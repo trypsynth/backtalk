@@ -29,8 +29,6 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.provider.Settings.SettingNotFoundException;
-import android.provider.Settings.System;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.WindowMetrics;
@@ -64,7 +62,6 @@ public class DimScreenActor implements OnConfigurationChangedListener {
 
   private static final float MAX_DIM_AMOUNT = 0.9f;
   private static final float MIN_BRIGHTNESS = 0.1f;
-  private static final float MAX_BRIGHTNESS = 1.0f;
 
   private static final int START_DIMMING_MESSAGE = 1;
   private static final int UPDATE_TIMER_MESSAGE = 2;
@@ -279,18 +276,10 @@ public class DimScreenActor implements OnConfigurationChangedListener {
 
   private void addExitInstructionView() {
     viewParams.dimAmount = MAX_DIM_AMOUNT;
-    viewParams.screenBrightness = getDeviceBrightness();
+    viewParams.screenBrightness = LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
     viewParams.buttonBrightness = MIN_BRIGHTNESS;
     windowManager.addView(view, viewParams);
     view.showText();
-  }
-
-  private float getDeviceBrightness() {
-    try {
-      return System.getInt(service.getContentResolver(), System.SCREEN_BRIGHTNESS);
-    } catch (SettingNotFoundException e) {
-      return MAX_BRIGHTNESS;
-    }
   }
 
   private void startDimmingCount() {
