@@ -15,10 +15,20 @@ dependencies {
     wearImplementation project(':materialtheme')
 }
 
+// Gemini settings come from local.properties, which is not committed, so each builder uses their own key.
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+def geminiApiKey = localProperties.getProperty('gemini.api.key', '')
+def geminiModel = localProperties.getProperty('gemini.model', 'gemini-flash-latest')
+
 android {
     namespace "com.google.android.accessibility.talkback"
     defaultConfig {
         buildConfigField("String", "APPLICATION_ID", '"' + talkbackApplicationId + '"')
-        buildConfigField("String", "GEMINI_API_KEY", "\"\"")
+        buildConfigField("String", "GEMINI_API_KEY", '"' + geminiApiKey + '"')
+        buildConfigField("String", "GEMINI_MODEL", '"' + geminiModel + '"')
     }
 }

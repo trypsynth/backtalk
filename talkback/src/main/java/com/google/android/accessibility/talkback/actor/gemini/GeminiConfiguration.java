@@ -16,6 +16,7 @@
 package com.google.android.accessibility.talkback.actor.gemini;
 
 import android.content.Context;
+import com.google.android.accessibility.talkback.BuildConfig;
 
 /** This class implements the configuration flags for Gemini requests. */
 public final class GeminiConfiguration {
@@ -27,7 +28,7 @@ public final class GeminiConfiguration {
   }
 
   static String getGeminiModel(Context context) {
-    return "";
+    return BuildConfig.GEMINI_MODEL;
   }
 
   public static String getQnaSupportLocales(Context context) {
