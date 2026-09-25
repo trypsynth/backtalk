@@ -31,7 +31,7 @@ import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.TwoStatePreference;
-import com.android.talkback.TalkBackPreferencesActivity.HatsRequesterViewModel;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity.HatsRequesterViewModel;
 import com.google.android.accessibility.talkback.HatsSurveyRequester;
 import com.google.android.accessibility.talkback.HelpAndFeedbackUtils;
 import com.google.android.accessibility.talkback.NotificationActivity;

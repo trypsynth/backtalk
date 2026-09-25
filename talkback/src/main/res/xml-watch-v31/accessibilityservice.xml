@@ -15,4 +15,4 @@
     android:interactiveUiTimeout="10000"
     android:animatedImageDrawable="@drawable/talkback_intro"
     android:description="@string/talkback_service_description"
-    android:settingsActivity="com.android.talkback.TalkBackPreferencesActivity" />
+    android:settingsActivity="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity" />

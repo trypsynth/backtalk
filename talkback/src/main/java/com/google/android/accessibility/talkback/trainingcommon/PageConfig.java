@@ -35,7 +35,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.preference.base.AdvancedSettingFragment;
 import com.google.android.accessibility.talkback.preference.base.TalkBackKeyboardShortcutPreferenceFragment;

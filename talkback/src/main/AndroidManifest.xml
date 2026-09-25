@@ -74,7 +74,7 @@
             android:exported="true"
             android:label="@string/talkback_title"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:settingsActivity="com.android.talkback.TalkBackPreferencesActivity"
+            android:settingsActivity="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity"
             android:directBootAware="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -98,7 +98,7 @@
 
         <!-- TalkBack Preferences -->
         <activity
-            android:name="com.android.talkback.TalkBackPreferencesActivity"
+            android:name="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
             android:label="@string/talkback_preferences_title"
@@ -114,7 +114,7 @@
 
         <!-- TalkBack subsettings Preferences -->
         <activity
-            android:name="com.android.talkback.TalkBackPreferencesActivity$TalkBackSubSettings"
+            android:name="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity$TalkBackSubSettings"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="false"
             android:label="@string/talkback_preferences_title"

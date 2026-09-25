@@ -17,4 +17,4 @@
     android:intro="@string/talkback_service_intro"
     android:isAccessibilityTool="true"
     android:canPerformGestures="true"
-    android:settingsActivity="com.android.talkback.TalkBackPreferencesActivity" />
+    android:settingsActivity="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity" />

@@ -15,4 +15,4 @@
     android:animatedImageDrawable="@drawable/talkback_intro"
     android:canPerformGestures="true"
     android:htmlDescription="@string/talkback_service_html_description"
-    android:settingsActivity="com.android.talkback.TalkBackPreferencesActivity" />
+    android:settingsActivity="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity" />

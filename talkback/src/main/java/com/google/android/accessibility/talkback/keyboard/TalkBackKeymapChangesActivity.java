@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.text.HtmlCompat;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.preference.base.TalkBackKeyboardShortcutPreferenceFragment;
 import com.google.android.accessibility.utils.preference.BasePreferencesActivity;

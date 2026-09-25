@@ -27,7 +27,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
-import com.android.talkback.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.preference.base.TalkBackGestureShortcutPreferenceFragment;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;

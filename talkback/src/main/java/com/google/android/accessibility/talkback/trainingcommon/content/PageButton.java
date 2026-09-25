@@ -30,7 +30,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.preference.base.TypingMethodPrefFragment;
 import com.google.android.accessibility.talkback.training.TutorialInitiator;

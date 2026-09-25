@@ -13,7 +13,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.braille.interfaces.ScreenReaderActionPerformer;
 import com.google.android.accessibility.braille.interfaces.ScreenReaderActionPerformer.ScreenReaderAction;
 import com.google.android.accessibility.braille.interfaces.TalkBackForBrailleDisplay;

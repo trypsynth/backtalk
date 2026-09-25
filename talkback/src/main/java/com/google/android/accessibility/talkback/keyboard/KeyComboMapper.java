@@ -59,7 +59,7 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Feedback.FocusDirection;

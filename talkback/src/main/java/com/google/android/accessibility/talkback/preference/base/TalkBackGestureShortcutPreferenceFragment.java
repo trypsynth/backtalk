@@ -32,7 +32,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceGroup;
-import com.android.talkback.TalkBackPreferencesActivity.TalkBackSubSettings;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity.TalkBackSubSettings;
 import com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;

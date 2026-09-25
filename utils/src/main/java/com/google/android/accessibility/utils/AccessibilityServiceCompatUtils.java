@@ -73,7 +73,7 @@ public class AccessibilityServiceCompatUtils {
     /** The name of the TalkBack Settings Activity. */
     public static final ComponentName SETTINGS_ACTIVITY =
         new ComponentName(
-            ACCESSIBILITY_SUITE_PACKAGE_NAME, "com.android.talkback.TalkBackPreferencesActivity");
+            ACCESSIBILITY_SUITE_PACKAGE_NAME, "com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity");
 
     /** The name of the TalkBack service. */
     public static final ComponentName TALKBACK_SERVICE =

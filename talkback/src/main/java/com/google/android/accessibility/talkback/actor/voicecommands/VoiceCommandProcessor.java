@@ -91,7 +91,7 @@ import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRAC
 import android.content.Intent;
 import android.text.TextUtils;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Interpretation;

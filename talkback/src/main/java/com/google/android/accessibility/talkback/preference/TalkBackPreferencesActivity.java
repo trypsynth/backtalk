@@ -14,7 +14,7 @@
  * the License.
  */
 
-package com.android.talkback;
+package com.google.android.accessibility.talkback.preference;
 
 import android.content.Intent;
 import android.os.Bundle;

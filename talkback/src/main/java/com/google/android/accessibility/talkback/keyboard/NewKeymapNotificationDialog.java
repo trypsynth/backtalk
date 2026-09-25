@@ -26,7 +26,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import androidx.annotation.StringRes;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.dialog.BaseDialog;
 import com.google.android.accessibility.talkback.preference.base.TalkBackKeyboardShortcutPreferenceFragment;

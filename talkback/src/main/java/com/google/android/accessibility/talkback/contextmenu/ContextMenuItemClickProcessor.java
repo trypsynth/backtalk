@@ -36,7 +36,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import androidx.annotation.StringRes;
 import androidx.annotation.VisibleForTesting;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Feedback.TriggerIntent.Action;
 import com.google.android.accessibility.talkback.Pipeline;

@@ -37,7 +37,7 @@ import android.os.Bundle;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import com.android.talkback.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
 import com.google.android.accessibility.talkback.Feedback.AdjustValue;
 import com.google.android.accessibility.talkback.Feedback.AdjustVolume;
 import com.google.android.accessibility.talkback.Feedback.BrailleDisplay;
