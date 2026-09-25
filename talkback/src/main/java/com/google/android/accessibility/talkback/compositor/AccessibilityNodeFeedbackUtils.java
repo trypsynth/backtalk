@@ -34,6 +34,7 @@ import com.google.android.accessibility.talkback.imagecaption.ImageContents;
 import com.google.android.accessibility.talkback.imagecaption.Result;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.BuildVersionUtils;
+import com.google.android.accessibility.utils.Filter;
 import com.google.android.accessibility.utils.LocaleUtils;
 import com.google.android.accessibility.utils.PackageManagerUtils;
 import com.google.android.accessibility.utils.Role;
@@ -45,6 +46,7 @@ import com.google.android.accessibility.utils.output.SpeechCleanupUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +60,12 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class AccessibilityNodeFeedbackUtils {
   private static final String TAG = "AccessibilityNodeFeedbackUtils";
+  private static final ImmutableSet<String> NOTIFICATION_VIEW_IDS =
+      ImmutableSet.of(
+          "com.android.systemui:id/expandableNotificationRow",
+          "com.android.systemui:id/notificationShelf");
+  private static final Filter<AccessibilityNodeInfoCompat> FILTER_NOTIFICATION =
+      Filter.node(node -> NOTIFICATION_VIEW_IDS.contains(node.getViewIdResourceName()));
 
   private AccessibilityNodeFeedbackUtils() {}
 
@@ -500,7 +508,10 @@ public class AccessibilityNodeFeedbackUtils {
   public static CharSequence getCollapsedOrExpandedStateText(
       AccessibilityNodeInfoCompat node, Context context) {
     if (AccessibilityNodeInfoUtils.isExpandable(node)) {
-      return context.getString(R.string.value_collapsed);
+      // Almost every notification starts collapsed, so announcing it on each one is noise.
+      return AccessibilityNodeInfoUtils.isOrHasMatchingAncestor(node, FILTER_NOTIFICATION)
+          ? ""
+          : context.getString(R.string.value_collapsed);
     } else if (AccessibilityNodeInfoUtils.isCollapsible(node)) {
       return context.getString(R.string.value_expanded);
     }
