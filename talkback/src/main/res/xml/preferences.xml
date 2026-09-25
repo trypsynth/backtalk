@@ -121,9 +121,5 @@
     <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
         android:key="@string/pref_help_and_feedback_key"
         android:title="@string/title_pref_help_and_feedback" />
-    <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
-        android:key="@string/pref_gup_key"
-        android:summary="@string/subtitle_pref_gup"
-        android:title="@string/title_pref_gup" />
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 </PreferenceScreen>
