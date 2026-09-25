@@ -78,7 +78,7 @@ Backtalk installs as `com.android.talkback`, so it does not replace Google's Tal
 
 ## Run
 
-After you install Backtalk, go to **Settings > Accessibility**. Backtalk is listed as **TalkBack_TfP** and is off by default. Turn off Google's TalkBack first, then turn on Backtalk.
+After you install Backtalk, go to **Settings > Accessibility**. Backtalk is listed as **Backtalk** and is off by default. Turn off Google's TalkBack first, then turn on Backtalk.
 
 ## Debug tools
 
