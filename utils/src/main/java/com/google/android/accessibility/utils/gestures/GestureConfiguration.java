@@ -27,5 +27,25 @@ public final class GestureConfiguration {
    */
   public static final int DOUBLE_TAP_TIMEOUT_MS = ViewConfiguration.getDoubleTapTimeout() - 50;
 
+  // A gesture waits a bit longer than the tap gap before it completes, so a late tap still counts.
+  private static final int MULTI_TAP_COMPLETION_MARGIN_MS =
+      ViewConfiguration.getDoubleTapTimeout() - DOUBLE_TAP_TIMEOUT_MS;
+
+  private static volatile int multiTapTimeoutMs = DOUBLE_TAP_TIMEOUT_MS;
+
   private GestureConfiguration() {}
+
+  /** Returns the user-set maximum number of milliseconds between two taps of a multi-tap gesture. */
+  public static int getMultiTapTimeoutMs() {
+    return multiTapTimeoutMs;
+  }
+
+  /** Returns how long a tap gesture waits for another tap before it completes. */
+  public static int getMultiTapCompletionTimeoutMs() {
+    return multiTapTimeoutMs + MULTI_TAP_COMPLETION_MARGIN_MS;
+  }
+
+  public static void setMultiTapTimeoutMs(int timeoutMs) {
+    multiTapTimeoutMs = timeoutMs;
+  }
 }

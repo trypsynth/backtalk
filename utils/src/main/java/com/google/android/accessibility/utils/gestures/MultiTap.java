@@ -46,7 +46,6 @@ public class MultiTap extends GestureMatcher {
   // The acceptable distance the pointer can move and still count as a tap.
   int touchSlop;
   int tapTimeout;
-  int doubleTapTimeout;
   int currentTaps;
   float baseX;
   float baseY;
@@ -81,7 +80,6 @@ public class MultiTap extends GestureMatcher {
     touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     int deltaTapTimeout = context.getResources().getInteger(R.integer.config_tap_timeout_delta);
     tapTimeout = ViewConfiguration.getTapTimeout() + deltaTapTimeout;
-    doubleTapTimeout = GestureConfiguration.DOUBLE_TAP_TIMEOUT_MS;
   }
 
   @Override
@@ -98,7 +96,7 @@ public class MultiTap extends GestureMatcher {
   protected void onDown(EventId eventId, MotionEvent event) {
     long time = event.getEventTime();
     long timeDelta = time - lastUpTime;
-    if (timeDelta > doubleTapTimeout) {
+    if (timeDelta > GestureConfiguration.getMultiTapTimeoutMs()) {
       debugMotionEvent(TAG, "onDown/doubleTapTimeout's over. Gesture:%d", getGestureId());
       cancelGesture(event);
       return;

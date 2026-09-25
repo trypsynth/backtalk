@@ -42,4 +42,12 @@
         android:key="@string/pref_typing_long_press_duration_key"
         android:summary="%s"
         android:title="@string/title_pref_typing_long_tap_duration" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteListPreference
+        android:defaultValue="@string/pref_multi_tap_timeout_default"
+        android:dialogTitle="@string/title_pref_multi_tap_timeout"
+        android:entries="@array/pref_multi_tap_timeout_entries"
+        android:entryValues="@array/pref_multi_tap_timeout_values"
+        android:key="@string/pref_multi_tap_timeout_key"
+        android:summary="%s"
+        android:title="@string/title_pref_multi_tap_timeout" />
 </PreferenceScreen>

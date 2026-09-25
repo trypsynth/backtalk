@@ -2050,6 +2050,16 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
 
     <!-- Label for type and hold duration. [CHAR LIMIT=NONE]-->
     <string name="value_typing_long_press_500ms">0.5 seconds</string>
+    <!-- Title for the maximum time between taps of a multi-tap gesture. [CHAR LIMIT=NONE]-->
+    <string name="title_pref_multi_tap_timeout">Time between taps</string>
+    <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
+    <string name="value_multi_tap_timeout_100ms">0.1 seconds</string>
+    <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
+    <string name="value_multi_tap_timeout_150ms">0.15 seconds</string>
+    <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
+    <string name="value_multi_tap_timeout_200ms">0.2 seconds</string>
+    <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
+    <string name="value_multi_tap_timeout_250ms">0.25 seconds (default)</string>
     <!-- Label for type and hold duration. [CHAR LIMIT=NONE]-->
     <string name="value_typing_long_press_1000ms">1 second</string>
     <!-- Label for type and hold duration. [CHAR LIMIT=NONE]-->

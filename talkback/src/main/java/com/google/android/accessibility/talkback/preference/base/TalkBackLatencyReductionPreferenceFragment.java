@@ -247,6 +247,12 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
     resetTypeLatencyPreferenceScreen.setOnPreferenceClickListener(resetPreferenceClickListener);
 
     if (reset) {
+      ListPreference multiTapTimeoutPreference =
+          findPreference(getString(R.string.pref_multi_tap_timeout_key));
+      if (multiTapTimeoutPreference != null) {
+        multiTapTimeoutPreference.setValue(
+            context.getResources().getString(R.string.pref_multi_tap_timeout_default));
+      }
       TwoStatePreference singleTapPreference =
           findPreference(getString(R.string.pref_single_tap_key));
       if (singleTapPreference != null) {

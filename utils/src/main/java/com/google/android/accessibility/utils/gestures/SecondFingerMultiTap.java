@@ -36,7 +36,6 @@ class SecondFingerMultiTap extends GestureMatcher {
   private int doubleTapSlop;
   private int touchSlop;
   private int tapTimeout;
-  private int doubleTapTimeout;
   private int currentTaps;
   private int secondFingerPointerId;
   float baseX;
@@ -56,7 +55,6 @@ class SecondFingerMultiTap extends GestureMatcher {
 
     touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     tapTimeout = ViewConfiguration.getTapTimeout();
-    doubleTapTimeout = GestureConfiguration.DOUBLE_TAP_TIMEOUT_MS;
     clear();
   }
 
@@ -82,7 +80,7 @@ class SecondFingerMultiTap extends GestureMatcher {
     secondFingerPointerId = event.getPointerId(index);
     long time = event.getEventTime();
     long timeDelta = time - lastUpTime;
-    if (timeDelta > doubleTapTimeout) {
+    if (timeDelta > GestureConfiguration.getMultiTapTimeoutMs()) {
       cancelGesture(event);
       return;
     }

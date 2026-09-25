@@ -370,6 +370,7 @@ public class TouchInteractionMonitor
             - 50;
 
     LogUtils.v(LOG_TAG, "Non IME Touch focus time out value:%d", touchFocusUserIntentTimeout);
+    updateMultiTapTimeout(prefs);
     requestTouchExplorationDelayed = new RequestTouchExplorationDelayed(determineUserIntentTimeout);
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     edgeSwipeHeightPixels = metrics.ydpi / GestureUtils.CM_PER_INCH * EDGE_SWIPE_HEIGHT_CM;
@@ -418,6 +419,15 @@ public class TouchInteractionMonitor
     }
   }
 
+  private void updateMultiTapTimeout(SharedPreferences prefs) {
+    GestureConfiguration.setMultiTapTimeoutMs(
+        SharedPreferencesUtils.getIntFromStringPref(
+            prefs,
+            context.getResources(),
+            R.string.pref_multi_tap_timeout_key,
+            R.string.pref_multi_tap_timeout_default));
+  }
+
   private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener =
       (prefs, key) -> {
         if (context.getString(R.string.pref_typing_focus_time_out_key).equals(key)) {
@@ -436,6 +446,8 @@ public class TouchInteractionMonitor
                       R.string.pref_touch_focus_time_out_key,
                       R.string.pref_touch_focus_time_out_default)
                   - 50;
+        } else if (context.getString(R.string.pref_multi_tap_timeout_key).equals(key)) {
+          updateMultiTapTimeout(prefs);
         } else if (context.getString(R.string.pref_typing_confirmation_key).equals(key)) {
           typingMethod =
               SharedPreferencesUtils.getIntFromStringPref(

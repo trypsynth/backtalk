@@ -38,7 +38,6 @@ class MultiFingerMultiTap extends GestureMatcher {
   final int targetFingerCount;
   // The acceptable distance between two taps of a finger.
   private int doubleTapSlop;
-  private int doubleTapTimeout;
   private int tapTimeout;
   // The acceptable distance the pointer can move and still count as a tap.
   private int touchSlop;
@@ -70,7 +69,6 @@ class MultiFingerMultiTap extends GestureMatcher {
     mTargetTapCount = taps;
     targetFingerCount = fingers;
     doubleTapSlop = ViewConfiguration.get(context).getScaledDoubleTapSlop() * fingers;
-    doubleTapTimeout = GestureConfiguration.DOUBLE_TAP_TIMEOUT_MS;
     tapTimeout = targetFingerCount * ViewConfiguration.getTapTimeout();
     touchSlop = ViewConfiguration.get(context).getScaledTouchSlop() * fingers;
 
@@ -104,7 +102,7 @@ class MultiFingerMultiTap extends GestureMatcher {
       return;
     }
     long timeDelta = event.getEventTime() - lastUpTime;
-    if (timeDelta > doubleTapTimeout) {
+    if (timeDelta > GestureConfiguration.getMultiTapTimeoutMs()) {
       cancelGesture(event);
       return;
     }

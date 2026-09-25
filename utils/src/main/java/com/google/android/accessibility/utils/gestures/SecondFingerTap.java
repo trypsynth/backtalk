@@ -36,7 +36,6 @@ import com.google.android.accessibility.utils.Performance.EventId;
 class SecondFingerTap extends GestureMatcher {
   private static final int TARGET_FINGER_COUNT = 2;
   protected final int targetTaps;
-  private final int doubleTapTimeout;
   protected int currentTaps;
   private final int touchSlop;
   private long firstDownTime;
@@ -52,7 +51,6 @@ class SecondFingerTap extends GestureMatcher {
       GestureMatcher.AnalyticsEventLogger logger) {
     super(gesture, new Handler(context.getMainLooper()), listener, logger);
     targetTaps = taps;
-    doubleTapTimeout = ViewConfiguration.getDoubleTapTimeout();
     touchSlop = ViewConfiguration.get(context).getScaledTouchSlop() * TARGET_FINGER_COUNT;
     bases = new PointF[TARGET_FINGER_COUNT];
     for (int i = 0; i < TARGET_FINGER_COUNT; i++) {
@@ -91,7 +89,7 @@ class SecondFingerTap extends GestureMatcher {
   @Override
   protected void onPointerDown(EventId eventId, MotionEvent event) {
     long timeDelta = event.getEventTime() - firstDownTime;
-    if (timeDelta < doubleTapTimeout) {
+    if (timeDelta < GestureConfiguration.getMultiTapCompletionTimeoutMs()) {
       cancelGesture(event);
       return;
     }

@@ -52,6 +52,7 @@
     <string name="pref_developer_version_code_key">pref_developer_version_code</string>
     <string name="pref_typing_confirmation_key" translatable="false">pref_typing_confirmation</string>
     <string name="pref_typing_long_press_duration_key" translatable="false">pref_typing_long_press_duration</string>
+    <string name="pref_multi_tap_timeout_key" translatable="false">pref_multi_tap_timeout</string>
     <string name="pref_typing_tap_and_hold_duration_key" translatable="false">pref_type_and_hold_duration</string>
     <string name="pref_typing_focus_time_out_key" translatable="false">pref_typing_focus_time_out_key</string>
     <string name="pref_typing_focus_time_out_first_update_key" translatable="false">pref_typing_focus_time_out_first_update_key</string>
@@ -837,6 +838,24 @@
     </string-array>
 
     <string name="typing_long_press_default" translatable="false">3000</string>
+
+  <!-- Multi-tap timeout entries -->
+    <string-array name="pref_multi_tap_timeout_entries">
+      <item>@string/value_multi_tap_timeout_100ms</item>
+      <item>@string/value_multi_tap_timeout_150ms</item>
+      <item>@string/value_multi_tap_timeout_200ms</item>
+      <item>@string/value_multi_tap_timeout_250ms</item>
+    </string-array>
+
+  <!-- Multi-tap timeout values -->
+    <string-array name="pref_multi_tap_timeout_values">
+      <item>100</item>
+      <item>150</item>
+      <item>200</item>
+      <item>250</item>
+    </string-array>
+
+    <string name="pref_multi_tap_timeout_default" translatable="false">250</string>
 
   <!-- Touch explore time entries -->
   <string-array name="pref_touch_explore_time_out_entries">
