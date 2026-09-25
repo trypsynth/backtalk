@@ -22,6 +22,7 @@ For TalkBack usage instructions, see the [TalkBack User Guide](https://support.g
 ### Screen and brightness
 
 *   **Brightness reading control.** Swipe up or down to change the screen brightness in steps of about 10%. This works when the screen is hidden, so you can set the brightness before you give the phone to someone. The first time you use it, TalkBack asks for the "Modify system settings" permission.
+*   **Shorter hide screen message.** If you turn off **Always show this** in the hide screen dialog, Backtalk only says "Screen hidden" and skips the instructions for showing the screen again.
 *   **Hide screen brightness fix.** For 3 minutes after you hide the screen, TalkBack set the screen to full brightness. It now keeps your brightness.
 *   **Proximity sensor off by default.** TalkBack no longer stops speech when something covers the proximity sensor. To turn it back on, go to **Advanced settings > Cover proximity sensor to stop speech** in TalkBack settings.
 

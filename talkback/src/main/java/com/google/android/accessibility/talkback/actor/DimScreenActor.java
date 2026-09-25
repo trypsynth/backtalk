@@ -396,6 +396,10 @@ public class DimScreenActor implements OnConfigurationChangedListener {
                     .setAction(Action.SPEAK)
                     .setText(service.getString(R.string.screen_dimmed))
                     .build()));
+    // Users who turned off the confirmation dialog already know how to show the screen again.
+    if (!getShouldShowDialogPref()) {
+      return;
+    }
     // The prompt for exiting Hide Screen mode. Need to separate it as a single Speech, instead of a
     // hint, because it will always be interrupted by window changed event if Hide Screen is
     // triggered from TalkBack menu or the confirm dialog.
