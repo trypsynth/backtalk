@@ -28,8 +28,9 @@ import org.json.JSONObject;
 
 /** Performs Gemini REST requests. */
 public class GeminiRestRequestPerformer {
-  private static final int TIMEOUT_MS = 5_000;
-  private static final int MAX_RETRIES = 2;
+  private static final int TIMEOUT_MS = 30_000;
+  // Retrying a request that timed out sends and pays for the same slow request again.
+  private static final int MAX_RETRIES = 0;
 
   interface GeminiRestResponseCallback {
     void onResponse(GeminiResponse response);
