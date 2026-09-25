@@ -35,6 +35,7 @@ import static com.google.android.accessibility.braille.common.BrailleImeAction.S
 
 import android.content.Context;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.inputmethod.InputConnection;
 import androidx.annotation.Nullable;
 import com.google.android.accessibility.braille.common.BrailleCommonTalkBackSpeaker;
@@ -296,6 +297,23 @@ public class BrailleImeActor {
       }
     }
     return result;
+  }
+
+  /** Returns whether a backward delete would have no text to remove. */
+  public boolean isNothingToDelete() {
+    if (!callback.isConnectionValid()
+        || talkBackForBrailleIme.isCurrentGranularityTypoCorrection()) {
+      return false;
+    }
+    ImeConnection imeConnection = callback.getImeConnection();
+    EditBuffer editBuffer = callback.getEditBuffer();
+    if (editBuffer != null
+        && editBuffer.getHoldingsInfo(imeConnection).holdings().array().length != 0) {
+      return false;
+    }
+    InputConnection inputConnection = imeConnection.inputConnection;
+    return TextUtils.isEmpty(inputConnection.getSelectedText(0))
+        && TextUtils.isEmpty(inputConnection.getTextBeforeCursor(1, 0));
   }
 
   private void performTextAction(

@@ -82,16 +82,26 @@ public class BrailleImeGestureController {
       return false;
     }
     BrailleImeAction action = optionalBrailleImeAction.get();
+    // Checked before the action runs, because the action changes the text.
+    boolean nothingToDelete =
+        (action == BrailleImeAction.DELETE_CHARACTER_OR_PREVIOUS_ITEM
+                || action == BrailleImeAction.DELETE_WORD)
+            && brailleImeActor.isNothingToDelete();
     boolean result = brailleImeActor.performAction(action);
-    performFeedback(action);
+    performFeedback(action, nothingToDelete);
     performLogging(action, currentActions.equals(defaultActions));
     return result;
   }
 
-  private void performFeedback(BrailleImeAction action) {
+  private void performFeedback(BrailleImeAction action, boolean nothingToDelete) {
+    if (nothingToDelete) {
+      BrailleImeVibrator.getInstance(context).vibrate(VibrationType.NOTHING_TO_DELETE);
+      return;
+    }
     switch (action) {
-      case HIDE_KEYBOARD, SWITCH_KEYBOARD, HELP_AND_OTHER_ACTIONS, SUBMIT_TEXT ->
+      case HIDE_KEYBOARD, SWITCH_KEYBOARD, HELP_AND_OTHER_ACTIONS ->
           BrailleImeVibrator.getInstance(context).vibrate(VibrationType.OTHER_GESTURES);
+      case SUBMIT_TEXT -> BrailleImeVibrator.getInstance(context).vibrate(VibrationType.SUBMIT);
       case NEXT_GRANULARITY,
           PREVIOUS_GRANULARITY,
           ADD_SPACE_OR_NEXT_ITEM,
