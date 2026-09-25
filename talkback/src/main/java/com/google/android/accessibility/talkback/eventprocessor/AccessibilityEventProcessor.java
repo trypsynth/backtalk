@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
+import android.os.Trace;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +38,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.view.accessibility.AccessibilityEventCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityRecordCompat;
+import com.google.android.accessibility.talkback.BuildConfig;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
@@ -575,13 +577,25 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
     }
 
     // Send events to the only those processors which handle them.
+    if (BuildConfig.DEBUG) {
+      Trace.beginSection(AccessibilityEvent.eventTypeToString(event.getEventType()));
+    }
     Iterator<AccessibilityEventListener> iterator = accessibilityEventListeners.iterator();
     while (iterator.hasNext()) {
       AccessibilityEventListener eventProcessor = iterator.next();
       int eventTypesHandled = eventProcessor.getEventTypes();
       if (AccessibilityEventUtils.eventMatchesAnyType(event, eventTypesHandled)) {
+        if (BuildConfig.DEBUG) {
+          Trace.beginSection(eventProcessor.getClass().getSimpleName());
+        }
         eventProcessor.onAccessibilityEvent(event, eventId);
+        if (BuildConfig.DEBUG) {
+          Trace.endSection();
+        }
       }
+    }
+    if (BuildConfig.DEBUG) {
+      Trace.endSection();
     }
   }
 
