@@ -35,7 +35,7 @@ For TalkBack usage instructions, see the [TalkBack User Guide](https://support.g
 
 ### Braille keyboard
 
-*   **Better haptics.** The braille keyboard uses the same crisp vibration effects as the rest of TalkBack. Submitting text and deleting in an empty field use a longer vibration so that you can tell them apart.
+*   **Better haptics.** The braille keyboard uses the same crisp vibration effects as the rest of TalkBack. Submitting text feels the same as closing or switching the keyboard. Deleting in an empty field gives a soft vibration that fades out, so that you know there was nothing to delete.
 
 ## Build
 

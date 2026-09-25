@@ -99,9 +99,8 @@ public class BrailleImeGestureController {
       return;
     }
     switch (action) {
-      case HIDE_KEYBOARD, SWITCH_KEYBOARD, HELP_AND_OTHER_ACTIONS ->
+      case HIDE_KEYBOARD, SWITCH_KEYBOARD, HELP_AND_OTHER_ACTIONS, SUBMIT_TEXT ->
           BrailleImeVibrator.getInstance(context).vibrate(VibrationType.OTHER_GESTURES);
-      case SUBMIT_TEXT -> BrailleImeVibrator.getInstance(context).vibrate(VibrationType.SUBMIT);
       case NEXT_GRANULARITY,
           PREVIOUS_GRANULARITY,
           ADD_SPACE_OR_NEXT_ITEM,

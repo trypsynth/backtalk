@@ -18,6 +18,7 @@ package com.google.android.accessibility.brailleime;
 
 import static android.os.VibrationEffect.Composition.PRIMITIVE_CLICK;
 import static android.os.VibrationEffect.Composition.PRIMITIVE_LOW_TICK;
+import static android.os.VibrationEffect.Composition.PRIMITIVE_QUICK_FALL;
 import static android.os.VibrationEffect.Composition.PRIMITIVE_QUICK_RISE;
 import static android.os.VibrationEffect.Composition.PRIMITIVE_TICK;
 
@@ -27,35 +28,51 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.VibrationEffect.Composition;
 import android.os.Vibrator;
+import androidx.annotation.RequiresApi;
 
 /** Singleton class which presents vibrations in braille keyboard. */
 public class BrailleImeVibrator {
 
   /**
-   * Vibration type in braille keyboard. Types with primitives play them as a composition when the
-   * device supports it, and fall back to a one-shot vibration otherwise.
+   * Vibration type in braille keyboard. Types play their steps as a composition when the device
+   * supports all of the primitives, and fall back to a one-shot vibration otherwise.
    */
   public enum VibrationType {
-    BRAILLE_COMMISSION(25, 120, PRIMITIVE_TICK),
-    SPACE_DELETE_OR_MOVE_CURSOR_OR_GRANULARITY(70, 150, PRIMITIVE_CLICK),
-    NEWLINE_OR_DELETE_WORD(120, 180, PRIMITIVE_CLICK, PRIMITIVE_CLICK),
-    HOLD(25, 200, PRIMITIVE_LOW_TICK),
-    OTHER_GESTURES(190, 210, PRIMITIVE_QUICK_RISE),
-    SUBMIT(150, 110),
-    NOTHING_TO_DELETE(150, 110);
+    BRAILLE_COMMISSION(25, 120, step(PRIMITIVE_TICK, 1f, 0)),
+    SPACE_DELETE_OR_MOVE_CURSOR_OR_GRANULARITY(70, 150, step(PRIMITIVE_CLICK, 1f, 0)),
+    NEWLINE_OR_DELETE_WORD(
+        120, 180, step(PRIMITIVE_CLICK, 1f, 0), step(PRIMITIVE_CLICK, 1f, 60)),
+    HOLD(25, 200, step(PRIMITIVE_LOW_TICK, 1f, 0)),
+    OTHER_GESTURES(190, 210, step(PRIMITIVE_QUICK_RISE, 1f, 0)),
+    NOTHING_TO_DELETE(150, 110, step(PRIMITIVE_QUICK_FALL, 0.6f, 0));
 
     private final int duration;
     private final int amplitude;
-    private final int[] primitives;
+    private final Step[] steps;
 
-    VibrationType(int duration, int amplitude, int... primitives) {
+    VibrationType(int duration, int amplitude, Step... steps) {
       this.duration = duration;
       this.amplitude = amplitude;
-      this.primitives = primitives;
+      this.steps = steps;
     }
   }
 
-  private static final int PRIMITIVE_GAP_MS = 60;
+  /** One primitive in a composition, with its scale and the delay before it plays. */
+  private static final class Step {
+    private final int primitive;
+    private final float scale;
+    private final int delayMs;
+
+    private Step(int primitive, float scale, int delayMs) {
+      this.primitive = primitive;
+      this.scale = scale;
+      this.delayMs = delayMs;
+    }
+  }
+
+  private static Step step(int primitive, float scale, int delayMs) {
+    return new Step(primitive, scale, delayMs);
+  }
 
   private static BrailleImeVibrator instance;
   private final Vibrator vibrator;
@@ -89,18 +106,24 @@ public class BrailleImeVibrator {
     if (!enabled) {
       return;
     }
-    int[] primitives = vibrationType.primitives;
-    if (primitives.length > 0
-        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-        && vibrator.areAllPrimitivesSupported(primitives)) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && isCompositionSupported(vibrationType)) {
       Composition composition = VibrationEffect.startComposition();
-      for (int i = 0; i < primitives.length; i++) {
-        composition.addPrimitive(primitives[i], /* scale= */ 1f, i == 0 ? 0 : PRIMITIVE_GAP_MS);
+      for (Step step : vibrationType.steps) {
+        composition.addPrimitive(step.primitive, step.scale, step.delayMs);
       }
       vibrator.vibrate(composition.compose());
       return;
     }
     vibrator.vibrate(
         VibrationEffect.createOneShot(vibrationType.duration, vibrationType.amplitude));
+  }
+
+  @RequiresApi(Build.VERSION_CODES.R)
+  private boolean isCompositionSupported(VibrationType vibrationType) {
+    int[] primitives = new int[vibrationType.steps.length];
+    for (int i = 0; i < primitives.length; i++) {
+      primitives[i] = vibrationType.steps[i].primitive;
+    }
+    return vibrator.areAllPrimitivesSupported(primitives);
   }
 }
