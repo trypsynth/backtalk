@@ -1450,9 +1450,9 @@
     <string name="pref_shortcut_4finger_swipe_down_default">@string/shortcut_value_next_window</string>
     <string name="pref_shortcut_4finger_swipe_left_default">@string/shortcut_value_prev_container</string>
     <string name="pref_shortcut_4finger_swipe_right_default">@string/shortcut_value_next_container</string>
-    <string name="pref_shortcut_4finger_1tap_default">@string/shortcut_value_practice_gestures</string>
-    <string name="pref_shortcut_4finger_2tap_default">@string/shortcut_value_tutorial</string>
-    <string name="pref_shortcut_4finger_3tap_default">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_4finger_1tap_default">@string/shortcut_value_back</string>
+    <string name="pref_shortcut_4finger_2tap_default">@string/shortcut_value_home</string>
+    <string name="pref_shortcut_4finger_3tap_default">@string/shortcut_value_overview</string>
     <string name="pref_shortcut_2finger_1tap_hold_default">@string/shortcut_long_press_talkback_exit</string>
     <string name="pref_shortcut_3finger_1tap_hold_default">@string/shortcut_value_screen_search</string>
     <string name="pref_shortcut_2finger_2tap_hold_default">@string/shortcut_value_start_selection_mode</string>
