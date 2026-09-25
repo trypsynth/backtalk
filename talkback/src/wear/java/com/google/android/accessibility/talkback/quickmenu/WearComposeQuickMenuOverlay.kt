@@ -1,4 +1,4 @@
-package com.android.talkback.quickmenu
+package com.google.android.accessibility.talkback.quickmenu
 
 import android.content.Context
 import android.view.ViewGroup
@@ -22,7 +22,6 @@ import androidx.wear.compose.material3.confirmationDialogCurvedText
 import com.google.android.accessibility.material.theme.AccessibilitySuiteTheme
 import com.google.android.accessibility.talkback.Feedback.TalkBackUI
 import com.google.android.accessibility.talkback.R
-import com.google.android.accessibility.talkback.quickmenu.QuickMenuOverlay
 import kotlinx.coroutines.delay
 
 /**

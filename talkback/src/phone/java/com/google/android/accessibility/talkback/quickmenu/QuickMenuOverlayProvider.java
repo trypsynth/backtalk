@@ -1,9 +1,8 @@
-package com.android.talkback.quickmenu;
+package com.google.android.accessibility.talkback.quickmenu;
 
 import android.content.Context;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.actor.TalkBackUIActor;
-import com.google.android.accessibility.talkback.quickmenu.QuickMenuOverlay;
 import java.util.Map;
 
 /** Provides {@link QuickMenuOverlay} for different {@link TalkBackUIActor.Type}s on Handset. */

@@ -19,7 +19,7 @@ package com.google.android.accessibility.talkback.actor;
 import android.content.Context;
 import android.content.res.Configuration;
 import androidx.annotation.VisibleForTesting;
-import com.android.talkback.quickmenu.QuickMenuOverlayProvider;
+import com.google.android.accessibility.talkback.quickmenu.QuickMenuOverlayProvider;
 import com.google.android.accessibility.talkback.Feedback.TalkBackUI;
 import com.google.android.accessibility.talkback.quickmenu.QuickMenuOverlay;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
