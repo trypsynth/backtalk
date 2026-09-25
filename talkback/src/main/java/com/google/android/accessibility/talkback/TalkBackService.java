@@ -1590,6 +1590,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
     compositor.handleEvent(Compositor.EVENT_SPOKEN_FEEDBACK_ON, talkbackOnEventId);
 
+    // Hides the screen after announcing that TalkBack is on, so "Screen hidden" is spoken second.
+    dimScreenController.resume();
+
     // If the locked-boot-completed intent was fired before onServiceConnected, we queued it,
     // so now we need to run it.
     if (lockedBootCompletedPending) {
@@ -2630,8 +2633,6 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
 
     reloadPreferences();
-
-    dimScreenController.resume();
 
     inputFocusInterpreter.initLastEditableFocusForGlobalVariables();
 
