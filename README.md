@@ -29,6 +29,10 @@ For TalkBack usage instructions, see the [TalkBack User Guide](https://support.g
 
 *   **4-finger taps by default.** Tap with 4 fingers to go back. Double-tap with 4 fingers to go home. Triple-tap with 4 fingers to open recent apps. If you changed these gestures before, your settings stay.
 
+### TalkBack menu
+
+*   **Shorter menu by default.** These items are off by default: Screen search, Add or edit labels, Describe text formatting, Copy last spoken phrase, Spoken language, Voice commands, Keyboard shortcuts, Text-to-speech, and Braille display settings. To turn them back on, go to **Customize menus** in TalkBack settings.
+
 ### Speech
 
 *   **No "collapsed" on notifications.** TalkBack no longer says "collapsed" for each notification on the lock screen and in the notification shade. It still says "expanded" when you open one, and it still says "collapsed" in other apps.
