@@ -1246,7 +1246,7 @@
     <string name="pref_speech_volume_default">100</string>
     <bool name="pref_screenoff_default">false</bool>
     <bool name="pref_verbose_scroll_announcement_default">false</bool>
-    <bool name="pref_proximity_default">true</bool>
+    <bool name="pref_proximity_default">false</bool>
     <bool name="pref_show_exit_watermark_default">true</bool>
     <bool name="pref_cache_keyboard_keys_default">false</bool>
     <bool name="pref_vibration_default">true</bool>

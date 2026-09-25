@@ -42,6 +42,10 @@ For TalkBack usage instructions, see the
 *   **Hide screen brightness fix.** For 3 minutes after you hide the screen,
     TalkBack set the screen to full brightness. It now keeps your brightness.
 
+*   **Proximity sensor off by default.** TalkBack no longer stops speech when
+    something covers the proximity sensor. To turn it back on, go to
+    **Advanced settings** in TalkBack settings.
+
 ### Gestures
 
 *   **4-finger taps by default.** Tap with 4 fingers to go back. Double-tap with
