@@ -76,7 +76,7 @@ dependencies {
     implementation 'com.google.zxing:core:3.5.1'
 
     // Cloud services
-    implementation 'com.mcxiaoke.volley:library:1.0.+'
+    implementation 'com.android.volley:volley:1.2.1'
 
     // Compose libraries for all form factors
     implementation "androidx.activity:activity:1.10.0"
