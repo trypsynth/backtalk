@@ -31,6 +31,7 @@ import com.google.android.accessibility.talkback.actor.gemini.GeminiActor.Gemini
 import com.google.android.accessibility.talkback.actor.gemini.GeminiActor.GeminiResponseListener;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiCommand.CommonRequest;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiRestRequestPerformer.GeminiRestResponseCallback;
+import com.google.android.accessibility.talkback.actor.gemini.screenqa.OverviewResponse;
 import com.google.android.accessibility.utils.NetworkUtils;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
@@ -58,6 +59,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
   private final String safetyThresholdSexuallyExplicit;
   private final String safetyThresholdDangerousContent;
   private final String prefixPrompt;
+  private final ScreenOverviewRequester screenOverviewRequester;
 
   public GeminiRestEndpoint(
       Context context, String apiKey, GeminiRestRequestPerformer requestPerformer) {
@@ -77,6 +79,13 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
     safetyThresholdDangerousContent =
         GeminiConfiguration.getSafetyThresholdDangerousContent(context);
     prefixPrompt = GeminiConfiguration.getPrefixPrompt(context);
+    screenOverviewRequester =
+        new ScreenOverviewRequester(
+            (postData, callback) -> {
+              requestPerformer.performRequest(
+                  TextUtils.isEmpty(urlWithApiKey) ? url : urlWithApiKey, postData, callback);
+              return kotlin.Unit.INSTANCE;
+            });
     prefs = SharedPreferencesUtils.getSharedPreferences(context);
   }
 
@@ -109,6 +118,9 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
       text = commonRequest.getText();
       imageByteArray = commonRequest.getScreenshot();
       geminiResponseListener = commonRequest.getListener();
+    } else if (command instanceof GeminiCommand.ScreenOverview
+        || command instanceof GeminiCommand.ScreenQuery) {
+      return requestScreenOverviewOrQuery(command);
     } else {
       LogUtils.v(TAG, "Not a common request - Return.");
       return false;
@@ -174,6 +186,38 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
           });
     } catch (JSONException e) {
       LogUtils.e(TAG, "Error processing Gemini request: " + e.getMessage());
+      return false;
+    }
+    return true;
+  }
+
+  private boolean requestScreenOverviewOrQuery(GeminiCommand command) {
+    GeminiResponseCallback<OverviewResponse> listener =
+        command instanceof GeminiCommand.ScreenOverview overview
+            ? overview.getListener()
+            : ((GeminiCommand.ScreenQuery) command).getListener();
+    if (!isSupported()) {
+      listener.onError(ErrorReason.UNSUPPORTED);
+      return false;
+    }
+    if (!NetworkUtils.isNetworkConnected(context)) {
+      listener.onError(ErrorReason.NETWORK_ERROR);
+      return false;
+    }
+    try {
+      JSONArray safetySettings =
+          DataFieldUtils.createSafetySettingsJson(
+              safetyThresholdHarassment,
+              safetyThresholdHateSpeech,
+              safetyThresholdSexuallyExplicit,
+              safetyThresholdDangerousContent);
+      if (command instanceof GeminiCommand.ScreenOverview overview) {
+        screenOverviewRequester.requestOverview(overview, safetySettings);
+      } else {
+        screenOverviewRequester.requestQuery((GeminiCommand.ScreenQuery) command, safetySettings);
+      }
+    } catch (JSONException e) {
+      LogUtils.e(TAG, "Error processing screen overview request: " + e.getMessage());
       return false;
     }
     return true;

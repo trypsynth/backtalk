@@ -57,7 +57,7 @@ You need JDK 17, the Android SDK, and NDK 27.3.13750724. Set `ANDROID_HOME` to y
 
 ### Image descriptions with Gemini
 
-Google's source release does not include the Gemini settings, so **Describe image** only reads text in images unless you add your own Gemini API key. To add one:
+Google's source release does not include the Gemini settings, so **Describe image** only reads text in images, and **Describe screen** does not work, unless you add your own Gemini API key. Backtalk adds its own support for Describe screen, including follow-up questions. To add a key:
 
 1.  Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
 2.  Add this line to `local.properties` in the project folder: `gemini.api.key=YOUR_KEY`
@@ -66,9 +66,7 @@ Google's source release does not include the Gemini settings, so **Describe imag
 
 Git ignores `local.properties`, so your key is not committed. The key is built into the APK, so do not share an APK that contains your key.
 
-Images that you describe are sent to Google. On the free tier, Google can use this data to improve its products.
-
-**Describe screen** does not work yet.
+Images and screenshots that you describe are sent to Google. On the free tier, Google can use this data to improve its products.
 
 ## Install
 
