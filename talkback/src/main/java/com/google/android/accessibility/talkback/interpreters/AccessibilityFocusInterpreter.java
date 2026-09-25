@@ -22,6 +22,8 @@ import static com.google.android.accessibility.talkback.Interpretation.Touch.Act
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.accessibility.AccessibilityEvent;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.ActorState;
@@ -71,6 +73,10 @@ public class AccessibilityFocusInterpreter
         TargetViewChangeListener {
   public static final String TAG = "A11yFocusInterp";
 
+  // Scroll events arrive many times per second, and finding a new focus target queries the app's
+  // node tree over IPC on the main thread. Waiting for scrolling to settle keeps touch responsive.
+  private static final long MANUAL_SCROLL_SETTLE_MS = 150;
+
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Member variables
 
@@ -82,6 +88,17 @@ public class AccessibilityFocusInterpreter
 
   private Pipeline.InterpretationReceiver pipelineInterpretations;
   private ActorState actorState;
+
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private @Nullable ManualScrollInterpretation pendingManualScroll;
+  private final Runnable handlePendingManualScroll =
+      () -> {
+        ManualScrollInterpretation interpretation = pendingManualScroll;
+        pendingManualScroll = null;
+        if (interpretation != null) {
+          handleManualScroll(interpretation);
+        }
+      };
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Construction methods
@@ -156,6 +173,21 @@ public class AccessibilityFocusInterpreter
   /** Event-interpreter function, called by {@link ManualScrollInterpreter}. */
   @Override
   public void onManualScroll(ManualScrollInterpretation interpretation) {
+    if (FormFactorUtils.isAndroidWear()) {
+      handleManualScroll(interpretation);
+      return;
+    }
+    // Copy the event, because the framework may recycle it after dispatch.
+    pendingManualScroll =
+        ManualScrollInterpretation.create(
+            interpretation.eventId(),
+            AccessibilityEvent.obtain(interpretation.event()),
+            interpretation.direction());
+    handler.removeCallbacks(handlePendingManualScroll);
+    handler.postDelayed(handlePendingManualScroll, MANUAL_SCROLL_SETTLE_MS);
+  }
+
+  private void handleManualScroll(ManualScrollInterpretation interpretation) {
     if (!screenState.areMainWindowsStable()) {
       LogUtils.w(
           TAG,

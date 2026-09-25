@@ -105,6 +105,7 @@ public class TouchInteractionMonitor
         ComponentCallbacks,
         UserInterface.UserInputEventListener {
   private static final String LOG_TAG = "TouchInteractionMonitor";
+  private static final String DEBUG_GESTURE_TAG = "BacktalkGesture";
   private static final float MAX_DRAGGING_ANGLE_COS = 0.525321989f; // cos(pi/4)
   // The height of the top and bottom edges for  edge-swipes.
   // For now this is only used to allow three-finger edge-swipes from the bottom.
@@ -594,6 +595,13 @@ public class TouchInteractionMonitor
   @SuppressWarnings("Override")
   @Override
   public void onStateChanged(int state) {
+    if (BuildConfig.DEBUG) {
+      Log.d(
+          DEBUG_GESTURE_TAG,
+          TouchInteractionController.stateToString(this.state)
+              + " -> "
+              + TouchInteractionController.stateToString(state));
+    }
     LogUtils.v(
         LOG_TAG,
         "%s -> %s",
@@ -899,6 +907,16 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureCompleted(AccessibilityGestureEvent gestureEvent) {
+    if (BuildConfig.DEBUG) {
+      Log.d(
+          DEBUG_GESTURE_TAG,
+          "Gesture "
+              + AccessibilityServiceCompatUtils.gestureIdToString(gestureEvent.getGestureId())
+              + " in state "
+              + TouchInteractionController.stateToString(state)
+              + ", previous "
+              + TouchInteractionController.stateToString(previousState));
+    }
     LogUtils.v(
         LOG_TAG,
         "TalkBack gesture id:%s detected",

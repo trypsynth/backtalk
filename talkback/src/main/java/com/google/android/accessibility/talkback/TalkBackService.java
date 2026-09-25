@@ -769,6 +769,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   @Override
   public void onCreate() {
+    if (BuildConfig.DEBUG) {
+      MainThreadStallLogger.install();
+    }
     bootReceiver = new BootReceiver();
     ContextCompat.registerReceiver(this, bootReceiver, BootReceiver.getFilter(), RECEIVER_EXPORTED);
     super.onCreate();
