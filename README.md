@@ -44,7 +44,8 @@ For TalkBack usage instructions, see the
 
 *   **Proximity sensor off by default.** TalkBack no longer stops speech when
     something covers the proximity sensor. To turn it back on, go to
-    **Advanced settings** in TalkBack settings.
+    **Advanced settings > Cover proximity sensor to stop speech** in TalkBack
+    settings.
 
 ### Gestures
 
