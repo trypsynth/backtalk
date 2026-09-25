@@ -1358,7 +1358,7 @@
     <bool name="pref_selector_granularity_column_default">false</bool>
     <bool name="pref_selector_text_formatting_inline_default">false</bool>
 
-    <bool name="pref_show_context_menu_custom_action_default">true</bool>
+    <bool name="pref_show_context_menu_custom_action_default">false</bool>
     <bool name="pref_show_context_menu_editing_default">true</bool>
     <bool name="pref_show_context_menu_page_navigation_default">false</bool>
     <bool name="pref_show_context_menu_labeling_default">false</bool>
@@ -1380,7 +1380,7 @@
     <bool name="pref_show_context_menu_show_keyboard_shortcuts_default">false</bool>
     <bool name="pref_show_context_menu_talkback_settings_default">true</bool>
     <bool name="pref_show_context_menu_system_action_default">false</bool>
-    <bool name="pref_show_context_menu_tts_settings_default">false</bool>
+    <bool name="pref_show_context_menu_tts_settings_default">true</bool>
     <bool name="pref_show_context_menu_image_caption_default">true</bool>
     <bool name="pref_show_context_menu_summarize_view_default">true</bool>
     <bool name="pref_show_context_menu_typo_suggestions_default">true</bool>

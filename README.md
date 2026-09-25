@@ -31,7 +31,7 @@ For TalkBack usage instructions, see the [TalkBack User Guide](https://support.g
 
 ### TalkBack menu
 
-*   **Shorter menu by default.** These items are off by default: Screen search, Add or edit labels, Describe text formatting, Copy last spoken phrase, Spoken language, Voice commands, Keyboard shortcuts, Text-to-speech, and Braille display settings. To turn them back on, go to **Customize menus** in TalkBack settings.
+*   **Shorter menu by default.** These items are off by default: Actions, Screen search, Add or edit labels, Describe text formatting, Copy last spoken phrase, Spoken language, Voice commands, Keyboard shortcuts, and Braille display settings. Actions stay available with the actions reading control. Text-to-speech stays on, so that you can get to speech settings if your speech engine crashes. To turn them back on, go to **Customize menus** in TalkBack settings.
 
 ### Speech
 
