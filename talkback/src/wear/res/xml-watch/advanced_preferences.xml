@@ -50,11 +50,5 @@
         android:fragment="com.google.android.accessibility.talkback.preference.base.DeveloperPrefFragment"
         android:key="@string/pref_category_developer_key"
         android:title="@string/title_pref_category_developer_settings"/>
-    <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
-        android:key="@string/pref_policy_key"
-        android:title="@string/title_pref_show_privacy_policy"/>
-    <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
-        android:key="@string/pref_show_tos_key"
-        android:title="@string/title_pref_show_tos"/>
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 </PreferenceScreen>
