@@ -690,6 +690,21 @@
   -->
   <string name="template_accessibility_volume_change_decrease">Decrease accessibility volume to <xliff:g id="percent">%1$d</xliff:g> percent.</string>
   <!--
+    Source: String for notifying the user the screen brightness is changed.
+    Description: This is spoken to the user. [CHAR_LIMIT=NONE]
+  -->
+  <string name="template_brightness_changed">Brightness <xliff:g id="percent">%1$d</xliff:g> percent.</string>
+  <!--
+    Source: String for notifying the user that TalkBack needs permission to change brightness.
+    Description: This is spoken to the user. [CHAR_LIMIT=NONE]
+  -->
+  <string name="brightness_needs_permission">Allow modify system settings to change brightness.</string>
+  <!--
+    Source: String for notifying the user that adaptive brightness blocks manual brightness changes.
+    Description: This is spoken to the user. [CHAR_LIMIT=NONE]
+  -->
+  <string name="brightness_adaptive_on">Turn off adaptive brightness to change brightness.</string>
+  <!--
     Source: String for notifying the user the accessibility volume is decreased.
     Description: This is spoken to the user. [CHAR_LIMIT=NONE]
   -->

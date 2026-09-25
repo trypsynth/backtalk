@@ -182,6 +182,7 @@
     <string name="pref_selector_special_widget_index_key" translatable="false">pref_selector_special_widget_index_key</string>
     <string name="pref_selector_scroll_seq_key" translatable="false">pref_selector_scroll_seq_key </string>
     <string name="pref_selector_change_a11y_volume_key" translatable="false">pref_selector_change_a11y_volume_key </string>
+    <string name="pref_selector_change_brightness_key" translatable="false">pref_selector_change_brightness_key</string>
     <string name="pref_selector_change_touch_focus_latency_key" translatable="false">pref_selector_change_touch_focus_latency_key</string>
     <string name="pref_selector_change_typing_focus_latency_key" translatable="false">pref_selector_change_typing_focus_latency_key</string>
     <string name="pref_selector_control_telling_time" translatable="false">pref_selector_control_telling_time</string>
@@ -1296,6 +1297,7 @@
     <bool name="pref_selector_hide_screen_default">false</bool>
     <bool name="pref_selector_scroll_seq_default">false</bool>
     <bool name="pref_selector_a11y_volume_default">false</bool>
+    <bool name="pref_selector_brightness_default">true</bool>
     <bool name="pref_selector_typing_focus_latency_default">false</bool>
     <bool name="pref_selector_touch_focus_latency_default">false</bool>
     <bool name="pref_selector_control_telling_time_default">false</bool>
@@ -1605,6 +1607,7 @@
     <string name="selector_audio_focus" translatable="false">AUDIO_DUCKING</string>
     <string name="selector_scroll_seq" translatable="false">SELECTOR_SCROLL_SEQ</string>
     <string name="selector_a11y_volume_change" translatable="false">SELECTOR_A11y_VOLUME_CHANGE</string>
+    <string name="selector_brightness_change" translatable="false">SELECTOR_BRIGHTNESS_CHANGE</string>
     <string name="selector_typing_focus_latency_change" translatable="false">SELECTOR_TYPING_FOCUS_LATENCY_CHANGE</string>
     <string name="selector_touch_focus_latency_change" translatable="false">SELECTOR_TOUCH_FOCUS_LATENCY_CHANGE</string>
     <string name="selector_control_telling_time" translatable="false">SELECTOR_CONTROL_TELLING_TIME</string>

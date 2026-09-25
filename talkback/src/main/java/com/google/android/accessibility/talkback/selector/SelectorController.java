@@ -189,6 +189,10 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_change_a11y_volume_key,
         R.string.selector_a11y_volume_change,
         R.bool.pref_selector_a11y_volume_default),
+    CHANGE_BRIGHTNESS(
+        R.string.pref_selector_change_brightness_key,
+        R.string.selector_brightness_change,
+        R.bool.pref_selector_brightness_default),
     CHANGE_TOUCH_FOCUS_LATENCY(
         R.string.pref_selector_change_touch_focus_latency_key,
         R.string.selector_touch_focus_latency_change,
@@ -605,6 +609,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.AUDIO_FOCUS,
           Setting.SCROLLING_SEQUENTIAL,
           Setting.CHANGE_ACCESSIBILITY_VOLUME,
+          Setting.CHANGE_BRIGHTNESS,
           Setting.CHANGE_TOUCH_FOCUS_LATENCY,
           Setting.CHANGE_TYPING_FOCUS_LATENCY,
           Setting.ADJUSTABLE_WIDGET,
@@ -902,6 +907,10 @@ public class SelectorController implements UserInputEventListener {
       }
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         actionDescription = context.getString(R.string.title_pref_a11y_volume);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case CHANGE_BRIGHTNESS -> {
+        actionDescription = context.getString(R.string.title_pref_brightness);
         hint = getAdjustSelectedSettingGestures();
       }
       case CHANGE_TOUCH_FOCUS_LATENCY -> {
@@ -1345,6 +1354,9 @@ public class SelectorController implements UserInputEventListener {
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         return FeatureSupport.hasAccessibilityAudioStream(context);
       }
+      case CHANGE_BRIGHTNESS -> {
+        return true;
+      }
       case CHANGE_TOUCH_FOCUS_LATENCY -> {
         return true;
       }
@@ -1659,6 +1671,10 @@ public class SelectorController implements UserInputEventListener {
       }
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         changeAccessibilityVolume(eventId, isNext);
+        return;
+      }
+      case CHANGE_BRIGHTNESS -> {
+        changeBrightness(eventId, /* increase= */ !isNext);
         return;
       }
       case CHANGE_TOUCH_FOCUS_LATENCY -> {
@@ -2115,6 +2131,28 @@ public class SelectorController implements UserInputEventListener {
               : Item.ITEM_ACCESSIBILITY_VOLUME_MAXIMUM;
       showQuickMenuActionOverlay(eventId, displayText, item);
     }
+  }
+
+  private void changeBrightness(EventId eventId, boolean increase) {
+    String displayText;
+    if (!ScreenBrightness.canWrite(context)) {
+      displayText = context.getString(R.string.brightness_needs_permission);
+      ScreenBrightness.requestWritePermission(context);
+    } else if (ScreenBrightness.isAdaptive(context)) {
+      displayText = context.getString(R.string.brightness_adaptive_on);
+    } else if (ScreenBrightness.adjust(context, increase)) {
+      displayText =
+          context.getString(
+              R.string.template_brightness_changed, ScreenBrightness.getPercent(context));
+    } else {
+      displayText =
+          context.getString(
+              increase
+                  ? R.string.template_volume_change_maximum
+                  : R.string.template_volume_change_minimum);
+    }
+    announceSetting(eventId, displayText, getSelectSettingGestures());
+    showQuickMenuActionOverlay(eventId, displayText);
   }
 
   private void changeTouchFocusLatency(EventId eventId, boolean decreaseLatency) {

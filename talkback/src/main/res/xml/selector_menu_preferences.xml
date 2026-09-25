@@ -278,6 +278,12 @@
             android:summary="@string/summary_support_change_a11y_volume"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_brightness_default"
+            android:key="@string/pref_selector_change_brightness_key"
+            android:title="@string/title_pref_brightness"
+            android:summary="@string/summary_support_change_brightness"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_touch_focus_latency_default"
             android:key="@string/pref_selector_change_touch_focus_latency_key"
             android:title="@string/title_pref_touch_focus_latency"

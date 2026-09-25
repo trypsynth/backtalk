@@ -26,6 +26,9 @@
     <!-- Required for managing audio levels on GB. -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
+    <!-- Required for changing screen brightness from the reading controls. -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+
     <!-- Required for speech recognition and hearing user's audio -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
