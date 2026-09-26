@@ -97,6 +97,11 @@ public class OrderedTraversalStrategy implements TraversalStrategy {
     return controller.findInitial(root);
   }
 
+  /** Returns whether {@code node} is part of the traversal order. */
+  public boolean containsNode(AccessibilityNodeInfoCompat node) {
+    return controller.containsNode(node);
+  }
+
   /** Dumps the traversal order tree. */
   public List<AccessibilityNodeInfoCompat> dumpTree() {
     return controller.dumpTree();

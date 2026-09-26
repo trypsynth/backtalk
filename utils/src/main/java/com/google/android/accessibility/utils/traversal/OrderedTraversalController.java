@@ -234,6 +234,11 @@ public class OrderedTraversalController {
     movingTree.setParent(targetTree);
   }
 
+  /** Returns whether {@code node} is part of the traversal order. */
+  public boolean containsNode(AccessibilityNodeInfoCompat node) {
+    return nodeTreeMap.containsKey(node);
+  }
+
   public @Nullable AccessibilityNodeInfoCompat findNext(AccessibilityNodeInfoCompat node) {
     WorkingTree tree = nodeTreeMap.get(node);
     if (tree == null) {

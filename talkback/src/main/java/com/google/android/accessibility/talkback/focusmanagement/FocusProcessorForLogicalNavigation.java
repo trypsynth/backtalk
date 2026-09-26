@@ -1122,14 +1122,25 @@ public class FocusProcessorForLogicalNavigation {
     }
 
     // Build the window's traversal tree once and share it with the edge checks below, which would
-    // otherwise each build their own copy of the same tree.
-    if (BuildConfig.DEBUG) {
-      Trace.beginSection("BuildTraversalStrategy");
+    // otherwise each build their own copy of the same tree. Reuse the tree of the last swipe if
+    // nothing in the window has changed since.
+    TraversalStrategy traversalStrategy = null;
+    if (TraversalStrategyUtils.isLogicalDirection(searchDirection)) {
+      traversalStrategy = TraversalTreeCache.get(rootNode, pivot);
     }
-    TraversalStrategy traversalStrategy =
-        TraversalStrategyUtils.getTraversalStrategy(rootNode, focusFinder, searchDirection);
-    if (BuildConfig.DEBUG) {
-      Trace.endSection();
+    boolean usedSavedTree = traversalStrategy != null;
+    if (traversalStrategy == null) {
+      if (BuildConfig.DEBUG) {
+        Trace.beginSection("BuildTraversalStrategy");
+      }
+      traversalStrategy =
+          TraversalStrategyUtils.getTraversalStrategy(rootNode, focusFinder, searchDirection);
+      if (BuildConfig.DEBUG) {
+        Trace.endSection();
+      }
+      if (traversalStrategy instanceof OrderedTraversalStrategy orderedStrategy) {
+        TraversalTreeCache.put(rootNode, orderedStrategy);
+      }
     }
 
     // Perform auto-scroll action if necessary.
@@ -1279,7 +1290,15 @@ public class FocusProcessorForLogicalNavigation {
         announceSingleLinkFocused(LinkUtils.getLinkText(target, linkIndexToFocus), eventId);
         return setAccessibilityFocusInternal(target, navigationAction, linkIndexToFocus, eventId);
       } else {
-        return setAccessibilityFocusInternal(target, navigationAction, eventId);
+        boolean focused = setAccessibilityFocusInternal(target, navigationAction, eventId);
+        if (!focused && usedSavedTree) {
+          // The app might have removed the target before its change event reached us, so try
+          // again with a new tree.
+          TraversalTreeCache.clear("focus failed");
+          return navigateToDefaultOrMacroGranularityTarget(
+              pivot, ignoreDescendantsOfPivot, navigationAction, eventId);
+        }
+        return focused;
       }
     }
 
