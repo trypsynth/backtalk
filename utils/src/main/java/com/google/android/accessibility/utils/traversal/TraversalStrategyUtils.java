@@ -232,6 +232,31 @@ public class TraversalStrategyUtils {
       boolean ignoreDescendantsOfPivot,
       @TraversalStrategy.SearchDirection int searchDirection,
       FocusFinder focusFinder) {
+    return isAutoScrollEdgeListItem(
+        pivot,
+        scrollableNodeInfo,
+        ignoreDescendantsOfPivot,
+        searchDirection,
+        focusFinder,
+        /* windowOrderedStrategy= */ null);
+  }
+
+  /**
+   * Same as {@link #isAutoScrollEdgeListItem(AccessibilityNodeInfoCompat, ScrollableNodeInfo,
+   * boolean, int, FocusFinder)}, but reuses {@code windowOrderedStrategy} when the scroll direction
+   * is logical. Building an ordered strategy walks the whole window, so reusing one the caller
+   * already built for the same window saves a full tree build.
+   *
+   * @param windowOrderedStrategy An {@link OrderedTraversalStrategy} built from the root of the
+   *     window that contains the scrollable node, or {@code null} to build a new one.
+   */
+  public static boolean isAutoScrollEdgeListItem(
+      AccessibilityNodeInfoCompat pivot,
+      @NonNull ScrollableNodeInfo scrollableNodeInfo,
+      boolean ignoreDescendantsOfPivot,
+      @TraversalStrategy.SearchDirection int searchDirection,
+      FocusFinder focusFinder,
+      @Nullable OrderedTraversalStrategy windowOrderedStrategy) {
 
     Integer supportedDirection = scrollableNodeInfo.getSupportedScrollDirection(searchDirection);
     if (supportedDirection == null) {
@@ -239,7 +264,9 @@ public class TraversalStrategyUtils {
     }
 
     TraversalStrategy traversalStrategy =
-        scrollableNodeInfo.getSupportedTraversalStrategy(supportedDirection, focusFinder);
+        (windowOrderedStrategy != null && isLogicalDirection(supportedDirection))
+            ? windowOrderedStrategy
+            : scrollableNodeInfo.getSupportedTraversalStrategy(supportedDirection, focusFinder);
     return isMatchingEdgeListItem(
         pivot,
         scrollableNodeInfo.getNode(),

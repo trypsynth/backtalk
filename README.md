@@ -18,6 +18,7 @@ For TalkBack usage instructions, see the [TalkBack User Guide](https://support.g
 
 *   **Time between taps setting.** In TalkBack settings, go to **Advanced settings > Reduce delay > Time between taps** to set how long TalkBack waits for another tap. The default is 0.25 seconds, and you can lower it to 0.1 seconds. A shorter time makes all multi-tap gestures respond faster, but a slow double tap can count as two single taps.
 *   **Less lag while scrolling.** After each scroll event, TalkBack searched the list for a new item to focus. This blocked touch exploration and could make gestures fail. TalkBack now does this search once, after scrolling stops.
+*   **Faster swiping in lists.** To find the next item in a list, TalkBack built the reading order of the whole screen three times: once to check whether you were at the end of the list, once to find the item, and once to check whether the item needed scrolling into view. It now builds it once and reuses it.
 
 ### Screen and brightness
 

@@ -51,6 +51,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Trace;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -62,6 +63,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionIn
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat;
 import androidx.core.view.accessibility.AccessibilityWindowInfoCompat;
 import com.google.android.accessibility.talkback.ActorState;
+import com.google.android.accessibility.talkback.BuildConfig;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
@@ -106,6 +108,7 @@ import com.google.android.accessibility.utils.output.ScrollActionRecord;
 import com.google.android.accessibility.utils.output.ScrollActionRecord.UserAction;
 import com.google.android.accessibility.utils.output.SpeechController;
 import com.google.android.accessibility.utils.traversal.GridTraversalManager;
+import com.google.android.accessibility.utils.traversal.OrderedTraversalStrategy;
 import com.google.android.accessibility.utils.traversal.OrderedTraversalStrategyConfig;
 import com.google.android.accessibility.utils.traversal.TraversalStrategy;
 import com.google.android.accessibility.utils.traversal.TraversalStrategy.SearchDirection;
@@ -1118,13 +1121,26 @@ public class FocusProcessorForLogicalNavigation {
       return false;
     }
 
-    // Perform auto-scroll action if necessary.
-    if (autoScrollAtEdge(pivot, ignoreDescendantsOfPivot, navigationAction, eventId)) {
-      return true;
+    // Build the window's traversal tree once and share it with the edge checks below, which would
+    // otherwise each build their own copy of the same tree.
+    if (BuildConfig.DEBUG) {
+      Trace.beginSection("BuildTraversalStrategy");
     }
-
     TraversalStrategy traversalStrategy =
         TraversalStrategyUtils.getTraversalStrategy(rootNode, focusFinder, searchDirection);
+    if (BuildConfig.DEBUG) {
+      Trace.endSection();
+    }
+
+    // Perform auto-scroll action if necessary.
+    if (autoScrollAtEdge(
+        pivot,
+        ignoreDescendantsOfPivot,
+        navigationAction,
+        reusableOrderedStrategy(traversalStrategy, rootNode, pivot),
+        eventId)) {
+      return true;
+    }
 
     Filter<AccessibilityNodeInfoCompat> nodeFilter =
         NavigationTarget.createNodeFilter(
@@ -1232,7 +1248,12 @@ public class FocusProcessorForLogicalNavigation {
     AccessibilityNodeInfoCompat target = navigationResult.getNode();
 
     if ((target != null) && navigationAction.shouldScroll) {
-      boolean scrolled = ensureOnScreen(target, navigationAction.searchDirection, eventId);
+      boolean scrolled =
+          ensureOnScreen(
+              target,
+              navigationAction.searchDirection,
+              reusableOrderedStrategy(traversalStrategy, rootNode, target),
+              eventId);
       // REFERTO If ensureOnScreen caused scrolling, we need use the scroll callback
       // to set focus on the next node (from the pivot) inside scrollable parent. This is helpful
       // to find focus that was invisible before scrolling.
@@ -2001,6 +2022,15 @@ public class FocusProcessorForLogicalNavigation {
       @NonNull AccessibilityNodeInfoCompat node,
       @SearchDirection int searchDirection,
       EventId eventId) {
+    return ensureOnScreen(node, searchDirection, /* windowOrderedStrategy= */ null, eventId);
+  }
+
+  @CanIgnoreReturnValue
+  private boolean ensureOnScreen(
+      @NonNull AccessibilityNodeInfoCompat node,
+      @SearchDirection int searchDirection,
+      @Nullable OrderedTraversalStrategy windowOrderedStrategy,
+      EventId eventId) {
     boolean isRtl = WindowUtils.isScreenLayoutRTL(service);
     ScrollableNodeInfo scrollableNodeInfo =
         ScrollableNodeInfo.findScrollableNodeForDirection(
@@ -2017,7 +2047,8 @@ public class FocusProcessorForLogicalNavigation {
                 scrollableNodeInfo,
                 /* ignoreDescendantsOfPivot= */ false,
                 searchDirection,
-                focusFinder)
+                focusFinder,
+                windowOrderedStrategy)
             || isPositionAtEdge(service, node, scrollableNode, searchDirection);
 
     if (!needToEnsureOnScreen) {
@@ -2258,6 +2289,23 @@ public class FocusProcessorForLogicalNavigation {
   }
 
   /**
+   * Returns {@code strategy} if the edge checks can reuse it for {@code node}, namely if it is an
+   * {@link OrderedTraversalStrategy} built from {@code root} and {@code node} is in the same window.
+   * Navigation can find a target in another window, and the tree of one window can't answer edge
+   * checks for another.
+   */
+  private static @Nullable OrderedTraversalStrategy reusableOrderedStrategy(
+      TraversalStrategy strategy,
+      @NonNull AccessibilityNodeInfoCompat root,
+      @NonNull AccessibilityNodeInfoCompat node) {
+    if (!(strategy instanceof OrderedTraversalStrategy orderedStrategy)
+        || node.getWindowId() != root.getWindowId()) {
+      return null;
+    }
+    return orderedStrategy;
+  }
+
+  /**
    * Tries to perform scroll if the pivot is at the edge of a scrollable container and suitable
    * autoscroll.
    */
@@ -2265,6 +2313,7 @@ public class FocusProcessorForLogicalNavigation {
       @NonNull AccessibilityNodeInfoCompat pivot,
       boolean ignoreDescendantsOfPivot,
       NavigationAction navigationAction,
+      @Nullable OrderedTraversalStrategy windowOrderedStrategy,
       EventId eventId) {
     if (!navigationAction.shouldScroll) {
       LogUtils.v(TAG, "autoScrollAtEdge returns due to shouldScroll is false");
@@ -2302,7 +2351,8 @@ public class FocusProcessorForLogicalNavigation {
         scrollableNodeInfo,
         ignoreDescendantsOfPivot,
         navigationAction.searchDirection,
-        focusFinder)) {
+        focusFinder,
+        windowOrderedStrategy)) {
       return false;
     }
 
