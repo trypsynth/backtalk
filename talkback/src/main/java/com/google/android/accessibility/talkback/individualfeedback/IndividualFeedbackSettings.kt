@@ -68,6 +68,19 @@ object IndividualFeedbackSettings {
       FeedbackItem("turn_on", R.string.individual_sound_turn_on),
       FeedbackItem("turn_off", R.string.individual_sound_turn_off),
       FeedbackItem("calibration_done", R.string.individual_sound_calibration_done),
+      FeedbackItem("control_button", R.string.individual_sound_control_button),
+      FeedbackItem("control_checkbox", R.string.individual_sound_control_checkbox),
+      FeedbackItem("control_radio_button", R.string.individual_sound_control_radio_button),
+      FeedbackItem("control_edit_text", R.string.individual_sound_control_edit_text),
+      FeedbackItem("control_combo_box", R.string.individual_sound_control_combo_box),
+      FeedbackItem("control_slider", R.string.individual_sound_control_slider),
+      FeedbackItem("control_link", R.string.individual_sound_control_link),
+      FeedbackItem("control_image", R.string.individual_sound_control_image),
+      FeedbackItem("control_clock", R.string.individual_sound_control_clock),
+      FeedbackItem("control_tab", R.string.individual_sound_control_tab),
+      FeedbackItem("control_menu_item", R.string.individual_sound_control_menu_item),
+      FeedbackItem("control_list_item", R.string.individual_sound_control_list_item),
+      FeedbackItem("control_tree_item", R.string.individual_sound_control_tree_item),
     )
 
   /**
@@ -101,6 +114,19 @@ object IndividualFeedbackSettings {
         (1..8).map { "radial_menu_${it}_pattern" },
       ),
       FeedbackItem("notification_pattern", R.string.individual_vibration_notification),
+      // Control vibrations come only from sound themes.
+      FeedbackItem("control_button_pattern", R.string.individual_sound_control_button),
+      FeedbackItem("control_checkbox_pattern", R.string.individual_sound_control_checkbox),
+      FeedbackItem("control_radio_button_pattern", R.string.individual_sound_control_radio_button),
+      FeedbackItem("control_edit_text_pattern", R.string.individual_sound_control_edit_text),
+      FeedbackItem("control_combo_box_pattern", R.string.individual_sound_control_combo_box),
+      FeedbackItem("control_slider_pattern", R.string.individual_sound_control_slider),
+      FeedbackItem("control_image_pattern", R.string.individual_sound_control_image),
+      FeedbackItem("control_clock_pattern", R.string.individual_sound_control_clock),
+      FeedbackItem("control_tab_pattern", R.string.individual_sound_control_tab),
+      FeedbackItem("control_menu_item_pattern", R.string.individual_sound_control_menu_item),
+      FeedbackItem("control_list_item_pattern", R.string.individual_sound_control_list_item),
+      FeedbackItem("control_tree_item_pattern", R.string.individual_sound_control_tree_item),
     )
 
   /**

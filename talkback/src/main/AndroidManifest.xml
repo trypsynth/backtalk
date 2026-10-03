@@ -255,6 +255,29 @@
             android:exported="true" >
         </activity>
 
+        <!-- Installs sound themes that are opened with or shared to Backtalk. -->
+        <activity android:name="com.google.android.accessibility.talkback.soundthemes.SoundThemeInstallActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/sound_theme_install_label"
+            android:theme="@style/Theme.SoundThemeInstall"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:exported="true" >
+            <intent-filter android:label="@string/sound_theme_install_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+            </intent-filter>
+            <intent-filter android:label="@string/sound_theme_install_label">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/zip" />
+                <data android:mimeType="application/x-zip-compressed" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <!-- Custom Label Manager - Summary Activity -->
         <activity
             android:name="com.google.android.accessibility.talkback.labeling.LabelManagerSummaryActivity"

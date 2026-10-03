@@ -150,6 +150,7 @@ import com.google.android.accessibility.talkback.compositor.GlobalVariables;
 import com.google.android.accessibility.talkback.compositor.roledescription.RoleDescriptionExtractor.DescriptionOrder;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.controller.TelevisionNavigationController;
+import com.google.android.accessibility.talkback.controlsounds.ControlSoundsSettings;
 import com.google.android.accessibility.talkback.directtouch.DirectTouchController;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor.TalkBackListener;
@@ -210,6 +211,8 @@ import com.google.android.accessibility.talkback.pause.PauseController;
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
 import com.google.android.accessibility.talkback.selector.SelectorController;
 import com.google.android.accessibility.talkback.selector.SelectorController.SelectorEventNotifier;
+import com.google.android.accessibility.talkback.soundthemes.SoundThemes;
+import com.google.android.accessibility.talkback.soundthemes.ThemeFeedback;
 import com.google.android.accessibility.talkback.speech.SpeechCacheController;
 import com.google.android.accessibility.talkback.speechbubble.DisableTalkBackDialog;
 import com.google.android.accessibility.talkback.migration.AppIdHandOver;
@@ -281,6 +284,8 @@ import com.google.android.accessibility.utils.output.SpeechController.UtteranceC
 import com.google.android.accessibility.utils.output.SpeechControllerImpl;
 import com.google.android.accessibility.utils.output.SpeechControllerImpl.CapitalLetterHandlingMethod;
 import com.google.android.accessibility.utils.output.TextFormattingUtils;
+import com.google.android.accessibility.utils.output.ThemeSounds;
+import com.google.android.accessibility.utils.output.ThemeVibrations;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import com.google.android.libraries.accessibility.utils.servicecompat.AccessibilityServiceCompat;
 import com.google.common.collect.ImmutableList;
@@ -295,6 +300,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -3207,10 +3213,34 @@ public class TalkBackService extends AccessibilityServiceCompat
         getBooleanPref(R.string.pref_soundback_key, R.bool.pref_soundback_default);
     feedbackController.setAuditoryEnabled(auditoryEnabled);
     IndividualFeedbackSettings.INSTANCE.migrate(prefs);
-    feedbackController.setMutedAuditory(
-        IndividualFeedbackSettings.INSTANCE.mutedSoundResources(prefs));
-    feedbackController.setMutedHaptic(
-        IndividualFeedbackSettings.INSTANCE.mutedVibrationResources(prefs));
+    Set<String> mutedSounds = IndividualFeedbackSettings.INSTANCE.mutedSoundResources(prefs);
+    feedbackController.setMutedAuditory(mutedSounds);
+    Set<String> mutedVibrations =
+        IndividualFeedbackSettings.INSTANCE.mutedVibrationResources(prefs);
+    feedbackController.setMutedHaptic(mutedVibrations);
+    ThemeFeedback soundTheme = SoundThemes.feedback(this, prefs);
+    Map<String, String> customSounds = soundTheme.getSoundPaths();
+    feedbackController.setCustomSounds(customSounds);
+    Map<String, int[]> themeVibrations = soundTheme.vibrationsPlaying(mutedVibrations);
+    feedbackController.setThemeVibrations(themeVibrations);
+    // For the braille keyboard and direct touch, which play their own sounds and vibrations.
+    ThemeVibrations.set(themeVibrations);
+    ThemeSounds.set(SoundThemes.brailleTypingSounds(customSounds));
+    feedbackController.setSpatialMode(ControlSoundsSettings.spatialMode(prefs));
+    // A control's sound is asked for if it can be heard or felt, so with sound feedback off its
+    // vibration still tells what kind of control it is.
+    Set<Integer> heardControls =
+        ControlSoundsSettings.playingSounds(
+            prefs, auditoryEnabled, mutedSounds, customSounds.keySet());
+    Set<Integer> controlFeedback = new HashSet<>(heardControls);
+    controlFeedback.addAll(
+        ControlSoundsSettings.vibratingSounds(
+            prefs, hapticEnabled, mutedVibrations, soundTheme.felt()));
+    globalVariables.setControlSounds(
+        auditoryEnabled && ControlSoundsSettings.isOn(prefs),
+        controlFeedback,
+        heardControls,
+        ControlSoundsSettings.speakRoles(prefs));
 
     // Update preference: time feedback format.
     String timeFeedbackFormat =

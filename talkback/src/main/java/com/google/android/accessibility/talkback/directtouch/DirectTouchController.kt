@@ -46,6 +46,7 @@ import com.google.android.accessibility.utils.output.FeedbackItem.FLAG_FORCE_FEE
 import com.google.android.accessibility.utils.output.FeedbackItem.FLAG_NO_HISTORY
 import com.google.android.accessibility.utils.output.SpeechController.QUEUE_MODE_QUEUE
 import com.google.android.accessibility.utils.output.SpeechController.SpeakOptions
+import com.google.android.accessibility.utils.output.ThemeVibrations
 
 /**
  * Gives games direct touch. While an app the user turned on is in front, touches go straight to it.
@@ -283,7 +284,11 @@ class DirectTouchController(
       feedback.returnFeedback(Performance.EVENT_ID_UNTRACKED, Feedback.speech(text, options))
     }
     if (DirectTouchSettings.isHapticsEnabled(prefs)) {
-      vibrate(if (on) ON_PATTERN else OFF_PATTERN)
+      val vibrator = service.getSystemService(Vibrator::class.java)
+      val themeName = if (on) THEME_ON else THEME_OFF
+      if (vibrator == null || !ThemeVibrations.play(vibrator, themeName, VIBRATION_ATTRIBUTES)) {
+        vibrate(if (on) ON_PATTERN else OFF_PATTERN)
+      }
     }
   }
 
@@ -303,6 +308,9 @@ class DirectTouchController(
   private companion object {
     const val DEBOUNCE_MS = 150L
     const val SYSTEM_UI = "com.android.systemui"
+    // The names a sound theme replaces the on and off vibrations by.
+    const val THEME_ON = "direct_touch_on"
+    const val THEME_OFF = "direct_touch_off"
     val ON_PATTERN = longArrayOf(0, 15, 100, 15)
     val OFF_PATTERN = longArrayOf(0, 40)
     val VIBRATION_ATTRIBUTES: AudioAttributes =

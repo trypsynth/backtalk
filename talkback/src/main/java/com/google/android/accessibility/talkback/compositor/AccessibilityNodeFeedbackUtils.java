@@ -234,10 +234,14 @@ public class AccessibilityNodeFeedbackUtils {
    * <p>Note:
    * <li>The content should be non-copyable text for "copy last spoken phrase".
    * <li>Returns EditText role description even if TalkBack doesn't speak roles.
+   * <li>Returns nothing when the node's control sound plays for the focus instead.
    */
   public static CharSequence defaultRoleDescription(
       AccessibilityNodeInfoCompat node, Context context, GlobalVariables globalVariables) {
     if (!globalVariables.getSpeakRoles() && Role.getRole(node) != Role.ROLE_EDIT_TEXT) {
+      return "";
+    }
+    if (globalVariables.isRoleSaidBySound(node)) {
       return "";
     }
     CharSequence nodeRoleDescription = getNodeRoleDescription(node, context, globalVariables);

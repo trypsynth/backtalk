@@ -17,6 +17,7 @@
 package com.google.android.accessibility.talkback.individualfeedback
 
 import android.content.Context
+import com.google.android.accessibility.talkback.controlsounds.ControlSounds
 
 /**
  * The vibration that goes with each sound. Every sound has its own vibration, and it plays even
@@ -37,6 +38,85 @@ object SoundVibrations {
       "turn_off",
       "calibration_done",
     )
+
+  /**
+   * The switches of vibrations that only sound themes give, by sound resource name: each kind of
+   * control can have its own vibration in a theme. Without one, a control plays the focus
+   * vibration. A link shares the switch of the link vibration.
+   */
+  val THEME_ONLY_SWITCHES: Map<String, String> =
+    ControlSounds.SOUNDS.keys.associateWith {
+      if (it == "control_link") "hyperlink_pattern" else "${it}_pattern"
+    }
+
+  /** The name of the switch that turns off the vibration of a sound, by its resource name. */
+  @JvmStatic
+  fun switchOf(soundName: String): String? = PATTERNS[soundName] ?: THEME_ONLY_SWITCHES[soundName]
+
+  /**
+   * Vibrations without a sound that a sound theme can replace, by their names in theme.json, with
+   * the names they play under. Announcements play a vibration of their own, and the braille
+   * keyboard and direct touch vibrate outside the feedback controller.
+   */
+  val VIBRATION_ONLY: Map<String, String> =
+    mapOf(
+      "announcement" to "notification_pattern",
+      "braille_keyboard_character" to "braille_keyboard_character",
+      "braille_keyboard_space" to "braille_keyboard_space",
+      "braille_keyboard_new_line" to "braille_keyboard_new_line",
+      "braille_keyboard_hold" to "braille_keyboard_hold",
+      "braille_keyboard_gesture" to "braille_keyboard_gesture",
+      "braille_keyboard_nothing_to_delete" to "braille_keyboard_nothing_to_delete",
+      "direct_touch_on" to "direct_touch_on",
+      "direct_touch_off" to "direct_touch_off",
+    )
+
+  /** Patterns that play a sound's vibration without its sound: selection, by the sound's name. */
+  private val ALSO_PLAYED_AS: Map<String, List<String>> =
+    mapOf("focus_actionable" to listOf("view_focused_or_selected_pattern"))
+
+  /** The names of every vibration a sound theme can replace, as theme.json names them. */
+  @JvmStatic
+  fun themeNames(soundKeys: Collection<String>): Set<String> =
+    soundKeys.filter { it !in WITHOUT_VIBRATION }.toSet() + VIBRATION_ONLY.keys
+
+  /**
+   * Turns a theme's vibrations, by their theme.json names, into the names they play under: the
+   * sounds they play with, the patterns played without the sounds, and the vibrations without a
+   * sound. [soundResources] gives the resource names of each sound, such as the eight circle menu
+   * notes.
+   */
+  @JvmStatic
+  fun playedAs(
+    themeVibrations: Map<String, IntArray>,
+    soundResources: Map<String, List<String>>,
+  ): Map<String, IntArray> {
+    val played = HashMap<String, IntArray>()
+    for ((name, pattern) in themeVibrations) {
+      VIBRATION_ONLY[name]?.let { played[it] = pattern }
+      soundResources[name]?.forEach { sound ->
+        if (sound in WITHOUT_VIBRATION) return@forEach
+        played[sound] = pattern
+        PATTERNS[sound]?.let { played[it] = pattern }
+      }
+      ALSO_PLAYED_AS[name]?.forEach { played[it] = pattern }
+    }
+    return played
+  }
+
+  /**
+   * The switch in Individual sounds and vibrations that turns off what plays under [name], or null
+   * if it has none, like the braille keyboard and direct touch, which have settings of their own.
+   */
+  @JvmStatic
+  fun switchOfPlayed(name: String): String? =
+    switchOf(name)
+      ?: when (name) {
+        in PATTERNS.values,
+        "notification_pattern" -> name
+        "view_focused_or_selected_pattern" -> "view_actionable_pattern"
+        else -> null
+      }
 
   /** Vibration pattern resource names, by sound resource names. */
   val PATTERNS: Map<String, String> =

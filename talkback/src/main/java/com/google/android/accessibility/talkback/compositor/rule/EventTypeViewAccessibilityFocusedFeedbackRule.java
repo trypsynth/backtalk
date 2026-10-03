@@ -44,6 +44,7 @@ import com.google.android.accessibility.talkback.compositor.EventFeedback;
 import com.google.android.accessibility.talkback.compositor.EventInterpretation;
 import com.google.android.accessibility.talkback.compositor.GlobalVariables;
 import com.google.android.accessibility.talkback.compositor.roledescription.TreeNodesDescription;
+import com.google.android.accessibility.talkback.controlsounds.ControlSounds;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
 import com.google.android.accessibility.talkback.imagecaption.ImageContents;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
@@ -121,20 +122,53 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
         accessibilityFocusEventInterpretation.getIsInitialFocusAfterScreenStateChange();
     boolean isEventNavigateByUser = accessibilityFocusEventInterpretation.getIsNavigateByUser();
     boolean isDeviceScreenNoTouch = globalVariables.isDeviceScreenNoTouch();
+
+    // With control sounds on, the focus and list sounds come from where the focus lands, and a
+    // control sound takes the place of the focus sound. A control sound that the theme only gives
+    // a vibration leaves the focus sound in place, and its vibration takes the place of the focus
+    // vibration. Only while a control sound is heard or felt is the kind of control left out of
+    // the speech.
+    int earcon = earcon(srcNode, globalVariables);
+    int haptic = haptic(srcNode);
+    boolean earconVibrates = true;
+    float[] earconPosition = null;
+    boolean isFocusSound = earcon == R.raw.focus || earcon == R.raw.focus_actionable;
+    if (globalVariables.areControlSoundsOn()
+        && (isFocusSound || earcon == R.raw.chime_up || earcon == R.raw.chime_down)) {
+      earconPosition = ControlSounds.screenPosition(srcNode, context);
+    }
+    if (isFocusSound) {
+      int controlSound = globalVariables.getControlSoundForFocus(srcNode);
+      if (controlSound != 0) {
+        if (globalVariables.isControlSoundHeard(controlSound)) {
+          earcon = controlSound;
+        } else {
+          haptic = controlSound;
+          earconVibrates = false;
+        }
+        globalVariables.setRoleSoundOfFocus(controlSound);
+      }
+    }
+
     // TYPE_VIEW_HOVER_ENTER handled the feedback in this case.
-    CharSequence ttsOutput =
-        shouldEarlyAnnounceForLiftToType(context)
-                && isEqualsToLastHoverEnterKeyboardEventNode(eventOptions.eventInterpretation)
-            ? ""
-            : viewAccessibilityFocusedDescription(
-                eventOptions.eventObject,
-                srcNode,
-                isEventNavigateByUser,
-                context,
-                imageContents,
-                globalVariables,
-                processorPhoneticLetters,
-                treeNodesDescription);
+    CharSequence ttsOutput;
+    try {
+      ttsOutput =
+          shouldEarlyAnnounceForLiftToType(context)
+                  && isEqualsToLastHoverEnterKeyboardEventNode(eventOptions.eventInterpretation)
+              ? ""
+              : viewAccessibilityFocusedDescription(
+                  eventOptions.eventObject,
+                  srcNode,
+                  isEventNavigateByUser,
+                  context,
+                  imageContents,
+                  globalVariables,
+                  processorPhoneticLetters,
+                  treeNodesDescription);
+    } finally {
+      globalVariables.setRoleSoundOfFocus(0);
+    }
 
     LogUtils.v(
         TAG,
@@ -160,8 +194,11 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
         .setForceFeedbackEvenIfSsbActive(
             forceFeedbackEvenIfSsbActive(accessibilityFocusEventInterpretation, isInitialFocus))
         .setPreventDeviceSleep(true)
-        .setEarcon(earcon(srcNode, globalVariables))
-        .setHaptic(haptic(srcNode))
+        .setEarcon(earcon)
+        .setEarconX(earconPosition == null ? -1 : earconPosition[0])
+        .setEarconY(earconPosition == null ? -1 : earconPosition[1])
+        .setEarconVibrates(earconVibrates)
+        .setHaptic(haptic)
         .setInlineFormatting(
             supportInlineFormatting(srcNode, accessibilityFocusEventInterpretation))
         .build();

@@ -66,6 +66,12 @@ public abstract class EventFeedback {
 
   public abstract double earconVolume();
 
+  /** Where on the screen the earcon comes from, from 0 at the left edge to 1, or -1 for nowhere. */
+  public abstract double earconX();
+
+  /** Where on the screen the earcon comes from, from 0 at the top edge to 1, or -1 for nowhere. */
+  public abstract double earconY();
+
   /**
    * Whether the earcon plays the vibration that goes with its sound. Progress tones do not, since
    * they repeat while something loads.
@@ -146,6 +152,8 @@ public abstract class EventFeedback {
         StringBuilderUtils.optionalInt("earcon", earcon(), -1),
         StringBuilderUtils.optionalDouble("earconRate", earconRate(), 1.0d),
         StringBuilderUtils.optionalDouble("earconVolume", earconVolume(), 1.0d),
+        StringBuilderUtils.optionalDouble("earconX", earconX(), -1.0d),
+        StringBuilderUtils.optionalDouble("earconY", earconY(), -1.0d),
         StringBuilderUtils.optionalTag("earconWithoutVibration", !earconVibrates()),
         StringBuilderUtils.optionalTag("inlineFormatting", inlineFormatting()));
   }
@@ -171,6 +179,8 @@ public abstract class EventFeedback {
         .setEarcon(-1)
         .setEarconRate(1.0d)
         .setEarconVolume(1.0d)
+        .setEarconX(-1.0d)
+        .setEarconY(-1.0d)
         .setEarconVibrates(true)
         .setInlineFormatting(false);
   }
@@ -216,6 +226,10 @@ public abstract class EventFeedback {
     public abstract Builder setEarconRate(double value);
 
     public abstract Builder setEarconVolume(double value);
+
+    public abstract Builder setEarconX(double value);
+
+    public abstract Builder setEarconY(double value);
 
     public abstract Builder setEarconVibrates(boolean value);
 
