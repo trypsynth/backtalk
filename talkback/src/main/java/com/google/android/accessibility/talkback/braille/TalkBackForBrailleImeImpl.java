@@ -12,6 +12,7 @@ import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRAC
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS;
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS_AND_WORDS;
 import static com.google.android.accessibility.utils.monitor.InputModeTracker.INPUT_MODE_BRAILLE_KEYBOARD;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,7 +46,6 @@ import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.input.TextEventFilter.KeyboardEchoType;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Implements TalkBack functionalities exposed to BrailleIme. */
@@ -74,7 +74,7 @@ public class TalkBackForBrailleImeImpl implements TalkBackForBrailleIme {
   @VisibleForTesting
   static final Set<Setting> VALID_GRANULARITIES =
       Arrays.stream(ArrayUtils.concat(VALID_CURSOR_GRANULARITIES, VALID_NON_CURSOR_GRANULARITIES))
-          .collect(Collectors.toUnmodifiableSet());
+          .collect(toImmutableSet());
 
   /** Provides functionality of private methods. */
   public interface TalkBackPrivateMethodProvider {
