@@ -16,6 +16,7 @@
 
 package com.google.android.accessibility.talkback.focusmanagement
 
+import android.graphics.Rect
 import android.os.SystemClock
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
@@ -85,12 +86,17 @@ object TraversalTreeCache {
   private var hits = 0
   private var misses = 0
 
+  /** Where the last navigation started, so a removed node does not send the user to the top. */
+  private var lastPivotTop = Int.MIN_VALUE
+  private var lastPivotWindowId = NO_WINDOW_ID
+
   /** Returns the saved order of [root] if it has one and it contains [pivot]. */
   @JvmStatic
   fun get(
     root: AccessibilityNodeInfoCompat,
     pivot: AccessibilityNodeInfoCompat,
   ): OrderedTraversalStrategy? {
+    rememberPivot(pivot)
     if (
       firstIgnoredChangeTime != 0L &&
         SystemClock.uptimeMillis() - firstIgnoredChangeTime > MAX_AGE_AFTER_TEXT_CHANGE_MS
@@ -123,6 +129,54 @@ object TraversalTreeCache {
    */
   @JvmStatic
   fun holds(node: AccessibilityNodeInfoCompat): Boolean = strategy?.containsNode(node) == true
+
+  /**
+   * Remembers where a navigation started. When the focused node is later removed — an app
+   * re-laying-out its content, such as a blocked ad slot collapsing, does this — navigation carries
+   * on from the node nearest this place instead of falling back to the top of the window.
+   */
+  @JvmStatic
+  fun rememberPivot(pivot: AccessibilityNodeInfoCompat) {
+    val bounds = Rect()
+    pivot.getBoundsInScreen(bounds)
+    lastPivotTop = bounds.top
+    lastPivotWindowId = pivot.windowId
+  }
+
+  /**
+   * The node to search on from when the focused node has been removed: the last node above the
+   * place the last navigation started, so a swipe forward lands on whatever now occupies that
+   * place, rather than on the top of the page. Falls back to the first node when the removal was
+   * above everything. Null when nothing was remembered, or the window has changed.
+   *
+   * The content change that removes a node usually throws the saved order away as well — an ad slot
+   * collapsing sends a content change of the undefined type, which is structural here — so a fresh
+   * order is built when there is none. That build is on the swiping thread, but it happens only on
+   * the rare path where the focused node disappeared, and a swipe would have built an order anyway.
+   */
+  @JvmStatic
+  fun pivotAfterRemoval(root: AccessibilityNodeInfoCompat): AccessibilityNodeInfoCompat? {
+    if (lastPivotWindowId == NO_WINDOW_ID || root.windowId != lastPivotWindowId) {
+      return null
+    }
+    val order =
+      strategy?.takeIf { root == this.root }
+        ?: runCatching { OrderedTraversalStrategy(root) }.getOrNull()
+        ?: return null
+    val bounds = Rect()
+    var above: AccessibilityNodeInfoCompat? = null
+    for (node in order.dumpTree()) {
+      if (node.windowId != lastPivotWindowId) {
+        continue
+      }
+      node.getBoundsInScreen(bounds)
+      if (bounds.top >= lastPivotTop) {
+        return above ?: node
+      }
+      above = node
+    }
+    return above
+  }
 
   /** Saves the order of [root], replacing any saved order. */
   @JvmStatic

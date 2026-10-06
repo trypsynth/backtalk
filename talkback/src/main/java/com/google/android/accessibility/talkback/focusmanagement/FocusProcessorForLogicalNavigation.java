@@ -387,7 +387,19 @@ public class FocusProcessorForLogicalNavigation {
     // window.
     if (pivot == null) {
       // TODO: We might need to define our own "active window" in TalkBack side.
-      pivot = AccessibilityServiceCompatUtils.getRootInActiveWindow(service);
+      AccessibilityNodeInfoCompat root =
+          AccessibilityServiceCompatUtils.getRootInActiveWindow(service);
+      // The focused node was removed from the window — an app re-laying-out its content, such as a
+      // blocked ad slot collapsing, does this. Starting from the window root would send the user
+      // back to the top of the page, so carry on from the node nearest where the last navigation
+      // started instead.
+      AccessibilityNodeInfoCompat nearest =
+          (root == null) ? null : TraversalTreeCache.pivotAfterRemoval(root);
+      if (nearest != null && nearest.refresh()) {
+        pivot = nearest;
+      } else {
+        pivot = root;
+      }
     }
     return pivot;
   }
