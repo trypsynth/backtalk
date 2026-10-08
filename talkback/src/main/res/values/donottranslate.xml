@@ -9,6 +9,8 @@
     <string name="pref_proximity_key">pref_proximity</string>
     <!-- Must match SpeakerphoneSettings.PREF_ENABLED. -->
     <string name="pref_speakerphone_away_from_ear_key">pref_speakerphone_away_from_ear</string>
+    <!-- Must match VibrationWatchGestureSettings.PREF_RESERVED. -->
+    <string name="pref_reserve_vibration_watch_gestures_key">pref_reserve_vibration_watch_gestures</string>
     <string name="pref_status_readout_key" translatable="false">pref_status_readout</string>
     <string name="pref_direct_touch_key" translatable="false">pref_direct_touch</string>
     <string name="pref_check_for_updates_key" translatable="false">pref_check_for_updates</string>

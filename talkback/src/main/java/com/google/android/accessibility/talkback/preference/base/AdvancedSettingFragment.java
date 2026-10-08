@@ -200,6 +200,10 @@ public class AdvancedSettingFragment extends TalkbackBaseFragment {
 
     context = getContext();
     prefs = SharedPreferencesUtils.getSharedPreferences(context);
+    if (!FormFactorUtils.isAndroidWear()) {
+      PreferenceSettingsUtils.hidePreference(
+          context, getPreferenceScreen(), R.string.pref_reserve_vibration_watch_gestures_key);
+    }
 
     // During setup, do not allow user access below settings.
     if (!SettingsUtils.allowLinksOutOfSettings(context)) {
