@@ -8,7 +8,7 @@ This file is the continuity anchor for the Czech localization of BackTalk.
 - Upstream branch: `master`
 - Czech fork: `matejplch626-afk/backtalk`
 - Working branch: `czech-translation`
-- Last upstream commit checked: `7b7df8489033130cbb788e8c7258c1b755f3132f` (`Let lift to activate on the navigation bar pass touches straight to it`, 2026-10-08)
+- Last upstream commit checked: `4b7020c09e01883955233eab631f838dd6be1384` (`Update Czech localization for build 221 (#109)`, 2026-10-08)
 
 ## Localization strategy
 
@@ -63,6 +63,10 @@ Under `braille/common/src/phone/res/values-cs/`, `strings_backtalk.xml` covers t
 - `a93641b0a5ccc063c00bb41293dc0a011f15cfab` — removed three obsolete Czech Backtalk strings removed upstream
 
 ## Upstream watch log
+
+### 2026-10-08 — through `4b7020c09e01883955233eab631f838dd6be1384`
+
+Upstream advanced by 3 commits from `7b7df8489033130cbb788e8c7258c1b755f3132f`. Two commits changed internal speech/ringer handling without changing translatable TalkBack/Braille English resources. The third commit merged our Czech localization PR #109 (`Update Czech localization for build 221`), changing only Czech resources already supplied by this localization project. No new Czech translation work or follow-up PR is required.
 
 ### 2026-10-08 — through `7b7df8489033130cbb788e8c7258c1b755f3132f`
 
