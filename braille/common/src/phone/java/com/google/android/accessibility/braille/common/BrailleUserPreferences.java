@@ -19,6 +19,7 @@ package com.google.android.accessibility.braille.common;
 import static com.google.android.accessibility.braille.common.translate.BrailleLanguages.Code.KOREAN_2006;
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS;
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS_AND_WORDS;
+import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_NONE;
 import static java.lang.Math.min;
 
 import android.content.Context;
@@ -390,6 +391,25 @@ public class BrailleUserPreferences {
   public static boolean readKeyboardEchoCharacters(Context context) {
     int echo = readKeyboardEcho(context);
     return echo == PREF_ECHO_CHARACTERS || echo == PREF_ECHO_CHARACTERS_AND_WORDS;
+  }
+
+  /**
+   * Returns the keyboard echo the braille keyboard reports to Backtalk, a {@code
+   * TextEventFilter.KeyboardEchoType}.
+   *
+   * <p>In contracted braille the keyboard holds the whole word and commits it in one go, and
+   * announces each character itself as it is typed, so with the "characters" echo it reports
+   * "none" here. Backtalk would otherwise speak the committed word as well, making "characters"
+   * sound the same as "characters and words". Uncontracted typing commits a character at a time
+   * and still relies on Backtalk's echo, so it is left unchanged.
+   */
+  @KeyboardEchoType
+  public static int readKeyboardEchoForBacktalk(Context context) {
+    int echo = readKeyboardEcho(context);
+    if (echo == PREF_ECHO_CHARACTERS && readContractedMode(context)) {
+      return PREF_ECHO_NONE;
+    }
+    return echo;
   }
 
   /** Reads layout mode. */

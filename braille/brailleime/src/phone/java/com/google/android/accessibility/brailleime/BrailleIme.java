@@ -1136,7 +1136,8 @@ public class BrailleIme extends InputMethodService {
         @Override
         public OptionalInt getOnScreenKeyboardEcho() {
           return isInputViewShown() && !brailleDisplayConnectedAndNotSuspended
-              ? OptionalInt.of(BrailleUserPreferences.readKeyboardEcho(BrailleIme.this))
+              ? OptionalInt.of(
+                  BrailleUserPreferences.readKeyboardEchoForBacktalk(BrailleIme.this))
               : OptionalInt.empty();
         }
       };
