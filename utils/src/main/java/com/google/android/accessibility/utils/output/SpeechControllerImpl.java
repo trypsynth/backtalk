@@ -123,9 +123,6 @@ public class SpeechControllerImpl implements SpeechController {
    */
   private static final long SAVED_FEEDBACK_FOR_PAUSE_TIME = 800;
 
-  /** Reusable map used for passing parameters to the TextToSpeech. */
-  private final HashMap<String, String> mSpeechParametersMap = new HashMap<>();
-
   /**
    * Priority queue of actions to perform before utterances start, ordered by ascending utterance
    * index.
@@ -1991,9 +1988,10 @@ public class SpeechControllerImpl implements SpeechController {
       playHapticsFromFragment(fragment, eventId);
     }
 
-    // Reuse the global instance of speech parameters.
-    final HashMap<String, String> params = mSpeechParametersMap;
-    params.clear();
+    // Build the parameters for this fragment locally. A single shared map used to be reused here,
+    // but speech can be driven from several threads, so another fragment could clear or repopulate
+    // it between the writes below and the read in FailoverTextToSpeech.speak().
+    final HashMap<String, String> params = new HashMap<>();
 
     // Add all custom speech parameters.
     final Bundle speechParams = fragment.getSpeechParams();

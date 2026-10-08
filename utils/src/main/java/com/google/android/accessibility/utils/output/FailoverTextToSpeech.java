@@ -704,7 +704,13 @@ public class FailoverTextToSpeech {
     }
   }
 
-  private void addRecentUtteranceId(String utteranceId) {
+  private void addRecentUtteranceId(@Nullable String utteranceId) {
+    // Speech can be requested without an utterance id (the surrounding code tolerates a null id:
+    // allowDeviceSleep and the failure path in speak both handle it), but a ConcurrentLinkedDeque
+    // rejects nulls, so guard here instead of crashing the speech thread.
+    if (utteranceId == null) {
+      return;
+    }
     recentUtteranceIds.add(utteranceId);
     while (recentUtteranceIds.size() > 10) {
       recentUtteranceIds.poll();
