@@ -40,4 +40,7 @@ android {
         buildConfigField("String", "COMMIT_HASH", '"' + rootProject.gitCommitHash + '"')
         buildConfigField("int", "COMMIT_COUNT", String.valueOf(rootProject.gitCommitCount))
     }
+    buildFeatures {
+        aidl = true
+    }
 }

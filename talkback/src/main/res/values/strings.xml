@@ -288,6 +288,14 @@
     <string name="summary_pref_speakerphone_away_from_ear">During a call, switches to the speaker when you take the phone away from your ear, and back to the earpiece when you hold it up again.</string>
     <!-- Summary of that setting when Backtalk does not have the permission. %1$s is the adb command that grants it. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speakerphone_needs_permission">Needs a permission that Android does not give to screen readers. To grant it, run this command with adb or Shizuku, then come back to this screen: %1$s</string>
+    <!-- Title of the setting that lets other apps speak through Backtalk. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_speech_control">Let other apps speak</string>
+    <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_speech_control">Apps that ask for it can speak with Backtalk\'s voice, and stop, pause and resume its speech. Only turn this on if you trust the apps you have installed, since an app could say something misleading.</string>
+    <!-- Name of the permission that apps ask for to speak through Backtalk, shown in the app's permission list. [CHAR LIMIT=NONE] -->
+    <string name="permission_speak_label">speak through Backtalk</string>
+    <!-- Description of that permission. [CHAR LIMIT=NONE] -->
+    <string name="permission_speak_description">Lets the app speak with Backtalk\'s voice, and stop, pause and resume its speech, when you turn on Let other apps speak in Backtalk\'s Advanced settings.</string>
 
     <!--
       Source: Preference for speaking phonetic letter for letters.

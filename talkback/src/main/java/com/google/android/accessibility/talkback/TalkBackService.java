@@ -4072,7 +4072,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     displayIdToTouchInteractionMonitors.clear();
   }
 
-  protected Pipeline.@Nullable FeedbackReturner getFeedbackReturner() {
+  public Pipeline.@Nullable FeedbackReturner getFeedbackReturner() {
     if (pipeline != null) {
       return pipeline.getFeedbackReturner();
     }

@@ -11,6 +11,8 @@
     <string name="pref_speakerphone_away_from_ear_key">pref_speakerphone_away_from_ear</string>
     <string name="pref_status_readout_key" translatable="false">pref_status_readout</string>
     <string name="pref_direct_touch_key" translatable="false">pref_direct_touch</string>
+    <!-- Must match SpeechControl.PREF_ENABLED. -->
+    <string name="pref_speech_control_key">pref_speech_control</string>
     <string name="pref_check_for_updates_key" translatable="false">pref_check_for_updates</string>
     <string name="pref_auto_update_check_key" translatable="false">pref_auto_update_check</string>
     <string name="pref_show_exit_watermark_key">pref_show_exit_watermark</string>

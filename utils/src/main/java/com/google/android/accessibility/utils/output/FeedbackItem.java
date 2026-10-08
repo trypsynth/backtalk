@@ -111,6 +111,8 @@ public class FeedbackItem {
   /** Flag to indicate that the speech rate is absolute, not a multiplier of the system rate. */
   public static final int FLAG_RATE_IS_ABSOLUTE = 0x10000;
 
+  public static final int FLAG_PROSODY_FROM_CALLER = 0x20000;
+
   /** Unique ID defining this generated feedback */
   private String mUtteranceId = "";
 

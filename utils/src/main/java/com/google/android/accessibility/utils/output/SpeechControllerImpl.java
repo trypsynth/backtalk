@@ -2015,11 +2015,13 @@ public class SpeechControllerImpl implements SpeechController {
           params.get("com.google.android.tts:SubapplicationIdentifierId"));
     }
 
+    final float volume = speechVolume * parseFloatParam(params, SpeechParam.VOLUME, 1);
+
     // Utterance ID, stream, and volume override item params.
     final int stream = FailoverTextToSpeech.getSpeechAudioStream(mContext);
     params.put(Engine.KEY_PARAM_UTTERANCE_ID, feedbackItem.getUtteranceId());
     params.put(Engine.KEY_PARAM_STREAM, String.valueOf(stream));
-    params.put(Engine.KEY_PARAM_VOLUME, String.valueOf(speechVolume));
+    params.put(Engine.KEY_PARAM_VOLUME, String.valueOf(volume));
     HashMap<String, Integer> customFlags = new HashMap<>();
 
     if (feedbackItem.hasFlag(FeedbackItem.FLAG_CHUNKING_APPLIED)) {
@@ -2030,10 +2032,10 @@ public class SpeechControllerImpl implements SpeechController {
       customFlags.put(FailoverTextToSpeech.RATE_PARAMETER_TYPE, FailoverTextToSpeech.ABSOLUTE);
     }
 
-    float pitch =
-        speechPitch * (mUseIntonation ? parseFloatParam(params, SpeechParam.PITCH, 1) : 1);
-    final float rate =
-        speechRate * (mUseIntonation ? parseFloatParam(params, SpeechParam.RATE, 1) : 1);
+    final boolean useProsody =
+        mUseIntonation || feedbackItem.hasFlag(FeedbackItem.FLAG_PROSODY_FROM_CALLER);
+    float pitch = speechPitch * (useProsody ? parseFloatParam(params, SpeechParam.PITCH, 1) : 1);
+    final float rate = speechRate * (useProsody ? parseFloatParam(params, SpeechParam.RATE, 1) : 1);
     CharSequence text;
 
     final boolean shouldSilenceFragment = shouldSilenceSpeech(feedbackItem);
@@ -2092,7 +2094,7 @@ public class SpeechControllerImpl implements SpeechController {
         params,
         customFlags,
         stream,
-        speechVolume,
+        volume,
         preventDeviceSleep,
         feedbackItem.shouldFlushGlobalTtsQueue(),
         eventId);

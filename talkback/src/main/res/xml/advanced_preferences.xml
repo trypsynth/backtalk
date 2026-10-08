@@ -32,6 +32,11 @@
         android:key="@string/pref_speakerphone_away_from_ear_key"
         android:title="@string/title_pref_speakerphone_away_from_ear"
         android:summary="@string/summary_pref_speakerphone_away_from_ear" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_speech_control_key"
+        android:title="@string/title_pref_speech_control"
+        android:summary="@string/summary_pref_speech_control" />
     <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
         android:key="@string/pref_manage_labels_key"
         android:title="@string/title_pref_manage_labels" >
