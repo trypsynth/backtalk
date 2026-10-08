@@ -282,10 +282,13 @@
       Description: The user can check or not check this. [CHAR LIMIT=120]
     -->
     <string name="title_pref_cover_proximity_sensor">Cover proximity sensor to stop speech</string>
-    <!-- Title of the setting that moves calls to the speaker when the phone is away from the ear. [CHAR LIMIT=NONE] -->
+    <!-- Title of a switch in Advanced Settings on Wear OS watches. Reserves two-finger single and double taps for Samsung's Vibration Watch feature, which tells the time through vibrations. [CHAR LIMIT=NONE] -->
     <string name="title_pref_reserve_vibration_watch_gestures">Reserve gestures for Vibration Watch</string>
+    <!-- Summary of the Vibration Watch gesture switch. Backtalk stops handling the two gestures; the user must separately enable Samsung's Vibration Watch feature in the watch's accessibility settings. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_reserve_vibration_watch_gestures">Stops Backtalk handling two-finger single and double taps so Samsung Vibration Watch can use them. Enable Vibration Watch in your watch’s accessibility settings.</string>
+    <!-- Explanation shown instead of a gesture's assigned action when the Vibration Watch switch in Advanced Settings makes its two-finger single or double tap unavailable to Backtalk. [CHAR LIMIT=NONE] -->
     <string name="shortcut_reserved_for_vibration_watch">Reserved for Vibration Watch in Advanced Settings</string>
+    <!-- Title of the setting that moves calls to the speaker when the phone is away from the ear. [CHAR LIMIT=NONE] -->
     <string name="title_pref_speakerphone_away_from_ear">Speaker when away from your ear</string>
     <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speakerphone_away_from_ear">During a call, switches to the speaker when you take the phone away from your ear, and back to the earpiece when you hold it up again.</string>

@@ -501,6 +501,8 @@ Watch screens track only two fingers, so gestures with three or four fingers don
 | Triple-tap and hold with two fingers | Turn speech on or off |
 | Swipe left then up | Repeat last spoken phrase |
 
+On Samsung watches, turn on **Advanced settings** > **Reserve gestures for Vibration Watch** to let Samsung's Vibration Watch use two-finger single and double taps. The switch is off by default, and Vibration Watch must also be enabled in the watch's accessibility settings. While the switch is on, these gestures no longer perform their Backtalk actions: by default, a two-finger tap pauses or resumes speech, and a two-finger double tap controls media or starts voice input. Saved gesture assignments are kept and become available again when you turn the switch off.
+
 ### Backtalk menu on watches
 
 The Backtalk menu scrolls on watches, so you can reach every item. **Describe screen** is off in the watch menu by default, and **Pause Backtalk** isn't available on watches.
