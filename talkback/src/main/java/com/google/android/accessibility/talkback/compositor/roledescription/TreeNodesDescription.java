@@ -296,6 +296,17 @@ public class TreeNodesDescription {
         TextUtils.isEmpty(
             AccessibilityNodeFeedbackUtils.getNodeContentDescription(
                 node, context, globalVariables));
+    // Samsung labels the notification card with its title but leaves the message in a child.
+    // Read the body before the time; general child aggregation would repeat title/time.
+    if (!isContentDescriptionEmpty) {
+      List<CharSequence> notificationDescription =
+          SamsungNotificationDescription.describeCard(
+              node, joinList.get(0), shouldIterateChildren, context, globalVariables);
+      if (notificationDescription != null) {
+        joinList.clear();
+        joinList.addAll(notificationDescription);
+      }
+    }
     StringBuilder logString = new StringBuilder();
     logString
         .append(String.format(" (%s)", node.hashCode()))

@@ -152,6 +152,10 @@ When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, 
 
 ## Notifications
 
+### Samsung watch notification content
+
+On Samsung watches, Backtalk reads the app and title, then the message content, then the time when you focus a notification card. Samsung's card label can omit the message even though it is available in the accessibility tree. Backtalk includes that text automatically, without an extra gesture or setting, and does not announce the card's display font formatting.
+
 ### Speak notifications setting
 
 To stop Backtalk from reading new notifications when they arrive, turn off **Verbosity** > **Speak notifications**. Backtalk still reads incoming calls, and you can still read notifications in the notification shade. The setting is on by default.

@@ -43,6 +43,7 @@ import com.google.android.accessibility.talkback.compositor.CompositorUtils;
 import com.google.android.accessibility.talkback.compositor.EventFeedback;
 import com.google.android.accessibility.talkback.compositor.EventInterpretation;
 import com.google.android.accessibility.talkback.compositor.GlobalVariables;
+import com.google.android.accessibility.talkback.compositor.roledescription.SamsungNotificationDescription;
 import com.google.android.accessibility.talkback.compositor.roledescription.TreeNodesDescription;
 import com.google.android.accessibility.talkback.controlsounds.ControlSounds;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
@@ -480,6 +481,8 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
             || (accessibilityFocusEventInterpretation.getEvent() == Compositor.EVENT_UNKNOWN
                 && WebInterfaceUtils.isWebContainer(node));
     return assumeIsNavigateByUser
+        // Samsung's notification rendering styles are not message formatting to announce.
+        && !SamsungNotificationDescription.isNotificationCard(node)
         && (!WebInterfaceUtils.isWebContainer(node)
             || SpannableUtils.hasTargetSpan(node.getText(), AbsoluteSizeSpan.class, false));
   }
