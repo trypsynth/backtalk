@@ -12,14 +12,44 @@
     <string name="title_pref_switch_dialects">Automaticky přepínat dialekt</string>
     <string name="title_pref_tts_engine">Modul převodu textu na řeč</string>
     <string name="title_pref_system_tts_settings">Systémová nastavení převodu textu na řeč</string>
-    <string name="title_selector_switch_tts_engine">Hlasový modul</string>
-    <string name="summary_selector_switch_tts_engine">Přepínat mezi nainstalovanými hlasovými moduly</string>
     <string name="summary_pref_tts_engine_default">Výchozí systémový modul</string>
     <string name="title_pref_speech_pitch">Výška hlasu</string>
     <string name="title_pref_use_accessibility_stream">Používat hlasitost přístupnosti</string>
     <string name="summary_pref_use_accessibility_stream">Řeč a zvuky používají hlasitost přístupnosti, takže je můžete nastavit nezávisle na médiích. Je-li tato možnost vypnutá, používají hlasitost médií.</string>
     <string name="title_pref_speak_in_phrases">Odesílat dlouhý text po větách</string>
     <string name="summary_pref_speak_in_phrases">Pro hlasové moduly, které se zastavují pomalu, například Gryphon, aby se dlouhý text po přejetí zastavil ihned. Mnoho modulů při samostatně odesílaných větách dělá delší pauzy, proto tuto možnost ponechte vypnutou, pokud se váš modul zastavuje rychle.</string>
+
+    <!-- Voice profiles. -->
+    <string name="title_selector_voice_profile">Hlasový profil</string>
+    <string name="title_pref_voice_profiles">Hlasové profily</string>
+    <string name="voice_profile_default">Výchozí nastavení Backtalku</string>
+    <string name="voice_profile_in_use">Používá se: <xliff:g id="name" example="Čtení">%1$s</xliff:g></string>
+    <string name="spoken_language_unavailable_with_profile">Při používání hlasového profilu není mluvený jazyk k dispozici</string>
+    <string name="voice_profile_menu_item_in_use"><xliff:g id="name" example="Čtení">%1$s</xliff:g>, používá se</string>
+    <string name="no_voice_profiles">Žádné hlasové profily</string>
+    <string name="shortcut_voice_profiles">Vybrat hlasový profil</string>
+    <string name="shortcut_previous_voice_profile">Předchozí hlasový profil</string>
+    <string name="shortcut_next_voice_profile">Další hlasový profil</string>
+    <string name="title_pref_voice_profile_in_use">Používaný hlasový profil</string>
+    <string name="title_pref_add_voice_profile">Přidat hlasový profil</string>
+    <string name="voice_profile_new_name">Hlasový profil <xliff:g id="number" example="2">%1$d</xliff:g></string>
+    <string name="voice_profile_name_taken">Hlasový profil s názvem <xliff:g id="name" example="Čtení">%1$s</xliff:g> již existuje</string>
+    <string name="title_pref_voice_profile_name">Název</string>
+    <string name="title_pref_voice_profile_language">Jazyk</string>
+    <string name="title_pref_voice_profile_voice">Hlas</string>
+    <string name="voice_profile_engine_default">Výchozí</string>
+    <string name="voice_profile_loading">Načítání</string>
+    <string name="voice_profile_not_installed"><xliff:g id="name" example="Eloquence">%1$s</xliff:g>, není nainstalováno</string>
+    <string name="voice_profile_voice_in_language"><xliff:g id="voice" example="en-us-x-tpf-local">%1$s</xliff:g>, <xliff:g id="language" example="čeština (Česko)">%2$s</xliff:g></string>
+    <string name="voice_profile_move_up">Přesunout nahoru</string>
+    <string name="voice_profile_move_down">Přesunout dolů</string>
+    <string name="voice_profile_rename">Přejmenovat</string>
+    <string name="voice_profile_moved_above">Přesunuto nad <xliff:g id="name" example="Čtení">%1$s</xliff:g></string>
+    <string name="voice_profile_moved_below">Přesunuto pod <xliff:g id="name" example="Čtení">%1$s</xliff:g></string>
+    <string name="voice_profile_deleted"><xliff:g id="name" example="Čtení">%1$s</xliff:g> odstraněn</string>
+    <string name="title_pref_delete_voice_profile">Odstranit hlasový profil</string>
+    <string name="voice_profile_delete_confirm">Odstranit <xliff:g id="name" example="Čtení">%1$s</xliff:g>?</string>
+    <string name="voice_profile_delete">Odstranit</string>
 
     <!-- Incoming notifications. -->
     <string name="title_pref_speak_notifications">Oznamovat příchozí oznámení</string>
@@ -88,6 +118,30 @@
     <string name="pref_interrupt_typing_entry_edit_fields">V editačních polích</string>
     <string name="pref_interrupt_typing_entry_keyboard_echo">Při odezvě klávesnice</string>
     <string name="title_pref_interrupt_enter">Přerušovat řeč klávesou Enter</string>
+
+    <!-- Table reading. -->
+    <string name="pref_table_headers_category_title">Čtení tabulek</string>
+    <string name="pref_table_column_headers_title">Číst záhlaví sloupců</string>
+    <string name="pref_table_column_headers_entry_after">Po obsahu buňky</string>
+    <string name="pref_table_column_headers_entry_before">Před obsahem buňky</string>
+    <string name="pref_table_column_headers_entry_off">Nečíst</string>
+    <string name="pref_table_speak_row_column_numbers_title">Oznamovat čísla řádků a sloupců</string>
+    <string name="pref_table_speak_row_column_numbers_summary">Oznamovat čísla řádků a sloupců u buněk tabulky</string>
+
+    <!-- Updated Gemini API consent text. -->
+    <string name="dialog_message_detailed_ai_description">Vybrané obrázky jsou odesílány do rozhraní Gemini API společnosti Google, aby byly popsány. Když je zapnutá AI v zařízení, obrázky se místo toho popisují v tomto telefonu a nikam se neodesílají.\n\nPři použití bezplatného klíče API může Google přijatá data uchovávat, používat je ke zlepšování svých produktů a nechat je kontrolovat lidmi. Generativní AI je experimentální, takže bude dělat chyby. Platí <xliff:g id="Gemini API terms" example="Další smluvní podmínky Gemini API">%1$s</xliff:g>.</string>
+    <string name="dialog_message_detailed_ai_promotion">Podrobné popisy obrázků využívají generativní AI. Vybrané obrázky jsou odesílány do rozhraní Gemini API společnosti Google, aby byly popsány. Když je zapnutá AI v zařízení, obrázky se místo toho popisují v tomto telefonu a nikam se neodesílají.\n\nPři použití bezplatného klíče API může Google přijatá data uchovávat, používat je ke zlepšování svých produktů a nechat je kontrolovat lidmi. Generativní AI je experimentální, takže bude dělat chyby. Podrobné popisy obrázků můžete kdykoli vypnout v nastavení Backtalku.\n\nPlatí <xliff:g id="Gemini API terms" example="Další smluvní podmínky Gemini API">%1$s</xliff:g>.</string>
+    <string name="dialog_message_screen_overview_promotion">Snímek obrazovky je odeslán do rozhraní Gemini API společnosti Google, aby byl popsán, což trvá několik sekund. Když je zapnutá AI v zařízení, snímek se místo toho popíše v tomto telefonu a nikam se neodesílá.\n\nPři použití bezplatného klíče API může Google přijatá data uchovávat, používat je ke zlepšování svých produktů a nechat je kontrolovat lidmi. Generativní AI je experimentální, takže bude dělat chyby. Platí <xliff:g id="Gemini API terms" example="Další smluvní podmínky Gemini API">%1$s</xliff:g>.</string>
+    <string name="gemini_api_terms_link">Další smluvní podmínky Gemini API</string>
+
+    <!-- Tutorial paths renamed by Backtalk. -->
+    <string name="basic_other_ways_to_type_text">V Backtalku můžete psát i jinými způsoby. Například můžete písmeno zadat dvojitým klepnutím. Později to můžete změnit v Nastavení Backtalku &gt; Klávesnice na obrazovce &gt; Způsob psaní.</string>
+    <string name="basic_other_ways_to_type_text_tts">V Backtalku můžete psát i jinými způsoby. Například můžete písmeno zadat dvojitým klepnutím. Později to můžete změnit v Nastavení Backtalku, potom Klávesnice na obrazovce a potom Způsob psaní.</string>
+    <string name="image_description_playground_content_two">Nastavení popisů obrázků můžete kdykoli změnit v Nastavení Backtalku &gt; Automatické popisy.</string>
+    <string name="image_description_playground_content_two_tts">Nastavení popisů obrázků můžete kdykoli změnit v Nastavení Backtalku, potom Automatické popisy.</string>
+    <string name="talkback_keyboard_tutorial_text">Tento kurz je určen pro rozšířené rozložení kláves, které obsahuje mnoho nových příkazů. Rozložení vyberete v Nastavení Backtalku &gt; Klávesové zkratky.\n\nTéma vyberete stisknutím Akce + šipka doprava. Nejlepších výsledků dosáhnete, když před zahájením zapnete Backtalk.</string>
+    <string name="keyboard_tutorial_add_container_reading_controls">Opustili jste kontejner. Kontejnery můžete také přidat do ovládání čtení a potom pomocí Akce + Shift + šipka doprava nebo doleva vybrat kontejnery a pomocí Akce + šipka dolů nebo nahoru mezi kontejnery přecházet. Ovládání čtení upravíte v Nastavení Backtalku &gt; Ovládání čtení.\n\nDalší tlačítko najdete stisknutím Akce + šipka doprava.</string>
+    <string name="keyboard_tutorial_customize_reading_controls_page_text">Pomocí ovládání čtení můžete také upravovat nastavení řeči a v Nastavení Backtalku &gt; Ovládání čtení můžete přizpůsobit, co lze pomocí ovládání čtení dělat.</string>
 
     <!-- Call speaker routing based on proximity. -->
     <string name="title_pref_speakerphone_away_from_ear">Reproduktor při oddálení od ucha</string>
