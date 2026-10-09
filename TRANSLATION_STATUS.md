@@ -8,7 +8,7 @@ This file is the continuity anchor for the Czech localization of BackTalk.
 - Upstream branch: `master`
 - Czech fork: `matejplch626-afk/backtalk`
 - Working branch: `czech-translation`
-- Last upstream commit checked: `dd3e2dd188a6b8469b296f960b9c57c192d80336` (`Add Wear setting to reserve Vibration Watch gestures (#105)`, 2026-10-08)
+- Last upstream commit checked: `d984cac89a1415ef1225c5a6352dc0e123d79aac` (`Fix the default shown on the focus delay screens`, 2026-10-09)
 
 ## Localization strategy
 
@@ -16,9 +16,9 @@ BackTalk inherits the existing Czech translation from Google's TalkBack. Do not 
 
 ## Latest upstream watch
 
-### 2026-10-09 — through `dd3e2dd188a6b8469b296f960b9c57c192d80336`
+### 2026-10-09 — through `d984cac89a1415ef1225c5a6352dc0e123d79aac`
 
-Upstream advanced by 3 commits from `4b7020c09e01883955233eab631f838dd6be1384`. Two commits changed speech completion/default latency behavior without adding or changing translatable resources. Commit #105 added a Wear OS Advanced settings switch for reserving two-finger single and double taps for Samsung Vibration Watch and added three new user-visible English strings: `title_pref_reserve_vibration_watch_gestures`, `summary_pref_reserve_vibration_watch_gestures`, and `shortcut_reserved_for_vibration_watch`. Czech translations were added to `talkback/src/main/res/values-cs/strings_backtalk.xml`. These strings contain no placeholders, plurals, XLIFF or HTML markup.
+Upstream advanced by 5 commits from `dd3e2dd188a6b8469b296f960b9c57c192d80336`. The localization-relevant change adds three new user-visible choices for the order in which Backtalk announces an item's name, state and type: `pref_node_desc_order_entry_name_state_role_pos`, `pref_node_desc_order_entry_role_state_name_pos`, and `pref_node_desc_order_entry_state_role_name_pos`. Czech translations were added to `talkback/src/main/res/values-cs/strings_backtalk.xml`. These strings contain no placeholders, plurals, XLIFF or HTML markup. The remaining changes adjust item-detail behavior/settings placement and focus-delay defaults without adding or changing other translatable strings.
 
 ## Important Czech maintenance commits
 
