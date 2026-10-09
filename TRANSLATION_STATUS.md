@@ -8,7 +8,7 @@ This file is the continuity anchor for the Czech localization of BackTalk.
 - Upstream branch: `master`
 - Czech fork: `matejplch626-afk/backtalk`
 - Working branch: `czech-translation`
-- Last upstream commit checked: `d984cac89a1415ef1225c5a6352dc0e123d79aac` (`Fix the default shown on the focus delay screens`, 2026-10-09)
+- Last upstream commit checked: `8219b85b193ec9fec37e4b715d064247ed0a232e` (`Stop speech when a key is pressed on a keyboard (#115)`, 2026-10-09)
 
 ## Localization strategy
 
@@ -16,9 +16,9 @@ BackTalk inherits the existing Czech translation from Google's TalkBack. Do not 
 
 ## Latest upstream watch
 
-### 2026-10-09 — through `d984cac89a1415ef1225c5a6352dc0e123d79aac`
+### 2026-10-09 — through `8219b85b193ec9fec37e4b715d064247ed0a232e`
 
-Upstream advanced by 5 commits from `dd3e2dd188a6b8469b296f960b9c57c192d80336`. The localization-relevant change adds three new user-visible choices for the order in which Backtalk announces an item's name, state and type: `pref_node_desc_order_entry_name_state_role_pos`, `pref_node_desc_order_entry_role_state_name_pos`, and `pref_node_desc_order_entry_state_role_name_pos`. Czech translations were added to `talkback/src/main/res/values-cs/strings_backtalk.xml`. These strings contain no placeholders, plurals, XLIFF or HTML markup. The remaining changes adjust item-detail behavior/settings placement and focus-delay defaults without adding or changing other translatable strings.
+Upstream advanced by 3 commits from `d984cac89a1415ef1225c5a6352dc0e123d79aac`. The localization-relevant change #115 adds five user-visible settings for physical-keyboard speech interruption: `title_pref_interrupt_typing`, `pref_interrupt_typing_entry_always`, `pref_interrupt_typing_entry_edit_fields`, `pref_interrupt_typing_entry_keyboard_echo`, and `title_pref_interrupt_enter`. Czech translations were added to `talkback/src/main/res/values-cs/strings_backtalk.xml`. These strings contain no placeholders, plurals, XLIFF, HTML or other markup. Other changes in the range are implementation/internal changes and do not require additional Czech localization.
 
 ## Important Czech maintenance commits
 
