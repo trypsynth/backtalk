@@ -147,6 +147,16 @@ object TraversalTreeCache {
     firstIgnoredChangeTime == 0L && holds(node)
 
   /**
+   * The root of the window that [node] is in, if the saved order holds [node]: the root the order
+   * was read from, as nothing that could change the window has happened since. Asking the window
+   * for its root instead always waits for the app, because Android never answers that from its
+   * node cache.
+   */
+  @JvmStatic
+  fun rootFor(node: AccessibilityNodeInfoCompat): AccessibilityNodeInfoCompat? =
+    root?.takeIf { it.windowId == node.windowId && holds(node) }
+
+  /**
    * Remembers where a navigation started. When the focused node is later removed — an app
    * re-laying-out its content, such as a blocked ad slot collapsing, does this — navigation carries
    * on from the node nearest this place instead of falling back to the top of the window.
