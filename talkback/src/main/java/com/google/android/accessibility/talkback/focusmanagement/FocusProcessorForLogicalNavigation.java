@@ -372,9 +372,14 @@ public class FocusProcessorForLogicalNavigation {
    */
   private AccessibilityNodeInfoCompat getPivotNodeForNavigationAction(
       NavigationAction navigationAction) {
+    // While the saved reading order holds the focused node, Android's cached copy of the node is
+    // current: nothing that could change the window has happened since the order was read from the
+    // app. So the focus monitor need not ask the app for the node again then.
     AccessibilityNodeInfoCompat pivot =
         accessibilityFocusMonitor.getAccessibilityFocus(
-            navigationAction.useInputFocusAsPivotIfEmpty, /* requireEditable= */ false);
+            navigationAction.useInputFocusAsPivotIfEmpty,
+            /* requireEditable= */ false,
+            /* isCurrent= */ Filter.node(TraversalTreeCache::holds));
 
     // The focus monitor can return Android's cached copy of a node that was just removed, so check
     // with the app that the pivot is still there. Skip that round trip when the saved reading order
