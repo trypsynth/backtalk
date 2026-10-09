@@ -8,7 +8,7 @@ This file is the continuity anchor for the Czech localization of BackTalk.
 - Upstream branch: `master`
 - Czech fork: `matejplch626-afk/backtalk`
 - Working branch: `czech-translation`
-- Last upstream commit checked: `8219b85b193ec9fec37e4b715d064247ed0a232e` (`Stop speech when a key is pressed on a keyboard (#115)`, 2026-10-09)
+- Last upstream commit checked: `902bf7c14c1e04e591a3c1059f08116ef815e8c0` (`Speak each keyboard focus move once (#129)`, 2026-10-09)
 
 ## Localization strategy
 
@@ -16,9 +16,9 @@ BackTalk inherits the existing Czech translation from Google's TalkBack. Do not 
 
 ## Latest upstream watch
 
-### 2026-10-09 — through `8219b85b193ec9fec37e4b715d064247ed0a232e`
+### 2026-10-09 — through `902bf7c14c1e04e591a3c1059f08116ef815e8c0`
 
-Upstream advanced by 3 commits from `d984cac89a1415ef1225c5a6352dc0e123d79aac`. The localization-relevant change #115 adds five user-visible settings for physical-keyboard speech interruption: `title_pref_interrupt_typing`, `pref_interrupt_typing_entry_always`, `pref_interrupt_typing_entry_edit_fields`, `pref_interrupt_typing_entry_keyboard_echo`, and `title_pref_interrupt_enter`. Czech translations were added to `talkback/src/main/res/values-cs/strings_backtalk.xml`. These strings contain no placeholders, plurals, XLIFF, HTML or other markup. Other changes in the range are implementation/internal changes and do not require additional Czech localization.
+Upstream advanced by 27 commits from `8219b85b193ec9fec37e4b715d064247ed0a232e`. Localization-relevant changes include voice profiles (#111), renamed tutorial setting paths (#120), revised Gemini API consent text (#126), table-reading verbosity settings (#103), and several smaller Backtalk strings. Czech translations were added for the new voice-profile UI, seven table-reading strings, four revised Gemini API/terms strings, and six tutorial strings whose English meaning/path changed. Existing upstream Czech additions in this range (battery/charger wording, navigation-bar buttons, typing-method confirmation and other small settings) were reviewed and not duplicated. XLIFF placeholders and XML escaping were preserved.
 
 ## Important Czech maintenance commits
 
@@ -28,6 +28,7 @@ Upstream advanced by 3 commits from `d984cac89a1415ef1225c5a6352dc0e123d79aac`. 
 - `4b87efbc611b8780f801a101f10385e9b16af417` — emoji speech and repeated-emoji settings
 - `a93641b0a5ccc063c00bb41293dc0a011f15cfab` — removed obsolete Czech resources removed upstream
 - `3bb8318d7a479f8392cb4ae724cfabcf78f08188` — Czech Vibration Watch gesture strings
+- `917135a9200c7bfdb44d4d4a65bc5b97689f6e60` — voice profiles, table reading, Gemini consent and tutorial-path updates
 
 ## Maintenance workflow
 
