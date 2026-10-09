@@ -35,7 +35,6 @@
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="@bool/pref_table_speak_row_column_numbers_default"
         android:key="@string/pref_table_speak_row_column_numbers_key"
-        android:summary="@string/pref_table_speak_row_column_numbers_summary"
         android:title="@string/pref_table_speak_row_column_numbers_title" />
 
     <!-- Scroll announcement verbosity -->
@@ -217,7 +216,7 @@
       app:splitSummary="true" />
 
   <!-- Table settings -->
-  <PreferenceCategory
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
       android:key="@string/pref_table_headers_category_key"
       android:title="@string/pref_table_headers_category_title">
 
@@ -228,6 +227,6 @@
         android:key="@string/pref_table_column_headers_key"
         android:summary="%s"
         android:title="@string/pref_table_column_headers_title" />
-  </PreferenceCategory>
+  </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 
 </PreferenceScreen>

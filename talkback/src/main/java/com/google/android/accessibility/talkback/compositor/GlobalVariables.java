@@ -625,10 +625,6 @@ public class GlobalVariables extends TimedFlags implements ParseTree.VariableDel
     tableColumnHeaders = value;
   }
 
-  public boolean getSpeakTableRowColumnNumbers() {
-    return speakTableRowColumnNumbers;
-  }
-
   public void setSpeakTableRowColumnNumbers(boolean value) {
     speakTableRowColumnNumbers = value;
   }

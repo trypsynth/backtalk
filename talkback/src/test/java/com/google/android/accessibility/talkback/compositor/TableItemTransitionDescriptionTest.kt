@@ -90,21 +90,6 @@ class TableItemTransitionDescriptionTest {
   private fun column(number: Int) = context.getString(R.string.column_index_template, number)
 
   @Test
-  fun defaults_sayTheSameAsTheDescriptionWithoutSettings() {
-    val cells = table(headers = listOf("Name", "Colour", "Count"))
-    for (cell in listOf(cells[1][0], cells[1][1], cells[2][1], cells[0][2])) {
-      state.updateCollectionInformation(
-          cell, AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED))
-      assertEquals(
-          CollectionStateFeedbackUtils.getCollectionItemTransitionDescription(cell, state, context)
-              .toString(),
-          CollectionStateFeedbackUtils.getCollectionItemTransitionDescription(
-                  cell, state, context, GlobalVariables.TABLE_HEADERS_AFTER, true)
-              .toString())
-    }
-  }
-
-  @Test
   fun headers_areSpokenForTheColumnThatChanged() {
     val cells = table(headers = listOf("Name", "Colour", "Count"))
     assertEquals("${row(2)}, Name", describe(cells[1][0]).toString())

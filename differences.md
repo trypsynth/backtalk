@@ -167,10 +167,12 @@ When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, 
 In **Verbosity**, you can choose whether Backtalk reads table column headers before or after the cell's data, or leaves them out:
 
 *   **After cell data**, the default, keeps TalkBack's order: the cell's contents, then the row and column headers or numbers.
-*   **Before cell data** speaks the row and column headers or numbers before the cell's contents.
+*   **Before cell data** speaks the row and column headers or numbers before the cell's contents, along with "Column heading" or "Row heading" for a header cell. This applies to grids as well as tables, so an item in a photo grid says its row and column first. On a TV, Backtalk already speaks them first, so this option changes nothing there.
 *   **Do not read** leaves column headers out, and reads column numbers only when row and column numbers are on.
 
 Under preset settings in **Verbosity**, you can also turn off **Speak row and column numbers** to hear only named headers without row and column coordinates. The setting is on by default.
+
+Both settings only apply while **Speak container info** is on, because rows and columns aren't spoken at all when it's off.
 
 ## Notifications
 
