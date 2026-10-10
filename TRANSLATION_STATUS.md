@@ -8,7 +8,7 @@ This file is the continuity anchor for the Czech localization of BackTalk.
 - Upstream branch: `master`
 - Czech fork: `matejplch626-afk/backtalk`
 - Working branch: `czech-translation`
-- Last upstream commit checked: `902bf7c14c1e04e591a3c1059f08116ef815e8c0` (`Speak each keyboard focus move once (#129)`, 2026-10-09)
+- Last upstream commit checked: `30407ef9c28e64d7b0c86eb6d6e353692190900e` (`Leave the one-pixel gap when hiding the screen again`, 2026-10-09)
 
 ## Localization strategy
 
@@ -16,9 +16,9 @@ BackTalk inherits the existing Czech translation from Google's TalkBack. Do not 
 
 ## Latest upstream watch
 
-### 2026-10-09 — through `902bf7c14c1e04e591a3c1059f08116ef815e8c0`
+### 2026-10-10 — through `30407ef9c28e64d7b0c86eb6d6e353692190900e`
 
-Upstream advanced by 27 commits from `8219b85b193ec9fec37e4b715d064247ed0a232e`. Localization-relevant changes include voice profiles (#111), renamed tutorial setting paths (#120), revised Gemini API consent text (#126), table-reading verbosity settings (#103), and several smaller Backtalk strings. Czech translations were added for the new voice-profile UI, seven table-reading strings, four revised Gemini API/terms strings, and six tutorial strings whose English meaning/path changed. Existing upstream Czech additions in this range (battery/charger wording, navigation-bar buttons, typing-method confirmation and other small settings) were reviewed and not duplicated. XLIFF placeholders and XML escaping were preserved.
+Upstream advanced by 2 commits from `902bf7c14c1e04e591a3c1059f08116ef815e8c0`. The major localization-relevant change adds the new scripting/plugin system and `strings_scripts.xml`, containing the user-facing Scripts settings, installation/update dialogs, permissions, compatibility warnings, script management, inspection tools and command bindings. A complete Czech `values-cs/strings_scripts.xml` was added with XLIFF placeholders and Android formatting preserved. The following commit only fixes screen-curtain sizing and has no translatable resource changes.
 
 ## Important Czech maintenance commits
 
@@ -29,6 +29,7 @@ Upstream advanced by 27 commits from `8219b85b193ec9fec37e4b715d064247ed0a232e`.
 - `a93641b0a5ccc063c00bb41293dc0a011f15cfab` — removed obsolete Czech resources removed upstream
 - `3bb8318d7a479f8392cb4ae724cfabcf78f08188` — Czech Vibration Watch gesture strings
 - `917135a9200c7bfdb44d4d4a65bc5b97689f6e60` — voice profiles, table reading, Gemini consent and tutorial-path updates
+- `aaacfb003162d8b6cdb5cb330101735cd8d875de` — Czech scripting/plugin UI
 
 ## Maintenance workflow
 
