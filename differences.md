@@ -1,5 +1,13 @@
 # Differences from TalkBack
 
+## Returning to a screen
+
+Backtalk remembers the last item you read on up to 20 recent app screens and browser pages while the service is running. Restoration starts only when you use Back, including the Back gesture/key or a recognized app Back button. It tries to focus the same item, including when an app recreates its list or automatically focuses the toolbar. This also works when an app opens a post or link in another app: using Back from the browser or other app restores the originating item. Forward navigation, switching apps, and opening or reading the status bar do not trigger restoration. Input on the returned screen or focus in another window cancels pending restoration. This memory clears when Backtalk stops.
+
+Visible items are restored without scrolling. **Advanced settings** > **Scroll to restore previous focus** is off by default. Turn it on to let Backtalk bring an offscreen item back into view. Backtalk uses the app's supported scroll actions and checks that it found the remembered item; it stops after at most ten scroll actions or three seconds. It waits for rebuilding content instead of searching by scrolling when the saved row position is already visible. Touching, navigating, typing, or scrolling cancels pending restoration. A browser restoring its own page scroll position or updating its address during Back does not cancel the attempt.
+
+Apps and pages must expose enough accessibility information to distinguish the screen and item. In native app rows and cards, a single exposed title or heading can identify the item even when its read-state description, counts, or subtitle change. This applies across apps; uncertain or duplicate titles still need an unambiguous match. If the item was removed, labels are ambiguous, or the app does not expose the necessary information, Backtalk keeps its usual focus behavior. It remembers elements such as headings, links, and posts, rather than character positions within text. TV keeps its usual input-focus behavior.
+
 Backtalk is built from Google's TalkBack source releases. This document describes how Backtalk differs from TalkBack: features that TalkBack doesn't have, defaults that Backtalk changes, and problems in TalkBack that Backtalk fixes. To learn how to install Backtalk, see the [README](README.md).
 
 Each section names the settings involved as they appear in Backtalk. Unless a section says otherwise, each setting is in Backtalk settings.

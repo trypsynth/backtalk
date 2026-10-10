@@ -12,6 +12,11 @@
     </com.google.android.accessibility.material.preference.AccessibilitySuitePreference>
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="false"
+        android:key="@string/pref_scroll_to_restore_previous_focus_key"
+        android:title="@string/title_pref_scroll_to_restore_previous_focus"
+        android:summary="@string/summary_pref_scroll_to_restore_previous_focus" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="false"
         android:key="@string/pref_reserve_vibration_watch_gestures_key"
         android:title="@string/title_pref_reserve_vibration_watch_gestures"
         android:summary="@string/summary_pref_reserve_vibration_watch_gestures" />
