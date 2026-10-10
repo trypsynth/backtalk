@@ -21,6 +21,11 @@
       android:key="pref_screen_announcements_screen_on_category"
       android:title="@string/title_screen_announcements_screen_on">
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="false"
+        android:key="@string/pref_screen_on_suppress_extra_speech_key"
+        android:summary="@string/summary_pref_suppress_extra_screen_on_speech"
+        android:title="@string/title_pref_suppress_extra_screen_on_speech" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="@bool/pref_tell_time_default"
         android:key="@string/pref_speak_time_key"
         android:title="@string/title_pref_announce_time" />

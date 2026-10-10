@@ -31,6 +31,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.compositor.roledescription.RoleDescriptionExtractor;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
 import com.google.android.accessibility.talkback.imagecaption.ImageContents;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.scripting.Scripts;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
@@ -501,6 +502,14 @@ public class Compositor {
       @Nullable EventId eventId,
       HandleEventOptions options,
       LoadSpeechResultNotifier synthesizeResultNotifier) {
+    // Selection and text interpreters can bypass EventFilter. Apply the wake policy at the common
+    // output boundary, after event interpretation/state updates, for every raw-event speech path.
+    ScreenOnSpeechSuppression wakeSuppression = ScreenOnSpeechSuppression.from(mContext);
+    if (options.eventObject != null
+        && wakeSuppression != null
+        && wakeSuppression.shouldSuppressEvent(options.eventObject)) {
+      return;
+    }
     // Extract options.
     @Nullable EventInterpretation eventInterpretation = options.eventInterpretation;
     if (eventInterpretation != null) {

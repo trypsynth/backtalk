@@ -209,7 +209,7 @@ public class FocusActorForScreenStateChange {
 
     boolean firstTime = screenState.isInterpretFirstTimeWhenWakeUp();
     boolean forceMuteFeedback =
-        FocusActorHelper.shouldMuteFeedbackForFocusedNode(nodeToRestoreFocus, screenState);
+        FocusActorHelper.shouldMuteFeedbackForFocusedNode(service, nodeToRestoreFocus, screenState);
     FocusActionInfo focusActionInfo =
         FOCUS_ACTION_INFO_RESTORED_BUILDER.setForceMuteFeedback(forceMuteFeedback).build();
 
@@ -270,7 +270,7 @@ public class FocusActorForScreenStateChange {
 
     boolean firstTime = screenState.isInterpretFirstTimeWhenWakeUp();
     boolean forceMuteFeedback =
-        FocusActorHelper.shouldMuteFeedbackForFocusedNode(nodeForSync, screenState);
+        FocusActorHelper.shouldMuteFeedbackForFocusedNode(service, nodeForSync, screenState);
     FocusActionInfo focusActionInfo =
         FOCUS_ACTION_INFO_SYNCED_INPUT_FOCUS_BUILDER
             .setForceMuteFeedback(forceMuteFeedback)
@@ -433,7 +433,7 @@ public class FocusActorForScreenStateChange {
 
     boolean firstTime = screenState.isInterpretFirstTimeWhenWakeUp();
     boolean forceMuteFeedback =
-        FocusActorHelper.shouldMuteFeedbackForFocusedNode(nodeToFocus, screenState);
+        FocusActorHelper.shouldMuteFeedbackForFocusedNode(service, nodeToFocus, screenState);
 
     FocusActionInfo focusActionInfo =
         FOCUS_ACTION_INFO_REQUEST_INITIAL_NODE_BUILDER

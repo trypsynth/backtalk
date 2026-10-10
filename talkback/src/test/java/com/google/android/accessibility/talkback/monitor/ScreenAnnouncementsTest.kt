@@ -39,7 +39,13 @@ class ScreenAnnouncementsTest {
     val onScreen = mutableMapOf<String, Boolean>()
     for (i in 0 until switches.length) {
       val switch = switches.item(i) as Element
-      val key = switch.getAttribute("android:key")
+      val resourceKey = switch.getAttribute("android:key")
+      val key = if (resourceKey == "@string/pref_screen_on_suppress_extra_speech_key") {
+        val strings = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+          .parse(File("src/main/res/values/donottranslate.xml")).getElementsByTagName("string")
+        (0 until strings.length).map { strings.item(it) as Element }
+          .first { it.getAttribute("name") == "pref_screen_on_suppress_extra_speech_key" }.textContent
+      } else resourceKey
       if (!key.startsWith("@")) {
         onScreen[key] = switch.getAttribute("android:defaultValue").toBooleanStrict()
       }
@@ -55,6 +61,9 @@ class ScreenAnnouncementsTest {
       ScreenAnnouncementSettings.isOn(prefs, ScreenAnnouncementSettings.SCREEN_OFF_RINGER)
     )
     assertTrue(ScreenAnnouncementSettings.isOn(prefs, ScreenAnnouncementSettings.SAY_UNLOCKED))
+    assertFalse(
+      ScreenAnnouncementSettings.isOn(prefs, ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH)
+    )
     assertEquals(emptyList<StatusItem>(), ScreenAnnouncementSettings.screenOnStatusItems(prefs))
   }
 
@@ -83,5 +92,46 @@ class ScreenAnnouncementsTest {
   fun screenOnStatusNeverRepeatsTheTime() {
     // The time has its own switch and is spoken first.
     assertFalse(StatusItem.TIME in ScreenAnnouncementSettings.SCREEN_ON_STATUS)
+  }
+
+  @Test
+  fun suppressionIsPersistedAndOnlyAppliesBeforeInteractionAfterWake() {
+    val prefs = FakeSharedPreferences()
+    val suppression = ScreenOnSpeechSuppression(prefs, false)
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH, true).apply()
+    assertFalse(suppression.isSuppressing())
+    suppression.onDisplayStateChanged(true)
+    assertTrue(suppression.isSuppressing())
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH, false).apply()
+    assertFalse(suppression.isSuppressing())
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH, true).apply()
+    suppression.onUserInteraction()
+    assertFalse(suppression.isSuppressing())
+  }
+
+  @Test
+  fun suppressionIsInactiveOnWearEvenWithAnImportedEnabledPreference() {
+    val prefs = FakeSharedPreferences()
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH, true).apply()
+    val suppression = ScreenOnSpeechSuppression(prefs, false, isWear = true)
+    suppression.onDisplayStateChanged(true)
+    assertFalse(suppression.isSuppressing())
+  }
+
+  @Test
+  fun suppressionDoesNotChangeSelectedStatusOrUnlockAnnouncements() {
+    val prefs = FakeSharedPreferences()
+    prefs.edit()
+      .putBoolean(ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH, true)
+      .putBoolean("pref_screen_on_battery", true)
+      .putBoolean("pref_screen_on_airplane_mode", true)
+      .apply()
+    assertEquals(
+      listOf(StatusItem.BATTERY, StatusItem.AIRPLANE_MODE),
+      ScreenAnnouncementSettings.screenOnStatusItems(prefs),
+    )
+    assertTrue(ScreenAnnouncementSettings.isOn(prefs, ScreenAnnouncementSettings.SAY_UNLOCKED))
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.SAY_UNLOCKED, false).apply()
+    assertFalse(ScreenAnnouncementSettings.isOn(prefs, ScreenAnnouncementSettings.SAY_UNLOCKED))
   }
 }
