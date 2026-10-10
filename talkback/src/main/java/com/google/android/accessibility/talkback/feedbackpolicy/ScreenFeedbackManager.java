@@ -41,6 +41,7 @@ import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.eventprocessor.EventState;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorAccessibilityHints;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.gesture.GestureHints;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
@@ -331,6 +332,11 @@ public class ScreenFeedbackManager
       logCompose(logDepth, "composeFeedback", "interpretation=%s", interpretation);
 
       Feedback feedback = new Feedback();
+
+      // Keep window interpretation and focus restoration intact; only omit automatic wake speech.
+      if (ScreenOnSpeechSuppression.isSuppressing(service)) {
+        return feedback;
+      }
 
       if (isWakeUpForWear(interpretation)) {
         // Only announce unread notification feedback on wake up experience for wear and have early

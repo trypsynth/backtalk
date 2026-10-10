@@ -357,6 +357,10 @@ Backtalk doesn't stop speech when something covers the proximity sensor. To turn
 
 In **Verbosity** > **Screen on and off**, you can choose what Backtalk says when the screen turns off, when it turns on, and when you unlock the phone. When the screen turns off, Backtalk says "Screen off" and the ringer mode. When the screen turns on, it says the time, and it can also say the battery, the Wi-Fi network, the mobile network, the ringer and Do Not Disturb, and airplane mode, after the time in the same announcement. When you unlock the phone, it says "Device unlocked". Each of these has its own switch. By default, everything except the extra screen-on items is on.
 
+On phones, under **When the screen turns on**, **Suppress extra speech** limits automatic wake speech to the time and status items you selected. It skips lock-screen information, such as the carrier and Extend Unlock, and the automatically restored focused item. Focus still returns, and swiping or touching items speaks normally. With no screen-on items selected, waking is silent. This option is off by default and is hidden and inactive on Wear OS. The separate **Say "Device unlocked"** switch still controls the unlock announcement.
+
+Some phones send several lock-screen announcements and focus events as they wake. Suppression continues through those automatic events until you start interacting by touch, gesture, a navigation key, or a focus navigation command. Notifications and the selected time and status announcements still speak normally.
+
 These switches are separate from **Status readout**, so the status gesture can say different things. Backtalk doesn't make the screen-on announcement during calls, and the lock screen no longer cuts off "Screen off".
 
 ## Pausing Backtalk

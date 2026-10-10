@@ -183,6 +183,8 @@ public class TalkBackPreferenceFilter {
     // A watch is not held to the ear for calls.
     SPEAKERPHONE_AWAY_FROM_EAR(
         R.string.pref_speakerphone_away_from_ear_key, HIDDEN_ON_WATCH | HIDDEN_ON_TV),
+    SCREEN_ON_SUPPRESS_EXTRA_SPEECH(
+        R.string.pref_screen_on_suppress_extra_speech_key, HIDDEN_ON_WATCH),
     // Pausing is turned off on watches, so there is nothing to resume.
     RESUME_BACKTALK(R.string.pref_resume_backtalk_key, HIDDEN_ON_WATCH | HIDDEN_ON_TV),
     // Pausing is turned off on TVs too: the volume keys often go to the TV or a soundbar, and there

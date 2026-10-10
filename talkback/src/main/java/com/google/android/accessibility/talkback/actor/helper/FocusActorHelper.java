@@ -29,6 +29,7 @@ import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenState;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
 import com.google.android.accessibility.talkback.keyboard.KeyComboManagerHelper;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
 import com.google.android.accessibility.utils.BuildVersionUtils;
 import com.google.android.accessibility.utils.FormFactorUtils;
@@ -45,11 +46,18 @@ public final class FocusActorHelper {
    * Checks whether the feedback for the focused node should be muted.
    *
    * @param nodeToFocus the node to check
+   * @param context the context used to read screen announcement preferences
    * @param screenState the screen state for current active window
    * @return {@code true} if the focused node should be muted.
    */
   public static boolean shouldMuteFeedbackForFocusedNode(
-      AccessibilityNodeInfoCompat nodeToFocus, ScreenState screenState) {
+      Context context, AccessibilityNodeInfoCompat nodeToFocus, @Nullable ScreenState screenState) {
+    if (ScreenOnSpeechSuppression.isSuppressing(context)) {
+      return true;
+    }
+    if (screenState == null) {
+      return false;
+    }
     // We mute the feedback of focused node only when it wakes up on the Home Screen and not on CB.
     return FormFactorUtils.isAndroidWear()
         && screenState.isInterpretFirstTimeWhenWakeUp()

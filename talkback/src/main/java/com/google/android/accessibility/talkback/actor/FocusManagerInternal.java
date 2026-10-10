@@ -332,9 +332,8 @@ public class FocusManagerInternal {
 
     boolean firstTime =
         stableScreenState != null && stableScreenState.isInterpretFirstTimeWhenWakeUp();
-    // Cell broadcast is an emergent announcement, so we don't mute it.
     boolean forceMuteFeedback =
-        FocusActorHelper.shouldMuteFeedbackForFocusedNode(nodeToFocus, stableScreenState);
+        FocusActorHelper.shouldMuteFeedbackForFocusedNode(service, nodeToFocus, stableScreenState);
 
     FocusActionInfo focusActionInfo =
         FocusActionInfo.builder()
