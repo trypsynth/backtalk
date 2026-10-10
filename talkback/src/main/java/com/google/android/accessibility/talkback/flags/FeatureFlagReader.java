@@ -253,10 +253,6 @@ public final class FeatureFlagReader {
     return false;
   }
 
-  public static boolean requestStateChangeInSameThread(Context context) {
-    return true;
-  }
-
   public static boolean logEventBasedLatency(Context context) {
     return false;
   }

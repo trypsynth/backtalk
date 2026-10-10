@@ -324,8 +324,6 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 import kotlin.Unit;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -4251,7 +4249,6 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
 
     List<Display> displays = WindowUtils.getAllDisplays(getApplicationContext());
-    Executor gestureExecutor = Executors.newSingleThreadExecutor();
     for (Display display : displays) {
       @Nullable TouchInteractionController touchInteractionController =
           getTouchInteractionController(display.getDisplayId());
@@ -4263,7 +4260,6 @@ public class TalkBackService extends AccessibilityServiceCompat
               display,
               prefs,
               touchInteractionController,
-              gestureExecutor,
               this,
               primesController,
               new TouchExplorationModeFailureReporter(analytics),
@@ -4272,7 +4268,9 @@ public class TalkBackService extends AccessibilityServiceCompat
       touchInteractionMonitor.setMultiFingerGesturesEnabled(true);
       touchInteractionMonitor.setTwoFingerPassthroughEnabled(true);
       touchInteractionMonitor.setServiceHandlesDoubleTap(true);
-      touchInteractionController.registerCallback(gestureExecutor, touchInteractionMonitor);
+      // No executor: the controller calls the monitor on the main thread as each event comes in, in
+      // order with the timeouts that gesture detection counts there.
+      touchInteractionController.registerCallback(/* executor= */ null, touchInteractionMonitor);
       displayIdToTouchInteractionMonitors.put(display.getDisplayId(), touchInteractionMonitor);
       userInterface.registerListener(touchInteractionMonitor);
       LogUtils.i(TAG, "Enabling service gesture detection on display %d", display.getDisplayId());
