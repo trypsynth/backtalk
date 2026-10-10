@@ -9,6 +9,7 @@ import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntConsumer;
 
 /** System/global action performer */
 public final class SystemActionPerformer {
@@ -50,12 +51,16 @@ public final class SystemActionPerformer {
 
   /** Actor-state passed in from pipeline. */
   private ActorStateWritable actorState;
+  private IntConsumer beforeActionListener;
 
   public SystemActionPerformer(AccessibilityService service) {
     this.service = service;
   }
 
   public boolean performAction(int id) {
+    if (beforeActionListener != null) {
+      beforeActionListener.accept(id);
+    }
     if (actorState != null) {
       actorState.setLastSystemAction(id);
     }
@@ -82,5 +87,9 @@ public final class SystemActionPerformer {
 
   public void setActorState(ActorStateWritable actorState) {
     this.actorState = actorState;
+  }
+
+  public void setBeforeActionListener(IntConsumer listener) {
+    beforeActionListener = listener;
   }
 }
