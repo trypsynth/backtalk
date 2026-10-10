@@ -511,6 +511,8 @@ Scripts never change Backtalk's own screens, so the Scripts screen always works.
 
 Speech requested with `backtalk.speak` can be heard while media is playing, including queued and interrupting requests. The script still needs the Speech permission, and muting speech, recording, voice recognition and phone calls retain their existing speech policy.
 
+Hooks that change or suppress speech take priority over queued script work and share a 30-millisecond deadline. If the deadline expires or a long task is already running, Backtalk uses its normal speech, so scripts should keep these hooks fast.
+
 Scripts run on phones and tablets only. [Writing Backtalk scripts](docs/scripting.md) describes the whole API, and [docs/scripting/examples](docs/scripting/examples) has a script to start from.
 
 ### Inspect focused item and Copy screen tree
