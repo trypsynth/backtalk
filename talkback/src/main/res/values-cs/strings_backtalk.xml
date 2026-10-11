@@ -119,14 +119,4 @@
     <string name="template_setting_limit">%1$s, %2$s</string>
     <string name="title_pref_speak_nav_bar_buttons">Oznamovat tlačítka navigační lišty</string>
     <string name="summary_pref_speak_nav_bar_buttons">Když je aktivace zvednutím zapnutá na navigační liště, oznámit tlačítko, které klepnutí stiskne, například Zpět nebo Plocha.</string>
-    <string name="title_pref_speech_control">Povolit mluvení jiným aplikacím</string>
-    <string name="summary_pref_speech_control">Aplikace, které povolíte, mohou říkat text vaším hlasem Backtalku. Před každým textem uslyšíte zvuk a při zamknutém zařízení se nic neřekne.</string>
-    <string name="speech_control_apps_category">Aplikace</string>
-    <string name="speech_control_no_apps">Zatím žádná aplikace nepožádala o mluvení.</string>
-    <string name="speech_control_ask_title">Povolit aplikaci %1$s mluvit prostřednictvím Backtalku?</string>
-    <string name="speech_control_ask_text">Může říkat text vaším hlasem Backtalku. Můžete to změnit v Rozšířených nastaveních.</string>
-    <string name="speech_control_allow">Povolit</string>
-    <string name="speech_control_deny">Nepovolit</string>
-    <string name="permission_speak_label">mluvit prostřednictvím Backtalku</string>
-    <string name="permission_speak_description">Umožňuje aplikaci požádat o říkání textu vaším hlasem Backtalku. Backtalk se vás zeptá, než aplikace může mluvit.</string>
 </resources>
