@@ -2223,16 +2223,18 @@ public class TalkBackService extends AccessibilityServiceCompat
 
     // Construct pipeline.
     SystemActionPerformer systemActionPerformer = new SystemActionPerformer(this);
-    systemActionPerformer.setBeforeActionListener(
-        action -> {
-          if (screenFocusRestorer != null) {
-            if (action == GLOBAL_ACTION_BACK) {
-              screenFocusRestorer.requestBack();
-            } else {
-              screenFocusRestorer.onUserInteraction();
+    if (!FormFactorUtils.isAndroidWear() && !FormFactorUtils.isAndroidTv()) {
+      systemActionPerformer.setBeforeActionListener(
+          action -> {
+            if (screenFocusRestorer != null) {
+              if (action == GLOBAL_ACTION_BACK) {
+                screenFocusRestorer.requestBack();
+              } else {
+                screenFocusRestorer.onUserInteraction();
+              }
             }
-          }
-        });
+          });
+    }
     pipeline =
         new Pipeline(
             this,
@@ -2496,11 +2498,13 @@ public class TalkBackService extends AccessibilityServiceCompat
     // in the order they are added.
     eventFilter =
         new EventFilter(this, compositor, touchMonitor, globalVariables, earlyFocusSpeech);
-    screenFocusRestorer =
-        new ScreenFocusRestorer(
-            this, prefs, pipeline.getFeedbackReturner(), pipeline.getActorState().getFocusHistory());
-    userInterface.registerListener(screenFocusRestorer);
-    focuser.setBeforeActivationListener(screenFocusRestorer::rememberBeforeActivation);
+    if (!FormFactorUtils.isAndroidWear() && !FormFactorUtils.isAndroidTv()) {
+      screenFocusRestorer =
+          new ScreenFocusRestorer(
+              this, prefs, pipeline.getFeedbackReturner(), pipeline.getActorState().getFocusHistory());
+      userInterface.registerListener(screenFocusRestorer);
+      focuser.setBeforeActivationListener(screenFocusRestorer::rememberBeforeActivation);
+    }
     focuser.setFocusSetListener(
         (node, info, eventId, actionTime) -> {
           eventFilter.onAccessibilityFocusSet(
@@ -2510,7 +2514,9 @@ public class TalkBackService extends AccessibilityServiceCompat
               actionTime,
               /* continuousReading= */ fullScreenReadActor != null
                   && fullScreenReadActor.isActive());
-          screenFocusRestorer.onFocusSet(node, info, actionTime);
+          if (screenFocusRestorer != null) {
+            screenFocusRestorer.onFocusSet(node, info, actionTime);
+          }
         });
     eventFilter.setTargetPredictor(directionNavigationActor::predictTarget);
     eventFilter.setFingerDownSupplier(

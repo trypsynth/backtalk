@@ -32,7 +32,8 @@ import java.security.MessageDigest
 /**
  * Complements window history with content bookmarks. Runs after normal initial-focus processing,
  * so a returning screen can replace automatic toolbar focus without changing dialog/IME policy.
- * Session bookmarks retain values only; a pending scroll briefly retains its action target.
+ * Bookmarks retain values only. The latest user focus is held until activation or Back, when
+ * its identity is checked and described; ordinary focus and content events never scan screens.
  */
 class ScreenFocusRestorer internal constructor(
   private val service: TalkBackService,
@@ -42,6 +43,7 @@ class ScreenFocusRestorer internal constructor(
   private val history: ScreenFocusBookmarks,
   private val available: () -> Boolean,
   private val readContext: (() -> Context?)?,
+  private val windows: WindowAccess = ServiceWindowAccess(service),
 ) : UserInputEventListener {
   constructor(service: TalkBackService, prefs: SharedPreferences,
     pipeline: Pipeline.FeedbackReturner, focusHistory: AccessibilityFocusActionHistory.Reader) :
@@ -67,8 +69,13 @@ class ScreenFocusRestorer internal constructor(
   private var triedPosition = false
   private var waitingForScroll = false
   private var stopped = false
-  private var cancelledBeforeEnter = false
-  private var cancelledScreen: RememberedScreen? = null
+  private var generation = 0L
+  private var observedContext: Context? = null
+  private var ordinaryWindow = false
+  private var cachedFocus: CachedFocus? = null
+  private var awaitingWebFocus = false
+  private var awaitingWebScreen: RememberedScreen? = null
+  private var activationTime = 0L
   private var lastWindowId: Int? = null
   private var lastRecordedFocusTime = Long.MIN_VALUE
   private var backRequestedAt: Long? = null
@@ -77,13 +84,44 @@ class ScreenFocusRestorer internal constructor(
   private var activationOrigin: RememberedScreen? = null
   private var retryAt = Long.MAX_VALUE
   private val retry = Runnable { retryAt = Long.MAX_VALUE; attemptRestore() }
-  private val releaseScroll = Runnable { scrollNode = null; waitingForScroll = false }
+  private val deadline = Runnable { onUserInteraction() }
+  private val releaseWebFocus = Runnable { awaitingWebFocus = false; awaitingWebScreen = null }
 
   internal data class Context(
     val root: AccessibilityNodeInfoCompat,
     val screen: RememberedScreen,
     val anchors: Set<String>,
   )
+
+  /** Boundary for framework reads; tests feed actual trees through the production capture path. */
+  internal interface WindowAccess {
+    fun activeRoot(): AccessibilityNodeInfoCompat?
+    fun rootFor(node: AccessibilityNodeInfoCompat): AccessibilityNodeInfoCompat?
+  }
+
+  private class ServiceWindowAccess(private val service: TalkBackService) : WindowAccess {
+    override fun activeRoot() = service.rootInActiveWindow?.let(AccessibilityNodeInfoCompat::wrap)
+    override fun rootFor(node: AccessibilityNodeInfoCompat) = node.window?.root
+  }
+
+  private data class FocusIdentity(val packageName: String, val windowId: Int,
+    val uniqueId: String, val viewId: String, val className: String, val role: Int,
+    val text: String, val description: String)
+
+  private data class CachedFocus(val node: AccessibilityNodeInfoCompat, val identity: FocusIdentity)
+
+  private fun identity(node: AccessibilityNodeInfoCompat) = FocusIdentity(
+    node.packageName?.toString().orEmpty(), node.windowId, node.uniqueId.orEmpty(),
+    node.viewIdResourceName.orEmpty(), node.className?.toString().orEmpty(), Role.getRole(node),
+    boundedIdentity(node.text?.toString().orEmpty()),
+    boundedIdentity(node.contentDescription?.toString().orEmpty()))
+
+  private fun enabled() = !stopped && !FormFactorUtils.isAndroidWear() && !FormFactorUtils.isAndroidTv()
+
+  private fun authorized(now: Long = SystemClock.uptimeMillis()): Boolean =
+    history.pending(now) != null || backRequestedAt?.let {
+      now >= it && now - it < ScreenFocusBookmarks.RESTORE_TIMEOUT_MS
+    } == true
 
   override fun touchInteractionState(active: Boolean) {
     if (active) onUserInteraction()
@@ -101,14 +139,17 @@ class ScreenFocusRestorer internal constructor(
   }
 
   fun onUserInteraction() {
+    generation++
     backRequestedAt = null
-    if (transitionQueued || retryAt != Long.MAX_VALUE) {
-      cancelledBeforeEnter = true
-      cancelledScreen = context()?.screen
-    }
+    backFrom = null
+    backWindowId = null
+    observedContext = null
+    awaitingWebFocus = false
+    awaitingWebScreen = null
     history.cancel()
     handler.removeCallbacks(retry)
-    handler.removeCallbacks(releaseScroll)
+    handler.removeCallbacks(deadline)
+    handler.removeCallbacks(releaseWebFocus)
     retryAt = Long.MAX_VALUE
     transitionQueued = false
     scrollNode = null
@@ -118,11 +159,10 @@ class ScreenFocusRestorer internal constructor(
   /** Also called synchronously before the app's event for a successful focus action arrives. */
   fun onFocusSet(node: AccessibilityNodeInfoCompat, info: FocusActionInfo,
     actionTime: Long = SystemClock.uptimeMillis()) {
-    if (stopped || restoring) return
-    val active = context()
-    if (active == null || node.packageName != active.root.packageName ||
-      node.windowId != active.root.windowId) {
+    if (!enabled() || restoring) return
+    if (node.packageName?.toString() == "com.android.systemui") {
       onUserInteraction()
+      cachedFocus = null
       return
     }
     if (info.sourceAction == FocusActionInfo.SCREEN_STATE_CHANGE) {
@@ -132,6 +172,10 @@ class ScreenFocusRestorer internal constructor(
       return
     }
     if (!isUserFocus(info)) return
+    val observed = observedContext
+    if (authorized() && observed != null && node.packageName == observed.root.packageName &&
+      node.windowId == observed.root.windowId && node != observed.root &&
+      !AccessibilityNodeInfoUtils.hasAncestor(node, observed.root)) return
     // Direct show/scroll actions can be followed by the manual-scroll interpreter's focus action.
     // Real input clears scrollNode first, so this exemption cannot override a user's gesture.
     if (info.sourceAction == FocusActionInfo.MANUAL_SCROLL &&
@@ -140,71 +184,109 @@ class ScreenFocusRestorer internal constructor(
       if (scrollNode == null) schedule()
       return
     }
-    // A focus action can precede attachment/reconstruction of its node. Only deduplicate its
-    // later event after recording actually succeeds, allowing that event to finish the first save.
-    if (recordPosition(node)) {
+    val finishActivation = awaitingWebFocus && actionTime <= activationTime &&
+      (node.isHeading || WebInterfaceUtils.supportsWebActions(node))
+    val expectedScreen = awaitingWebScreen
+    onUserInteraction()
+    if (!node.isPassword && !node.isEditable && Role.getRole(node) != Role.ROLE_WEB_VIEW) {
+      cachedFocus = CachedFocus(AccessibilityNodeInfoCompat.obtain(node), identity(node))
       lastRecordedFocusTime = maxOf(lastRecordedFocusTime, actionTime)
       activationOrigin = null
+      // Firefox may resolve a pending HTML navigation only after native activation. This is
+      // still part of that activation, rather than work performed on every ordinary swipe.
+      if (finishActivation) {
+        activationOrigin = recordPosition(node, expectedScreen)?.screen
+        cachedFocus = null
+      }
+    } else {
+      cachedFocus = null
     }
   }
 
   /** Capture initial/app-assigned focus too when the user activates it without first swiping. */
   fun rememberBeforeActivation(node: AccessibilityNodeInfoCompat) {
+    if (!enabled()) return
     if (isBackControl(node)) {
       requestBack()
       return
     }
-    val recorded = recordPosition(node)
-    if (!recorded && !isDocument(node)) return
-    if (recorded) focusHistory.lastFocusActionRecord?.let { record ->
+    val document = isDocument(node) && (Role.getRole(node) == Role.ROLE_WEB_VIEW ||
+      (!node.isHeading && !node.isClickable && node.childCount > 0))
+    val cached = cachedFocus
+    val recorded = if (document) {
+      if (cached != null && cached.identity.packageName == node.packageName?.toString() &&
+        cached.identity.windowId == node.windowId) recordCachedPosition() else null
+    } else recordPosition(node)
+    if (recorded == null && !document) return
+    val origin = recorded ?: context(node)
+    onUserInteraction()
+    if (recorded != null) focusHistory.lastFocusActionRecord?.let { record ->
       if (record.focusedNode == node) {
         lastRecordedFocusTime = maxOf(lastRecordedFocusTime, record.actionTime)
       }
     }
-    activationOrigin = context()?.screen
+    activationOrigin = origin?.screen
+    awaitingWebFocus = document && recorded == null && origin != null
+    awaitingWebScreen = if (awaitingWebFocus) origin?.screen else null
+    activationTime = SystemClock.uptimeMillis()
+    if (awaitingWebFocus) handler.postDelayed(releaseWebFocus, ScreenFocusBookmarks.RESTORE_TIMEOUT_MS)
+    cachedFocus = null
   }
 
   private fun isBackControl(node: AccessibilityNodeInfoCompat): Boolean {
     if (Role.getRole(node) != Role.ROLE_BUTTON && Role.getRole(node) != Role.ROLE_IMAGE_BUTTON) return false
     return node.viewIdResourceName == "android:id/home" ||
       node.viewIdResourceName?.substringAfterLast('/') in setOf("back", "back_button", "navigate_up") ||
-      label(node) in setOf("Back", "Navigate up")
+      label(node) == service.getString(androidx.appcompat.R.string.abc_action_bar_up_description)
   }
 
-  private fun recordPosition(node: AccessibilityNodeInfoCompat): Boolean {
-    if (stopped) return false
-    val context = context() ?: return false
-    if (node.windowId != context.root.windowId || node.packageName != context.root.packageName) return false
+  private fun recordCachedPosition(): Context? {
+    val cached = cachedFocus ?: return null
+    // A framework handle may now represent a different recycled row. Never describe or save it
+    // against the current screen until the cheap identity snapshot has survived a refresh.
+    if (!cached.node.refresh() || identity(cached.node) != cached.identity) return null
+    return recordPosition(cached.node)
+  }
+
+  private fun recordPosition(node: AccessibilityNodeInfoCompat,
+    expectedScreen: RememberedScreen? = null): Context? {
+    if (!enabled()) return null
+    val context = context(node) ?: return null
+    if (expectedScreen != null && context.screen != expectedScreen) return null
+    if (node.windowId != context.root.windowId || node.packageName != context.root.packageName) return null
     if (!node.refresh() || (node != context.root &&
         !AccessibilityNodeInfoUtils.hasAncestor(node, context.root))) {
-      return false
+      return null
     }
     if (node.isPassword || node.isEditable ||
       (isDocument(node) && (Role.getRole(node) == Role.ROLE_WEB_VIEW ||
         (!node.isHeading && !node.isClickable && node.childCount > 0)))) {
-      return false
+      return null
     }
     val item = describe(node)
-    if (!item.hasContent && item.uniqueId.isEmpty()) return false
-    onUserInteraction()
+    if (!item.hasContent && item.uniqueId.isEmpty()) return null
     history.enter(context.screen, SystemClock.uptimeMillis(), allowRestore = false)
     history.remember(context.screen, context.anchors, item)
     lastWindowId = context.root.windowId
-    return true
+    return context
   }
 
   /** Only explicit Back (gesture, key, or app Back button) authorizes a restoration attempt. */
   fun requestBack() {
-    val departing = context()
-    // User focus and activation already record positions. Reading native focus here can return
-    // a WebView container instead of the actual HTML heading and erase the browser bookmark.
+    if (!enabled()) return
     onUserInteraction()
+    val departing = recordCachedPosition() ?: context()
+    cachedFocus = null
+    awaitingWebFocus = false
+    if (departing == null && ordinaryWindow) return
     backFrom = if (departing?.screen == activationOrigin) null else departing?.screen
     backWindowId = if (backFrom != null) departing?.root?.windowId else null
     activationOrigin = null
     backRequestedAt = SystemClock.uptimeMillis()
-    cancelledBeforeEnter = false
-    cancelledScreen = null
+    observedContext = departing
+    // Failed searches/actions can cancel history before a retry is posted. Release every
+    // temporary node and context at the original deadline even in those failure paths.
+    handler.postDelayed(deadline, ScreenFocusBookmarks.RESTORE_TIMEOUT_MS)
     schedule()
   }
 
@@ -215,7 +297,7 @@ class ScreenFocusRestorer internal constructor(
   }
 
   fun onAccessibilityEvent(event: AccessibilityEvent) {
-    if (stopped) return
+    if (!enabled()) return
     when (event.eventType) {
       AccessibilityEvent.TYPE_TOUCH_INTERACTION_START,
       AccessibilityEvent.TYPE_VIEW_HOVER_ENTER -> onUserInteraction()
@@ -231,14 +313,13 @@ class ScreenFocusRestorer internal constructor(
       AccessibilityEvent.TYPE_VIEW_CLICKED -> {
         val source = event.source?.let(AccessibilityNodeInfoCompat::wrap)
         // This is the event produced by the Back button whose activation armed the request.
-        if (backRequestedAt == null || source == null || !isBackControl(source)) onUserInteraction()
+        if (!authorized() || source == null || !isBackControl(source)) onUserInteraction()
       }
       AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED -> {
         val focused = event.source?.let(AccessibilityNodeInfoCompat::wrap)
-        val active = context()
-        if (focused != null && (active == null || focused.packageName != active.root.packageName ||
-            focused.windowId != active.root.windowId)) {
+        if (focused?.packageName?.toString() == "com.android.systemui") {
           onUserInteraction()
+          cachedFocus = null
           return
         }
         // Firefox's HTML navigation is asynchronous and bypasses the synchronous focus-set hook.
@@ -318,24 +399,29 @@ class ScreenFocusRestorer internal constructor(
     val now = SystemClock.uptimeMillis()
     if (history.pending(now) == null &&
       backRequestedAt?.let { now - it < ScreenFocusBookmarks.RESTORE_TIMEOUT_MS } != true) return null
-    val active = context() ?: return null
+    val active = observedContext ?: return null
     if (active.screen.document.isEmpty() && (backFrom?.packageName != active.screen.packageName ||
         backFrom?.document.isNullOrEmpty())) return null
     return active
   }
 
   private fun queueTransition() {
+    generation++
+    if (!authorized()) {
+      cachedFocus = null
+      awaitingWebFocus = false
+      awaitingWebScreen = null
+      observedContext = null
+      return
+    }
     transitionQueued = true
     // Window/title events may repeat throughout reconstruction. Only a changed screen or
     // recreated window starts a new attempt; duplicate events cannot reset its deadline or input veto.
-    // Observe departures immediately, even if the other app/page is only open for less than
-    // the settling delay. Restoration itself still waits for normal initial focus to finish.
-    observeScreen(context(), SystemClock.uptimeMillis())
+    // Only a Back attempt pays for observing a window; all other transitions are bookkeeping.
     schedule()
   }
 
   private fun observeScreen(context: Context?, now: Long) {
-    if (activationOrigin != null && context?.screen != activationOrigin) activationOrigin = null
     val requestedAt = backRequestedAt
     val validBack = requestedAt != null && now - requestedAt < ScreenFocusBookmarks.RESTORE_TIMEOUT_MS
     if (!validBack) backRequestedAt = null
@@ -349,12 +435,6 @@ class ScreenFocusRestorer internal constructor(
     if (returning) backRequestedAt = null
     lastWindowId = context?.root?.windowId
     if (changed) {
-      // Input on the departing screen must not veto a later return. Input already performed
-      // on the destination still cancels restoration, including content-only transitions.
-      if (cancelledBeforeEnter && cancelledScreen != context?.screen) {
-        cancelledBeforeEnter = false
-        cancelledScreen = null
-      }
       triedPosition = false
       scrollNode = null
       waitingForScroll = false
@@ -362,6 +442,7 @@ class ScreenFocusRestorer internal constructor(
   }
 
   private fun schedule(delay: Long = SETTLE_DELAY_MS) {
+    if (!enabled() || !authorized()) return
     // Do not debounce forever when pages continuously update.
     val at = SystemClock.uptimeMillis() + delay
     if (at >= retryAt) return
@@ -376,19 +457,22 @@ class ScreenFocusRestorer internal constructor(
       return
     }
     val now = SystemClock.uptimeMillis()
-    val context = context()
-    observeScreen(context, now)
-    transitionQueued = false
-    if (cancelledBeforeEnter) {
-      history.cancel()
-      cancelledBeforeEnter = false
-      cancelledScreen = null
-    }
-    if (context == null) {
-      scrollNode = null
-      waitingForScroll = false
+    if (!authorized(now)) {
+      onUserInteraction()
       return
     }
+    val attemptGeneration = generation
+    val context = context()
+    if (context == null) {
+      // A browser may temporarily have no root while reconstructing a history entry. Keep
+      // the original deadline and wait for content events, but never cross into an ordinary
+      // dialog, keyboard, or system window with this supplementary restoration path.
+      if (ordinaryWindow) onUserInteraction()
+      return
+    }
+    observedContext = context
+    observeScreen(context, now)
+    transitionQueued = false
     val bookmark = history.pending(now) ?: run {
       scrollNode = null
       waitingForScroll = false
@@ -423,7 +507,7 @@ class ScreenFocusRestorer internal constructor(
         node.windowId == context.root.windowId &&
         AccessibilityNodeInfoUtils.hasAncestor(node, context.root)) {
         if (history.pending(SystemClock.uptimeMillis()) == null ||
-          context()?.screen != context.screen) {
+          generation != attemptGeneration) {
           history.cancel()
           return
         }
@@ -451,7 +535,7 @@ class ScreenFocusRestorer internal constructor(
           supports(node, AccessibilityActionCompat.ACTION_SHOW_ON_SCREEN.id) &&
           !waitingForScroll && history.beginScroll(now, viewport)) {
           if (requestScroll(node, AccessibilityActionCompat.ACTION_SHOW_ON_SCREEN.id, null,
-              context)) return
+              context, attemptGeneration)) return
           history.cancel()
           return
         }
@@ -481,7 +565,7 @@ class ScreenFocusRestorer internal constructor(
             }
           }
           if (requestScroll(container, AccessibilityActionCompat.ACTION_SCROLL_TO_POSITION.id,
-              args, context)) return
+              args, context, attemptGeneration)) return
           // A rejected action terminates this attempt instead of issuing a second action against
           // the same viewport (which would also bypass the ten-action budget).
           history.cancel()
@@ -491,7 +575,7 @@ class ScreenFocusRestorer internal constructor(
           bookmark.item.row < rows.minOf { it.row }
         val action = if (backwards) AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD
           else AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD
-        if (requestScroll(container, action, null, context)) return
+        if (requestScroll(container, action, null, context, attemptGeneration)) return
         history.cancel()
       }
     }
@@ -518,9 +602,9 @@ class ScreenFocusRestorer internal constructor(
     node.actionList.any { it.id == action }
 
   private fun requestScroll(node: AccessibilityNodeInfoCompat, action: Int, args: Bundle?,
-    expected: Context): Boolean {
+    expected: Context, attemptGeneration: Long): Boolean {
     if (history.pending(SystemClock.uptimeMillis()) == null) return false
-    if (context()?.screen != expected.screen || !node.refresh() ||
+    if (generation != attemptGeneration || !node.refresh() ||
       (node != expected.root && !AccessibilityNodeInfoUtils.hasAncestor(node, expected.root))) {
       history.cancel()
       return false
@@ -530,14 +614,9 @@ class ScreenFocusRestorer internal constructor(
     scrollNode = AccessibilityNodeInfoCompat.obtain(node)
     scrollTime = SystemClock.uptimeMillis()
     waitingForScroll = true
-    // A no-progress retry can cancel history before the deadline callback is scheduled. Release
-    // the temporary node independently, while recognizing late automatic scroll focus until then.
-    handler.removeCallbacks(releaseScroll)
-    handler.postDelayed(releaseScroll, history.remaining(scrollTime))
     val success = pipeline.returnFeedback(Performance.EVENT_ID_UNTRACKED,
       Feedback.nodeAction(node, action, args))
     if (!success) {
-      handler.removeCallbacks(releaseScroll)
       waitingForScroll = false
       scrollNode = null
     } else {
@@ -548,14 +627,26 @@ class ScreenFocusRestorer internal constructor(
     return success
   }
 
-  private fun context(): Context? {
+  private fun context(node: AccessibilityNodeInfoCompat? = null): Context? {
+    ordinaryWindow = false
+    if (!enabled()) return null
     if (readContext != null) return readContext.invoke()
-    if (FormFactorUtils.isAndroidTv()) return null
-    val root = service.rootInActiveWindow?.let(AccessibilityNodeInfoCompat::wrap) ?: return null
+    val root = (if (node != null) windows.rootFor(node) ?: windows.activeRoot()
+      else windows.activeRoot()) ?: return null
+    // Some browser virtual nodes cannot resolve their window root. The active root is a safe
+    // fallback only when it belongs to that exact window and package, including split screen.
+    if (node != null && (root.windowId != node.windowId || root.packageName != node.packageName)) return null
     val window = root.window ?: return null
-    if (window.type != AccessibilityWindowInfo.TYPE_APPLICATION) return null
+    if (window.type != AccessibilityWindowInfo.TYPE_APPLICATION) {
+      ordinaryWindow = true
+      return null
+    }
     val packageName = root.packageName?.toString().orEmpty()
-    if (packageName.isEmpty() || packageName == service.packageName) return null
+    if (packageName.isEmpty() || packageName == service.packageName ||
+      packageName == "com.android.systemui") {
+      ordinaryWindow = true
+      return null
+    }
     return captureContext(root, window.title?.toString().orEmpty())
   }
 
@@ -636,6 +727,7 @@ class ScreenFocusRestorer internal constructor(
     var child = node
     var previous = ""
     var next = ""
+    var siblingBudget = 100
     repeat(8) {
       val parent = ancestor ?: return@repeat
       ancestors.add(containerId(parent))
@@ -650,10 +742,15 @@ class ScreenFocusRestorer internal constructor(
       }
       // Use siblings of the item wrapper as well as siblings of its focused child.
       if (it == 0 || nearestContainer) {
-        for (index in 0 until minOf(parent.childCount, 100)) {
+        for (index in 0 until minOf(parent.childCount, siblingBudget)) {
+          siblingBudget--
           if (parent.getChild(index) == child) {
-            if (index > 0) previous = parent.getChild(index - 1)?.let(::itemText).orEmpty()
-            if (index + 1 < parent.childCount) {
+            if (index > 0 && siblingBudget > 0) {
+              siblingBudget--
+              previous = parent.getChild(index - 1)?.let(::itemText).orEmpty()
+            }
+            if (index + 1 < parent.childCount && siblingBudget > 0) {
+              siblingBudget--
               next = parent.getChild(index + 1)?.let(::itemText).orEmpty()
             }
             break
@@ -722,6 +819,10 @@ class ScreenFocusRestorer internal constructor(
     stopped = true
     handler.removeCallbacksAndMessages(null)
     scrollNode = null
+    cachedFocus = null
+    observedContext = null
+    awaitingWebFocus = false
+    awaitingWebScreen = null
     lastWindowId = null
     history.clear()
   }

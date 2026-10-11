@@ -293,6 +293,7 @@ class ScreenFocusRestorerTest {
     val focused = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
     shadowOf(focused).setSourceNode(post.unwrap())
     restorer.onAccessibilityEvent(focused)
+    restorer.rememberBeforeActivation(post)
     assertEquals(1, bookmarks.size)
     val front = currentContext!!
     currentContext = front.copy(screen = front.screen.copy(pane = "Comments"))
@@ -937,6 +938,7 @@ class ScreenFocusRestorerTest {
     restorer.onUserInteraction()
     restorer.onFocusSet(automaticTop,
       FocusActionInfo.builder().setSourceAction(FocusActionInfo.MANUAL_SCROLL).build())
+    restorer.rememberBeforeActivation(automaticTop)
     bookmarks.enter(currentContext!!.screen, now, true)
     assertEquals("Automatic top", bookmarks.pending(now)!!.item.text)
   }
@@ -952,6 +954,7 @@ class ScreenFocusRestorerTest {
     val newFocus = node("Later focus", parent = currentContext!!.root)
     restorer.onFocusSet(newFocus,
       FocusActionInfo.builder().setSourceAction(FocusActionInfo.MANUAL_SCROLL).build())
+    restorer.rememberBeforeActivation(newFocus)
     val now = android.os.SystemClock.uptimeMillis()
     bookmarks.enter(currentContext!!.screen, now, true)
     assertEquals("Later focus", bookmarks.pending(now)!!.item.text)
@@ -1057,6 +1060,7 @@ class ScreenFocusRestorerTest {
     currentContext = restorer.captureContext(root, "Browser")
     restorer.onFocusSet(heading,
       FocusActionInfo.builder().setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION).build())
+    restorer.rememberBeforeActivation(document)
     document.text = "Page B"
     currentContext = restorer.captureContext(root, "Browser")
     event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
@@ -1223,6 +1227,7 @@ class ScreenFocusRestorerTest {
     val focused = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED)
     shadowOf(focused).setSourceNode(heading.unwrap())
     restorer.onAccessibilityEvent(focused)
+    restorer.rememberBeforeActivation(container)
     assertEquals(1, bookmarks.size)
     currentContext = page.copy(screen = page.screen.copy(document = "Another document"))
     event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
@@ -1242,6 +1247,7 @@ class ScreenFocusRestorerTest {
     currentContext = restorer.captureContext(root, "Firefox")
     restorer.onFocusSet(link,
       FocusActionInfo.builder().setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION).build())
+    restorer.rememberBeforeActivation(link)
     val now = android.os.SystemClock.uptimeMillis()
     bookmarks.enter(currentContext!!.screen, now, true)
     assertEquals("A web link", bookmarks.pending(now)!!.item.text)
@@ -1275,7 +1281,7 @@ class ScreenFocusRestorerTest {
     val origin = currentContext!!
     currentContext = origin.copy(screen = origin.screen.copy(pane = "Comments"))
     event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
-    val back = node("Back", "android.widget.Button", parent = currentContext!!.root)
+    val back = node("Back", "android.widget.Button", "android:id/home", parent = currentContext!!.root)
     restorer.rememberBeforeActivation(back)
     val clicked = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_CLICKED)
     shadowOf(clicked).setSourceNode(back.unwrap())
@@ -1284,5 +1290,34 @@ class ScreenFocusRestorerTest {
     event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
     settle()
     assertEquals(row.text, feedback.single().failovers().single().focus()!!.target()!!.text)
+  }
+
+  @Test fun delayedHtmlFocusFromActivationCannotBookmarkAnotherDocument() {
+    val root = node(className = "android.widget.FrameLayout")
+    val document = node("Page A", "android.webkit.WebView", parent = root)
+    val heading = node("Pending heading", "android.view.View", parent = document)
+    heading.isHeading = true
+    heading.addAction(AccessibilityNodeInfoCompat.ACTION_NEXT_HTML_ELEMENT)
+    currentContext = restorer.captureContext(root, "Browser")
+    val time = android.os.SystemClock.uptimeMillis()
+    restorer.rememberBeforeActivation(document)
+    document.text = "Page B"
+    currentContext = restorer.captureContext(root, "Browser")
+    restorer.onFocusSet(heading,
+      FocusActionInfo.builder().setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION).build(), time)
+    assertEquals(0, bookmarks.size)
+  }
+
+  @Test fun unresolvedHtmlActivationExpiresWithoutMakingLaterSwipesReadContext() {
+    val root = node(className = "android.widget.FrameLayout")
+    val document = node("Page A", "android.webkit.WebView", parent = root)
+    val heading = node("Later heading", "android.view.View", parent = document)
+    heading.isHeading = true
+    currentContext = restorer.captureContext(root, "Browser")
+    restorer.rememberBeforeActivation(document)
+    settle(3200)
+    restorer.onFocusSet(heading,
+      FocusActionInfo.builder().setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION).build())
+    assertEquals(0, bookmarks.size)
   }
 }

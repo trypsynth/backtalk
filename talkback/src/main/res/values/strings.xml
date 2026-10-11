@@ -4327,5 +4327,5 @@ Do not use any markdown in your response."</string>
   <!-- Title of an Advanced Settings switch. Allows scrolling to the remembered item when returning to a screen. [CHAR LIMIT=NONE] -->
   <string name="title_pref_scroll_to_restore_previous_focus">Scroll to restore previous focus</string>
   <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
-  <string name="summary_pref_scroll_to_restore_previous_focus">When returning to a screen, allow Backtalk to scroll to the last focused item. Off by default.</string>
+  <string name="summary_pref_scroll_to_restore_previous_focus">Scroll to the last focused item when returning to a screen.</string>
 </resources>
