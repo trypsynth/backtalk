@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_pref_speech_control_sound">Přehrát zvuk před řečí jiných aplikací</string>
+</resources>
