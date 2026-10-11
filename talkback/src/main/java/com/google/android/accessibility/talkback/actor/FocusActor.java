@@ -55,12 +55,15 @@ import com.google.android.accessibility.talkback.utils.LinkUtils;
 import com.google.android.accessibility.talkback.utils.LinkUtils.LinkSpan;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
+import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.FocusFinder;
 import com.google.android.accessibility.utils.PerformActionUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
+import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -86,6 +89,8 @@ public class FocusActor implements UserInputEventListener {
   private Pipeline.FeedbackReturner pipeline;
   private ListMenuManager menuManager;
   private GlobalVariables globalVariables;
+  // Touches the focused item on activation while direct click is on. Null below Android 13.
+  private @Nullable DirectClick directClick;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // Construction
@@ -135,13 +140,45 @@ public class FocusActor implements UserInputEventListener {
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // Methods
 
+  /**
+   * Lets activating the focused item touch it on the screen while direct click is on. Only from
+   * Android 13, where Backtalk's own gesture detection gets the touch and can hand it to the app.
+   */
+  public void enableDirectClick(
+      BooleanSupplier readyToPress, DirectClick.PassThrough passThrough) {
+    if (FeatureSupport.supportGestureDetection()) {
+      directClick = DirectClick.create(service, readyToPress, passThrough, this::clickUsually);
+    }
+  }
+
+  /** The direct click, whose presses gesture detection hands to the app. Null below Android 13. */
+  public @Nullable DirectClick getDirectClick() {
+    return directClick;
+  }
+
+  /** Lifts a direct click's press still down. */
+  public void shutdown() {
+    if (directClick != null) {
+      directClick.shutdown();
+    }
+  }
+
   public boolean clickCurrentFocus(EventId eventId) {
     AccessibilityNodeInfoCompat currentFocus =
         accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
-    return clickNode(currentFocus, eventId);
+    return clickNode(currentFocus, eventId, /* touchIfDirect= */ true);
   }
 
   public boolean clickNode(AccessibilityNodeInfoCompat node, EventId eventId) {
+    return clickNode(node, eventId, /* touchIfDirect= */ false);
+  }
+
+  /**
+   * Clicks {@code node}. When {@code touchIfDirect}, as when the user activates the focused item,
+   * and direct click is on, touches it on the screen instead, for controls that ignore the click.
+   */
+  private boolean clickNode(
+      @Nullable AccessibilityNodeInfoCompat node, EventId eventId, boolean touchIfDirect) {
     if (node == null || pipeline == null) {
       return false;
     }
@@ -151,6 +188,25 @@ public class FocusActor implements UserInputEventListener {
       return true;
     }
 
+    if (touchIfDirect
+        && directClick != null
+        && isDirectClickOn()
+        && directClick.click(node, eventId)) {
+      return true;
+    }
+    return clickUsually(node, eventId);
+  }
+
+  private boolean isDirectClickOn() {
+    return SharedPreferencesUtils.getBooleanPref(
+        SharedPreferencesUtils.getSharedPreferences(service),
+        service.getResources(),
+        R.string.pref_direct_click_key,
+        R.bool.pref_direct_click_default);
+  }
+
+  /** Clicks with ACTION_CLICK, or failing that, as the framework or a simulated tap can. */
+  private boolean clickUsually(AccessibilityNodeInfoCompat node, EventId eventId) {
     if (PerformActionUtils.isNodeSupportAction(node, AccessibilityNodeInfoCompat.ACTION_CLICK)
         && pipeline.returnFeedback(eventId, Feedback.nodeAction(node, ACTION_CLICK.getId()))) {
       return true;

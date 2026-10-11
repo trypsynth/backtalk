@@ -683,6 +683,10 @@
     <string name="title_pref_single_tap">Single-tap to activate</string>
     <!-- Summary sub-text for single-tap activation. When enabled, the user can place accessibility focus on an item and activate it using a single tap, rather than the default double-tap. [CHAR LIMIT=NONE]-->
     <string name="summary_pref_single_tap">Tap once on a focused item to activate. Faster navigation than double-tapping.</string>
+    <!-- Preference for direct click. When enabled, activating the focused item (double-tap, the activation key or a braille display) touches the item on the screen, as a finger would, instead of asking the app to activate it. Some app buttons only react to a real touch. [CHAR LIMIT=NONE]-->
+    <string name="title_pref_direct_click">Direct click</string>
+    <!-- Summary sub-text for direct click. When enabled, activating the focused item touches the item on the screen, as a finger would, instead of asking the app to activate it. Text fields and sliders are still activated the usual way, because a touch would put the cursor or set the value where it lands. [CHAR LIMIT=NONE]-->
+    <string name="summary_pref_direct_click">Double-tap touches the focused item on the screen, like a finger, instead of asking the app to activate it. Helps with buttons that ignore double-tap. Text fields and sliders are still activated the usual way.</string>
     <!-- Label for the button to launch an activity for managing TalkBack's verbosity. [CHAR LIMIT=40] -->
     <string name="pref_verbosity_title">Verbosity</string>
     <!--
