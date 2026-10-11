@@ -61,6 +61,7 @@ import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.List;
+import java.util.function.Consumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -86,6 +87,7 @@ public class FocusActor implements UserInputEventListener {
   private Pipeline.FeedbackReturner pipeline;
   private ListMenuManager menuManager;
   private GlobalVariables globalVariables;
+  private @Nullable Consumer<AccessibilityNodeInfoCompat> beforeActivationListener;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   // Construction
@@ -124,6 +126,11 @@ public class FocusActor implements UserInputEventListener {
     focusManagerInternal.setFocusSetListener(listener);
   }
 
+  public void setBeforeActivationListener(
+      @Nullable Consumer<AccessibilityNodeInfoCompat> listener) {
+    beforeActivationListener = listener;
+  }
+
   public void setMenuManager(ListMenuManager menuManager) {
     this.menuManager = menuManager;
   }
@@ -144,6 +151,9 @@ public class FocusActor implements UserInputEventListener {
   public boolean clickNode(AccessibilityNodeInfoCompat node, EventId eventId) {
     if (node == null || pipeline == null) {
       return false;
+    }
+    if (beforeActivationListener != null) {
+      beforeActivationListener.accept(node);
     }
     node = Scripts.actionTarget(node, false);
 
@@ -189,6 +199,9 @@ public class FocusActor implements UserInputEventListener {
     if (node == null || pipeline == null) {
       return false;
     }
+    if (beforeActivationListener != null) {
+      beforeActivationListener.accept(node);
+    }
     return pipeline.returnFeedback(
         eventId,
         Feedback.nodeAction(Scripts.actionTarget(node, true), ACTION_LONG_CLICK.getId()));
@@ -199,6 +212,9 @@ public class FocusActor implements UserInputEventListener {
         accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
     if (currentFocus == null) {
       return false;
+    }
+    if (beforeActivationListener != null) {
+      beforeActivationListener.accept(currentFocus);
     }
     AccessibilityNodeInfoCompat nodeToClick =
         AccessibilityNodeInfoUtils.getSelfOrMatchingAncestor(
