@@ -304,6 +304,9 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
   private long cachedWindowsTime;
   // How long the windows are kept, in case a change came without a windows event.
   private static final long WINDOWS_CACHE_MAX_AGE_MS = 2_000;
+  // Whether a window event or a check is being interpreted. All its lookups use the windows it
+  // fetched, which are current, so a window missing from them doesn't make them be fetched again.
+  private boolean interpreting;
   private final boolean isSplitScreenModeAvailable;
   private final HashMap<Integer, Window> windowIdToData = new HashMap<>();
   // Caches the window roles from last window transition for comparison.
@@ -400,19 +403,28 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
   }
 
   private @Nullable CharSequence getWindowTitleFromWindowInfo(int windowId) {
+    if (!FeatureSupport.supportGetTitleFromWindows()) {
+      return null;
+    }
+
+    @Nullable AccessibilityWindowInfo window = findWindow(windowId);
+    return (window == null) ? null : AccessibilityWindowInfoUtils.getTitle(window);
+  }
+
+  private @Nullable AccessibilityWindowInfo findWindow(int windowId) {
     // A role without a window has none to find, and not finding one would fetch the windows again.
-    if (!FeatureSupport.supportGetTitleFromWindows() || windowId == WINDOW_ID_NONE) {
+    if (windowId == WINDOW_ID_NONE) {
       return null;
     }
 
     long fetchedBefore = cachedWindowsTime;
     @Nullable AccessibilityWindowInfo window = findWindow(windowsOnAllDisplays(), windowId);
-    if (window == null && cachedWindowsTime == fetchedBefore) {
+    if (window == null && !interpreting && cachedWindowsTime == fetchedBefore) {
       // The window may have appeared since the windows were fetched, before its windows event.
       cachedWindowsOnAllDisplays = null;
       window = findWindow(windowsOnAllDisplays(), windowId);
     }
-    return (window == null) ? null : AccessibilityWindowInfoUtils.getTitle(window);
+    return window;
   }
 
   private static @Nullable AccessibilityWindowInfo findWindow(
@@ -430,7 +442,8 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
   /**
    * Returns the windows on every display, kept until the windows change. Asking the system for them
    * each time held up the announcement of every swipe, which looks up the window's title and
-   * whether the screen is split.
+   * whether the screen is split. Each window event, and each check while the windows settle,
+   * fetches them once for all its lookups.
    */
   private SparseArray<List<AccessibilityWindowInfo>> windowsOnAllDisplays() {
     long now = SystemClock.uptimeMillis();
@@ -590,7 +603,13 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     if (screenTransitionStartTime == 0) {
       screenTransitionStartTime = event.getEventTime();
     }
-    InterpretationAndRoles interpAndRoles = interpretInternal(event, depth);
+    InterpretationAndRoles interpAndRoles;
+    interpreting = true;
+    try {
+      interpAndRoles = interpretInternal(event, depth);
+    } finally {
+      interpreting = false;
+    }
     EventInterpretation interpretation = interpAndRoles.interpretation;
     WindowRoles newWindowRoles = interpAndRoles.roles;
 
@@ -846,10 +865,18 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     // Map windows to roles, detect window role changes.
     WindowRoles latestRoles = (pendingWindowRoles == null) ? windowRoles : pendingWindowRoles;
     WindowRoles newWindowRoles = new WindowRoles(latestRoles);
-    updateWindowRoles(interpretation, service, newWindowRoles, depth + 1);
-    setWindowTitles(newWindowRoles);
-    detectWindowChanges(newWindowRoles, interpretation, depth + 1);
-    detectInputMethodChanged(newWindowRoles, interpretation, /* checkDuplicate= */ true, depth + 1);
+    // Look at the windows as they are now, since they can change before their windows event.
+    cachedWindowsOnAllDisplays = null;
+    interpreting = true;
+    try {
+      updateWindowRoles(interpretation, service, newWindowRoles, depth + 1);
+      setWindowTitles(newWindowRoles);
+      detectWindowChanges(newWindowRoles, interpretation, depth + 1);
+      detectInputMethodChanged(
+          newWindowRoles, interpretation, /* checkDuplicate= */ true, depth + 1);
+    } finally {
+      interpreting = false;
+    }
     LogUtils.v(TAG, "END delayedInterpret() interpretation=%s", interpretation);
 
     // Don't send delayed interpretation if it's a dialog opened event to avoid announcing the
@@ -1027,8 +1054,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
         {
           HashSet<Integer> windowIdsToBeRemoved = new HashSet<>(windowIdToData.keySet());
           int displayId = interpretation.getDisplayId();
-          List<AccessibilityWindowInfo> windows =
-              AccessibilityServiceCompatUtils.getWindowsOnAllDisplays(service).get(displayId);
+          List<AccessibilityWindowInfo> windows = windowsOnAllDisplays().get(displayId);
           if (windows == null) {
             return;
           }
@@ -1196,8 +1222,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     AccessibilityWindowInfo inputMethodWindow = null;
 
     int displayId = interpretation.getDisplayId();
-    List<AccessibilityWindowInfo> windows =
-        AccessibilityServiceCompatUtils.getWindowsOnAllDisplays(service).get(displayId);
+    List<AccessibilityWindowInfo> windows = windowsOnAllDisplays().get(displayId);
 
     // If there are no windows available, clear the cached IDs.
     if (windows == null || windows.isEmpty()) {
@@ -1377,7 +1402,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
         // source or not. If so, use the announcement first. If not, they are supposed to be
         // different transitions and should keep both.
         int inputMethodWindowId = interpretation.getInputMethod().id;
-        CharSequence inputMethodPackageName = getWindowPackageName(service, inputMethodWindowId);
+        CharSequence inputMethodPackageName = getWindowPackageName(inputMethodWindowId);
         CharSequence announcementPackageName = announcement.packageName();
         if (inputMethodWindowId == WINDOW_ID_NONE
             || (inputMethodPackageName != null
@@ -1411,7 +1436,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
       @Nullable CharSequence packageName = (window == null) ? null : window.eventPackageName;
       // Try to get package name from accessibility window info if it's not in the map.
       if (packageName == null) {
-        packageName = getWindowPackageName(service, windowId);
+        packageName = getWindowPackageName(windowId);
       }
       if (packageName != null) {
         title = getApplicationLabel(packageName);
@@ -1424,25 +1449,13 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     return title;
   }
 
-  private static @Nullable CharSequence getWindowPackageName(
-      AccessibilityService service, int windowId) {
-    if (windowId == WINDOW_ID_NONE) {
+  private @Nullable CharSequence getWindowPackageName(int windowId) {
+    @Nullable AccessibilityWindowInfo window = findWindow(windowId);
+    if (window == null) {
       return null;
     }
-    @Nullable CharSequence packageName = null;
-
-    List<AccessibilityWindowInfo> windows = getAllWindows(service);
-    for (AccessibilityWindowInfo accessibilityWindowInfo : windows) {
-      if (accessibilityWindowInfo.getId() == windowId) {
-        AccessibilityNodeInfo rootNode =
-            AccessibilityWindowInfoUtils.getRoot(accessibilityWindowInfo);
-        if (rootNode != null) {
-          packageName = rootNode.getPackageName();
-        }
-        break;
-      }
-    }
-    return packageName;
+    AccessibilityNodeInfo rootNode = AccessibilityWindowInfoUtils.getRoot(window);
+    return (rootNode == null) ? null : rootNode.getPackageName();
   }
 
   private @Nullable CharSequence getApplicationLabel(CharSequence packageName) {
@@ -1459,17 +1472,6 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     }
 
     return packageManager.getApplicationLabel(applicationInfo);
-  }
-
-  private static List<AccessibilityWindowInfo> getAllWindows(AccessibilityService service) {
-    List<AccessibilityWindowInfo> windows = new ArrayList<>();
-    SparseArray<List<AccessibilityWindowInfo>> windowsOnAllDisplays =
-        AccessibilityServiceCompatUtils.getWindowsOnAllDisplays(service);
-    final int displaySize = windowsOnAllDisplays.size();
-    for (int i = 0; i < displaySize; i++) {
-      windows.addAll(windowsOnAllDisplays.valueAt(i));
-    }
-    return windows;
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////

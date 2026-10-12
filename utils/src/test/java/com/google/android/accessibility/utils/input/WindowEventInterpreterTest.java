@@ -200,6 +200,9 @@ public class WindowEventInterpreterTest {
             + " \"untitled\" was 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"",
         "550ms windows from=10 changes=0x2 stable start=0 delay=550/550 main | src 10 feedback"
             + " \"untitled\" was 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"");
+    // Each event and each of the 55 checks asks for the windows once, though each looks up the
+    // Settings window, which has closed.
+    assertEquals(2 + 55, serviceWindows.windowListRequests);
   }
 
   @Test
@@ -216,10 +219,8 @@ public class WindowEventInterpreterTest {
             + " 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"",
         "200ms windows from=11 changes=0x1 stable start=0 delay=200/200 main | src 11\"Wi-Fi\""
             + " was 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"");
-    // The event asks for the windows three times: to note their titles, to map them to roles, and
-    // to look up the titles of the windows in those roles. Each of the 20 checks asks once, to map
-    // them to roles again, and the roles that have no window don't ask.
-    assertEquals(3 + 20, serviceWindows.windowListRequests);
+    // The event and each of the 20 checks ask for the windows once, for all their lookups.
+    assertEquals(1 + 20, serviceWindows.windowListRequests);
   }
 
   @Test
