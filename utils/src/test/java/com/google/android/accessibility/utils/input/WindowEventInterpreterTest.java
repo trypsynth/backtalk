@@ -416,6 +416,16 @@ public class WindowEventInterpreterTest {
   }
 
   @Test
+  public void rootPackageIsKeptForOthersToo() {
+    AccessibilityWindowInfo notes = app(NOTES, null).rootPackage(NOTES_PACKAGE).active().build();
+    setWindows(statusBar(), navigationBar(), notes);
+
+    assertEquals(NOTES_PACKAGE, interpreter.getRootPackageName(notes).toString());
+    assertEquals(NOTES_PACKAGE, interpreter.getRootPackageName(notes).toString());
+    assertEquals(1, RootsShadow.rootRequests);
+  }
+
+  @Test
   public void paneTitleNamesTheWindowUntilThePaneCloses() {
     openSettings();
 

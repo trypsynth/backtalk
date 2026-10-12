@@ -67,6 +67,8 @@ class DirectTouchController(
   private val service: AccessibilityService,
   private val prefs: SharedPreferences,
   private val feedback: Pipeline.FeedbackReturner,
+  /** Keeps the package of each window's root, which direct touch looks up on every look. */
+  private val windowEventInterpreter: WindowEventInterpreter,
 ) :
   WindowEventInterpreter.WindowEventHandler,
   RingerModeAndScreenMonitor.ScreenChangedListener,
@@ -222,8 +224,7 @@ class DirectTouchController(
       return
     }
     val windows = service.windows.orEmpty()
-    val mainPackage =
-      windows.firstOrNull { it.id == mainWindowId }?.root?.packageName?.toString()
+    val mainPackage = windows.firstOrNull { it.id == mainWindowId }?.let { rootPackage(it) }
     val directTyping = mainPackage != null && DirectTouchSettings.isDirectTyping(prefs, mainPackage)
     val shouldBeActive = mainPackage != null && shouldBeActive(windows, mainPackage)
     val navBarDirect = isNavBarDirect()
@@ -349,9 +350,12 @@ class DirectTouchController(
     }
   }
 
+  /** The package of the window's root, which the window's app is asked for once per window. */
+  private fun rootPackage(window: AccessibilityWindowInfo): String? =
+    windowEventInterpreter.getRootPackageName(window)?.toString()
+
   private fun isSystemUiWindow(window: AccessibilityWindowInfo): Boolean =
-    window.type == AccessibilityWindowInfo.TYPE_SYSTEM &&
-      window.root?.packageName?.toString() == SYSTEM_UI
+    window.type == AccessibilityWindowInfo.TYPE_SYSTEM && rootPackage(window) == SYSTEM_UI
 
   private fun shouldBeActive(
     windows: List<AccessibilityWindowInfo>,
@@ -360,8 +364,11 @@ class DirectTouchController(
     if (mainPackage in IGNORED_PACKAGES) {
       return false
     }
-    val capable = DirectTouchCapability.declaresDirectTouch(service.packageManager, mainPackage)
-    DirectTouchSettings.onFirstSight(prefs, mainPackage, capable)
+    // Only the first sight of an app uses its manifest, which the package manager has to read.
+    if (!DirectTouchSettings.isSeen(prefs, mainPackage)) {
+      val capable = DirectTouchCapability.declaresDirectTouch(service.packageManager, mainPackage)
+      DirectTouchSettings.onFirstSight(prefs, mainPackage, capable)
+    }
     // A dialog is a window of its own, so any other application window is either a dialog from the
     // same app or another app.
     val otherApplicationWindows =
@@ -371,11 +378,10 @@ class DirectTouchController(
         masterEnabled = DirectTouchSettings.isMasterEnabled(prefs),
         appEnabled = DirectTouchSettings.isAppEnabled(prefs, mainPackage),
         screenInteractive = screenInteractive && displayOn,
-        foreignAppWindow =
-          otherApplicationWindows.any { it.root?.packageName?.toString() != mainPackage },
-        systemUiCoversHalf = systemUiCoversHalf(windows),
         dialogShowing = otherApplicationWindows.isNotEmpty(),
         textFieldFocused = textFieldFocused,
+        foreignAppWindow = { otherApplicationWindows.any { rootPackage(it) != mainPackage } },
+        systemUiCoversHalf = { systemUiCoversHalf(windows) },
       )
     return DirectTouchPolicy.shouldBeActive(input)
   }
@@ -384,11 +390,10 @@ class DirectTouchController(
     val displayHeight = displayBounds().height()
     val bounds = Rect()
     return windows.any { window ->
-      if (!isSystemUiWindow(window)) {
-        return@any false
-      }
       window.getBoundsInScreen(bounds)
-      DirectTouchPolicy.coversHalfScreen(window.isActive, bounds.height(), displayHeight)
+      // Telling System UI apart asks the window's app for its root, so the shape comes first.
+      DirectTouchPolicy.coversHalfScreen(window.isActive, bounds.height(), displayHeight) &&
+        isSystemUiWindow(window)
     }
   }
 
