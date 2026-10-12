@@ -22,6 +22,7 @@ import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.DISABLED;
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.EMPTY_PROMPT;
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.FEATURE_DOWNLOADING;
+import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.JOB_CANCELLED;
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.NETWORK_ERROR;
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.NO_IMAGE;
 import static com.google.android.accessibility.talkback.actor.gemini.GeminiActor.ErrorReason.UNSUPPORTED;
@@ -769,9 +770,15 @@ public class GeminiActor {
               manualTrigger);
         }
       }
-      case JOB_CANCELLED ->
-          analytics.onGeminiFailEvent(
-              TalkBackAnalytics.GEMINI_FAIL_USER_ABORT, isServerSideRequest(requestId));
+      case JOB_CANCELLED -> {
+        analytics.onGeminiFailEvent(
+            TalkBackAnalytics.GEMINI_FAIL_USER_ABORT, isServerSideRequest(requestId));
+        // The model on the phone timed out, ran out of memory, which it has said, or made way for
+        // a newer request. The caption ends without a description, so that ImageCaptioner goes on
+        // to the next screenshot.
+        responseImageCaptionResult(
+            requestId, /* text= */ "", /* isSuccess= */ false, JOB_CANCELLED, manualTrigger);
+      }
     }
     progressTonePlayer.stop();
   }
