@@ -67,7 +67,7 @@ class DirectTouchController(
   private val service: AccessibilityService,
   private val prefs: SharedPreferences,
   private val feedback: Pipeline.FeedbackReturner,
-  /** Keeps the package of each window's root, which direct touch looks up on every look. */
+  /** Keeps the package of each window's root, which every look at the screen needs. */
   private val windowEventInterpreter: WindowEventInterpreter,
 ) :
   WindowEventInterpreter.WindowEventHandler,

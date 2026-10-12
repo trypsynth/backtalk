@@ -209,7 +209,7 @@ public class FocusActorForScreenStateChange {
     }
 
     // Fetching the root waits for the window's app, which is drawing the new screen, so it is
-    // fetched only once there is a focus to restore, and only once.
+    // fetched only when there is a focus to restore, and a single time.
     AccessibilityNodeInfoCompat root =
         AccessibilityWindowInfoUtils.getRootCompat(currentActiveWindow);
     if (root == null) {

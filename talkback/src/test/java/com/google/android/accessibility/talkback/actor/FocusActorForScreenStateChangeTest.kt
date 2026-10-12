@@ -25,11 +25,11 @@ import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.google.android.accessibility.talkback.ActorState
 import com.google.android.accessibility.talkback.ActorStateWritable
-import com.google.android.accessibility.talkback.Feedback
 import com.google.android.accessibility.talkback.Pipeline
 import com.google.android.accessibility.talkback.PrimesController
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenState
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory
+import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory.WindowIdentifier
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo
 import com.google.android.accessibility.talkback.monitor.InputMethodMonitor
 import com.google.android.accessibility.utils.FocusFinder
@@ -38,6 +38,7 @@ import com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED
 import com.google.android.accessibility.utils.input.WindowsDelegate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -135,12 +136,16 @@ class FocusActorForScreenStateChangeTest {
   @Test
   fun systemWindowGetsNoFocusLastPutInAnApp() {
     // The history has a focus for the shade's window id, whose node reports an application
-    // window. Backtalk doesn't restore a focus from an app into System UI.
-    val appRoot = root()
-    val app = window(SHADE, AccessibilityWindowInfo.TYPE_APPLICATION, appRoot)
-    history.onAccessibilityFocusAction(button(app, appRoot), focusInfo(), 1, screen(app))
-    val shade = window(SHADE, AccessibilityWindowInfo.TYPE_SYSTEM, root())
+    // window, and the node is still there. Only the rule that keeps a focus from an app out of
+    // System UI stops it from being restored.
+    val root = root()
+    val app = window(SHADE, AccessibilityWindowInfo.TYPE_APPLICATION, root)
+    history.onAccessibilityFocusAction(button(app, root), focusInfo(), 1, screen(app))
+    val shade = window(SHADE, AccessibilityWindowInfo.TYPE_SYSTEM, root)
     shadowOf(service).setWindows(listOf(shade))
+    assertNotNull(
+      history.reader.getLastFocusActionRecordInWindow(WindowIdentifier.create(SHADE, screen(shade)))
+    )
 
     assertFalse(restore(shade))
     assertEquals(0, RootsShadow.rootRequests)
