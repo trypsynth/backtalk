@@ -216,6 +216,10 @@ public class WindowEventInterpreterTest {
             + " 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"",
         "200ms windows from=11 changes=0x1 stable start=0 delay=200/200 main | src 11\"Wi-Fi\""
             + " was 10\"Settings\" | A 11\"Wi-Fi\" was 10\"Settings\"");
+    // The event asks for the windows three times: to note their titles, to map them to roles, and
+    // to look up the titles of the windows in those roles. Each of the 20 checks asks once, to map
+    // them to roles again, and the roles that have no window don't ask.
+    assertEquals(3 + 20, serviceWindows.windowListRequests);
   }
 
   @Test

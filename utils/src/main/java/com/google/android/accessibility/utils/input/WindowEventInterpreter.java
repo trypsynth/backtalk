@@ -400,7 +400,8 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
   }
 
   private @Nullable CharSequence getWindowTitleFromWindowInfo(int windowId) {
-    if (!FeatureSupport.supportGetTitleFromWindows()) {
+    // A role without a window has none to find, and not finding one would fetch the windows again.
+    if (!FeatureSupport.supportGetTitleFromWindows() || windowId == WINDOW_ID_NONE) {
       return null;
     }
 
@@ -1425,6 +1426,9 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
 
   private static @Nullable CharSequence getWindowPackageName(
       AccessibilityService service, int windowId) {
+    if (windowId == WINDOW_ID_NONE) {
+      return null;
+    }
     @Nullable CharSequence packageName = null;
 
     List<AccessibilityWindowInfo> windows = getAllWindows(service);
