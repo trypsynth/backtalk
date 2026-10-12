@@ -1654,8 +1654,11 @@ public class ImageCaptioner extends Handler
     return (locale == null) ? Locale.getDefault() : locale;
   }
 
-  @VisibleForTesting
-  void clearRequests() {
+  /**
+   * Ends all requests and drops the captions that wait for their results, so that results that come
+   * later are ignored.
+   */
+  public void clearRequests() {
     removeMessages(MSG_RESULT_TIMEOUT);
     screenshotRequests.clear();
     characterCaptionRequests.clear();
@@ -1814,8 +1817,8 @@ public class ImageCaptioner extends Handler
         manualTrigger);
     @Nullable CaptionResult captionResult = captionResults.getCaptionResult(requestId);
     if (captionResult == null) {
-      // The caption ended before its description came, such as when the service shut down. Like
-      // any result that comes after its request ended, the description is ignored.
+      // The caption ended before its description came, such as when Backtalk paused. Like any
+      // result that comes after its request ended, the description is ignored.
       LogUtils.w(TAG, "Ignore the description of a caption that has ended, id = %d", requestId);
       return true;
     }

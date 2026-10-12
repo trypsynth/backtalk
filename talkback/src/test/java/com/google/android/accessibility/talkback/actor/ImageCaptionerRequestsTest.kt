@@ -394,7 +394,7 @@ class ImageCaptionerRequestsTest {
   @Test
   fun aDescriptionThatComesAfterItsCaptionEnded_isIgnored() {
     val first = describeImageWithGemini()
-    // Its caption ends without the description, as when the service shuts down.
+    // Its caption ends without the description, as when Backtalk pauses.
     captioner.clearRequests()
     val second = describeImageWithGemini()
 
