@@ -307,6 +307,10 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
   // Whether a window event or a check is being interpreted. All its lookups use the windows it
   // fetched, which are current, so a window missing from them doesn't make them be fetched again.
   private boolean interpreting;
+  // The package of each listed window's root, by window id, since fetching a root waits for the
+  // window's app. A window keeps its id until it closes, and no other window gets it. A root that
+  // couldn't be fetched isn't kept.
+  private final SparseArray<CharSequence> rootPackageNames = new SparseArray<>();
   private final boolean isSplitScreenModeAvailable;
   private final HashMap<Integer, Window> windowIdToData = new HashMap<>();
   // Caches the window roles from last window transition for comparison.
@@ -367,6 +371,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
 
   public void onSuspendInfrastructure() {
     displayMonitor.removeDisplayStateChangedListener(this);
+    rootPackageNames.clear();
   }
 
   private void clearScreenState() {
@@ -1052,6 +1057,7 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
       }
       case AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
         {
+          forgetRootPackagesOfClosedWindows();
           HashSet<Integer> windowIdsToBeRemoved = new HashSet<>(windowIdToData.keySet());
           int displayId = interpretation.getDisplayId();
           List<AccessibilityWindowInfo> windows = windowsOnAllDisplays().get(displayId);
@@ -1454,8 +1460,24 @@ public class WindowEventInterpreter implements WindowsDelegate, DisplayStateChan
     if (window == null) {
       return null;
     }
-    AccessibilityNodeInfo rootNode = AccessibilityWindowInfoUtils.getRoot(window);
-    return (rootNode == null) ? null : rootNode.getPackageName();
+    @Nullable CharSequence packageName = rootPackageNames.get(windowId);
+    if (packageName == null) {
+      AccessibilityNodeInfo rootNode = AccessibilityWindowInfoUtils.getRoot(window);
+      packageName = (rootNode == null) ? null : rootNode.getPackageName();
+      if (packageName != null) {
+        rootPackageNames.put(windowId, packageName);
+      }
+    }
+    return packageName;
+  }
+
+  private void forgetRootPackagesOfClosedWindows() {
+    SparseArray<List<AccessibilityWindowInfo>> windows = windowsOnAllDisplays();
+    for (int i = rootPackageNames.size() - 1; i >= 0; i--) {
+      if (findWindow(windows, rootPackageNames.keyAt(i)) == null) {
+        rootPackageNames.removeAt(i);
+      }
+    }
   }
 
   private @Nullable CharSequence getApplicationLabel(CharSequence packageName) {

@@ -62,6 +62,7 @@ import org.robolectric.annotation.Implements;
 import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowAccessibilityRecord;
 import org.robolectric.shadows.ShadowAccessibilityService;
+import org.robolectric.shadows.ShadowAccessibilityWindowInfo;
 import org.robolectric.util.ReflectionHelpers;
 import org.robolectric.util.ReflectionHelpers.ClassParameter;
 
@@ -75,7 +76,12 @@ import org.robolectric.util.ReflectionHelpers.ClassParameter;
  * window change run one by one.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 34, shadows = WindowEventInterpreterTest.WindowsShadow.class)
+@Config(
+    sdk = 34,
+    shadows = {
+      WindowEventInterpreterTest.WindowsShadow.class,
+      WindowEventInterpreterTest.RootsShadow.class
+    })
 public class WindowEventInterpreterTest {
 
   /** The service the interpreter belongs to. */
@@ -118,6 +124,19 @@ public class WindowEventInterpreterTest {
     }
   }
 
+  /** Counts how often a window's root is fetched, which waits for the window's app. */
+  @Implements(AccessibilityWindowInfo.class)
+  public static class RootsShadow extends ShadowAccessibilityWindowInfo {
+    static int rootRequests;
+
+    @Implementation
+    @Override
+    protected AccessibilityNodeInfo getRoot() {
+      rootRequests++;
+      return super.getRoot();
+    }
+  }
+
   private static final int STATUS_BAR = 1;
   private static final int NAVIGATION_BAR = 2;
   private static final int SETTINGS = 10;
@@ -151,6 +170,7 @@ public class WindowEventInterpreterTest {
   public void setUp() {
     service = Robolectric.setupService(TestService.class);
     serviceWindows = Shadow.extract(service);
+    RootsShadow.rootRequests = 0;
     interpreter = new WindowEventInterpreter(service, new DisplayMonitor(service));
     interpreter.addListener((interpretation, eventId) -> transcript.add(describe(interpretation)));
   }
@@ -343,6 +363,12 @@ public class WindowEventInterpreterTest {
     interpret(windowsChanged(NOTES, WINDOWS_CHANGE_ADDED));
     interpret(windowsChanged(SETTINGS, WINDOWS_CHANGE_REMOVED));
     waitMs(600);
+    assertEquals("Notes", interpreter.getWindowTitle(NOTES).toString());
+    // Notes closes, and is no longer named after its app.
+    setWindows(statusBar(), navigationBar(), app(SETTINGS, "Settings").active().build());
+    interpret(windowsChanged(SETTINGS, WINDOWS_CHANGE_ADDED));
+    interpret(windowsChanged(NOTES, WINDOWS_CHANGE_REMOVED));
+    waitMs(600);
 
     assertTranscript(
         "0ms windows from=50 changes=0x1 original start=0 delay=10/550 main | src 50 feedback"
@@ -350,8 +376,43 @@ public class WindowEventInterpreterTest {
         "0ms windows from=10 changes=0x2 original start=0 delay=10/550 main | src 10 feedback"
             + " \"untitled\" was 10\"Settings\" | A 50 feedback \"Notes\" was 10\"Settings\"",
         "550ms windows from=10 changes=0x2 stable start=0 delay=550/550 main | src 10 feedback"
+            + " \"untitled\" was 10\"Settings\" | A 50 feedback \"Notes\" was 10\"Settings\"",
+        "600ms windows from=10 changes=0x1 original start=600 delay=10/550 main | src"
+            + " 10\"Settings\" was 10 | A 10\"Settings\" was 50",
+        "600ms windows from=50 changes=0x2 original start=600 delay=10/550 main | src 50 feedback"
+            + " \"untitled\" was 10 | A 10\"Settings\" was 50",
+        "1150ms windows from=50 changes=0x2 stable start=600 delay=550/550 main | src 50 feedback"
+            + " \"untitled\" was 10 | A 10\"Settings\" was 50");
+    // The app is asked for the window's root once, though the window is named at every check.
+    assertEquals(1, RootsShadow.rootRequests);
+  }
+
+  @Test
+  public void appOfAWindowWithoutATitleIsAskedForAgainUntilItAnswers() {
+    installApp(NOTES_PACKAGE, "Notes");
+    openSettings();
+
+    // At first the window's root can't be fetched, as before its app has drawn it.
+    setWindows(statusBar(), navigationBar(), app(NOTES, null).active().build());
+    interpret(windowsChanged(NOTES, WINDOWS_CHANGE_ADDED));
+    interpret(windowsChanged(SETTINGS, WINDOWS_CHANGE_REMOVED));
+    waitMs(100);
+    setWindows(
+        statusBar(),
+        navigationBar(),
+        app(NOTES, null).rootPackage(NOTES_PACKAGE).active().build());
+    int rootRequestsBefore = RootsShadow.rootRequests;
+    waitMs(500);
+
+    assertTranscript(
+        "0ms windows from=50 changes=0x1 original start=0 delay=10/550 main | src 50 feedback"
+            + " \"untitled\" was 10\"Settings\" | A 50 feedback \"untitled\" was 10\"Settings\"",
+        "0ms windows from=10 changes=0x2 original start=0 delay=10/550 main | src 10 feedback"
+            + " \"untitled\" was 10\"Settings\" | A 50 feedback \"untitled\" was 10\"Settings\"",
+        "550ms windows from=10 changes=0x2 stable start=0 delay=550/550 main | src 10 feedback"
             + " \"untitled\" was 10\"Settings\" | A 50 feedback \"Notes\" was 10\"Settings\"");
-    assertEquals("Notes", interpreter.getWindowTitle(NOTES).toString());
+    // Once the root can be fetched, it is fetched once, and its package is kept.
+    assertEquals(1, RootsShadow.rootRequests - rootRequestsBefore);
   }
 
   @Test
@@ -447,6 +508,7 @@ public class WindowEventInterpreterTest {
     waitMs(600);
     transcript.clear();
     serviceWindows.windowListRequests = 0;
+    RootsShadow.rootRequests = 0;
     startTime = SystemClock.uptimeMillis();
   }
 
