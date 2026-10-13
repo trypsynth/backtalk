@@ -161,6 +161,7 @@ import com.google.android.accessibility.talkback.controlsounds.ControlSoundsSett
 import com.google.android.accessibility.talkback.directtouch.DirectTouchController;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor.TalkBackListener;
+import com.google.android.accessibility.talkback.eventprocessor.PhoneticLetterMode;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorEmojiTraversal;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorEventQueue;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorGestureVibrator;
@@ -2017,6 +2018,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             : new ImageContents(labelManager, /* imageCaptionStorage= */ null);
 
     processorPhoneticLetters = new ProcessorPhoneticLetters(this, globalVariables);
+    speechController.setLetterSpeller(processorPhoneticLetters::getPhoneticForSpelling);
 
     compositor =
         new Compositor(
@@ -3437,6 +3439,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 res.getString(R.string.pref_capital_letters_default)));
     speechController.setCapLetterFeedback(capLetterFeedback);
     globalVariables.setGlobalSayCapital(capLetterFeedback == CAPITAL_LETTERS_TYPE_SPEAK_CAP);
+    globalVariables.setCapitalLetterFeedback(capLetterFeedback);
     @Nullable VoiceProfile voiceProfile = VoiceProfiles.readActive(prefs);
     pipeline.setSpeechPitch(
         (voiceProfile != null)
@@ -3645,13 +3648,7 @@ public class TalkBackService extends AccessibilityServiceCompat
       globalVariables.setUsageHintEnabled(speakUsageHints);
 
       // Update preference: speak phonetic letters.
-      boolean speakPhoneticLetters =
-          VerbosityPreferences.getPreferenceValueBool(
-              prefs,
-              res,
-              res.getString(R.string.pref_phonetic_letters_key),
-              res.getBoolean(R.bool.pref_phonetic_letters_default));
-      globalVariables.setSpeakPhoneticLettersEnabled(speakPhoneticLetters);
+      globalVariables.setPhoneticLetterMode(PhoneticLetterMode.read(prefs, res));
 
       // Update preference: count repeated symbols.
       boolean countrepeatedSymbols =

@@ -174,6 +174,19 @@ Under preset settings in **Verbosity**, you can also turn off **Speak row and co
 
 Both settings only apply while **Speak container info** is on, because rows and columns aren't spoken at all when it's off.
 
+### Speak letters phonetically
+
+TalkBack's **Speak letters with examples** switch is called **Speak letters phonetically** in Backtalk, in **Verbosity** under preset settings, and in on-screen keyboard settings. It has four choices:
+
+*   **Off** says only the letter.
+*   **After the letter, delayed**, the default, is what the switch did when it was on. Keyboard keys say the letter, then its phonetic word, as in "h, hotel". Moving by character, the word comes a quarter of a second after the letter, and moving on before then skips it.
+*   **After the letter, no delay** says the letter and its word together, as in "h hotel".
+*   **Instead of the letter** says only the word, as in "hotel".
+
+With **After the letter, no delay** and **Instead of the letter**, Backtalk says it in all of these places. **After the letter, delayed** still ignores **Spell last spoken phrase**, deleting a letter, and inserting a letter with a touch keyboard like Gboard, just as TalkBack did when **Speak letters with examples** was turned on.
+
+The **High** preset uses **After the letter, delayed** and the **Low** preset uses **Off**. Your choice from the switch carries over.
+
 ## Notifications
 
 ### Samsung watch notification content

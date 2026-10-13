@@ -93,6 +93,7 @@
     <string name="pref_category_typing_focus_delay_key" translatable="false">pref_category_typing_focus_delay_key</string>
 
     <string name="pref_phonetic_letters_key">pref_phonetic_letters</string>
+    <string name="pref_phonetic_letters_mode_key" translatable="false">pref_phonetic_letters_mode</string>
     <string name="pref_punctuation_key" translatable="false">pref_punctuation</string>
     <string name="pref_punctuation_verbosity" translatable="false">pref_punctuation_verbosity</string>
     <string name="pref_count_repeated_symbols_key" >pref_collapse_repeated_symbols</string>
@@ -1302,6 +1303,23 @@
       <item>2</item>
       <item>3</item>
     </string-array>
+
+    <string-array name="pref_phonetic_letters_mode_entries">
+      <item>@string/phonetic_letters_mode_off</item>
+      <item>@string/phonetic_letters_mode_after_letter_delay</item>
+      <item>@string/phonetic_letters_mode_after_letter_no_delay</item>
+      <item>@string/phonetic_letters_mode_instead_of_letter</item>
+    </string-array>
+
+    <!-- The values of PhoneticLetterMode's constants. -->
+    <string-array name="pref_phonetic_letters_mode_values" translatable="false">
+      <item>off</item>
+      <item>after_letter_delay</item>
+      <item>after_letter_no_delay</item>
+      <item>instead_of_letter</item>
+    </string-array>
+
+    <string name="pref_phonetic_letters_mode_default" translatable="false">after_letter_delay</string>
 
     <string-array name="pref_punctuation_entries">
       <item>@string/punctuation_all</item>
