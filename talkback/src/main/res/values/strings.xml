@@ -54,6 +54,10 @@
       Description: Distinguishes the system settings from TalkBack's own speech settings. [CHAR LIMIT=NONE]
     -->
     <string name="title_pref_system_tts_settings">System text-to-speech settings</string>
+    <!-- Title for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
+    <string name="title_selector_switch_tts_engine">Speech engine</string>
+    <!-- Summary for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
+    <string name="summary_selector_switch_tts_engine">Switch between installed speech engines</string>
     <!-- Title for the reading control that switches between voice profiles. [CHAR LIMIT=NONE] -->
     <string name="title_selector_voice_profile">Voice profile</string>
     <!--
@@ -74,6 +78,11 @@
       voice profile is in use, as all speech then uses the profile's voice. [CHAR LIMIT=NONE]
     -->
     <string name="spoken_language_unavailable_with_profile">Spoken language unavailable while using a voice profile</string>
+    <!--
+      Said when the user tries to change the speech engine from the reading controls while a voice
+      profile is in use, as the profile has its own speech engine. [CHAR LIMIT=NONE]
+    -->
+    <string name="speech_engine_unavailable_with_profile">Speech engine unavailable while using a voice profile</string>
     <!--
       Item in the menu of voice profiles for the profile in use, opened from the Backtalk menu, a
       gesture or a keyboard shortcut. [CHAR LIMIT=NONE]
@@ -407,6 +416,10 @@
     <string name="permission_speak_label">speak through Backtalk</string>
     <!-- Description of that permission. [CHAR LIMIT=NONE] -->
     <string name="permission_speak_description">Lets the app ask to say text in your Backtalk voice. Backtalk asks you before the app can speak.</string>
+    <!-- Name of the permission that an app needs to ask to be a braille display for Backtalk, shown in the app's permission list. [CHAR LIMIT=NONE] -->
+    <string name="permission_braille_display_label">ask to be a braille display for Backtalk</string>
+    <!-- Description of that permission. [CHAR LIMIT=NONE] -->
+    <string name="permission_braille_display_description">Lets the app ask to be a braille display for Backtalk. If you allow it in Backtalk, it can read everything on the screen and control your device. Backtalk asks you first.</string>
 
     <!--
       Source: Preference for speaking phonetic letter for letters.
@@ -1975,6 +1988,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_edittext_breakout_start_selection_mode">Start or end selection mode</string>
     <!-- Label for the menu item to end text selection mode. [CHAR_LIMIT=40] -->
     <string name="title_edittext_breakout_end_selection_mode">End selection mode</string>
+    <!-- Label for the gesture action that drops the text selected for copying. [CHAR_LIMIT=40] -->
+    <string name="title_clear_selection">Clear selection</string>
     <!-- Label for the menu item to show spelling suggestions for misspelling words. [CHAR_LIMIT=60] -->
     <string name="title_edittext_typo_suggestions">Spelling / grammar suggestions</string>
     <!-- Label for the menu item to show the spelling suggestion for a misspelling word. [CHAR_LIMIT=60] -->

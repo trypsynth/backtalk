@@ -2559,7 +2559,8 @@ public class TalkBackService extends AccessibilityServiceCompat
       windowEventInterpreter.addListener(uiChangeEventInterpreter);
       windowEventInterpreter.addListener(imageCaptioner);
       directTouchController =
-          new DirectTouchController(this, prefs, pipeline.getFeedbackReturner());
+          new DirectTouchController(
+              this, prefs, pipeline.getFeedbackReturner(), windowEventInterpreter);
       windowEventInterpreter.addListener(directTouchController);
       ringerModeAndScreenMonitor.addScreenChangedListener(directTouchController);
       displayMonitor.addDisplayStateChangedListener(directTouchController);
@@ -2951,6 +2952,14 @@ public class TalkBackService extends AccessibilityServiceCompat
     // Gives a name of its own to any voice profile that a damaged setting left without one, before
     // anything says it.
     VoiceProfileNames.saveNames(this, prefs);
+    VoiceProfiles.moveReadingControl(
+        prefs,
+        getString(R.string.pref_selector_voice_profile_moved_key),
+        getString(R.string.pref_selector_switch_tts_engine_key),
+        getString(R.string.pref_selector_voice_profile_key),
+        getString(R.string.pref_current_selector_setting_key),
+        getString(R.string.selector_switch_tts_engine),
+        getString(R.string.selector_voice_profile));
     reloadPreferences();
 
     inputFocusInterpreter.initLastEditableFocusForGlobalVariables();
