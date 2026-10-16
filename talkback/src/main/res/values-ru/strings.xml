@@ -507,7 +507,7 @@
   <string name="shortcut_speech_pitch_decrease">Понизить тон голоса</string>
   <string name="shortcut_speech_rate_increase">Увеличить скорость речи</string>
   <string name="shortcut_speech_rate_decrease">Снизить скорость речи</string>
-  <string name="shortcut_toggle_selection">Включить или отключить режим выбора</string>
+  <string name="shortcut_toggle_selection">Включить или отключить режим выделения</string>
   <string name="shortcut_show_tutorial">Открыть руководство</string>
   <string name="shortcut_toggle_braille_contracted_mode">Переход между полной и сокращённой версией</string>
   <string name="shortcut_toggle_braille_on_screen_overlay">Клавиатура Брайля для подключённых дисплеев Брайля</string>
