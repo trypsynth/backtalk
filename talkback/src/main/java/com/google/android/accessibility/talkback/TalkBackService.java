@@ -2455,6 +2455,11 @@ public class TalkBackService extends AccessibilityServiceCompat
                 }
                 interruptFullScreenReadActor();
                 clearQueues();
+                if (imageCaptioner != null) {
+                  // The pause drops a description from Gemini on its way to the caption that
+                  // waits for it, which would then hold every later screenshot for good.
+                  imageCaptioner.clearRequests();
+                }
               }
 
               @Override

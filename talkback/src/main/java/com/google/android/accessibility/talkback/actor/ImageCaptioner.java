@@ -1654,8 +1654,11 @@ public class ImageCaptioner extends Handler
     return (locale == null) ? Locale.getDefault() : locale;
   }
 
-  @VisibleForTesting
-  void clearRequests() {
+  /**
+   * Ends all requests and drops the captions that wait for their results, so that results that come
+   * later are ignored.
+   */
+  public void clearRequests() {
     removeMessages(MSG_RESULT_TIMEOUT);
     screenshotRequests.clear();
     characterCaptionRequests.clear();
@@ -1813,15 +1816,17 @@ public class ImageCaptioner extends Handler
         isSuccess,
         manualTrigger);
     @Nullable CaptionResult captionResult = captionResults.getCaptionResult(requestId);
-    AccessibilityNode targetNode = null;
+    if (captionResult == null) {
+      // The caption ended before its description came, such as when Backtalk paused. Like any
+      // result that comes after its request ended, the description is ignored.
+      LogUtils.w(TAG, "Ignore the description of a caption that has ended, id = %d", requestId);
+      return true;
+    }
+    AccessibilityNode targetNode = captionResult.node;
+    captionResult.isGeminiFinishedWithError = !isSuccess;
 
-    if (captionResult != null) {
-      targetNode = captionResult.node;
-      captionResult.isGeminiFinishedWithError = !isSuccess;
-
-      if (Objects.equals(errorReason, ErrorReason.NETWORK_ERROR)) {
-        captionResult.isNetworkError = true;
-      }
+    if (Objects.equals(errorReason, ErrorReason.NETWORK_ERROR)) {
+      captionResult.isNetworkError = true;
     }
 
     if (manualTrigger) {
@@ -1905,8 +1910,11 @@ public class ImageCaptioner extends Handler
         }
 
         if (TextUtils.isEmpty(fallbackResult)) {
-          // Fallback result is empty, so only announce the Gemini error result.
-          returnFeedback(imageDescriptionResult.text());
+          // Fallback result is empty, so only announce the Gemini error result, which a cancelled
+          // request does not have.
+          if (!Result.isEmpty(imageDescriptionResult)) {
+            returnFeedback(imageDescriptionResult.text());
+          }
         } else {
           // Gemini error with a fallback result.
           @Nullable CharSequence reason =
