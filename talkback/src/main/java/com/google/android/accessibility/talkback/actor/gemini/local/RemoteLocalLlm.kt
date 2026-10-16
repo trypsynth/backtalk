@@ -52,6 +52,7 @@ class RemoteLocalLlm(
   private val model: LocalModel,
   private val modelFile: File,
   private val useGpu: Boolean,
+  private val useNpu: Boolean = false,
 ) : LocalLlm {
   private class Reply(val what: Int, val text: String?)
 
@@ -114,6 +115,7 @@ class RemoteLocalLlm(
       request.data.apply {
         putString(LocalModelService.KEY_MODEL_PATH, modelFile.path)
         putBoolean(LocalModelService.KEY_USE_GPU, useGpu)
+        putBoolean(LocalModelService.KEY_USE_NPU, useNpu && model.requiresNpu)
         putInt(
           LocalModelService.KEY_MAX_TOKENS,
           model.maxTokens ?: LocalModelService.NO_MAX_TOKENS,

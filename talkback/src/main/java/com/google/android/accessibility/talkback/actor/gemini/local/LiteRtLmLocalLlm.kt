@@ -34,6 +34,12 @@ import java.util.concurrent.TimeUnit
  * Runs a Gemma 4 `.litertlm` file with LiteRT-LM. The engine takes seconds to load and holds about
  * a gigabyte or more of memory, so it loads on the first request and unloads after [idleUnloadMs]
  * without one.
+ *
+ * NPU-optimized files (e.g. `gemma-4-E2B-it_qualcomm_sm8750.litertlm` for Snapdragon 8 Elite) run
+ * with [Backend.NPU] for lower latency and battery use, which matters for a screen reader that
+ * describes every image and screen. Like the Google AI Edge Gallery, the NPU libraries come from
+ * `context.applicationInfo.nativeLibraryDir` (the `litert-npu-runtime-qualcomm` AAR). When NPU
+ * loading fails, the caller should retry with CPU/GPU.
  */
 class LiteRtLmLocalLlm(
   context: Context,
@@ -44,6 +50,8 @@ class LiteRtLmLocalLlm(
   private val idleUnloadMs: Long = DEFAULT_IDLE_UNLOAD_MS,
   /** Runs before each load, and throws [LocalLlmMemoryException] to stop it. */
   private val beforeLoad: () -> Unit = {},
+  private val useNpu: Boolean = false,
+  private val nativeLibraryDir: String = context.applicationInfo.nativeLibraryDir,
 ) : LocalLlm {
   private val cacheDir = context.cacheDir.path
   private val generateLock = Any()
@@ -125,7 +133,14 @@ class LiteRtLmLocalLlm(
       return it
     }
     beforeLoad()
-    val backend = if (useGpu) Backend.GPU() else Backend.CPU()
+    // NPU files are SoC-specific and only run on Backend.NPU. Portable files use the GPU switch.
+    // Vision uses the same backend as text so the whole request stays on one accelerator.
+    val backend =
+      when {
+        useNpu -> Backend.NPU(nativeLibraryDir)
+        useGpu -> Backend.GPU()
+        else -> Backend.CPU()
+      }
     val config =
       EngineConfig(
         modelPath = modelFile.path,
@@ -135,9 +150,20 @@ class LiteRtLmLocalLlm(
         maxNumImages = 1,
         cacheDir = cacheDir,
       )
-    return Engine(config).also {
-      it.initialize()
-      engine = it
+    // If the NPU libraries are missing or the SoC does not match, surface it as a normal
+    // load failure so the caller can fall back to GPU/CPU instead of crashing.
+    try {
+      return Engine(config).also {
+        it.initialize()
+        engine = it
+      }
+    } catch (e: LocalLlmMemoryException) {
+      throw e
+    } catch (e: Throwable) {
+      if (useNpu) {
+        Log.w(TAG, "NPU load failed, caller should retry with GPU/CPU", e)
+      }
+      throw e
     }
   }
 

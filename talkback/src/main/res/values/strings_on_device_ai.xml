@@ -122,6 +122,13 @@
     <!-- Summary of the GPU switch. [CHAR LIMIT=NONE] -->
     <string name="pref_on_device_ai_gpu_summary">Can be faster and use less memory. If answers fail, turn this off.</string>
 
+    <!-- Switch that runs NPU-optimized models on the Snapdragon NPU. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_npu">Use the NPU (Snapdragon)</string>
+    <!-- Summary of the NPU switch. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_npu_summary">Fastest on Snapdragon 8 Elite and QCS8275, and uses less battery. Only NPU models use it. If answers fail, turn this off to use the GPU or CPU instead.</string>
+    <!-- Summary of the switch when the chosen NPU file is for a different chip. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_unsupported_soc">Not available for this model. It is built for a different Snapdragon chip.</string>
+
     <!-- Download failed: no network. [CHAR LIMIT=NONE] -->
     <string name="on_device_ai_error_network">The download stopped. Check your connection and try again. It will carry on where it stopped.</string>
     <!-- Download failed: the server refused. [CHAR LIMIT=NONE] -->

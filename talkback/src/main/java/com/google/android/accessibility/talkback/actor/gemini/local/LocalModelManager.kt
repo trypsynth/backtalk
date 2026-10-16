@@ -64,7 +64,13 @@ class LocalModelManager private constructor(context: Context) {
     Executors.newSingleThreadExecutor { Thread(it, "on-device-ai-close").apply { isDaemon = true } }
   private val llmLock = Any()
   @Volatile private var llm: RemoteLocalLlm? = null
-  private var llmKey: Triple<LocalModel, Boolean, Long>? = null
+  private data class LlmKey(
+    val model: LocalModel,
+    val gpu: Boolean,
+    val npu: Boolean,
+    val modified: Long,
+  )
+  private var llmKey: LlmKey? = null
 
   val store = LocalModelStore(File(appContext.filesDir, "models"))
 
@@ -112,13 +118,15 @@ class LocalModelManager private constructor(context: Context) {
   fun llm(): LocalLlm? {
     val model = activeModel() ?: return null
     val gpu = OnDeviceAiSettings.useGpu(prefs)
+    // NPU only for SoC-specific files; portable models ignore the switch and keep CPU/GPU.
+    val npu = OnDeviceAiSettings.useNpu(prefs) && model.requiresNpu
     val file = store.file(model)
-    val key = Triple(model, gpu, file.lastModified())
+    val key = LlmKey(model, gpu, npu, file.lastModified())
     synchronized(llmLock) {
       val current = llm
       if (current == null || llmKey != key) {
         current?.let { retire(it) }
-        llm = RemoteLocalLlm(appContext, model, file, gpu)
+        llm = RemoteLocalLlm(appContext, model, file, gpu, npu)
         llmKey = key
       }
       return llm
