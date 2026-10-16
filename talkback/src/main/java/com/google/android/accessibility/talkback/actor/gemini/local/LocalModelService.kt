@@ -45,6 +45,7 @@ class LocalModelService : Service() {
     val path: String,
     val lastModified: Long,
     val useGpu: Boolean,
+    val useNpu: Boolean,
     val maxTokens: Int?,
   )
 
@@ -135,7 +136,10 @@ class LocalModelService : Service() {
   private fun llmFor(data: Bundle): LiteRtLmLocalLlm {
     val file = File(data.getString(KEY_MODEL_PATH).orEmpty())
     val maxTokens = data.getInt(KEY_MAX_TOKENS, NO_MAX_TOKENS).takeIf { it != NO_MAX_TOKENS }
-    val config = Config(file.path, file.lastModified(), data.getBoolean(KEY_USE_GPU), maxTokens)
+    val useGpu = data.getBoolean(KEY_USE_GPU)
+    // Only NPU-optimized files (requiresNpu) may use the NPU; portable files keep CPU/GPU.
+    val wantNpu = data.getBoolean(KEY_USE_NPU, false)
+    val config = Config(file.path, file.lastModified(), useGpu, wantNpu, maxTokens)
     llm?.let {
       if (config == llmConfig) return it
       // Forget it before closing it, so that a cancel meanwhile does not go to it.
@@ -149,7 +153,10 @@ class LocalModelService : Service() {
         file,
         config.useGpu,
         maxTokens,
-        beforeLoad = { if (checkMemory) checkFreeMemory(appContext, file.length()) },
+        beforeLoad = {
+          if (checkMemory) checkFreeMemory(appContext, file.length(), config.useNpu)
+        },
+        useNpu = config.useNpu,
       )
       .also {
         llm = it
@@ -173,11 +180,14 @@ class LocalModelService : Service() {
     // How many instances of the service exist, so that the model closes only when none is left.
     private val instances = AtomicInteger(0)
 
-    private fun checkFreeMemory(context: Context, modelBytes: Long) {
+    private fun checkFreeMemory(context: Context, modelBytes: Long, isNpu: Boolean) {
       val memory = ActivityManager.MemoryInfo()
       context.getSystemService(ActivityManager::class.java).getMemoryInfo(memory)
-      Log.i(TAG, "${memory.availMem / MIB} MB free for a ${modelBytes / MIB} MB model")
-      if (!OnDeviceAiSettings.hasFreeMemoryFor(modelBytes, memory.availMem, memory.lowMemory)) {
+      Log.i(TAG, "${memory.availMem / MIB} MB free for a ${modelBytes / MIB} MB model (npu=$isNpu)")
+      // NPU weights live on Hexagon SRAM; only ~60% of the file size is needed as free CPU
+      // memory. Without the discount, NPU phones fail the check even though the load succeeds.
+      val required = if (isNpu) (modelBytes * 0.6).toLong() else modelBytes
+      if (!OnDeviceAiSettings.hasFreeMemoryFor(required, memory.availMem, memory.lowMemory)) {
         throw LocalLlmMemoryException("Not enough free memory")
       }
     }
@@ -201,6 +211,7 @@ class LocalModelService : Service() {
 
     const val KEY_MODEL_PATH = "model_path"
     const val KEY_USE_GPU = "use_gpu"
+    const val KEY_USE_NPU = "use_npu"
     const val KEY_MAX_TOKENS = "max_tokens"
     const val KEY_PROMPT = "prompt"
 
