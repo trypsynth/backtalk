@@ -80,4 +80,50 @@ object DirectTouchRegions {
     excluded.forEach { region.op(it, Region.Op.DIFFERENCE) }
     return region
   }
+
+  /**
+   * Whether an event of [eventType] from an app that marks its own direct touch areas can mean the
+   * marked views moved, appeared or went away, without any window changing.
+   */
+  fun movesMarkedAreas(eventType: Int): Boolean =
+    eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED ||
+      eventType == AccessibilityEvent.TYPE_VIEW_SCROLLED
+
+  /** A window on screen, as far as working out which parts of marked views can be touched. */
+  data class LayeredWindow(
+    val id: Int,
+    /** Windows with a higher layer are drawn on top. */
+    val layer: Int,
+    val bounds: Rect,
+    /**
+     * Touches on it always stay with Backtalk, wherever it is in the stack, as [shouldExcludeWindow]
+     * decides.
+     */
+    val alwaysExcluded: Boolean,
+  )
+
+  /** A view the app marked as a direct touch area, in the window with [windowId]. */
+  data class MarkedArea(val windowId: Int, val bounds: Rect)
+
+  /**
+   * The parts of the [marked] views that can take touches directly: each view clipped to its own
+   * window, minus every window drawn on top of that window and every window that is always excluded.
+   * A dialog from the same app is cut out this way, so it works with Backtalk while the rest of a
+   * marked view stays direct. A view whose window isn't in [windows] is left out.
+   */
+  fun markedRegion(marked: List<MarkedArea>, windows: List<LayeredWindow>): Region {
+    val region = Region()
+    marked.forEach { area ->
+      val window = windows.firstOrNull { it.id == area.windowId } ?: return@forEach
+      val part = Region(area.bounds)
+      part.op(window.bounds, Region.Op.INTERSECT)
+      windows.forEach { other ->
+        if (other.id != window.id && (other.alwaysExcluded || other.layer > window.layer)) {
+          part.op(other.bounds, Region.Op.DIFFERENCE)
+        }
+      }
+      region.op(part, Region.Op.UNION)
+    }
+    return region
+  }
 }

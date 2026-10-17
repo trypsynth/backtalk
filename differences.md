@@ -446,6 +446,36 @@ If you develop a game, add this `<meta-data>` element inside your `<application>
     android:value="true" />
 ```
 
+### Direct touch on part of the screen
+
+Some apps want raw touch in one area only, such as a player with a gesture pad. In these apps, only the marked area takes your touches directly, and the rest of the screen works with Backtalk as usual. Backtalk says "Direct touch on" when the app comes to the front and "Direct touch off" when it leaves, as for a game, and says nothing as the marked area appears and goes away.
+
+If you develop such an app, add this `<meta-data>` element instead of the one above, inside your `<application>` element or your main `<activity>` element. Backtalk turns your app on the first time that it sees it, and players can still turn it off in the **Apps** list. If you add both, this one wins.
+
+```xml
+<meta-data
+    android:name="dev.nvgt.capability.DIRECT_TOUCH_REGIONS"
+    android:value="true" />
+```
+
+Then mark each view that should take touches directly by giving it the ID `dev_nvgt_direct_touch_region`. Declare the ID in your app's resources, for example in `res/values/ids.xml`:
+
+```xml
+<resources>
+    <item name="dev_nvgt_direct_touch_region" type="id" />
+</resources>
+```
+
+and give it to the view, in a layout with `android:id="@id/dev_nvgt_direct_touch_region"`, or in code:
+
+```kotlin
+gesturePad.id = R.id.dev_nvgt_direct_touch_region
+```
+
+Several views can have the ID. Backtalk asks your app for the views with it, and your app finds them itself, so this costs the same however many views your app has. Backtalk passes touches through on the screen bounds of the marked views that are shown and visible, and follows them when your app's content changes or scrolls, looking again at most every 150 milliseconds. Anything on top of them stays with Backtalk, including your own dialogs and popups, the keyboard, and system bars. While nothing is marked, nothing passes through. Direct touch still turns off when a text field takes focus, another app opens on top, the notification shade opens, or the screen turns off.
+
+Showing or hiding a marked view needs nothing extra. If you give a view that stays on screen the ID, or take it away, call `view.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)` afterward, so that Backtalk looks again.
+
 ## On-screen keyboard
 
 ### Lift to type, except to send

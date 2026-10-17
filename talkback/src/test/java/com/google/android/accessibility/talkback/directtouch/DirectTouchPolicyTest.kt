@@ -93,4 +93,21 @@ class DirectTouchPolicyTest {
   fun activeShortSystemWindowIsNotTheShade() {
     assertFalse(DirectTouchPolicy.coversHalfScreen(active = true, windowHeight = 120, displayHeight = 1080))
   }
+
+  @Test
+  fun aDialogFromTheSameAppDoesNotTurnRegionModeOff() {
+    assertTrue(DirectTouchPolicy.shouldBeActive(base().copy(regionMode = true, dialogShowing = true)))
+  }
+
+  @Test
+  fun everythingElseStillTurnsRegionModeOff() {
+    val region = base().copy(regionMode = true)
+    assertTrue(DirectTouchPolicy.shouldBeActive(region))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(foreignAppWindow = { true })))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(systemUiCoversHalf = { true })))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(textFieldFocused = true)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(screenInteractive = false)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(masterEnabled = false)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(appEnabled = false)))
+  }
 }
