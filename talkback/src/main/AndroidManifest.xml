@@ -459,5 +459,17 @@
             </intent-filter>
         </receiver>
 
+        <!-- ML Kit logs usage to Google through Firebase datatransport. Removing these keeps the
+             events from ever being uploaded. -->
+        <service
+            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+            tools:node="remove" />
+        <service
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+            tools:node="remove" />
+        <receiver
+            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+            tools:node="remove" />
+
     </application>
 </manifest>
