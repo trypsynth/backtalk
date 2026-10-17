@@ -413,6 +413,10 @@ public class RingerModeAndScreenMonitor extends SameThreadBroadcastReceiver
       }
     }
 
+    if (ttsText.length() == 0) {
+      return;
+    }
+
     SpeakOptions speakOptions =
         SpeakOptions.create()
             // Uses QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH so that time announcement does not
