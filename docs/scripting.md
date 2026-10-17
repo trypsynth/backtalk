@@ -77,7 +77,7 @@ apps: [
 ],
 ```
 
-*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it.
+*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it. Backtalk learns the activity from the app's window changes. Until it has seen one, such as just after Backtalk is updated or the phone restarts with the app open, the script runs in all of the app's screens.
 *   `window` limits it to windows whose title contains the text.
 
 A script with `apps` is loaded when one of its apps comes to the front and unloaded when it leaves, so anything it keeps in variables is lost then. Use [`backtalk.storage`](#storage) for what should last.
@@ -125,7 +125,7 @@ A rule names its item with `id`, with `match`, or with both:
 *   `id` is the item's view id, either the short form (`send_button`) or the full one (`com.example:id/send_button`).
 *   `match` is a [query](#queries).
 
-`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it.
+`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it. A rule with `activity` applies while the activity isn't known yet, as described for `apps`.
 
 A rule can set any of these:
 
@@ -281,7 +281,7 @@ Sounds and vibration follow the user's **Sound feedback** and **Vibration feedba
 *   `backtalk.screen.focused()` is the item with Backtalk's focus.
 *   `backtalk.screen.root()` is the top item of the active window.
 *   `backtalk.screen.find(query)` and `backtalk.screen.findAll(query, limit = 50)` search the active window. A search looks at up to 3,000 items, returns up to 200, and stops when the script runs out of [time](#limits).
-*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
+*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `activity` is `null` until Backtalk has seen the app change window. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
 
 ### Rules from code
 
