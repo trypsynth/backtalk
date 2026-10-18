@@ -1,6 +1,6 @@
 # Writing Backtalk scripts
 
-A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 3.
+A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 4.
 
 Scripts run on phones and tablets. Watches and TVs can't run them.
 
@@ -53,7 +53,7 @@ backtalk.onAppEnter(() => backtalk.speak('Hello from a script'));
 | `id` | Required. Lowercase letters, digits, dots, dashes and underscores, starting with a letter or digit, up to 64 characters. A script with the same id replaces the installed one. |
 | `name` | Required. Shown in the Scripts list, and at the start of the title of every dialog the script shows. |
 | `author` | Required. |
-| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 3. Version 2 added `has` to [queries](#queries) and `activate` to [rules](#rules), and version 3 added `meta` to [`backtalk.app`](#screen). |
+| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 4. Version 2 added `has` to [queries](#queries) and `activate` to [rules](#rules), version 3 added `meta` to [`backtalk.app`](#screen), and version 4 added `silence` to rules. |
 | `testedApiVersion` | Required. The highest script API version you tested with. Backtalk warns before installing a script tested only with an older version. |
 | `version` | The script's own version, as text. The default is `'1'`. |
 | `description` | Shown on the script's page and before it's installed. |
@@ -77,7 +77,7 @@ apps: [
 ],
 ```
 
-*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it.
+*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it. Backtalk learns the activity from the app's window changes. Until it has seen one, such as just after Backtalk is updated or the phone restarts with the app open, the script runs in all of the app's screens.
 *   `window` limits it to windows whose title contains the text.
 
 A script with `apps` is loaded when one of its apps comes to the front and unloaded when it leaves, so anything it keeps in variables is lost then. Use [`backtalk.storage`](#storage) for what should last.
@@ -125,7 +125,7 @@ A rule names its item with `id`, with `match`, or with both:
 *   `id` is the item's view id, either the short form (`send_button`) or the full one (`com.example:id/send_button`).
 *   `match` is a [query](#queries).
 
-`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it.
+`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it. A rule with `activity` applies while the activity isn't known yet, as described for `apps`.
 
 A rule can set any of these:
 
@@ -134,6 +134,7 @@ A rule can set any of these:
 | `label` | The item's name, used where the app gave none or a poor one. |
 | `speak` | Everything Backtalk says for the item, in place of its name, role and state. |
 | `hide` | `true` hides the item: swiping skips it. `'all'` hides what's inside it too. A hidden item is still there, so a script can click it. |
+| `silence` | `true` stops Backtalk speaking the item's changes, selections and announcements, such as a progress bar's updates. `'all'` silences what's inside it too, such as the seek bar in a grouped row. Focusing the item still speaks it. Needs script API version 4. |
 | `role` | The item's role, such as `'button'`. An unknown role is an error that lists the roles. |
 | `state` | The item's state, such as `'Selected'`. |
 | `hint` | The usage hint. |
@@ -281,7 +282,7 @@ Sounds and vibration follow the user's **Sound feedback** and **Vibration feedba
 *   `backtalk.screen.focused()` is the item with Backtalk's focus.
 *   `backtalk.screen.root()` is the top item of the active window.
 *   `backtalk.screen.find(query)` and `backtalk.screen.findAll(query, limit = 50)` search the active window. A search looks at up to 3,000 items, returns up to 200, and stops when the script runs out of [time](#limits).
-*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
+*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `activity` is `null` until Backtalk has seen the app change window. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
 
 ### Rules from code
 

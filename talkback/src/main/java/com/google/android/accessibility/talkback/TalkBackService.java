@@ -174,6 +174,7 @@ import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.flags.Flags;
 import com.google.android.accessibility.talkback.focusmanagement.AccessibilityFocusMonitor;
 import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorForLogicalNavigation;
+import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorForScreenStateChange;
 import com.google.android.accessibility.talkback.focusmanagement.ScreenFocusRestorer;
 import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCache;
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenStateMonitor;
@@ -263,6 +264,7 @@ import com.google.android.accessibility.utils.PackageManagerUtils;
 import com.google.android.accessibility.utils.Performance;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.Performance.StageId;
+import com.google.android.accessibility.utils.Role;
 import com.google.android.accessibility.utils.ServiceKeyEventListener;
 import com.google.android.accessibility.utils.ServiceStateListener;
 import com.google.android.accessibility.utils.SettingsUtils;
@@ -811,6 +813,12 @@ public class TalkBackService extends AccessibilityServiceCompat
   private boolean volumeUpKeyPressedInPassThroughWindow = false;
   // Records whether the last keystroke of VolumeDown key occurred in the passthrough window.
   private boolean volumeDownKeyPressedInPassThroughWindow = false;
+  // Records whether the last press of VolumeUp or VolumeDown adjusted the focused slider.
+  private boolean volumeUpKeyAdjustsSlider = false;
+  private boolean volumeDownKeyAdjustsSlider = false;
+
+  /** "Volume keys adjust sliders" setting. */
+  private boolean volumeKeysAdjustSliders = false;
 
   private final @NonNull SparseArray<TouchInteractionMonitor> displayIdToTouchInteractionMonitors =
       new SparseArray<>();
@@ -1378,6 +1386,9 @@ public class TalkBackService extends AccessibilityServiceCompat
         FeatureFlagReader.enableSpeechVolumeKeyboard(this)
             && (keyEvent.getModifiers() & keyComboManager.getKeyComboModel().getTriggerModifier())
                 != 0;
+    if (adjustSliderWithVolumeKey(keyEvent, triggerModifierPressed)) {
+      return true;
+    }
     if (keyAction == KeyEvent.ACTION_DOWN) {
       boolean handleVolumeKeyInTalkBack =
           isTouchInteracting
@@ -1420,6 +1431,7 @@ public class TalkBackService extends AccessibilityServiceCompat
 
     if (keyAction == KeyEvent.ACTION_DOWN) {
       textEventInterpreter.setLastKeyEventTime(keyEvent.getEventTime());
+      InputFocusInterpreter.setLastKeyDownTime(keyEvent.getEventTime());
       textEventInterpreter.resetLastKeyDown();
     }
     Performance perf = Performance.getInstance();
@@ -1470,6 +1482,61 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
 
     return false;
+  }
+
+  /**
+   * Adjusts the focused slider with the volume keys, when the setting is on, and returns whether
+   * the key was consumed. Volume keys pressed while touching the screen, with the keyboard
+   * shortcut modifier, or during continuous reading keep adjusting speech volume. The key up that
+   * ends a press which adjusted the slider is consumed too.
+   */
+  private boolean adjustSliderWithVolumeKey(KeyEvent keyEvent, boolean triggerModifierPressed) {
+    int keyCode = keyEvent.getKeyCode();
+    boolean isUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP;
+    if (!isUp && keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
+      return false;
+    }
+    if (keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
+      boolean adjusted;
+      if (isUp) {
+        adjusted = volumeUpKeyAdjustsSlider;
+        volumeUpKeyAdjustsSlider = false;
+      } else {
+        adjusted = volumeDownKeyAdjustsSlider;
+        volumeDownKeyAdjustsSlider = false;
+      }
+      return adjusted;
+    }
+    // Holding the key repeats the adjustment, even if focus leaves the slider meanwhile.
+    if (keyEvent.getRepeatCount() == 0) {
+      boolean adjusts =
+          volumeKeysAdjustSliders
+              && isServiceActive()
+              && !isTouchInteracting
+              && !triggerModifierPressed
+              && !isBrailleImeTouchInteracting()
+              && !pipeline.getActorState().getContinuousRead().isActive()
+              && ringerModeAndScreenMonitor != null
+              && ringerModeAndScreenMonitor.isInteractive()
+              && Role.getRole(accessibilityFocusMonitor.getSupportedAdjustableNode())
+                  == Role.ROLE_SEEK_CONTROL;
+      if (isUp) {
+        volumeUpKeyAdjustsSlider = adjusts;
+      } else {
+        volumeDownKeyAdjustsSlider = adjusts;
+      }
+    }
+    if (!(isUp ? volumeUpKeyAdjustsSlider : volumeDownKeyAdjustsSlider)) {
+      return false;
+    }
+    pipeline
+        .getFeedbackReturner()
+        .returnFeedback(
+            Performance.EVENT_ID_UNTRACKED,
+            Feedback.adjustValue(
+                isUp ? Feedback.AdjustValue.Action.INCREASE_VALUE
+                    : Feedback.AdjustValue.Action.DECREASE_VALUE));
+    return true;
   }
 
   private boolean isBrailleImeTouchInteracting() {
@@ -3315,9 +3382,18 @@ public class TalkBackService extends AccessibilityServiceCompat
       enableAnimation(!reduceDelayPref);
     }
     WindowEventInterpreter.setReduceWindowDelay(reduceDelayPref);
+    ScreenFeedbackManager.setFirstItemInterruptsWindowName(
+        getBooleanPref(
+            R.string.pref_first_item_interrupts_window_name_key,
+            R.bool.pref_first_item_interrupts_window_name_default));
 
     FocusProcessorForLogicalNavigation.setWrapAround(
         getBooleanPref(R.string.pref_wrap_around_key, R.bool.pref_wrap_around_default));
+    // TV navigation relies on focus following input focus, so the switch is hidden there.
+    FocusProcessorForScreenStateChange.setFocusNewWindows(
+        FormFactorUtils.isAndroidTv()
+            || getBooleanPref(
+                R.string.pref_focus_new_windows_key, R.bool.pref_focus_new_windows_default));
     EventFilter.setSpeakItemsBeforeScroll(
         getBooleanPref(
             R.string.pref_speak_items_before_scroll_key,
@@ -3535,6 +3611,10 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
     enterInterruptsSpeech =
         getBooleanPref(R.string.pref_interrupt_enter_key, R.bool.pref_interrupt_enter_default);
+    volumeKeysAdjustSliders =
+        getBooleanPref(
+            R.string.pref_volume_keys_adjust_sliders_key,
+            R.bool.pref_volume_keys_adjust_sliders_default);
 
     boolean useAudioFocus =
         getBooleanPref(R.string.pref_use_audio_focus_key, R.bool.pref_use_audio_focus_default);

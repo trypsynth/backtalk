@@ -74,6 +74,10 @@ After a window changes, TalkBack waits for the window to settle before it says t
 
 The **Turn off animations** setting in **Advanced settings** > **Reduce delay** turns off animations for the whole phone, so screens change immediately and the wait is only 200 ms. TalkBack called this setting **Reduce window announcement delay**, and had disabled the code that turns animations off, so the setting did nothing. Backtalk makes the setting work, and turns animations back on when you turn Backtalk off. On Android 12 and earlier, which don't let Backtalk turn animations off, the setting only shortens the wait. The setting is on by default.
 
+When you activated an item, or pressed a key, while the item was being spoken or just after, TalkBack still spoke its usage hint, such as "Double-tap to activate", and the name of the new window waited for the hint. Backtalk drops the hint.
+
+TalkBack speaks the window name only after the speech before it, and the first item in the new window only after the window name. To hear the first item sooner, turn on **Speak first item without waiting for window name** in **Advanced settings** > **Reduce delay**. The window name then interrupts the speech before it, and the first item interrupts the window name as soon as it is focused, so usually only the window sound is heard before the first item.
+
 ### Swiping into the next part of a list
 
 When the next item was only partly on screen, TalkBack scrolled it into view, waited for the scroll before it spoke, and then waited another 110 ms in case more scroll events arrived. Backtalk speaks the item immediately and lets the scroll finish while it speaks.
@@ -318,6 +322,10 @@ When you swipe past the last item on the screen, TalkBack stops once and then go
 
 **Wrap around** is also a reading control, so you can turn it on or off with a swipe up or down. It's on by default.
 
+### Focus in new windows
+
+When a window opens, or you go back, TalkBack moves focus into it: back to the item you were on, to the text field with the cursor, or to the first item. To leave focus alone, turn off **Advanced settings** > **Move focus to new windows**. Backtalk then speaks only the window name, and the next swipe moves to the first item. This applies to Backtalk's own menus and dialogs too, when they open and when they close. Focus follows input focus only when you move it with a key, such as an arrow key or Tab, not when an app moves it by itself. When the item you focused disappears and the windows haven't changed, focus is placed again. The switch isn't on TVs, which need focus to follow input focus.
+
 ### Gestures recognized by Backtalk
 
 By default, Backtalk recognizes gestures itself instead of leaving this to Android, which makes the rotor and the quadruple-tap with three fingers possible. TalkBack leaves this off.
@@ -345,6 +353,10 @@ On Android 11, when you picked an action with the **Actions** reading control, a
 ### Sliders that report themselves as unfocusable
 
 realme UI reports some volume sliders as not focusable and unlabeled, so TalkBack skipped them. Backtalk can focus them.
+
+### Volume keys that adjust sliders
+
+When you turn on **Advanced settings** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.
 
 ## Backtalk menu
 
