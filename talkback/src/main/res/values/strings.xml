@@ -4371,4 +4371,12 @@ Do not use any markdown in your response."</string>
   <!-- Tip notification content for lock screen notifications. [CHAR_LIMIT=NONE] -->
   <string name="notifictions_in_lock_screen_notification_content">To hear notifications when your screen is off, turn on \"Speak notifications when screen is off\" in Backtalk verbosity settings</string>
 
+  <!-- Title of an Advanced Settings switch. Allows scrolling to the remembered item when returning to a screen. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_scroll_to_restore_previous_focus">Scroll to restore previous focus</string>
+  <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_scroll_to_restore_previous_focus">Scroll to the last focused item when returning to a screen.</string>
+  <!-- Title of the phone Advanced Settings switch. Opt in to remembering an accessibility element when using Back. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_restore_focus_on_back">Restore focus when going back</string>
+  <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_restore_focus_on_back">Return to the last focused item when going back to a screen.</string>
 </resources>
