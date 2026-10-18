@@ -1,6 +1,6 @@
 # Writing Backtalk scripts
 
-A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 2.
+A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 3.
 
 Scripts run on phones and tablets. Watches and TVs can't run them.
 
@@ -8,10 +8,20 @@ Scripts run on phones and tablets. Watches and TVs can't run them.
 
 A script is one of these:
 
-*   A `.js` file.
-*   A `.zip` file with a `main.js` in it, plus anything `main.js` uses: other JavaScript modules, sounds, and translations. The zip can be up to 5 MB unpacked and hold up to 200 files.
+*   A `.js` file, up to 1 MB.
+*   A `.zip` file with a `main.js` in it, plus anything `main.js` uses: other JavaScript modules, sounds, and translations. The zip can be up to 5 MB, up to 5 MB unpacked, and hold up to 200 files.
 
 To install a script, go to **Advanced settings** > **Scripts** in Backtalk settings and choose **Import script**. Backtalk lists what the script asks to do before it installs it. Importing a file with the id of a script that's already installed updates that script and keeps its data and settings; Backtalk always asks first, and says so if the author changed.
+
+To find scripts, choose **Script sources** on the Scripts screen and **Add source**. A source is the address of a repository, or of a branch or folder in one, on GitHub, GitLab, Codeberg, Gitea (gitea.com) or Bitbucket:
+
+*   `github.com/owner/repository` or `github.com/owner/repository/tree/main/scripts`
+*   `gitlab.com/group/repository` or `gitlab.com/group/subgroup/repository/-/tree/main/scripts`
+*   `codeberg.org/owner/repository` or `codeberg.org/owner/repository/src/branch/main/scripts`
+*   `gitea.com/owner/repository`, written as for Codeberg
+*   `bitbucket.org/workspace/repository` or `bitbucket.org/workspace/repository/src/main/scripts`
+
+Only public repositories on these services work. The source's `.js` and `.zip` files are listed. Choosing one downloads it and shows the same install dialog as **Import script**. **Remove source** on a source's screen removes it from the list; scripts already installed from it stay installed.
 
 Scripts run in [QuickJS](https://github.com/quickjs-ng/quickjs), so you can use modern JavaScript, including modules, classes, `async` and `await`. A script can't reach Android directly. It has no file system, no `require`, and no Java classes; everything goes through the `backtalk` object described below.
 
@@ -43,7 +53,7 @@ backtalk.onAppEnter(() => backtalk.speak('Hello from a script'));
 | `id` | Required. Lowercase letters, digits, dots, dashes and underscores, starting with a letter or digit, up to 64 characters. A script with the same id replaces the installed one. |
 | `name` | Required. Shown in the Scripts list, and at the start of the title of every dialog the script shows. |
 | `author` | Required. |
-| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 2, which adds `has` to [queries](#queries) and `activate` to [rules](#rules). |
+| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 3. Version 2 added `has` to [queries](#queries) and `activate` to [rules](#rules), and version 3 added `meta` to [`backtalk.app`](#screen). |
 | `testedApiVersion` | Required. The highest script API version you tested with. Backtalk warns before installing a script tested only with an older version. |
 | `version` | The script's own version, as text. The default is `'1'`. |
 | `description` | Shown on the script's page and before it's installed. |
@@ -271,7 +281,7 @@ Sounds and vibration follow the user's **Sound feedback** and **Vibration feedba
 *   `backtalk.screen.focused()` is the item with Backtalk's focus.
 *   `backtalk.screen.root()` is the top item of the active window.
 *   `backtalk.screen.find(query)` and `backtalk.screen.findAll(query, limit = 50)` search the active window. A search looks at up to 3,000 items, returns up to 200, and stops when the script runs out of [time](#limits).
-*   `backtalk.app` is `{ package, activity, window }` for the app in front.
+*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
 
 ### Rules from code
 

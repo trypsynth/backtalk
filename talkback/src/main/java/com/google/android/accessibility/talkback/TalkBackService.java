@@ -161,6 +161,7 @@ import com.google.android.accessibility.talkback.controlsounds.ControlSoundsSett
 import com.google.android.accessibility.talkback.directtouch.DirectTouchController;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor;
 import com.google.android.accessibility.talkback.eventprocessor.AccessibilityEventProcessor.TalkBackListener;
+import com.google.android.accessibility.talkback.eventprocessor.PhoneticLetterMode;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorEmojiTraversal;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorEventQueue;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorGestureVibrator;
@@ -249,6 +250,7 @@ import com.google.android.accessibility.talkback.utils.SpeechRecognizerPerformer
 import com.google.android.accessibility.talkback.utils.TalkbackFeatureSupport;
 import com.google.android.accessibility.talkback.utils.VerbosityPreferences;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
+import com.google.android.accessibility.utils.monitor.RecentUserInput;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.BuildVersionUtils;
@@ -1117,6 +1119,10 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (directTouchController != null) {
       directTouchController.onAccessibilityEvent(event);
     }
+    if (eventType == AccessibilityEvent.TYPE_TOUCH_INTERACTION_START
+        || eventType == AccessibilityEvent.TYPE_TOUCH_INTERACTION_END) {
+      RecentUserInput.mark();
+    }
     if (eventType == AccessibilityEvent.TYPE_TOUCH_INTERACTION_START) {
       // TODO: Could move the logic of TOUCH_INTERACTION related event handling out of
       // TalkBackService, and concentrated in a dedicated module such as ?
@@ -1343,6 +1349,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   /** Handles a key event and returns whether it should be considered consumed. */
   protected boolean onKeyEventInternal(KeyEvent keyEvent) {
+    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+      RecentUserInput.mark();
+    }
     if (pauseController != null) {
       // While paused, keys pass to apps except the ones that resume Backtalk.
       Boolean handled = pauseController.onKeyEvent(keyEvent);
@@ -2041,6 +2050,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             : new ImageContents(labelManager, /* imageCaptionStorage= */ null);
 
     processorPhoneticLetters = new ProcessorPhoneticLetters(this, globalVariables);
+    speechController.setLetterSpeller(processorPhoneticLetters::getPhoneticForSpelling);
 
     compositor =
         new Compositor(
@@ -2597,7 +2607,8 @@ public class TalkBackService extends AccessibilityServiceCompat
       windowEventInterpreter.addListener(uiChangeEventInterpreter);
       windowEventInterpreter.addListener(imageCaptioner);
       directTouchController =
-          new DirectTouchController(this, prefs, pipeline.getFeedbackReturner());
+          new DirectTouchController(
+              this, prefs, pipeline.getFeedbackReturner(), windowEventInterpreter);
       windowEventInterpreter.addListener(directTouchController);
       ringerModeAndScreenMonitor.addScreenChangedListener(directTouchController);
       displayMonitor.addDisplayStateChangedListener(directTouchController);
@@ -2989,6 +3000,14 @@ public class TalkBackService extends AccessibilityServiceCompat
     // Gives a name of its own to any voice profile that a damaged setting left without one, before
     // anything says it.
     VoiceProfileNames.saveNames(this, prefs);
+    VoiceProfiles.moveReadingControl(
+        prefs,
+        getString(R.string.pref_selector_voice_profile_moved_key),
+        getString(R.string.pref_selector_switch_tts_engine_key),
+        getString(R.string.pref_selector_voice_profile_key),
+        getString(R.string.pref_current_selector_setting_key),
+        getString(R.string.selector_switch_tts_engine),
+        getString(R.string.selector_voice_profile));
     reloadPreferences();
 
     inputFocusInterpreter.initLastEditableFocusForGlobalVariables();
@@ -3485,6 +3504,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 res.getString(R.string.pref_capital_letters_default)));
     speechController.setCapLetterFeedback(capLetterFeedback);
     globalVariables.setGlobalSayCapital(capLetterFeedback == CAPITAL_LETTERS_TYPE_SPEAK_CAP);
+    globalVariables.setCapitalLetterFeedback(capLetterFeedback);
     @Nullable VoiceProfile voiceProfile = VoiceProfiles.readActive(prefs);
     pipeline.setSpeechPitch(
         (voiceProfile != null)
@@ -3693,13 +3713,7 @@ public class TalkBackService extends AccessibilityServiceCompat
       globalVariables.setUsageHintEnabled(speakUsageHints);
 
       // Update preference: speak phonetic letters.
-      boolean speakPhoneticLetters =
-          VerbosityPreferences.getPreferenceValueBool(
-              prefs,
-              res,
-              res.getString(R.string.pref_phonetic_letters_key),
-              res.getBoolean(R.bool.pref_phonetic_letters_default));
-      globalVariables.setSpeakPhoneticLettersEnabled(speakPhoneticLetters);
+      globalVariables.setPhoneticLetterMode(PhoneticLetterMode.read(prefs, res));
 
       // Update preference: count repeated symbols.
       boolean countrepeatedSymbols =

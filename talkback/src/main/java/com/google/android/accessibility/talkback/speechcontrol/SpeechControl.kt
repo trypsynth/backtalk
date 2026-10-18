@@ -41,10 +41,9 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils
  * Speech from other apps can't be turned against the user:
  * - Nothing is said unless Let other apps speak is on and the user allowed that app, which
  *   Backtalk asks about the first time the app tries.
- * - A sound plays before each thing an app says, so it can't pass for Backtalk.
+ * - A sound can play before each thing an app says, so it can't pass for Backtalk.
  * - Nothing is said while the device is locked, or while Backtalk is off or paused.
- * - Each app can speak a few times at once, then about once a second, and text is cut at
- *   [SpeechControlPolicy.MAX_TEXT_LENGTH] characters.
+ * - Each app can speak a few times at once, then about once a second.
  * - Apps can replace or stop only speech from other apps, never Backtalk's own.
  *
  * Everything runs on the main thread.
@@ -65,6 +64,7 @@ object SpeechControl {
 
   /** Must match pref_speech_control_key. */
   const val PREF_ENABLED = "pref_speech_control"
+  const val PREF_SOUND = "pref_speech_control_sound"
 
   private var context: Context? = null
   private var feedback: Pipeline.FeedbackReturner? = null
@@ -102,6 +102,10 @@ object SpeechControl {
 
   fun isEnabled(context: Context): Boolean =
     SharedPreferencesUtils.getSharedPreferences(context).getBoolean(PREF_ENABLED, false)
+
+  /** Whether a sound plays before each thing another app says. Off unless the user turns it on. */
+  fun playsSound(context: Context): Boolean =
+    SharedPreferencesUtils.getSharedPreferences(context).getBoolean(PREF_SOUND, false)
 
   /**
    * Says [text] for the first of [apps], the caller's packages, that the user allowed, and asks
@@ -146,11 +150,10 @@ object SpeechControl {
         },
       )
     options.setUtteranceGroup(UTTERANCE_GROUP_OTHER_APPS)
+    val speech = Feedback.speech(say, options)
     // The sound marks the speech as another app's.
-    return feedback.returnFeedback(
-      EVENT_ID_UNTRACKED,
-      Feedback.speech(say, options).sound(R.raw.chime_up),
-    )
+    if (playsSound(context)) speech.sound(R.raw.chime_up)
+    return feedback.returnFeedback(EVENT_ID_UNTRACKED, speech)
   }
 
   /** Stops what other apps are saying, for the first of [apps] that the user allowed. */

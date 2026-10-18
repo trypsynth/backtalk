@@ -62,11 +62,9 @@ class SpeechControlPolicyTest {
   }
 
   @Test
-  fun textToSay_cutsLongTextAtAWord() {
-    val long = "word ".repeat(400)
-    val say = SpeechControlPolicy.textToSay(long)!!
-    assertTrue(say.length <= SpeechControlPolicy.MAX_TEXT_LENGTH)
-    assertTrue(say.endsWith("word"))
+  fun textToSay_keepsLongTextWhole() {
+    val long = "word ".repeat(10_000).trim()
+    assertEquals(long, SpeechControlPolicy.textToSay(long))
   }
 
   @Test

@@ -21,9 +21,6 @@ package com.google.android.accessibility.talkback.speechcontrol
  * be tested on their own.
  */
 object SpeechControlPolicy {
-  /** The longest text an app can have said at once. Longer text is cut at a word. */
-  const val MAX_TEXT_LENGTH = 1000
-
   private const val MIN_SCALE = 0.25f
   private const val MAX_SCALE = 4f
 
@@ -35,16 +32,9 @@ object SpeechControlPolicy {
 
   /**
    * The text to say, as plain text with no styling an app could use to change how Backtalk speaks
-   * it, trimmed, and cut at a word if it is too long. Null if there is nothing to say.
+   * it, and trimmed. Null if there is nothing to say.
    */
-  fun textToSay(text: CharSequence?): String? {
-    val plain = text?.toString()?.trim() ?: return null
-    if (plain.isEmpty()) return null
-    if (plain.length <= MAX_TEXT_LENGTH) return plain
-    val cut = plain.substring(0, MAX_TEXT_LENGTH)
-    val lastSpace = cut.lastIndexOf(' ')
-    return if (lastSpace > MAX_TEXT_LENGTH / 2) cut.substring(0, lastSpace) else cut
-  }
+  fun textToSay(text: CharSequence?): String? = text?.toString()?.trim()?.ifEmpty { null }
 
   /**
    * Lets each app speak a few times at once, then about once a second, so that an app can't keep

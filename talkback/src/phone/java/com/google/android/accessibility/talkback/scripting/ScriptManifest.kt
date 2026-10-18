@@ -254,7 +254,7 @@ data class ScriptManifest(
     }
 
   companion object {
-    const val API_VERSION = 2
+    const val API_VERSION = 3
 
     fun parse(json: String, strict: Boolean = true): ScriptManifest =
       ManifestParser(strict).parse(json)

@@ -42,6 +42,7 @@
     <string name="pref_system_tts_settings_key">pref_system_tts_settings</string>
     <string name="pref_tts_engine_key">pref_tts_engine</string>
     <string name="pref_use_accessibility_stream_key">pref_use_accessibility_stream</string>
+    <string name="pref_mute_speech_while_recording_key">pref_mute_speech_while_recording</string>
     <string name="pref_speak_in_phrases_key">pref_speak_in_phrases</string>
     <string name="pref_switch_languages_key">pref_switch_languages</string>
     <string name="pref_switch_dialects_key">pref_switch_dialects</string>
@@ -92,6 +93,7 @@
     <string name="pref_category_typing_focus_delay_key" translatable="false">pref_category_typing_focus_delay_key</string>
 
     <string name="pref_phonetic_letters_key">pref_phonetic_letters</string>
+    <string name="pref_phonetic_letters_mode_key" translatable="false">pref_phonetic_letters_mode</string>
     <string name="pref_punctuation_key" translatable="false">pref_punctuation</string>
     <string name="pref_punctuation_verbosity" translatable="false">pref_punctuation_verbosity</string>
     <string name="pref_count_repeated_symbols_key" >pref_collapse_repeated_symbols</string>
@@ -240,7 +242,9 @@
       <item>1</item>
       <item>2</item>
     </string-array>
-    <string name="pref_selector_voice_profile_key" translatable="false">pref_selector_switch_tts_engine_key</string>
+    <string name="pref_selector_switch_tts_engine_key" translatable="false">pref_selector_switch_tts_engine_key</string>
+    <string name="pref_selector_voice_profile_key" translatable="false">pref_selector_voice_profile_key</string>
+    <string name="pref_selector_voice_profile_moved_key" translatable="false">pref_selector_voice_profile_moved</string>
     <string name="pref_selector_control_telling_time" translatable="false">pref_selector_control_telling_time</string>
     <string name="pref_selector_actions_key" translatable="false">pref_selector_actions_key </string>
 
@@ -1131,6 +1135,7 @@
         <item>@string/title_edittext_breakout_move_to_beginning</item>
         <item>@string/title_edittext_breakout_move_to_end</item>
         <item>@android:string/selectAll</item>
+        <item>@string/title_clear_selection</item>
         <item>@android:string/copy</item>
         <item>@android:string/cut</item>
         <item>@android:string/paste</item>
@@ -1143,6 +1148,7 @@
         <item>@string/shortcut_value_move_cursor_to_beginning</item>
         <item>@string/shortcut_value_move_cursor_to_end</item>
         <item>@string/shortcut_value_select_all</item>
+        <item>@string/shortcut_value_clear_selection</item>
         <item>@string/shortcut_value_copy</item>
         <item>@string/shortcut_value_cut</item>
         <item>@string/shortcut_value_paste</item>
@@ -1210,6 +1216,7 @@
   <string name="shortcut_value_move_cursor_to_end" translatable="false">MOVE_CURSOR_TO_END</string>
   <string name="shortcut_value_toggle_voice_feedback" translatable="false">TOGGLE_VOICE_FEEDBACK</string>
   <string name="shortcut_value_select_all" translatable="false">SELECT_ALL</string>
+  <string name="shortcut_value_clear_selection" translatable="false">CLEAR_SELECTION</string>
   <string name="shortcut_value_copy" translatable="false">COPY</string>
   <string name="shortcut_value_cut" translatable="false">CUT</string>
   <string name="shortcut_value_paste" translatable="false">PASTE</string>
@@ -1301,6 +1308,23 @@
       <item>2</item>
       <item>3</item>
     </string-array>
+
+    <string-array name="pref_phonetic_letters_mode_entries">
+      <item>@string/phonetic_letters_mode_off</item>
+      <item>@string/phonetic_letters_mode_after_letter_delay</item>
+      <item>@string/phonetic_letters_mode_after_letter_no_delay</item>
+      <item>@string/phonetic_letters_mode_instead_of_letter</item>
+    </string-array>
+
+    <!-- The values of PhoneticLetterMode's constants. -->
+    <string-array name="pref_phonetic_letters_mode_values" translatable="false">
+      <item>off</item>
+      <item>after_letter_delay</item>
+      <item>after_letter_no_delay</item>
+      <item>instead_of_letter</item>
+    </string-array>
+
+    <string name="pref_phonetic_letters_mode_default" translatable="false">after_letter_delay</string>
 
     <string-array name="pref_punctuation_entries">
       <item>@string/punctuation_all</item>
@@ -1426,6 +1450,7 @@
     <integer name="pref_speech_rate_default_int">100</integer>
     <string name="pref_speech_pitch_default">1.0</string>
     <bool name="pref_use_accessibility_stream_default">true</bool>
+    <bool name="pref_mute_speech_while_recording_default">false</bool>
     <bool name="pref_speak_in_phrases_default">false</bool>
     <bool name="pref_switch_languages_default">true</bool>
     <bool name="pref_switch_dialects_default">true</bool>
@@ -1515,9 +1540,10 @@
     <bool name="pref_selector_a11y_volume_default">false</bool>
     <bool name="pref_selector_brightness_default">true</bool>
     <bool name="pref_selector_typing_focus_latency_default">false</bool>
-    <bool name="pref_selector_lift_to_activate_default">true</bool>
-    <bool name="pref_selector_wrap_around_default">true</bool>
+    <bool name="pref_selector_lift_to_activate_default">false</bool>
+    <bool name="pref_selector_wrap_around_default">false</bool>
     <bool name="pref_selector_tablet_held_up_faces_away_default">false</bool>
+    <bool name="pref_selector_switch_tts_engine_default">false</bool>
     <bool name="pref_selector_voice_profile_default">false</bool>
     <bool name="pref_selector_touch_focus_latency_default">false</bool>
     <bool name="pref_selector_control_telling_time_default">false</bool>
@@ -1838,7 +1864,8 @@
     <string name="selector_lift_to_activate_change" translatable="false">SELECTOR_LIFT_TO_ACTIVATE_CHANGE</string>
     <string name="selector_wrap_around" translatable="false">SELECTOR_WRAP_AROUND</string>
     <string name="selector_tablet_held_up_faces_away" translatable="false">SELECTOR_TABLET_HELD_UP_FACES_AWAY</string>
-    <string name="selector_voice_profile" translatable="false">SELECTOR_SWITCH_TTS_ENGINE</string>
+    <string name="selector_switch_tts_engine" translatable="false">SELECTOR_SWITCH_TTS_ENGINE</string>
+    <string name="selector_voice_profile" translatable="false">SELECTOR_VOICE_PROFILE</string>
     <string name="selector_touch_focus_latency_change" translatable="false">SELECTOR_TOUCH_FOCUS_LATENCY_CHANGE</string>
     <string name="selector_control_telling_time" translatable="false">SELECTOR_CONTROL_TELLING_TIME</string>
     <string name="selector_actions" translatable="false">SELECTOR_ACTIONS</string>

@@ -106,11 +106,15 @@ The setting is off by default, because many engines, such as RHVoice, already st
 
 In TalkBack, **Text-to-speech** opens Android's system speech settings. Backtalk has its own **Text-to-speech** screen, under **Feedback** in Backtalk settings. On this screen, you can choose a speech engine for Backtalk that's separate from Android's default engine, and set the speech volume, rate, and pitch with sliders. It also links to Android's system settings, and holds the speech settings that are described in the following sections.
 
+### Speech engine reading control
+
+The **Speech engine** reading control switches between your installed speech engines when you swipe up or down. It changes the engine of **Backtalk default**, so it's unavailable while a voice profile is in use. It isn't in the reading controls by default. To add it, go to **Reading controls**.
+
 ### Voice profiles
 
 A voice profile is a set of speech settings that you can switch to at once: a speech engine, language, voice, volume, rate, pitch, and **Send long text a sentence at a time**. For example, one profile can use a slower rate for long text while **Backtalk default** stays fast. To add one, go to **Text-to-speech** > **Voice profiles** and choose **Add voice profile**. When you choose a language, the voice list shows only the engine's voices in that language.
 
-To switch profiles, swipe up or down with the **Voice profile** reading control, or choose **Voice profile in use** on the **Voice profiles** screen. The **Voice profile** reading control replaces the **Speech engine** reading control. It isn't in the reading controls by default. To add it, go to **Reading controls**. You can also add a **Voice profile** item to the Backtalk menu in **Backtalk menu** settings, which lists the profiles and says which is in use. The **Choose voice profile**, **Previous voice profile** and **Next voice profile** actions can be assigned to gestures and keyboard shortcuts.
+To switch profiles, swipe up or down with the **Voice profile** reading control, or choose **Voice profile in use** on the **Voice profiles** screen. The **Voice profile** reading control is separate from the **Speech engine** reading control. It isn't in the reading controls by default. To add it, go to **Reading controls**. You can also add a **Voice profile** item to the Backtalk menu in **Backtalk menu** settings, which lists the profiles and says which is in use. The **Choose voice profile**, **Previous voice profile** and **Next voice profile** actions can be assigned to gestures and keyboard shortcuts.
 
 The reading control goes through the profiles in the order of the **Voice profiles** screen, after **Backtalk default**. To change the order, hold a profile and drag it, or use the **Move up** and **Move down** actions. Backtalk says which profile it moved above or below. Profiles also have **Rename** and **Delete** actions, which a long press shows too.
 
@@ -124,7 +128,7 @@ TalkBack always plays speech at the accessibility volume. In Backtalk, you can t
 
 When text is marked as another language, TalkBack switches the voice to that language. Backtalk lets you turn this off. In **Text-to-speech**, **Switch language automatically** controls changes to another language, and **Switch dialect automatically** controls changes to another country's form of the voice's language, such as US English text with a British English voice. Both are on by default.
 
-When you turn a change off, Backtalk no longer splits the text or pauses around it. Backtalk compares languages by their codes only, so Serbian in Latin and in Cyrillic script counts as two dialects, and Norwegian marked as `no` and as `nb` counts as two languages.
+When you turn a change off, Backtalk no longer splits the text or pauses around it. Text marked as the voice's own language and country, such as US English for a US English voice, isn't split either, whatever the settings, since the voice doesn't change. Backtalk compares languages by their codes only, so Serbian in Latin and in Cyrillic script counts as two dialects, and Norwegian marked as `no` and as `nb` counts as two languages.
 
 ### How emoji are spoken
 
@@ -173,6 +177,19 @@ In **Verbosity**, you can choose whether Backtalk reads table column headers bef
 Under preset settings in **Verbosity**, you can also turn off **Speak row and column numbers** to hear only named headers without row and column coordinates. The setting is on by default.
 
 Both settings only apply while **Speak container info** is on, because rows and columns aren't spoken at all when it's off.
+
+### Speak letters phonetically
+
+TalkBack's **Speak letters with examples** switch is called **Speak letters phonetically** in Backtalk, in **Verbosity** under preset settings, and in on-screen keyboard settings. It has four choices:
+
+*   **Off** says only the letter.
+*   **After the letter, delayed**, the default, is what the switch did when it was on. Keyboard keys say the letter, then its phonetic word, as in "h, hotel". Moving by character, the word comes a quarter of a second after the letter, and moving on before then skips it.
+*   **After the letter, no delay** says the letter and its word together, as in "h hotel".
+*   **Instead of the letter** says only the word, as in "hotel".
+
+With **After the letter, no delay** and **Instead of the letter**, Backtalk says it in all of these places. **After the letter, delayed** still ignores **Spell last spoken phrase**, deleting a letter, and inserting a letter with a touch keyboard like Gboard, just as TalkBack did when **Speak letters with examples** was turned on.
+
+The **High** preset uses **After the letter, delayed** and the **Low** preset uses **Off**. Your choice from the switch carries over.
 
 ## Notifications
 
@@ -391,7 +408,7 @@ Android lets only certain apps, such as smartwatch companions, change where call
 adb shell appops set fyi.quin.backtalk MANAGE_ONGOING_CALLS allow
 ```
 
-Then turn on **Sound and vibration** > **Speaker when away from your ear**. Until you grant the permission, the setting is unavailable and shows the command. This feature requires Android 12 or later.
+Then turn on **Sound and vibration** > **Speaker when away from your ear**. Until you grant the permission, the setting is unavailable and shows the command, and its **Copy command** action copies the command to the clipboard. This feature requires Android 12 or later.
 
 ## Direct touch
 
@@ -414,6 +431,10 @@ Touch returns to Backtalk when a dialog appears, another app opens on top of the
 ### Direct typing
 
 By default, the keyboard area keeps working with Backtalk. For a game that draws its own keyboard, open the actions menu on the game in the **Apps** list and choose **Turn on direct typing**.
+
+### Self-voicing keyboards
+
+A keyboard that speaks for itself, such as Advanced Braille Keyboard, needs your touches in every app, not only in games. Turn it on in the **Apps** list, and while it shows, touches on it go straight to it in any app, and the rest of the screen stays with Backtalk.
 
 ### Quick settings tile
 
@@ -485,6 +506,18 @@ If you hold or stand your tablet facing you instead, turn off **Tablet held up f
 
 A phone that's opened flat, and that hasn't been held up since the screen came on, follows the screen rotation, and with auto-rotate off expects the port on the left; turning it around on the table, or locking the orientation, corrects this. A phone held up screen away and laid flat without typing, or typed on screen away without ever being held within 40 degrees of upright, is taken to have faced you, so it expects the port on the wrong side; locking the orientation corrects this. Turns on the table require the game rotation vector sensor; devices without it still follow how they're held up. A tablet says where the port is only if it's a portrait tablet with the port at the bottom. Remembering how the device is held keeps the accelerometer running while the screen is on, as auto-rotate does.
 
+## Braille displays
+
+### Any braille display that uses HID
+
+On Android 15 and later, TalkBack connects to braille displays that use the HID braille standard over Bluetooth, but only lists displays whose names it knows, so newer displays and braille terminals were left out. Backtalk lists any Bluetooth device that offers HID, whatever its name, and connecting checks that it's a braille display, so other HID devices, such as keyboards, can appear in the list too. TalkBack also refused displays that send their keys and receive their cells in separate HID reports, as the standard allows; Backtalk connects to those.
+
+### Displays from other apps
+
+Apps can give Backtalk a braille display that it can't connect to on its own, such as the built-in keys and cells of a braille notetaker. Backtalk uses it like a display connected through Bluetooth or USB: its keys navigate and type with the same commands, and its cells show what Backtalk shows. A display with keys and no cells works too.
+
+Backtalk only uses a display from an app once you allow it, after a warning that the app will be able to read the screen and control the device. Backtalk asks when it finds such an app, and **Displays from other apps** in braille display settings lists them, to allow or stop allowing each one. A notification says which app is in use. A display connected through Bluetooth or USB comes first, and one from an app waits while it's connected. [Providing a braille display from another app](docs/braille-display-api.md) describes the API for app developers.
+
 ## Image and screen descriptions
 
 ### Gemini API key
@@ -527,7 +560,7 @@ Scripts run on phones and tablets only. [Writing Backtalk scripts](docs/scriptin
 
 Apps can ask Backtalk to say text in your own Backtalk voice, for example a game, an automation app such as Tasker, or a remote-access tool. To allow this, turn on **Advanced settings** > **Let other apps speak**. It's off by default.
 
-The first time an app asks, Backtalk posts a notification that asks whether to allow it, and nothing the app sends is said until you choose **Allow**. You can allow or block each app later in **Let other apps speak**. A short sound plays before each thing another app says, so you can tell it apart from Backtalk. Nothing is said while the device is locked, an app can speak only a few times in a row, and apps can never stop or cut off Backtalk's own speech. [Speaking through Backtalk from another app](docs/speech-api.md) describes the API for app developers.
+The first time an app asks, Backtalk posts a notification that asks whether to allow it, and nothing the app sends is said until you choose **Allow**. You can allow or block each app later in **Let other apps speak**. To hear a short sound before each thing another app says, so that you can tell it apart from Backtalk, turn on **Play a sound before other apps speak**. Nothing is said while the device is locked, an app can speak only a few times in a row, and apps can never stop or cut off Backtalk's own speech. [Speaking through Backtalk from another app](docs/speech-api.md) describes the API for app developers.
 
 ### Inspect focused item and Copy screen tree
 
