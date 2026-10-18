@@ -1,0 +1,59 @@
+name: Refresh Czech lint baseline
+
+on:
+  push:
+    branches:
+      - czech-translation
+    paths:
+      - '.github/workflows/refresh-czech-lint-baseline.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Refresh baseline entries for newly translated Czech strings
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('lint-baseline.xml')
+          text = path.read_text(encoding='utf-8')
+          locale = '&quot;cs&quot; (Czech), '
+          keys = (
+              'title_pref_volume_keys_adjust_sliders',
+              'summary_pref_volume_keys_adjust_sliders',
+          )
+
+          for key in keys:
+              marker = f'message="&quot;{key}&quot; is not translated in '
+              start = text.find(marker)
+              if start < 0:
+                  raise SystemExit(f'Baseline entry not found: {key}')
+              end = text.find('\n', start)
+              if end < 0:
+                  raise SystemExit(f'Baseline message is malformed: {key}')
+              entry = text[start:end]
+              if locale not in entry:
+                  raise SystemExit(f'Czech locale is not present in baseline entry: {key}')
+              updated = entry.replace(locale, '', 1)
+              text = text[:start] + updated + text[end:]
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+          git diff --check
+          git diff -- lint-baseline.xml
+
+      - name: Commit refreshed baseline
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lint-baseline.xml
+          git commit -m 'Refresh lint baseline for Czech slider translations'
+          git push
