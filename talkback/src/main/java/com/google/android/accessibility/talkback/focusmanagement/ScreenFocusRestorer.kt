@@ -50,10 +50,15 @@ class ScreenFocusRestorer internal constructor(
     this(service, prefs, pipeline, focusHistory, ScreenFocusBookmarks(),
       { TalkBackService.isServiceActive() && !service.actorState.continuousRead.isActive }, null)
   companion object {
+    const val ENABLE_PREFERENCE = "pref_restore_focus_on_back"
     const val SCROLL_PREFERENCE = "pref_scroll_to_restore_previous_focus"
     private const val TAG = "ScreenFocusRestorer"
     private const val SETTLE_DELAY_MS = 120L
     private const val MAX_SEARCH_NODES = 1000
+    // Capture still precedes navigation so it cannot accidentally describe the destination.
+    // Keep the same small identity budget when recognizing that screen on return.
+    internal const val MAX_CONTEXT_NODES = 32
+    internal const val MAX_SIBLING_VISITS = 24
     // Native address controls already recognized by WebInterfaceUtils; search only the skeleton,
     // never an entire document just because its browser toolbar is temporarily hidden.
     private val ADDRESS_IDS = setOf("url_bar", "url", "url_bar_title", "url_edit_text",
@@ -116,7 +121,21 @@ class ScreenFocusRestorer internal constructor(
     boundedIdentity(node.text?.toString().orEmpty()),
     boundedIdentity(node.contentDescription?.toString().orEmpty()))
 
-  private fun enabled() = !stopped && !FormFactorUtils.isAndroidWear() && !FormFactorUtils.isAndroidTv()
+  private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    if (key == ENABLE_PREFERENCE) {
+      onUserInteraction()
+      cachedFocus = null
+      activationOrigin = null
+      history.clear()
+    }
+  }
+
+  init {
+    prefs.registerOnSharedPreferenceChangeListener(preferenceListener)
+  }
+
+  private fun enabled() = !stopped && !FormFactorUtils.isAndroidWear() &&
+    !FormFactorUtils.isAndroidTv() && prefs.getBoolean(ENABLE_PREFERENCE, false)
 
   private fun authorized(now: Long = SystemClock.uptimeMillis()): Boolean =
     history.pending(now) != null || backRequestedAt?.let {
@@ -452,7 +471,7 @@ class ScreenFocusRestorer internal constructor(
   }
 
   private fun attemptRestore() {
-    if (stopped || PauseController.isPaused() || !available()) {
+    if (!enabled() || PauseController.isPaused() || !available()) {
       onUserInteraction()
       return
     }
@@ -652,7 +671,7 @@ class ScreenFocusRestorer internal constructor(
 
   internal fun captureContext(root: AccessibilityNodeInfoCompat, title: String): Context {
     // Stop at content containers: identity must not depend on which recycled rows are visible.
-    val skeleton = walk(root, 100, stopAtContent = true)
+    val skeleton = walk(root, MAX_CONTEXT_NODES, stopAtContent = true)
     val documents = skeleton.filter(::isDocument)
     val documentTitle = documents.firstOrNull()?.let(::label).orEmpty()
     val url = skeleton.firstOrNull {
@@ -727,7 +746,7 @@ class ScreenFocusRestorer internal constructor(
     var child = node
     var previous = ""
     var next = ""
-    var siblingBudget = 100
+    var siblingBudget = MAX_SIBLING_VISITS
     repeat(8) {
       val parent = ancestor ?: return@repeat
       ancestors.add(containerId(parent))
@@ -817,6 +836,7 @@ class ScreenFocusRestorer internal constructor(
 
   fun shutdown() {
     stopped = true
+    prefs.unregisterOnSharedPreferenceChangeListener(preferenceListener)
     handler.removeCallbacksAndMessages(null)
     scrollNode = null
     cachedFocus = null

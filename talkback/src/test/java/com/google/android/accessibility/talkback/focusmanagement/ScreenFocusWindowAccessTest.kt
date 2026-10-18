@@ -46,6 +46,8 @@ class ScreenFocusWindowAccessTest {
   @Before fun setUp() {
     service = Robolectric.buildService(TalkBackService::class.java).get()
     FormFactorUtils.initialize(service)
+    service.getSharedPreferences("window-access", Context.MODE_PRIVATE).edit()
+      .putBoolean(ScreenFocusRestorer.ENABLE_PREFERENCE, true).commit()
     restorer = ScreenFocusRestorer(service,
       service.getSharedPreferences("window-access", Context.MODE_PRIVATE),
       Pipeline.FeedbackReturner { feedback.add(it); true },
@@ -97,6 +99,76 @@ class ScreenFocusWindowAccessTest {
 
   private fun event(type: Int) = restorer.onAccessibilityEvent(AccessibilityEvent.obtain(type))
   private fun settle(ms: Long = 160) = shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(ms))
+
+  @Test fun defaultOffDoesNotCaptureOrRestoreEvenWithScrollingEnabled() {
+    val prefs = service.getSharedPreferences("window-access", Context.MODE_PRIVATE)
+    prefs.edit().remove(ScreenFocusRestorer.ENABLE_PREFERENCE)
+      .putBoolean(ScreenFocusRestorer.SCROLL_PREFERENCE, true).commit()
+    settle()
+    activeRoot = screen("List")
+    val row = node("Post", parent = activeRoot)
+    restorer.onFocusSet(row, navigation)
+    restorer.rememberBeforeActivation(row)
+    restorer.requestBack()
+    event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+    event(AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED)
+    settle(4000)
+    assertEquals(0, activeReads)
+    assertEquals(0, focusedReads)
+    assertEquals(0, history.size)
+    assertTrue(feedback.isEmpty())
+  }
+
+  @Test fun disablingCancelsPendingBackAndReenablingStartsWithEmptyHistory() {
+    val origin = screen("List")
+    val row = node("Post", parent = origin)
+    activeRoot = origin
+    restorer.onFocusSet(row, navigation)
+    restorer.rememberBeforeActivation(row)
+    activeRoot = screen("Details")
+    event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+    restorer.requestBack()
+    val reads = activeReads + focusedReads
+    val prefs = service.getSharedPreferences("window-access", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean(ScreenFocusRestorer.ENABLE_PREFERENCE, false).commit()
+    activeRoot = origin
+    event(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+    settle(4000)
+    assertEquals(reads, activeReads + focusedReads)
+    assertEquals(0, history.size)
+    assertNull(ReflectionHelpers.getField<Any?>(restorer, "cachedFocus"))
+    assertTrue(feedback.isEmpty())
+    prefs.edit().putBoolean(ScreenFocusRestorer.ENABLE_PREFERENCE, true).commit()
+    settle()
+    restorer.requestBack()
+    settle()
+    assertTrue(feedback.isEmpty())
+    assertEquals(0, history.size)
+    restorer.onFocusSet(row, navigation)
+    restorer.rememberBeforeActivation(row)
+    assertEquals(1, history.size)
+  }
+
+  @Test fun screenIdentityCaptureStopsAtSmallContextBudget() {
+    val root = screen("List")
+    repeat(ScreenFocusRestorer.MAX_CONTEXT_NODES - 1) { node("Context $it", parent = root) }
+    node("Late heading", parent = root).isHeading = true
+    val context = restorer.captureContext(root, "List")
+    assertFalse(context.screen.context.contains("Late heading"))
+    assertEquals(ScreenFocusRestorer.MAX_CONTEXT_NODES - 1, context.anchors.size)
+  }
+
+  @Test fun siblingLookupDoesNotSearchBeyondSmallBudget() {
+    val root = screen("List")
+    repeat(ScreenFocusRestorer.MAX_SIBLING_VISITS) { node("Earlier $it", parent = root) }
+    val target = node("Target", parent = root)
+    node("After", parent = root)
+    val item = restorer.describe(target)
+    assertEquals("Target", item.text)
+    assertEquals("", item.previous)
+    assertEquals("", item.next)
+    assertTrue(item.ancestors.isNotEmpty())
+  }
 
   @Test fun idleContentTransitionsHoverAndSwipesNeverReadRoots() {
     activeRoot = screen("List")

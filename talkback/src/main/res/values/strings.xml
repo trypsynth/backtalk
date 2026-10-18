@@ -4375,4 +4375,8 @@ Do not use any markdown in your response."</string>
   <string name="title_pref_scroll_to_restore_previous_focus">Scroll to restore previous focus</string>
   <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
   <string name="summary_pref_scroll_to_restore_previous_focus">Scroll to the last focused item when returning to a screen.</string>
+  <!-- Title of the phone Advanced Settings switch. Opt in to remembering an accessibility element when using Back. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_restore_focus_on_back">Restore focus when going back</string>
+  <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_restore_focus_on_back">Return to the last focused item when going back to a screen.</string>
 </resources>

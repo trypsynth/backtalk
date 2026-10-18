@@ -125,4 +125,8 @@
     <string name="title_pref_scroll_to_restore_previous_focus">Posunout k obnovení předchozího zaměření</string>
     <!-- Advanced settings summary: scrolling is optional; visible items restore without it. -->
     <string name="summary_pref_scroll_to_restore_previous_focus">Při návratu na obrazovku posunout na poslední zaměřenou položku.</string>
+    <!-- Phone Advanced settings switch: opt in to restoring an accessibility item after Back. -->
+    <string name="title_pref_restore_focus_on_back">Obnovit zaměření při návratu zpět</string>
+    <!-- Phone Advanced settings summary: return to the remembered item on the previous screen. -->
+    <string name="summary_pref_restore_focus_on_back">Při návratu zpět na obrazovku přejít na poslední zaměřenou položku.</string>
 </resources>

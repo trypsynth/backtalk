@@ -11,6 +11,12 @@
     </com.google.android.accessibility.material.preference.AccessibilitySuitePreference>
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="false"
+        android:key="@string/pref_restore_focus_on_back_key"
+        android:title="@string/title_pref_restore_focus_on_back"
+        android:summary="@string/summary_pref_restore_focus_on_back" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="false"
+        android:dependency="@string/pref_restore_focus_on_back_key"
         android:key="@string/pref_scroll_to_restore_previous_focus_key"
         android:title="@string/title_pref_scroll_to_restore_previous_focus"
         android:summary="@string/summary_pref_scroll_to_restore_previous_focus" />

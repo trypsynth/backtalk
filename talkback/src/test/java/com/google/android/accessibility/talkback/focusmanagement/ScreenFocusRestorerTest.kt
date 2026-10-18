@@ -41,6 +41,7 @@ class ScreenFocusRestorerTest {
     service = Robolectric.buildService(TalkBackService::class.java).get()
     com.google.android.accessibility.utils.FormFactorUtils.initialize(service)
     val prefs = service.getSharedPreferences("screen-focus-test", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean(ScreenFocusRestorer.ENABLE_PREFERENCE, true).commit()
     focusHistory = AccessibilityFocusActionHistory(service)
     restorer = ScreenFocusRestorer(service, prefs, Pipeline.FeedbackReturner {
       feedback.add(it)
