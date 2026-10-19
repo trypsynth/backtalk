@@ -117,8 +117,8 @@ class ThemeSoundsFragment : TalkbackBaseFragment() {
           canPreview = {
             val active = SoundThemes.active(context, prefs)
             !SoundThemes.isNone(active, item) &&
-              (SoundThemes.soundFile(context, prefs, item) != null ||
-                (!isControlSound(item) && item.key != "screen_on"))
+              (SoundThemes.soundFiles(active)[item.key] != null ||
+                (!isControlSound(item) && item.key != SoundThemes.SCREEN_ON))
           },
           isNone = {
             val active = SoundThemes.active(context, prefs)
@@ -126,8 +126,8 @@ class ThemeSoundsFragment : TalkbackBaseFragment() {
           },
           canReset = {
             val active = SoundThemes.active(context, prefs)
-            val hasCustom = SoundThemes.soundFile(context, prefs, item) != null
-            hasCustom || (SoundThemes.isNone(active, item) && item.key != "screen_on")
+            val hasCustom = SoundThemes.soundFiles(active)[item.key] != null
+            hasCustom || (SoundThemes.isNone(active, item) && item.key != SoundThemes.SCREEN_ON)
           },
         )
       row.setOnPreferenceClickListener {
@@ -167,7 +167,7 @@ class ThemeSoundsFragment : TalkbackBaseFragment() {
             SoundThemes.isNone(active, row.item) -> R.string.theme_sound_summary_no_sound
             row.item.key in custom -> R.string.theme_sound_summary_custom
             isControlSound(row.item) -> R.string.theme_sound_summary_none
-            row.item.key == "screen_on" -> R.string.theme_sound_summary_no_sound
+            row.item.key == SoundThemes.SCREEN_ON -> R.string.theme_sound_summary_no_sound
             isBrailleTypingSound(row.item) -> R.string.theme_sound_summary_android_keyboard
             else -> R.string.theme_sound_summary_default
           }
@@ -181,14 +181,14 @@ class ThemeSoundsFragment : TalkbackBaseFragment() {
     val context = requireContext()
     val active = SoundThemes.active(context, prefs)
     val isNone = SoundThemes.isNone(active, item)
-    val hasCustom = SoundThemes.soundFile(context, prefs, item) != null
+    val hasCustom = SoundThemes.soundFiles(active)[item.key] != null
     val choices = ArrayList<Pair<Int, () -> Unit>>()
     choices +=
       R.string.theme_sound_choose to
         {
           launchChooser(item)
         }
-    if (!isNone && (hasCustom || (!isControlSound(item) && item.key != "screen_on"))) {
+    if (!isNone && (hasCustom || (!isControlSound(item) && item.key != SoundThemes.SCREEN_ON))) {
       choices += R.string.theme_sound_preview to { soundPreview.play(context, prefs, item) }
     }
     if (!isNone) {
@@ -199,7 +199,7 @@ class ThemeSoundsFragment : TalkbackBaseFragment() {
             refresh()
           }
     }
-    if (hasCustom || (isNone && item.key != "screen_on")) {
+    if (hasCustom || (isNone && item.key != SoundThemes.SCREEN_ON)) {
       val label =
         when {
           isControlSound(item) -> R.string.theme_sound_remove

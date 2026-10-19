@@ -218,6 +218,9 @@ object SoundThemes {
   fun theme(context: Context, id: String): SoundTheme? =
     if (id == BACKTALK) backtalk(context) else read(File(themesDirectory(context), id))
 
+  /** The key of the screen on sound, which plays only if the theme gives it a sound. */
+  const val SCREEN_ON = "screen_on"
+
   /** The sound files of [theme], by item key. */
   @JvmStatic
   fun soundFiles(theme: SoundTheme): Map<String, File> {
@@ -234,18 +237,19 @@ object SoundThemes {
   fun soundFile(context: Context, prefs: SharedPreferences, item: FeedbackItem): File? =
     soundFiles(active(context, prefs))[item.key]
 
-  /**
-   * The sounds and vibrations of the theme in use. An item with several sounds, like the circle
-   * menu, plays its theme sound and vibration for all of them.
-   */
+  /** Whether [item] plays no sound in the theme in use. */
   @JvmStatic
   fun isNone(context: Context, prefs: SharedPreferences, item: FeedbackItem): Boolean =
     isNone(active(context, prefs), item)
 
+  /**
+   * Whether [item] plays no sound in [theme]: it is set to "none", or it is the screen on sound,
+   * which has no sound of Backtalk's own and so plays nothing without a file.
+   */
   @JvmStatic
   fun isNone(theme: SoundTheme, item: FeedbackItem): Boolean =
     theme.manifest.sounds[item.key] == SoundThemeManifest.NONE ||
-      (item.key == "screen_on" && soundFiles(theme)[item.key] == null)
+      (item.key == SCREEN_ON && soundFiles(theme)[item.key] == null)
 
   /**
    * The sounds and vibrations of the theme in use. An item with several sounds, like the circle
@@ -363,7 +367,9 @@ object SoundThemes {
   fun removeSound(context: Context, prefs: SharedPreferences, item: FeedbackItem) {
     val theme = active(context, prefs)
     soundFiles(theme)[item.key]?.delete()
-    write(theme.copy(manifest = theme.manifest.copy(sounds = theme.manifest.sounds - item.key)))
+    if (item.key in theme.manifest.sounds) {
+      write(theme.copy(manifest = theme.manifest.copy(sounds = theme.manifest.sounds - item.key)))
+    }
     changed(prefs)
   }
 
@@ -371,7 +377,9 @@ object SoundThemes {
   fun removeAllSounds(context: Context, prefs: SharedPreferences) {
     val theme = active(context, prefs)
     soundFiles(theme).values.forEach { it.delete() }
-    write(theme.copy(manifest = theme.manifest.copy(sounds = emptyMap())))
+    if (theme.manifest.sounds.isNotEmpty()) {
+      write(theme.copy(manifest = theme.manifest.copy(sounds = emptyMap())))
+    }
     changed(prefs)
   }
 
@@ -490,7 +498,11 @@ object SoundThemes {
           directory = staging,
           sounds =
             SOUNDS.filter { it.key in sounds || manifest.sounds[it.key] == SoundThemeManifest.NONE },
-          skipped = skipped + manifest.warnings,
+          skipped =
+            skipped +
+              manifest.warnings +
+              manifest.sounds.keys.filter { it in sounds }
+                .map { "sounds.$it: set to none, so the sound file for it is not played" },
         )
       }
     } catch (e: Exception) {

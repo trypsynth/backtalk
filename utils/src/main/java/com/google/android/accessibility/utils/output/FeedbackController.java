@@ -509,7 +509,7 @@ public class FeedbackController {
    */
   private boolean hasSound(int resId) {
     @Nullable String custom = customSoundPath(resId);
-    if ("none".equals(custom)) {
+    if (ThemeSounds.NONE.equals(custom)) {
       return false;
     }
     if (custom != null) {
