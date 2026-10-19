@@ -30,6 +30,9 @@ class SoundPreview {
   private var player: MediaPlayer? = null
 
   fun play(context: Context, prefs: SharedPreferences, item: FeedbackItem) {
+    if (SoundThemes.isNone(context, prefs, item)) {
+      return
+    }
     stop()
     val attributes =
       AudioAttributes.Builder()

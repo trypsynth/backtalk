@@ -50,7 +50,9 @@ object ThemeSounds {
       val newPool =
         SoundPool.Builder().setMaxStreams(MAX_STREAMS).setAudioAttributes(attributes).build()
       for (path in paths.values.toSet()) {
-        soundIds[path] = newPool.load(path, 1)
+        if (path != "none") {
+          soundIds[path] = newPool.load(path, 1)
+        }
       }
       pool = newPool
     }
@@ -64,6 +66,7 @@ object ThemeSounds {
   fun play(name: String, volume: Float): Boolean {
     synchronized(lock) {
       val path = paths[name] ?: return false
+      if (path == "none") return true
       val soundId = soundIds[path] ?: return false
       // A sound still loading is skipped rather than played late.
       pool?.play(soundId, volume, volume, 1, 0, 1f)
