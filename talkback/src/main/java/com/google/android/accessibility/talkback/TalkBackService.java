@@ -182,6 +182,7 @@ import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCa
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenStateMonitor;
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.TouchExplorationInterpreter;
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory;
+import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
 import com.google.android.accessibility.talkback.gesture.GestureController;
 import com.google.android.accessibility.talkback.gesture.GestureHistory;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
@@ -222,6 +223,7 @@ import com.google.android.accessibility.talkback.monitor.InputMethodMonitor;
 import com.google.android.accessibility.talkback.monitor.KeyboardLockMonitor;
 import com.google.android.accessibility.talkback.monitor.ProximitySensorMonitor;
 import com.google.android.accessibility.talkback.monitor.RingerModeAndScreenMonitor;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.monitor.VolumeMonitor;
 import com.google.android.accessibility.talkback.pause.PauseController;
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
@@ -841,6 +843,8 @@ public class TalkBackService extends AccessibilityServiceCompat
   private EventLatencyLogger eventLatencyLogger;
 
   private UserInterface userInterface;
+  private @Nullable ScreenOnSpeechSuppression screenOnSpeechSuppression;
+
   private DisableTalkBackDialog disableTalkbackDialog;
 
   private Configuration lastConfiguration;
@@ -953,6 +957,9 @@ public class TalkBackService extends AccessibilityServiceCompat
     unlockedBootHandler.removeCallbacks(checkUnlockedBoot);
     if (userInterface != null) {
       userInterface.unregisterAllListeners();
+    }
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.shutdown();
     }
 
     if (eventLatencyLogger != null) {
@@ -1107,6 +1114,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onAccessibilityEvent(event);
+    }
     // Paused Backtalk drops events, except the end of a touch that started before the pause, so
     // that nothing still thinks a finger is down after resuming. Its feedback is dropped too.
     if (PauseController.isPaused()
@@ -1344,6 +1354,9 @@ public class TalkBackService extends AccessibilityServiceCompat
    */
   @Override
   protected final boolean onKeyEvent(KeyEvent keyEvent) {
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onKeyEvent(keyEvent);
+    }
     boolean result = onKeyEventInternal(keyEvent);
 
     if (primesController != null) {
@@ -1593,6 +1606,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   /** Called by {@link TouchInteractionMonitor} when gesture detection started. */
   public void onGestureDetectionStarted() {
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onUserInteraction();
+    }
     if (processorPhoneticLetters != null) {
       processorPhoneticLetters.cancelPhoneticLetter(EVENT_ID_UNTRACKED);
     }
@@ -1601,6 +1617,9 @@ public class TalkBackService extends AccessibilityServiceCompat
   private boolean handleOnGestureById(int displayId, int gestureId) {
     if (!isServiceActive() || PauseController.isPaused()) {
       return false;
+    }
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onUserInteraction();
     }
     // Return before feedback, training, menus and gesture recording. Both callback overloads
     // use this entry point; ignoring an action in GestureController still reports it as handled.
@@ -2040,6 +2059,9 @@ public class TalkBackService extends AccessibilityServiceCompat
           @Override
           public void onGestureDetected(int gesture) {
             if (isServiceActive() && !PauseController.isPaused() && gestureController != null) {
+              if (screenOnSpeechSuppression != null) {
+                screenOnSpeechSuppression.onUserInteraction();
+              }
               Performance perf = Performance.getInstance();
               EventId eventId = perf.onFingerprintGestureEventReceived(gesture);
 
@@ -2078,6 +2100,17 @@ public class TalkBackService extends AccessibilityServiceCompat
     // not unpaired
     // supportsTouchScreen = packageManager.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN);
     displayMonitor = new DisplayMonitor(this);
+    screenOnSpeechSuppression =
+        ScreenOnSpeechSuppression.create(
+            this,
+            prefs,
+            getSystemService(android.hardware.display.DisplayManager.class)
+                    .getDisplay(Display.DEFAULT_DISPLAY).getState()
+                == Display.STATE_ON,
+            FormFactorUtils.isAndroidWear());
+    screenOnSpeechSuppression.registerUnlockReceiver(this);
+    // Register first so wake feedback and focus listeners observe the same display transition.
+    displayMonitor.addDisplayStateChangedListener(screenOnSpeechSuppression);
     accessibilityEventProcessor = new AccessibilityEventProcessor(this, displayMonitor);
     feedbackController = new FeedbackController(this);
     feedbackController.setSoundHaptics(SoundVibrations.patternIds(this));
@@ -2202,6 +2235,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             globalVariables);
 
     userInterface = new UserInterface();
+    userInterface.registerListener(screenOnSpeechSuppression);
     userInterface.registerListener(focuser);
 
     inputDeviceMonitor = new InputDeviceMonitor(this);
@@ -2502,6 +2536,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             displayMonitor,
             statusReader,
             this);
+    ringerModeAndScreenMonitor.addScreenChangedListener(screenOnSpeechSuppression);
     if (speechCacheController != null) {
       ringerModeAndScreenMonitor.addScreenChangedListener(speechCacheController);
     }
@@ -2570,14 +2605,20 @@ public class TalkBackService extends AccessibilityServiceCompat
     eventFilter =
         new EventFilter(this, compositor, touchMonitor, globalVariables, earlyFocusSpeech);
     focuser.setFocusSetListener(
-        (node, info, eventId, actionTime) ->
-            eventFilter.onAccessibilityFocusSet(
-                node,
-                info,
-                eventId,
-                actionTime,
-                /* continuousReading= */ fullScreenReadActor != null
-                    && fullScreenReadActor.isActive()));
+        (node, info, eventId, actionTime) -> {
+          screenOnSpeechSuppression.onFocusAction(info);
+          FocusActionInfo speechInfo =
+              screenOnSpeechSuppression.shouldSuppressFocus(node, info)
+                  ? new FocusActionInfo.Builder(info).setForceMuteFeedback(true).build()
+                  : info;
+          eventFilter.onAccessibilityFocusSet(
+              node,
+              speechInfo,
+              eventId,
+              actionTime,
+              /* continuousReading= */ fullScreenReadActor != null
+                  && fullScreenReadActor.isActive());
+        });
     eventFilter.setTargetPredictor(directionNavigationActor::predictTarget);
     eventFilter.setFingerDownSupplier(
         () ->
@@ -2790,6 +2831,10 @@ public class TalkBackService extends AccessibilityServiceCompat
   @VisibleForTesting
   public WindowEventInterpreter getWindowEventInterpreter() {
     return windowEventInterpreter;
+  }
+
+  public @Nullable ScreenOnSpeechSuppression getScreenOnSpeechSuppression() {
+    return screenOnSpeechSuppression;
   }
 
   private final TouchInteractingIndicator touchInteractingIndicator =

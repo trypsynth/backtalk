@@ -38,6 +38,10 @@
     <string name="title_pref_say_screen_off">Říkat „Obrazovka vypnuta“</string>
     <string name="title_pref_say_device_unlocked">Říkat „Zařízení odemknuto“</string>
     <string name="title_pref_announce_time">Čas</string>
+    <!-- Switch below the screen-on time and status choices. -->
+    <string name="title_pref_suppress_extra_screen_on_speech">Říkat pouze výše vybrané položky</string>
+    <!-- Limits automatic lock-screen wake speech to the selected items. -->
+    <string name="summary_pref_suppress_extra_screen_on_speech">Při zapnutí zamčené obrazovky oznamovat pouze vybrané položky.</string>
     <string name="title_pref_announce_ringer_mode">Režim vyzvánění</string>
     <string name="summary_pref_announce_ringer_mode">Oznamovat, když je vyzvánění nastaveno na vibrace nebo tichý režim</string>
 

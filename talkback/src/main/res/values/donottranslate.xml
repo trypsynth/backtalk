@@ -11,6 +11,8 @@
     <string name="pref_category_audio_key" translatable="false">pref_category_audio_key</string>
     <string name="pref_screenoff_key">pref_screenoff</string>
     <string name="pref_proximity_key">pref_proximity</string>
+    <!-- Must match ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH. -->
+    <string name="pref_screen_on_suppress_extra_speech_key" translatable="false">pref_screen_on_suppress_extra_speech</string>
     <!-- Must match SpeakerphoneSettings.PREF_ENABLED. -->
     <string name="pref_speakerphone_away_from_ear_key">pref_speakerphone_away_from_ear</string>
     <!-- Must match VibrationWatchGestureSettings.PREF_RESERVED. -->
