@@ -48,6 +48,7 @@ class OnDeviceAiFragment : TalkbackBaseFragment() {
   private lateinit var timeoutPref: Preference
   private lateinit var shortPromptsPref: CheckBoxPreference
   private lateinit var gpuPref: CheckBoxPreference
+  private lateinit var npuPref: CheckBoxPreference
 
   private var lastAnnounced = -1
   private var wasDownloading = false
@@ -117,8 +118,14 @@ class OnDeviceAiFragment : TalkbackBaseFragment() {
         true
       }
     gpuPref.setSummary(R.string.pref_on_device_ai_gpu_summary)
+    npuPref =
+      checkBox(context, OnDeviceAiSettings.PREF_NPU, R.string.pref_on_device_ai_npu) { useNpu ->
+        OnDeviceAiSettings.setUseNpu(prefs, useNpu)
+        true
+      }
+    npuPref.setSummary(R.string.pref_on_device_ai_npu_summary)
 
-    listOf(enablePref, modelPref, statusPref, managePref, importPref, timeoutPref, shortPromptsPref, gpuPref).forEach {
+    listOf(enablePref, modelPref, statusPref, managePref, importPref, timeoutPref, shortPromptsPref, gpuPref, npuPref).forEach {
       screen.addPreference(it)
     }
     preferenceScreen = screen
@@ -149,6 +156,7 @@ class OnDeviceAiFragment : TalkbackBaseFragment() {
       when {
         support == Support.UNSUPPORTED_CPU -> R.string.pref_on_device_ai_unsupported_cpu
         support == Support.NOT_ENOUGH_RAM -> R.string.pref_on_device_ai_not_enough_ram
+        support == Support.UNSUPPORTED_SOC -> R.string.pref_on_device_ai_unsupported_soc
         !manager.isReady() -> R.string.pref_on_device_ai_enable_needs_model
         else -> R.string.pref_on_device_ai_enable_summary
       }
@@ -165,6 +173,13 @@ class OnDeviceAiFragment : TalkbackBaseFragment() {
       )
     shortPromptsPref.isChecked = OnDeviceAiSettings.shortPrompts(prefs)
     gpuPref.isChecked = OnDeviceAiSettings.useGpu(prefs)
+    // NPU only matters for SoC-specific files; hide it on phones without an NPU build so the
+    // screen stays simple, and disable GPU when an NPU file is chosen (it cannot use the GPU).
+    val npuAvailable = OnDeviceAiSettings.npuModelForThisPhone() != null
+    npuPref.isVisible = npuAvailable
+    npuPref.isChecked = OnDeviceAiSettings.useNpu(prefs)
+    npuPref.isEnabled = !busy
+    gpuPref.isEnabled = !model.requiresNpu
 
     importPref.isEnabled = !busy
 

@@ -45,6 +45,7 @@ class LocalModelService : Service() {
     val path: String,
     val lastModified: Long,
     val useGpu: Boolean,
+    val useNpu: Boolean,
     val maxTokens: Int?,
   )
 
@@ -135,7 +136,10 @@ class LocalModelService : Service() {
   private fun llmFor(data: Bundle): LiteRtLmLocalLlm {
     val file = File(data.getString(KEY_MODEL_PATH).orEmpty())
     val maxTokens = data.getInt(KEY_MAX_TOKENS, NO_MAX_TOKENS).takeIf { it != NO_MAX_TOKENS }
-    val config = Config(file.path, file.lastModified(), data.getBoolean(KEY_USE_GPU), maxTokens)
+    val useGpu = data.getBoolean(KEY_USE_GPU)
+    // Only NPU-optimized files (requiresNpu) may use the NPU; portable files keep CPU/GPU.
+    val wantNpu = data.getBoolean(KEY_USE_NPU, false)
+    val config = Config(file.path, file.lastModified(), useGpu, wantNpu, maxTokens)
     llm?.let {
       if (config == llmConfig) return it
       // Forget it before closing it, so that a cancel meanwhile does not go to it.
@@ -150,6 +154,7 @@ class LocalModelService : Service() {
         config.useGpu,
         maxTokens,
         beforeLoad = { if (checkMemory) checkFreeMemory(appContext, file.length()) },
+        useNpu = config.useNpu,
       )
       .also {
         llm = it
@@ -201,6 +206,7 @@ class LocalModelService : Service() {
 
     const val KEY_MODEL_PATH = "model_path"
     const val KEY_USE_GPU = "use_gpu"
+    const val KEY_USE_NPU = "use_npu"
     const val KEY_MAX_TOKENS = "max_tokens"
     const val KEY_PROMPT = "prompt"
 

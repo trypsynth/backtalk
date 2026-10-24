@@ -40,6 +40,13 @@ data class LocalModel(
   val maxTokens: Int? = null,
   val license: String = "Apache-2.0",
   val experimental: Boolean = false,
+  /**
+   * The normalized SoC model this file is compiled for (e.g. "sm8750"), or null for portable
+   * CPU/GPU files. NPU files only run on their own chip via `Backend.NPU`; see [NpuDetector].
+   */
+  val socModel: String? = null,
+  /** Whether this file must run on the NPU and cannot fall back to CPU/GPU. */
+  val requiresNpu: Boolean = false,
 ) {
   val localFileName: String
     get() = localName ?: "$id.litertlm"
@@ -77,6 +84,38 @@ data class LocalModel(
       minTotalRamGib = 8,
       note = "Better answers, slower. Needs a phone with a lot of memory.",
       maxTokens = 6144,
+    ),
+    // NPU-optimized Gemma 4 E2B builds for Qualcomm Snapdragon (Hexagon NPU via QNN).
+    // Same vision-capable E2B as above, compiled per-SoC. Run with Backend.NPU, not CPU/GPU.
+    // Sizes/hashes are the Hugging Face X-Linked-Size/X-Linked-ETag of each file.
+    // See https://developers.google.com/edge/litert/next/litert_lm_npu (Qualcomm AI Engine Direct).
+    LocalModel(
+      id = "e2b-npu-sm8750",
+      name = "Gemma 4 E2B (Snapdragon 8 Elite NPU)",
+      repo = "litert-community/gemma-4-E2B-it-litert-lm",
+      fileName = "gemma-4-E2B-it_qualcomm_sm8750.litertlm",
+      localName = "gemma-4-E2B-it_qualcomm_sm8750.litertlm",
+      sizeBytes = 3_016_294_400L,
+      sha256 = "41dd675fbe735b6029012b5576a5716bac614fd8156de0128db4c9dff3cebd4e",
+      minTotalRamGib = 6,
+      note = "Fastest on Snapdragon 8 Elite. Runs on the NPU, uses less battery.",
+      maxTokens = 6144,
+      socModel = "sm8750",
+      requiresNpu = true,
+    ),
+    LocalModel(
+      id = "e2b-npu-qcs8275",
+      name = "Gemma 4 E2B (QCS8275 NPU)",
+      repo = "litert-community/gemma-4-E2B-it-litert-lm",
+      fileName = "gemma-4-E2B-it_qualcomm_qcs8275.litertlm",
+      localName = "gemma-4-E2B-it_qualcomm_qcs8275.litertlm",
+      sizeBytes = 3_294_593_024L,
+      sha256 = "ebc103e548e76a34b8114a1dc1dd6d33a893c38add108d8bae8165b51f320f02",
+      minTotalRamGib = 6,
+      note = "Fastest on QCS8275. Runs on the NPU, uses less battery.",
+      maxTokens = 6144,
+      socModel = "qcs8275",
+      requiresNpu = true,
     ),
     LocalModel(
       id = "gemma4-12b",
