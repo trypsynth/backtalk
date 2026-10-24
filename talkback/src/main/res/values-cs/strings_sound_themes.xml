@@ -44,6 +44,12 @@
     <string name="summary_pref_sound_theme_install_file">Soubor motivu je soubor ZIP. Motiv můžete také otevřít nebo sdílet s Backtalkem z jiné aplikace.</string>
     <string name="title_pref_sound_theme_install_link">Z odkazu</string>
     <string name="summary_pref_sound_theme_install_link">Odkaz na soubor motivu nebo na repozitář GitHub obsahující motiv. Odkaz můžete s Backtalkem sdílet také z prohlížeče.</string>
+    <string name="title_pref_sound_theme_install_source">Ze zdroje</string>
+    <string name="summary_pref_sound_theme_install_source">Soubory motivů v repozitáři na GitHubu, GitLabu, Codebergu, Gitee nebo Bitbucketu.</string>
+    <string name="sound_theme_sources">Zdroje zvukových motivů</string>
+    <string name="sound_theme_source_empty">V tomto zdroji nejsou žádné zvukové motivy</string>
+    <string name="sound_theme_source_failed">Zvukové motivy se nepodařilo načíst. <xliff:g id="reason" example="HTTP 404">%1$s</xliff:g></string>
+    <string name="sound_theme_source_remove_message">Zvukové motivy nainstalované z tohoto zdroje zůstanou nainstalované.</string>
     <string name="sound_theme_link_message">Zadejte nebo vložte odkaz na soubor motivu nebo na repozitář GitHub obsahující motiv.</string>
     <string name="sound_theme_link_hint">https://</string>
 
