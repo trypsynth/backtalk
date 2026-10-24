@@ -18,4 +18,13 @@
     <item name="control_menu_item" type="id" />
     <item name="control_list_item" type="id" />
     <item name="control_tree_item" type="id" />
+    <item name="screen_on" type="id" />
+    <item name="rotor_next" type="id" />
+    <item name="rotor_previous" type="id" />
+    <item name="keyboard_show" type="id" />
+    <item name="keyboard_hide" type="id" />
+    <item name="direct_touch_enter" type="id" />
+    <item name="direct_touch_exit" type="id" />
+    <item name="wrap_forward" type="id" />
+    <item name="wrap_back" type="id" />
 </resources>

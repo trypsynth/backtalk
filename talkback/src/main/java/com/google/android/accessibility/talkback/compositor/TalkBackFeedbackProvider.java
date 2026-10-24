@@ -114,7 +114,7 @@ public class TalkBackFeedbackProvider implements EventFeedbackProvider {
 
     EventFeedback eventFeedback = eventFeedbackFunction.apply(eventOptions);
 
-    LogUtils.v(TAG, " %s:  %s", Compositor.eventTypeToString(event), eventFeedback.toString());
+    LogUtils.v(TAG, " %s:  %s", Compositor.eventTypeToString(event), eventFeedback);
 
     return eventFeedback;
   }
@@ -158,9 +158,11 @@ public class TalkBackFeedbackProvider implements EventFeedbackProvider {
         feedbackRules, context, globalVariables);
 
     // Input text event
-    InputTextFeedbackRules.addFeedbackRules(feedbackRules, context, globalVariables);
+    InputTextFeedbackRules.addFeedbackRules(
+        feedbackRules, context, globalVariables, processorPhoneticLetters);
     InputTextPasswordFeedbackRules.addFeedbackRules(feedbackRules, context);
-    InputTextSelectionFeedbackRules.addFeedbackRules(feedbackRules, context, globalVariables);
+    InputTextSelectionFeedbackRules.addFeedbackRules(
+        feedbackRules, context, globalVariables, processorPhoneticLetters);
     InputDescribeNodeFeedbackRule.addFeedbackRule(feedbackRules, roleDescriptionExtractor);
 
     ScrollPositionFeedbackRule.addFeedbackRules(feedbackRules, context, globalVariables);

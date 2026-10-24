@@ -106,6 +106,10 @@ class AudioDeviceRouter @JvmOverloads constructor(
   private var keepAliveTrack: AudioTrack? = null
 
   private var speakerphoneSetByUs = false
+  // Whether this router asked for a communication device. Clearing one it never set still makes
+  // Android pick the communication route again, which during a call could move the call to a
+  // watch whose phone calls setting is off.
+  private var communicationDeviceSetByUs = false
   private var otherPlaybackCount = 0
   private val playbackCallback =
     object : AudioManager.AudioPlaybackCallback() {
@@ -626,6 +630,7 @@ class AudioDeviceRouter @JvmOverloads constructor(
           false
         }
       isRoutingActive = success
+      if (success) communicationDeviceSetByUs = true
       Log.i(TAG, "setCommunicationDevice(${device.productName} - type ${device.type}): $success")
       LogUtils.d(
         TAG,
@@ -664,8 +669,11 @@ class AudioDeviceRouter @JvmOverloads constructor(
   private fun clearDeviceRouting(am: AudioManager) {
     isRoutingActive = false
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      am.clearCommunicationDevice()
-      Log.i(TAG, "clearCommunicationDevice() executed")
+      if (communicationDeviceSetByUs) {
+        am.clearCommunicationDevice()
+        communicationDeviceSetByUs = false
+        Log.i(TAG, "clearCommunicationDevice() executed")
+      }
     } else {
       setLegacySpeakerphone(am, false)
       // If a call is active the user owns the speaker setting now; forget that it was ours.

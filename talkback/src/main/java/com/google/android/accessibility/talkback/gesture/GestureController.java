@@ -26,6 +26,7 @@ import static com.google.android.accessibility.talkback.Feedback.ContinuousRead.
 import static com.google.android.accessibility.talkback.Feedback.ContinuousRead.Action.START_AT_TOP;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.BRIGHTEN;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.DIM;
+import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CLEAR_SELECTION;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.COPY;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CURSOR_TO_BEGINNING;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CURSOR_TO_END;
@@ -92,6 +93,7 @@ import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.SpeechRateAndPitchActor;
+import com.google.android.accessibility.talkback.actor.SystemActionPerformer;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
@@ -118,6 +120,7 @@ import com.google.android.accessibility.talkback.utils.DebugProperties;
 import com.google.android.accessibility.talkback.utils.FocusIndicatorUtils;
 import com.google.android.accessibility.talkback.utils.GeminiCommandUtils;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
+import com.google.android.accessibility.utils.monitor.RecentUserInput;
 import com.google.android.accessibility.utils.KeyboardUtils;
 import com.google.android.accessibility.utils.Performance;
 import com.google.android.accessibility.utils.Performance.EventId;
@@ -167,6 +170,7 @@ public class GestureController {
   private final SpeechControllerImpl speaker;
   private final ScreenStateMonitor.State screenState;
   private final ProcessorPhoneticLetters processorPhoneticLetters;
+  private final ListEdgeScroller listEdgeScroller;
 
   private final @NonNull Map<Integer, Integer> captureGestureIdToAnnouncements = new HashMap<>();
   private final @NonNull Map<Integer, Integer> captureFingerprintGestureIdToAnnouncements =
@@ -218,6 +222,17 @@ public class GestureController {
     this.speaker = speaker;
     this.screenState = screenState;
     this.processorPhoneticLetters = processorPhoneticLetters;
+    listEdgeScroller = new ListEdgeScroller(service, pipeline, accessibilityFocusMonitor);
+  }
+
+  /** Stops what gestures started that is still going on. */
+  public void shutdown() {
+    listEdgeScroller.cancel();
+  }
+
+  /** Stops scrolling to the top or bottom when the user touches the screen or presses a key. */
+  public void onUserInputStarted() {
+    listEdgeScroller.cancel();
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,6 +268,7 @@ public class GestureController {
   }
 
   public void performAction(String action, EventId eventId) {
+    RecentUserInput.mark();
     Performance.getInstance().onPerformAction(eventId, action);
     TalkbackAction actionEvent = gestureShortcutMapping.getActionEvent(action);
     if (actionEvent != null) {
@@ -318,6 +334,10 @@ public class GestureController {
       result = pipeline.returnFeedback(eventId, Feedback.focusTop(INPUT_MODE_TOUCH));
     } else if (action.equals(service.getString(R.string.shortcut_value_last_in_screen))) {
       result = pipeline.returnFeedback(eventId, Feedback.focusBottom(INPUT_MODE_TOUCH));
+    } else if (action.equals(service.getString(R.string.shortcut_value_scroll_to_top))) {
+      result = listEdgeScroller.scroll(/* toStart= */ true, eventId);
+    } else if (action.equals(service.getString(R.string.shortcut_value_scroll_to_bottom))) {
+      result = listEdgeScroller.scroll(/* toStart= */ false, eventId);
     } else if (action.equals(service.getString(R.string.shortcut_value_media_control))) {
       result =
           pipeline.returnFeedback(
@@ -382,6 +402,11 @@ public class GestureController {
       result =
           pipeline.returnFeedback(
               eventId, Feedback.systemAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS));
+    } else if (action.equals(service.getString(R.string.shortcut_value_system_notifications))) {
+      result =
+          pipeline.returnFeedback(
+              eventId,
+              Feedback.systemAction(SystemActionPerformer.GLOBAL_ACTION_SYSTEM_NOTIFICATIONS));
     } else if (action.equals(service.getString(R.string.shortcut_value_quick_settings))) {
       result =
           pipeline.returnFeedback(
@@ -500,16 +525,15 @@ public class GestureController {
     } else if (action.equals(service.getString(R.string.shortcut_value_pause_or_resume_feedback))) {
       pipeline.returnFeedback(eventId, Feedback.speech(Feedback.Speech.Action.PAUSE_OR_RESUME));
     } else if (action.equals(service.getString(R.string.shortcut_value_start_selection_mode))) {
-      AccessibilityNodeInfoCompat node = getSelectTextFocus();
-      if (node == null) {
-        result = false;
+      if (actorState.getDirectionNavigation().isSelectionModeActive()) {
+        // Copying mode can be ended with nothing focused, as it goes from window to window.
+        result =
+            pipeline.returnFeedback(
+                eventId, Feedback.edit(getSelectTextFocus(/* speakIfNone= */ false), END_SELECT));
       } else {
+        AccessibilityNodeInfoCompat node = getSelectTextFocus(/* speakIfNone= */ true);
         // Editable or non-editable selectable text found.
-        if (actorState.getDirectionNavigation().isSelectionModeActive()) {
-          result = pipeline.returnFeedback(eventId, Feedback.edit(node, END_SELECT));
-        } else {
-          result = pipeline.returnFeedback(eventId, Feedback.edit(node, START_SELECT));
-        }
+        result = node != null && pipeline.returnFeedback(eventId, Feedback.edit(node, START_SELECT));
       }
     } else if (action.equals(service.getString(R.string.shortcut_value_move_cursor_to_beginning))) {
       AccessibilityNodeInfoCompat node = getEditTextFocus();
@@ -526,12 +550,16 @@ public class GestureController {
         pipeline.returnFeedback(eventId, Feedback.edit(node, CURSOR_TO_END));
       }
     } else if (action.equals(service.getString(R.string.shortcut_value_select_all))) {
-      AccessibilityNodeInfoCompat node = getSelectTextFocus();
+      AccessibilityNodeInfoCompat node = getSelectTextFocus(/* speakIfNone= */ true);
       if (node == null) {
         result = false;
       } else {
         pipeline.returnFeedback(eventId, Feedback.edit(node, SELECT_ALL));
       }
+    } else if (action.equals(service.getString(R.string.shortcut_value_clear_selection))) {
+      AccessibilityNodeInfoCompat node =
+          accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ true);
+      result = pipeline.returnFeedback(eventId, Feedback.edit(node, CLEAR_SELECTION));
     } else if (action.equals(service.getString(R.string.shortcut_value_copy))) {
       AccessibilityNodeInfoCompat node =
           accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ true);
@@ -750,6 +778,7 @@ public class GestureController {
 
   @SuppressWarnings("NewApi")
   public void onGesture(int gestureId, EventId eventId) {
+    RecentUserInput.mark();
     if (gestureId == GESTURE_FAKED_SPLIT_TYPING_AND_HOLD) {
       // The intended behavior is simulating the non-customizable gesture "double-tap-and-hold".
       gestureId = GESTURE_DOUBLE_TAP_AND_HOLD;
@@ -931,19 +960,25 @@ public class GestureController {
     return false;
   }
 
-  private @Nullable AccessibilityNodeInfoCompat getSelectTextFocus() {
+  private @Nullable AccessibilityNodeInfoCompat getSelectTextFocus(boolean speakIfNone) {
     @Nullable AccessibilityNodeInfoCompat node =
         accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ true);
     if (AccessibilityNodeInfoUtils.isTextSelectable(node)) {
       return node;
     }
-    node = accessibilityFocusMonitor.getEditingNodeFromFocusedKeyboard(node);
+    @Nullable AccessibilityNodeInfoCompat editingNode =
+        accessibilityFocusMonitor.getEditingNodeFromFocusedKeyboard(node);
+    if (editingNode != null) {
+      return editingNode;
+    }
+    // Other text is selected for copying by Backtalk; it speaks if there is none.
     if (node != null) {
       return node;
-    } else {
-      speak(service.getString(R.string.not_selectable));
-      return null;
     }
+    if (speakIfNone) {
+      speak(service.getString(R.string.not_selectable));
+    }
+    return null;
   }
 
   private @Nullable AccessibilityNodeInfoCompat getEditTextFocus() {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <string name="settings_backup_title">Резервное копирование и восстановление</string>
+  <string name="settings_backup_export">Экспорт настроек</string>
+  <string name="settings_backup_export_summary">Сохранить все настройки в файл.</string>
+  <string name="settings_backup_import">Импорт настроек</string>
+  <string name="settings_backup_import_summary">Заменить текущие настройки настройками из ранее экспортированного файла. Настройки, связанные с этим телефоном, например сопряжённые дисплеи Брайля и ваш ключ API Gemini, останутся без изменений.</string>
+  <string name="settings_backup_export_done">Настройки экспортированы</string>
+  <string name="settings_backup_export_failed">Не удалось экспортировать настройки</string>
+  <string name="settings_backup_import_done">Настройки импортированы</string>
+  <string name="settings_backup_import_restart">Чтобы некоторые импортированные настройки вступили в силу, нужно выключить и снова включить Backtalk.</string>
+  <string name="settings_backup_import_failed">Не удалось прочитать файл</string>
+</resources>

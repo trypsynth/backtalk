@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="title_pref_notification_list">Používat seznam oznámení BackTalku</string>
+    <string name="title_pref_notification_parts">Podrobnosti oznámení</string>
+    <string name="notification_part_title">Název</string>
+    <string name="notification_part_text">Text</string>
+    <string name="notification_part_app">Název aplikace</string>
+    <string name="notification_part_time">Čas</string>
+    <string name="notification_part_playback">Přehrávání nebo pozastavení</string>
+    <string name="notification_list_title">Oznámení</string>
+    <string name="notification_list_empty">Žádná oznámení</string>
+    <string name="notification_list_no_access">Přístup k oznámením je vypnutý</string>
+    <string name="notification_list_grant_access">Zapnout přístup k oznámením</string>
+    <string name="notification_list_quick_settings">Rychlá nastavení</string>
+    <string name="notification_list_dismiss">Odstranit</string>
+    <string name="notification_list_clear_all">Vymazat vše</string>
+    <string name="notification_list_send">Odeslat</string>
+    <string name="notification_list_playing">Přehrává se</string>
+    <string name="notification_list_paused">Pozastaveno</string>
+    <string name="notification_list_play">Přehrát</string>
+    <string name="notification_list_pause">Pozastavit</string>
+    <string name="notification_list_previous">Předchozí</string>
+    <string name="notification_list_next">Další</string>
+    <plurals name="notification_list_group_count">
+        <item quantity="one">%d oznámení</item>
+        <item quantity="few">%d oznámení</item>
+        <item quantity="many">%d oznámení</item>
+        <item quantity="other">%d oznámení</item>
+    </plurals>
+    <string name="shortcut_system_notifications">Systémová oznamovací lišta</string>
+</resources>

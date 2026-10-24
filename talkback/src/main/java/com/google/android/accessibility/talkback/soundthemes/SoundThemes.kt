@@ -46,6 +46,9 @@ data class SoundTheme(val id: String, val manifest: SoundThemeManifest, val dire
     get() = id == SoundThemes.BACKTALK
 }
 
+/** Thrown when a new theme's name gives the folder of an installed theme. */
+class ThemeExistsException(val id: String) : Exception("A theme called $id exists")
+
 /** A theme unpacked from a theme file, waiting for the person to install it or not. */
 data class StagedTheme(
   val id: String,
@@ -83,6 +86,10 @@ class ThemeFeedback(
     return if (mutedKeyboard.isEmpty()) playing
     else playing + mutedKeyboard.associateWith { IntArray(0) }
   }
+
+  /** The sound names whose sound can actually be heard (excluding "none"). */
+  fun audibleSoundNames(): Set<String> =
+    soundPaths.filterValues { it != SoundThemeManifest.NONE }.keys
 
   /** The sounds the theme gives a vibration that can be felt, by resource name. */
   fun felt(): Set<String> = vibrations.filterValues { it.isNotEmpty() }.keys
@@ -123,7 +130,7 @@ object SoundThemes {
   private const val TAG = "SoundThemes"
 
   /** The formats Android can play, as file extensions. */
-  val EXTENSIONS = setOf("wav", "ogg", "oga", "opus", "mp3", "flac", "m4a", "aac")
+  val EXTENSIONS = setOf("wav", "ogg", "oga", "opus", "mp3", "flac", "m4a", "aac", "mid", "midi")
 
   /** License, readme and credits files, which stay with the theme when it is shared again. */
   private val DOCUMENT = Regex("(license|licence|copying|readme|notice|authors|credits)(\\.(txt|md))?")
@@ -214,6 +221,28 @@ object SoundThemes {
   fun theme(context: Context, id: String): SoundTheme? =
     if (id == BACKTALK) backtalk(context) else read(File(themesDirectory(context), id))
 
+  /** The key of the screen on sound, which plays only if the theme gives it a sound. */
+  const val SCREEN_ON = "screen_on"
+
+  /** The keys of the rotor sounds, which play when the selected setting changes. */
+  const val ROTOR_NEXT = "rotor_next"
+  const val ROTOR_PREVIOUS = "rotor_previous"
+
+  /** The sounds that Backtalk has none of its own for, so that they play only from a theme. */
+  @JvmField
+  val THEME_ONLY: Set<String> =
+    setOf(
+      SCREEN_ON,
+      ROTOR_NEXT,
+      ROTOR_PREVIOUS,
+      "keyboard_show",
+      "keyboard_hide",
+      "direct_touch_enter",
+      "direct_touch_exit",
+      "wrap_forward",
+      "wrap_back",
+    )
+
   /** The sound files of [theme], by item key. */
   @JvmStatic
   fun soundFiles(theme: SoundTheme): Map<String, File> {
@@ -230,6 +259,20 @@ object SoundThemes {
   fun soundFile(context: Context, prefs: SharedPreferences, item: FeedbackItem): File? =
     soundFiles(active(context, prefs))[item.key]
 
+  /** Whether [item] plays no sound in the theme in use. */
+  @JvmStatic
+  fun isNone(context: Context, prefs: SharedPreferences, item: FeedbackItem): Boolean =
+    isNone(active(context, prefs), item)
+
+  /**
+   * Whether [item] plays no sound in [theme]: it is set to "none", or it is a sound that has none
+   * of Backtalk's own, like screen on, and so plays nothing without a file.
+   */
+  @JvmStatic
+  fun isNone(theme: SoundTheme, item: FeedbackItem): Boolean =
+    theme.manifest.sounds[item.key] == SoundThemeManifest.NONE ||
+      (item.key in THEME_ONLY && soundFiles(theme)[item.key] == null)
+
   /**
    * The sounds and vibrations of the theme in use. An item with several sounds, like the circle
    * menu, plays its theme sound and vibration for all of them.
@@ -241,6 +284,11 @@ object SoundThemes {
     val paths = HashMap<String, String>()
     for ((key, file) in soundFiles(theme)) {
       items[key]?.resourceNames?.forEach { paths[it] = file.path }
+    }
+    for ((key, value) in theme.manifest.sounds) {
+      if (value == SoundThemeManifest.NONE) {
+        items[key]?.resourceNames?.forEach { paths[it] = SoundThemeManifest.NONE }
+      }
     }
     val vibrations =
       SoundVibrations.playedAs(
@@ -302,6 +350,60 @@ object SoundThemes {
     File(themesDirectory(context), id).deleteRecursively()
   }
 
+  /**
+   * Creates an empty theme and returns its id. Throws [ThemeExistsException] if one with the same
+   * folder name is installed, and [IllegalArgumentException] for a blank name.
+   */
+  @JvmStatic
+  fun create(
+    context: Context,
+    name: String,
+    description: String,
+    author: String,
+    controlSounds: Boolean,
+    audio3d: String,
+  ): String {
+    val trimmed = name.trim()
+    require(trimmed.isNotEmpty()) { "A theme needs a name" }
+    val id = idFor(trimmed)
+    val directory = File(themesDirectory(context), id)
+    if (directory.exists()) throw ThemeExistsException(id)
+    val manifest =
+      SoundThemeManifest(
+        name = trimmed,
+        author = author.trim().ifEmpty { null },
+        description = description.trim().ifEmpty { null },
+        controlSounds = controlSounds,
+        audio3d = audio3d,
+      )
+    write(SoundTheme(id, manifest, directory))
+    return id
+  }
+
+  /**
+   * Saves control sounds and 3D audio to the theme [id], which need not be the one in use. For the
+   * one in use they also reach the preferences.
+   */
+  @JvmStatic
+  fun setSettings(
+    context: Context,
+    prefs: SharedPreferences,
+    id: String,
+    controlSounds: Boolean,
+    audio3d: String,
+  ) {
+    val theme = theme(context, id) ?: return
+    write(theme.copy(manifest = theme.manifest.copy(controlSounds = controlSounds, audio3d = audio3d)))
+    if (id == activeId(prefs)) {
+      prefs
+        .edit()
+        .putBoolean(ControlSoundsSettings.PREF_ON, controlSounds)
+        .putString(ControlSoundsSettings.PREF_3D, audio3d)
+        .putLong(PREF_CHANGED, System.currentTimeMillis())
+        .apply()
+    }
+  }
+
   // ---------------------------------------------------------------------------------------------
   // Sounds of the theme in use
 
@@ -320,19 +422,40 @@ object SoundThemes {
     val result = copySound(input, file, MAX_SOUND_BYTES)
     if (result != Result.OK) return result
     old?.delete()
+    if (item.key in theme.manifest.sounds) {
+      write(theme.copy(manifest = theme.manifest.copy(sounds = theme.manifest.sounds - item.key)))
+    }
     changed(prefs)
     return Result.OK
   }
 
+  /** Sets [item] to play no sound in the theme in use. */
+  fun setNone(context: Context, prefs: SharedPreferences, item: FeedbackItem) {
+    val theme = active(context, prefs)
+    theme.directory.mkdirs()
+    soundFiles(theme)[item.key]?.delete()
+    val updated = theme.manifest.copy(sounds = theme.manifest.sounds + (item.key to SoundThemeManifest.NONE))
+    write(theme.copy(manifest = updated))
+    changed(prefs)
+  }
+
   /** Makes [item] play Backtalk's sound again in the theme in use. */
   fun removeSound(context: Context, prefs: SharedPreferences, item: FeedbackItem) {
-    soundFiles(active(context, prefs))[item.key]?.delete()
+    val theme = active(context, prefs)
+    soundFiles(theme)[item.key]?.delete()
+    if (item.key in theme.manifest.sounds) {
+      write(theme.copy(manifest = theme.manifest.copy(sounds = theme.manifest.sounds - item.key)))
+    }
     changed(prefs)
   }
 
   /** Makes every item play Backtalk's sound again in the theme in use. */
   fun removeAllSounds(context: Context, prefs: SharedPreferences) {
-    soundFiles(active(context, prefs)).values.forEach { it.delete() }
+    val theme = active(context, prefs)
+    soundFiles(theme).values.forEach { it.delete() }
+    if (theme.manifest.sounds.isNotEmpty()) {
+      write(theme.copy(manifest = theme.manifest.copy(sounds = emptyMap())))
+    }
     changed(prefs)
   }
 
@@ -391,7 +514,7 @@ object SoundThemes {
                 String(readLimited(it, MAX_DOCUMENT_BYTES), Charsets.UTF_8)
               }
             try {
-              SoundThemeManifest.parse(text, VIBRATION_NAMES, fallbackName)
+              SoundThemeManifest.parse(text, VIBRATION_NAMES, fallbackName, SOUND_KEYS)
             } catch (e: JSONException) {
               throw NotAThemeException("theme.json: ${e.message}")
             }
@@ -449,8 +572,13 @@ object SoundThemes {
           id = idFor(manifest.name),
           manifest = manifest,
           directory = staging,
-          sounds = SOUNDS.filter { it.key in sounds },
-          skipped = skipped + manifest.warnings,
+          sounds =
+            SOUNDS.filter { it.key in sounds || manifest.sounds[it.key] == SoundThemeManifest.NONE },
+          skipped =
+            skipped +
+              manifest.warnings +
+              manifest.sounds.keys.filter { it in sounds }
+                .map { "sounds.$it: set to none, so the sound file for it is not played" },
         )
       }
     } catch (e: Exception) {
@@ -535,9 +663,10 @@ object SoundThemes {
   private fun backtalk(context: Context): SoundTheme {
     val directory = File(themesDirectory(context), BACKTALK)
     val stored = read(directory)
+    val manifest = stored?.manifest ?: SoundThemeManifest(name = BACKTALK_NAME)
     return SoundTheme(
       BACKTALK,
-      stored?.manifest ?: SoundThemeManifest(name = BACKTALK_NAME),
+      manifest,
       directory,
     )
   }
@@ -548,7 +677,7 @@ object SoundThemes {
     return try {
       SoundTheme(
         directory.name,
-        SoundThemeManifest.parse(file.readText(), VIBRATION_NAMES, directory.name),
+        SoundThemeManifest.parse(file.readText(), VIBRATION_NAMES, directory.name, SOUND_KEYS),
         directory,
       )
     } catch (e: JSONException) {

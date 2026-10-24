@@ -54,6 +54,10 @@
       Description: Distinguishes the system settings from TalkBack's own speech settings. [CHAR LIMIT=NONE]
     -->
     <string name="title_pref_system_tts_settings">System text-to-speech settings</string>
+    <!-- Title for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
+    <string name="title_selector_switch_tts_engine">Speech engine</string>
+    <!-- Summary for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
+    <string name="summary_selector_switch_tts_engine">Switch between installed speech engines</string>
     <!-- Title for the reading control that switches between voice profiles. [CHAR LIMIT=NONE] -->
     <string name="title_selector_voice_profile">Voice profile</string>
     <!--
@@ -74,6 +78,11 @@
       voice profile is in use, as all speech then uses the profile's voice. [CHAR LIMIT=NONE]
     -->
     <string name="spoken_language_unavailable_with_profile">Spoken language unavailable while using a voice profile</string>
+    <!--
+      Said when the user tries to change the speech engine from the reading controls while a voice
+      profile is in use, as the profile has its own speech engine. [CHAR LIMIT=NONE]
+    -->
+    <string name="speech_engine_unavailable_with_profile">Speech engine unavailable while using a voice profile</string>
     <!--
       Item in the menu of voice profiles for the profile in use, opened from the Backtalk menu, a
       gesture or a keyboard shortcut. [CHAR LIMIT=NONE]
@@ -164,10 +173,14 @@
       Description: Explains what sending long text as phrases does, and why to turn it off. [CHAR LIMIT=NONE]
     -->
     <string name="summary_pref_speak_in_phrases">For speech engines that are slow to stop, such as Gryphon, so swiping away stops long text at once. Many engines pause longer between sentences sent separately, so leave this off if yours stops quickly.</string>
-    <!-- Title of the setting that turns speech off while another app records with the microphone. [CHAR LIMIT=NONE] -->
-    <string name="title_pref_mute_speech_while_recording">Turn speech off while recording</string>
-    <!-- Summary of the setting that turns speech off while another app records with the microphone. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_mute_speech_while_recording">When an app starts recording without headphones connected, speech turns off so that it is not recorded, and comes back when the recording stops. Turn it back on sooner with the gesture to turn speech on or off.</string>
+    <!-- Title of the notification shown once on phones whose battery saver can stop Backtalk, when battery optimization is on for it. [CHAR LIMIT=NONE] -->
+    <string name="battery_optimization_notification_title">Battery optimization can stop Backtalk</string>
+    <!-- Text of the notification shown once on phones whose battery saver can stop Backtalk. Tapping it opens the system list of battery optimization. [CHAR LIMIT=NONE] -->
+    <string name="battery_optimization_notification_text">On this phone, the battery saver can stop Backtalk after the screen turns off, so it falls silent until it is restarted. Tap to open battery optimization, choose All apps, find Backtalk and choose Don\'t optimize.</string>
+    <!-- Title of the setting that keeps speech the user did not ask for, such as notifications, quiet while another app records with the microphone. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_mute_speech_while_recording">Quiet while recording</string>
+    <!-- Summary of the setting that keeps speech the user did not ask for quiet while another app records with the microphone. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_mute_speech_while_recording">While an app records without headphones connected, Backtalk only speaks in answer to your gestures, keys and typing, and stays quiet for things such as notifications, so that they are not recorded.</string>
     <!--
       Source: Title for the "switch languages" toggle.
       Description: When on, text that an app marks as another language is spoken in that language. [CHAR LIMIT=NONE]
@@ -345,6 +358,12 @@
     <string name="title_pref_category_feedback">Feedback</string>
     <!-- Settings category for keyboards and braille. [CHAR LIMIT=40] -->
     <string name="title_pref_category_typing_and_braille">Typing and braille</string>
+    <!-- Settings category for scripts, custom labels and other apps that speak through Backtalk, which change how other apps work with Backtalk. [CHAR LIMIT=40] -->
+    <string name="title_pref_category_apps">Apps</string>
+    <!-- Title of the settings screen for how touches focus and activate items: focus delay, lift to activate, single tap and the like. [CHAR LIMIT=40] -->
+    <string name="title_pref_touch_activation">Touch and activation</string>
+    <!-- Title of the settings screen for where focus goes while moving through the screen: wrap around, new windows, tables and browse mode. [CHAR LIMIT=40] -->
+    <string name="title_pref_navigation">Navigation</string>
     <!-- Settings category for advanced settings, the tutorial, and help. [CHAR LIMIT=40] -->
     <string name="title_pref_category_more">More</string>
     <!-- Title for preference that controls the volume of TalkBack's speech output. [CHAR LIMIT=25] -->
@@ -385,6 +404,10 @@
     <string name="summary_pref_speakerphone_away_from_ear">During a call, switches to the speaker when you take the phone away from your ear, and back to the earpiece when you hold it up again.</string>
     <!-- Summary of that setting when Backtalk does not have the permission. %1$s is the adb command that grants it. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speakerphone_needs_permission">Needs a permission that Android does not give to screen readers. To grant it, run this command with adb or Shizuku, then come back to this screen: %1$s</string>
+    <!-- Action on a setting that needs a permission granted with adb. Copies the adb command to the clipboard. [CHAR LIMIT=NONE] -->
+    <string name="action_copy_command">Copy command</string>
+    <!-- Shown after the adb command was copied to the clipboard. [CHAR LIMIT=NONE] -->
+    <string name="command_copied">Command copied</string>
     <!-- Title of the setting that lets other apps speak through Backtalk. [CHAR LIMIT=NONE] -->
     <string name="title_pref_speech_control">Let other apps speak</string>
     <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
@@ -407,6 +430,10 @@
     <string name="permission_speak_label">speak through Backtalk</string>
     <!-- Description of that permission. [CHAR LIMIT=NONE] -->
     <string name="permission_speak_description">Lets the app ask to say text in your Backtalk voice. Backtalk asks you before the app can speak.</string>
+    <!-- Name of the permission that an app needs to ask to be a braille display for Backtalk, shown in the app's permission list. [CHAR LIMIT=NONE] -->
+    <string name="permission_braille_display_label">ask to be a braille display for Backtalk</string>
+    <!-- Description of that permission. [CHAR LIMIT=NONE] -->
+    <string name="permission_braille_display_description">Lets the app ask to be a braille display for Backtalk. If you allow it in Backtalk, it can read everything on the screen and control your device. Backtalk asks you first.</string>
 
     <!--
       Source: Preference for speaking phonetic letter for letters.
@@ -418,6 +445,16 @@
       Description: Explains when phonetic letters will be spoken. [CHAR LIMIT=NONE]
     -->
     <string name="summary_pref_phonetic_letters">When you select keyboard keys or navigate by character, you\'ll hear an example along with each letter, like \"h, hotel\"</string>
+    <!-- Title of the setting for saying a word from a spelling alphabet, such as "hotel" for h, for letters such as keyboard keys and letters moved over by character. [CHAR LIMIT=40] -->
+    <string name="title_pref_phonetic_letters_mode">Speak letters phonetically</string>
+    <!-- Choice for Speak letters phonetically: only the letter is said. [CHAR LIMIT=NONE] -->
+    <string name="phonetic_letters_mode_off">Off</string>
+    <!-- Choice for Speak letters phonetically: the letter, then its word after a pause, as TalkBack does. Translate the example with the word that the phonetic letters for the language use for h. [CHAR LIMIT=NONE] -->
+    <string name="phonetic_letters_mode_after_letter_delay">After the letter, delayed, like \"h, hotel\"</string>
+    <!-- Choice for Speak letters phonetically: the letter and its word together, with no pause between them. Translate the example with the word that the phonetic letters for the language use for h. [CHAR LIMIT=NONE] -->
+    <string name="phonetic_letters_mode_after_letter_no_delay">After the letter, no delay, like \"h hotel\"</string>
+    <!-- Choice for Speak letters phonetically: the word is said in place of the letter. Translate the example with the word that the phonetic letters for the language use for h. [CHAR LIMIT=NONE] -->
+    <string name="phonetic_letters_mode_instead_of_letter">Instead of the letter, like \"hotel\"</string>
     <!--
       Source: Preference for reading punctuations. [CHAR LIMIT=45]
       Description: The user can check or not check this.
@@ -780,6 +817,53 @@
       Description: Explains whether to show the banner. [CHAR LIMIT=NONE]
     -->
     <string name="summary_pref_show_exit_watermark">When Backtalk turns on, show how to turn it off</string>
+    <!-- Title of the switch that makes the Notifications action open Backtalk's own list of notifications instead of the system's notification shade. [CHAR_LIMIT=NONE] -->
+    <string name="title_pref_notification_list">Use Backtalk\'s notification list</string>
+    <!-- Title of the screen that chooses which parts of a notification Backtalk's notification list speaks, and their order. [CHAR_LIMIT=NONE] -->
+    <string name="title_pref_notification_parts">Notification details</string>
+    <!-- A part of a notification that Backtalk's notification list can speak: its title. [CHAR_LIMIT=NONE] -->
+    <string name="notification_part_title">Title</string>
+    <!-- A part of a notification that Backtalk's notification list can speak: its text. [CHAR_LIMIT=NONE] -->
+    <string name="notification_part_text">Text</string>
+    <!-- A part of a notification that Backtalk's notification list can speak: the name of the app that posted it. [CHAR_LIMIT=NONE] -->
+    <string name="notification_part_app">App name</string>
+    <!-- A part of a notification that Backtalk's notification list can speak: when it was posted. [CHAR_LIMIT=NONE] -->
+    <string name="notification_part_time">Time</string>
+    <!-- A part of a media notification that Backtalk's notification list can speak: whether its media is playing or paused. [CHAR_LIMIT=NONE] -->
+    <string name="notification_part_playback">Playing or paused</string>
+    <!-- Title of Backtalk's own list of notifications. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_title">Notifications</string>
+    <!-- Shown in Backtalk's notification list when there are no notifications. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_empty">No notifications</string>
+    <!-- Shown in Backtalk's notification list when Backtalk does not have notification access. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_no_access">Notification access is off</string>
+    <!-- Button that opens the system setting for Backtalk's notification access. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_grant_access">Turn on notification access</string>
+    <!-- Button in Backtalk's notification list that opens the system's quick settings. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_quick_settings">Quick settings</string>
+    <!-- Accessibility action that removes a notification from Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_dismiss">Dismiss</string>
+    <!-- Button in Backtalk's notification list that removes every notification that can be removed. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_clear_all">Clear all</string>
+    <!-- Button that sends a reply typed in Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_send">Send</string>
+    <!-- State of a media notification in Backtalk's notification list whose media is playing. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_playing">Playing</string>
+    <!-- State of a media notification in Backtalk's notification list whose media is paused. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_paused">Paused</string>
+    <!-- Action on a media notification in Backtalk's notification list that starts playback. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_play">Play</string>
+    <!-- Action on a media notification in Backtalk's notification list that pauses playback. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_pause">Pause</string>
+    <!-- Action on a media notification in Backtalk's notification list that skips to the previous item. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_previous">Previous</string>
+    <!-- Action on a media notification in Backtalk's notification list that skips to the next item. [CHAR_LIMIT=NONE] -->
+    <string name="notification_list_next">Next</string>
+    <!-- Number of notifications in a group in Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+    <plurals name="notification_list_group_count">
+        <item quantity="one">%d notification</item>
+        <item quantity="other">%d notifications</item>
+    </plurals>
     <!-- The text of TalkBack mis-trigger-prevention watermark. [CHAR_LIMIT=NONE]-->
     <string name="talkback_exit_watermark_text">Backtalk on. Hold 2 fingers on screen for 5 seconds to turn off. To stop showing this message, tap with 3 fingers to open the Backtalk menu.</string>
     <!-- The hint text of TalkBack mis-trigger-prevention watermark. [CHAR_LIMIT=NONE]-->
@@ -1766,6 +1850,10 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="shortcut_scroll_forward">Scroll forward</string>
     <!-- Label for the shortcut that tries to scroll current view back. [CHAR_LIMIT=40] -->
     <string name="shortcut_scroll_back">Scroll back</string>
+    <!-- Label for the shortcut that scrolls the current list to its start and focuses its first item. [CHAR_LIMIT=40] -->
+    <string name="shortcut_scroll_to_top">Scroll to top</string>
+    <!-- Label for the shortcut that scrolls the current list to its end and focuses its last item. [CHAR_LIMIT=40] -->
+    <string name="shortcut_scroll_to_bottom">Scroll to bottom</string>
     <!-- Label for the shortcut that tries to scroll current view up. [CHAR_LIMIT=40] -->
     <string name="shortcut_scroll_up">Scroll up</string>
     <!-- Label for the shortcut that tries to scroll current view down. [CHAR_LIMIT=40] -->
@@ -1790,6 +1878,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="shortcut_overview">Overview</string>
     <!-- Label for the shortcut that opens the notifications shade. [CHAR_LIMIT=40] -->
     <string name="shortcut_notifications">Notifications</string>
+    <!-- Label for the shortcut that opens the system's notification shade, even when the Notifications shortcut opens Backtalk's own notification list. [CHAR_LIMIT=40] -->
+    <string name="shortcut_system_notifications">System notification shade</string>
     <!-- Label for the shortcut that opens the quick settings. [CHAR_LIMIT=50] -->
     <string name="shortcut_quick_settings">Quick Settings</string>
     <!-- Label for the shortcut that opens the custom action menu. [CHAR_LIMIT=40] -->
@@ -1965,6 +2055,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_edittext_breakout_start_selection_mode">Start or end selection mode</string>
     <!-- Label for the menu item to end text selection mode. [CHAR_LIMIT=40] -->
     <string name="title_edittext_breakout_end_selection_mode">End selection mode</string>
+    <!-- Label for the gesture action that drops the text selected for copying. [CHAR_LIMIT=40] -->
+    <string name="title_clear_selection">Clear selection</string>
     <!-- Label for the menu item to show spelling suggestions for misspelling words. [CHAR_LIMIT=60] -->
     <string name="title_edittext_typo_suggestions">Spelling / grammar suggestions</string>
     <!-- Label for the menu item to show the spelling suggestion for a misspelling word. [CHAR_LIMIT=60] -->
@@ -2466,6 +2558,14 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_pref_wrap_around">Wrap around</string>
     <!-- Summary of the wrap around setting. [CHAR LIMIT=NONE]-->
     <string name="summary_pref_wrap_around">Swiping past the last item goes to the first, and past the first goes to the last. When off, a sound plays at the end instead.</string>
+    <!-- Title of the switch that removes Links and Controls from the reading controls when the focused item is not in web content. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_selector_links_controls_web_only">Links and Controls only in web content</string>
+    <!-- Title of the switch that moves accessibility focus into a window when it opens or comes back, such as when an app opens or you go back. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_focus_new_windows">Move focus to new windows</string>
+    <!-- Title of the switch that makes the volume keys adjust the focused slider instead of the volume. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_volume_keys_adjust_sliders">Volume keys adjust sliders</string>
+    <!-- Summary of the switch that makes the volume keys adjust the focused slider instead of the volume. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_volume_keys_adjust_sliders">When a slider has focus, volume up and down change its value instead of the volume</string>
     <!-- Summary of the wrap around setting in the reading controls list. [CHAR LIMIT=NONE]-->
     <string name="summary_support_wrap_around">Turn wrapping from the last item to the first on or off</string>
     <!-- Spoken when wrap around is turned on. [CHAR LIMIT=NONE]-->
@@ -2938,6 +3038,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
   <string name="title_pref_cache_keyboard_keys">Announce keyboard keys faster</string>
   <!-- Title of the switch that speaks a list item a swipe moves to before the list has scrolled it into view. [CHAR LIMIT=NONE] -->
   <string name="title_pref_speak_items_before_scroll">Speak items before they scroll into view</string>
+  <!-- Title of the switch that lets the first item focused in a new window interrupt the window name, instead of waiting for it to finish. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_first_item_interrupts_window_name">Speak first item without waiting for window name</string>
   <!--
   Source: Title for the sound and vibration.
   Description: The user can set sound and vibration. [CHAR_LIMIT=NONE]

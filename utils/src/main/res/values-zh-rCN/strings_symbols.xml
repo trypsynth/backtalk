@@ -146,4 +146,29 @@
     <item quantity="one">点 %s</item>
     <item quantity="other">点 %s</item>
   </plurals>
+
+
+    <!-- Spoken description for the Arabic diacritic fatha keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_fatha" translatable="false">فَتْحَة</string>
+
+    <!-- Spoken description for the Arabic diacritic kasra keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_kasra" translatable="false">كَسْرَة</string>
+
+    <!-- Spoken description for the Arabic diacritic damma keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_damma" translatable="false">ضَمَّة</string>
+
+    <!-- Spoken description for the Arabic diacritic fathatan keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_fathatan" translatable="false">فتحَة تنوين</string>
+
+    <!-- Spoken description for the Arabic diacritic kasratan keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_kasratan" translatable="false">كَسْرَة تَنْوِين</string>
+
+    <!-- Spoken description for the Arabic diacritic dammatan keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_dammatan" translatable="false">ضَمَّة تَنْوِين</string>
+
+    <!-- Spoken description for the Arabic diacritic shadda keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_shadda" translatable="false">شَدّة‎</string>
+
+    <!-- Spoken description for the Arabic diacritic sukun keyboard key. [CHAR_LIMIT=30] -->
+    <string name="symbol_sukun" translatable="false">سُكُونْ</string>
 </resources>

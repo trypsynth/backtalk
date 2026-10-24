@@ -1,6 +1,6 @@
 # Writing Backtalk scripts
 
-A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 2.
+A script is a JavaScript file that changes how Backtalk works in one app, or in every app. This document describes the whole script API, version 4.
 
 Scripts run on phones and tablets. Watches and TVs can't run them.
 
@@ -8,10 +8,20 @@ Scripts run on phones and tablets. Watches and TVs can't run them.
 
 A script is one of these:
 
-*   A `.js` file.
-*   A `.zip` file with a `main.js` in it, plus anything `main.js` uses: other JavaScript modules, sounds, and translations. The zip can be up to 5 MB unpacked and hold up to 200 files.
+*   A `.js` file, up to 1 MB.
+*   A `.zip` file with a `main.js` in it, plus anything `main.js` uses: other JavaScript modules, sounds, and translations. The zip can be up to 5 MB, up to 5 MB unpacked, and hold up to 200 files.
 
-To install a script, go to **Advanced settings** > **Scripts** in Backtalk settings and choose **Import script**. Backtalk lists what the script asks to do before it installs it. Importing a file with the id of a script that's already installed updates that script and keeps its data and settings; Backtalk always asks first, and says so if the author changed.
+To install a script, go to **Apps** > **Scripts** in Backtalk settings and choose **Import script**. Backtalk lists what the script asks to do before it installs it. Importing a file with the id of a script that's already installed updates that script and keeps its data and settings; Backtalk always asks first, and says so if the author changed.
+
+To find scripts, choose **Script sources** on the Scripts screen and **Add source**. A source is the address of a repository, or of a branch or folder in one, on GitHub, GitLab, Codeberg, Gitea (gitea.com) or Bitbucket:
+
+*   `github.com/owner/repository` or `github.com/owner/repository/tree/main/scripts`
+*   `gitlab.com/group/repository` or `gitlab.com/group/subgroup/repository/-/tree/main/scripts`
+*   `codeberg.org/owner/repository` or `codeberg.org/owner/repository/src/branch/main/scripts`
+*   `gitea.com/owner/repository`, written as for Codeberg
+*   `bitbucket.org/workspace/repository` or `bitbucket.org/workspace/repository/src/main/scripts`
+
+Only public repositories on these services work. The source's `.js` and `.zip` files are listed. Choosing one downloads it and shows the same install dialog as **Import script**. **Remove source** on a source's screen removes it from the list; scripts already installed from it stay installed.
 
 Scripts run in [QuickJS](https://github.com/quickjs-ng/quickjs), so you can use modern JavaScript, including modules, classes, `async` and `await`. A script can't reach Android directly. It has no file system, no `require`, and no Java classes; everything goes through the `backtalk` object described below.
 
@@ -43,7 +53,7 @@ backtalk.onAppEnter(() => backtalk.speak('Hello from a script'));
 | `id` | Required. Lowercase letters, digits, dots, dashes and underscores, starting with a letter or digit, up to 64 characters. A script with the same id replaces the installed one. |
 | `name` | Required. Shown in the Scripts list, and at the start of the title of every dialog the script shows. |
 | `author` | Required. |
-| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 2, which adds `has` to [queries](#queries) and `activate` to [rules](#rules). |
+| `minApiVersion` | Required. The lowest script API version the script works with. This document describes version 4. Version 2 added `has` to [queries](#queries) and `activate` to [rules](#rules), version 3 added `meta` to [`backtalk.app`](#screen), and version 4 added `silence` to rules. |
 | `testedApiVersion` | Required. The highest script API version you tested with. Backtalk warns before installing a script tested only with an older version. |
 | `version` | The script's own version, as text. The default is `'1'`. |
 | `description` | Shown on the script's page and before it's installed. |
@@ -67,14 +77,14 @@ apps: [
 ],
 ```
 
-*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it.
+*   `activity` limits the script to one screen. It's the activity's full class name, or the end of it. Backtalk learns the activity from the app's window changes. Until it has seen one, such as just after Backtalk is updated or the phone restarts with the app open, the script runs in all of the app's screens.
 *   `window` limits it to windows whose title contains the text.
 
 A script with `apps` is loaded when one of its apps comes to the front and unloaded when it leaves, so anything it keeps in variables is lost then. Use [`backtalk.storage`](#storage) for what should last.
 
 A script without `apps` runs in every app and is loaded as long as it's turned on.
 
-Scripts never change Backtalk's own screens. Rules, speech changes, gestures, keys, menu items and reading controls from scripts don't apply there, and a script can't name Backtalk in `apps`. While a Backtalk screen is in front, calls that need the `screen`, `actions`, `system` or `dialogs` permission throw an error, `backtalk.speak` doesn't interrupt, and scripts get no events from Backtalk itself. This is so that **Advanced settings** > **Scripts** always works, whatever a script does.
+Scripts never change Backtalk's own screens. Rules, speech changes, gestures, keys, menu items and reading controls from scripts don't apply there, and a script can't name Backtalk in `apps`. While a Backtalk screen is in front, calls that need the `screen`, `actions`, `system` or `dialogs` permission throw an error, `backtalk.speak` doesn't interrupt, and scripts get no events from Backtalk itself. This is so that **Apps** > **Scripts** always works, whatever a script does.
 
 Scripts are also unloaded while the screen is off, while Backtalk is paused, and while **Turn off all scripts** is on. Timers and requests end when a script is unloaded.
 
@@ -115,7 +125,7 @@ A rule names its item with `id`, with `match`, or with both:
 *   `id` is the item's view id, either the short form (`send_button`) or the full one (`com.example:id/send_button`).
 *   `match` is a [query](#queries).
 
-`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it.
+`window` and `activity` limit a rule to windows whose title contains the text, or to an activity whose class name ends with it. A rule with `activity` applies while the activity isn't known yet, as described for `apps`.
 
 A rule can set any of these:
 
@@ -124,6 +134,7 @@ A rule can set any of these:
 | `label` | The item's name, used where the app gave none or a poor one. |
 | `speak` | Everything Backtalk says for the item, in place of its name, role and state. |
 | `hide` | `true` hides the item: swiping skips it. `'all'` hides what's inside it too. A hidden item is still there, so a script can click it. |
+| `silence` | `true` stops Backtalk speaking the item's changes, selections and announcements, such as a progress bar's updates. `'all'` silences what's inside it too, such as the seek bar in a grouped row. Focusing the item still speaks it. Needs script API version 4. |
 | `role` | The item's role, such as `'button'`. An unknown role is an error that lists the roles. |
 | `state` | The item's state, such as `'Selected'`. |
 | `hint` | The usage hint. |
@@ -271,7 +282,7 @@ Sounds and vibration follow the user's **Sound feedback** and **Vibration feedba
 *   `backtalk.screen.focused()` is the item with Backtalk's focus.
 *   `backtalk.screen.root()` is the top item of the active window.
 *   `backtalk.screen.find(query)` and `backtalk.screen.findAll(query, limit = 50)` search the active window. A search looks at up to 3,000 items, returns up to 200, and stops when the script runs out of [time](#limits).
-*   `backtalk.app` is `{ package, activity, window }` for the app in front.
+*   `backtalk.app` is `{ package, activity, window, meta }` for the app in front. `activity` is `null` until Backtalk has seen the app change window. `meta` holds the meta-data in the app's manifest that has a true or false, number or text value, such as `backtalk.app.meta['com.example.flag']`. Needs script API version 3.
 
 ### Rules from code
 

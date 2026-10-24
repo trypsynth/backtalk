@@ -68,7 +68,6 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionIn
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat;
 import androidx.core.view.accessibility.AccessibilityWindowInfoCompat;
 import com.google.android.accessibility.talkback.ActorState;
-import com.google.android.accessibility.talkback.BuildConfig;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
@@ -1220,13 +1219,15 @@ public class FocusProcessorForLogicalNavigation {
     }
     boolean usedSavedTree = traversalStrategy != null;
     if (traversalStrategy == null) {
-      long buildStart = BuildConfig.DEBUG ? SystemClock.uptimeMillis() : 0;
-      if (BuildConfig.DEBUG) {
+      boolean trace = LogUtils.shouldLog(Log.DEBUG);
+      long buildStart = trace ? SystemClock.uptimeMillis() : 0;
+      if (trace) {
         Trace.beginSection("BuildTraversalStrategy");
       }
+      WindowNodePrefetcher.prefetch(rootNode, service.getPackageName());
       traversalStrategy =
           TraversalStrategyUtils.getTraversalStrategy(rootNode, focusFinder, searchDirection);
-      if (BuildConfig.DEBUG) {
+      if (trace) {
         Trace.endSection();
         Log.d(
             "BacktalkTreeCache",
@@ -1250,6 +1251,9 @@ public class FocusProcessorForLogicalNavigation {
               reusableOrderedStrategy(traversalStrategy, rootNode, pivot),
               eventId);
       if (reveal == REVEAL_SHOWN) {
+        // The saved order was read before the scroll, so it still has the next item off screen,
+        // and the search would stop at the edge.
+        TraversalTreeCache.clear("revealed next item");
         revealingOffscreen = true;
         try {
           return navigateToDefaultOrMacroGranularityTarget(
@@ -1354,6 +1358,15 @@ public class FocusProcessorForLogicalNavigation {
     if (reachEdge && navigationAction.shouldWrap && wrapAround && navigationResult.isEmpty()) {
       navigationResult =
           findTargetForWrapAround(rootNode, navigationAction, traversalStrategy, eventId);
+      if (!navigationResult.isEmpty()) {
+        // Only a sound theme gives these sounds, so they play nothing otherwise.
+        pipeline.returnFeedback(
+            eventId,
+            Feedback.sound(
+                navigationAction.searchDirection == SEARCH_FOCUS_BACKWARD
+                    ? R.id.wrap_back
+                    : R.id.wrap_forward));
+      }
       if (navigationResult.shouldSkipNavigation()) {
         if (navigationResult.isWebElement()) {
           reachEdge = false;

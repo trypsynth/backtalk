@@ -22,7 +22,6 @@
     <string name="sound_theme_control_sounds_on">Zapíná zvuky a vibrace ovládacích prvků.</string>
     <string name="sound_theme_control_sounds_off">Vypíná zvuky a vibrace ovládacích prvků.</string>
 
-    <string name="sound_theme_use">Použít tento motiv</string>
     <string name="sound_theme_about">O tomto motivu</string>
     <string name="sound_theme_export">Uložit jako soubor motivu</string>
     <string name="sound_theme_remove">Odebrat</string>
@@ -80,9 +79,26 @@
     <string name="theme_sound_dialog_title"><xliff:g id="sound" example="Click">%1$s</xliff:g> (<xliff:g id="name" example="tick">%2$s</xliff:g>)</string>
     <string name="theme_sound_choose">Vybrat zvukový soubor</string>
     <string name="theme_sound_preview">Náhled</string>
+    <string name="theme_sound_none">Žádný zvuk</string>
+    <string name="theme_sound_summary_no_sound">Žádný zvuk</string>
+    <string name="theme_sound_action_set_none">Nastavit na žádný zvuk</string>
     <string name="theme_sound_use_default">Použít zvuk Backtalku</string>
     <string name="theme_sound_remove">Odebrat zvuk</string>
     <string name="theme_sound_too_large">Tento soubor je příliš velký. Zvuk může mít nejvýše 5 MB.</string>
     <string name="theme_sound_not_audio">Backtalk tento soubor nemůže přehrát. Vyberte zvuk ve formátu WAV, OGG, MP3 nebo FLAC.</string>
     <string name="theme_sound_failed">Backtalk tento soubor nemohl načíst.</string>
+    <string name="title_pref_sound_scheme">Zvukové schéma</string>
+    <string name="title_pref_manage_sound_themes">Spravovat zvukové motivy</string>
+    <string name="summary_pref_manage_sound_themes">Vytvářejte, instalujte, exportujte a odstraňujte zvukové motivy a měňte jejich nastavení a zvuky.</string>
+    <string name="title_pref_new_sound_theme">Nový motiv</string>
+    <string name="summary_pref_new_sound_theme">Vytvořte vlastní motiv a vyberte jeho zvuky, každý uslyšíte hned po nastavení.</string>
+    <string name="new_theme_title">Nový zvukový motiv</string>
+    <string name="new_theme_name_hint">Název</string>
+    <string name="new_theme_description_hint">Popis</string>
+    <string name="new_theme_author_hint">Autor</string>
+    <string name="new_theme_control_sounds">Podporuje zvuky ovládacích prvků</string>
+    <string name="new_theme_create">Vytvořit</string>
+    <string name="new_theme_exists">Motiv s tímto názvem již existuje.</string>
+    <string name="new_theme_needs_name">Zadejte název.</string>
+    <string name="sound_theme_customisation">Úprava zvuků</string>
 </resources>

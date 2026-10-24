@@ -33,6 +33,9 @@ android {
         // a watch, so they are not debuggable. Debug logging in the libraries stays on.
         debug {
             debuggable = false
+            // Shrinks and optimizes the libraries, so there is less code to load and compile.
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     packaging {

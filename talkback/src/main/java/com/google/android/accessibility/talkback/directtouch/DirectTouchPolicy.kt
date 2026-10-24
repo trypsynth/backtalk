@@ -16,18 +16,28 @@
 
 package com.google.android.accessibility.talkback.directtouch
 
-/** What is on screen and how the user set things up, as far as direct touch cares. */
+/**
+ * What is on screen and how the user set things up, as far as direct touch cares. The two checks
+ * that ask apps for their windows' roots are functions, so that they run only when the rest leave
+ * the answer open.
+ */
 data class DirectTouchInput(
   val masterEnabled: Boolean,
   /** The app in front is turned on in the direct touch list. */
   val appEnabled: Boolean,
   val screenInteractive: Boolean,
-  /** Another app's window is on top of the game. */
-  val foreignAppWindow: Boolean,
-  /** The notification shade or quick settings cover at least half the screen. */
-  val systemUiCoversHalf: Boolean,
+  /** Another window of the app in front is showing, such as a dialog. */
   val dialogShowing: Boolean,
   val textFieldFocused: Boolean,
+  /** Another app's window is on top of the game. */
+  val foreignAppWindow: () -> Boolean,
+  /** The notification shade or quick settings cover at least half the screen. */
+  val systemUiCoversHalf: () -> Boolean,
+  /**
+   * The app marks its own direct touch areas, so only they take touches directly. Its other windows
+   * are cut out of the region instead of turning direct touch off.
+   */
+  val regionMode: Boolean = false,
 )
 
 object DirectTouchPolicy {
@@ -40,13 +50,16 @@ object DirectTouchPolicy {
   fun coversHalfScreen(active: Boolean, windowHeight: Int, displayHeight: Int): Boolean =
     active && windowHeight > displayHeight / 2
 
-  /** Whether touches should go straight to the app in front. */
+  /**
+   * Whether touches should go straight to the app in front. In region mode, they then go straight
+   * only to the views it marks, and only while some are on screen.
+   */
   fun shouldBeActive(input: DirectTouchInput): Boolean =
     input.masterEnabled &&
       input.appEnabled &&
       input.screenInteractive &&
-      !input.foreignAppWindow &&
-      !input.systemUiCoversHalf &&
-      !input.dialogShowing &&
-      !input.textFieldFocused
+      (input.regionMode || !input.dialogShowing) &&
+      !input.textFieldFocused &&
+      !input.foreignAppWindow() &&
+      !input.systemUiCoversHalf()
 }

@@ -58,6 +58,10 @@
             android:key="@string/pref_selector_granularity_links_key"
             android:title="@string/granularity_web_link"
             android:summary="@string/summary_links"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+            android:defaultValue="@bool/pref_selector_links_controls_web_only_default"
+            android:key="@string/pref_selector_links_controls_web_only_key"
+            android:title="@string/title_pref_selector_links_controls_web_only"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_granularity_windows_default"
@@ -136,6 +140,12 @@
             android:key="@string/pref_selector_language_key"
             android:title="@string/spoken_language"
             android:summary="@string/summary_language"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_switch_tts_engine_default"
+            android:key="@string/pref_selector_switch_tts_engine_key"
+            android:title="@string/title_selector_switch_tts_engine"
+            android:summary="@string/summary_selector_switch_tts_engine"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_voice_profile_default"

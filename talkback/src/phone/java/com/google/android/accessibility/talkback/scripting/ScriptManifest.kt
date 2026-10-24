@@ -47,10 +47,16 @@ data class AppMatcher(val packageName: String, val activity: String?, val window
   fun matchesOther(packageName: String?): Boolean =
     packageName == this.packageName && activity == null && window == null
 
+  /**
+   * Whether the front activity is the one this names. An activity is only known from the app's
+   * window changes, so after Backtalk starts with the app already open it is unknown until the app
+   * changes window, and is taken to match.
+   */
   private fun activityMatches(className: String?): Boolean {
     val wanted = activity ?: return true
-    return className == wanted ||
-      className?.endsWith(if (wanted.startsWith(".")) wanted else ".$wanted") == true
+    return className == null ||
+      className == wanted ||
+      className.endsWith(if (wanted.startsWith(".")) wanted else ".$wanted")
   }
 }
 
@@ -71,6 +77,7 @@ data class ScriptSetting(
   }
 }
 
+/** How far hide or silence reaches: not at all, the item, or the item and everything in it. */
 enum class Hide {
   NONE,
   SELF,
@@ -85,6 +92,8 @@ data class ScriptRule(
   val label: String? = null,
   val speak: String? = null,
   val hide: Hide = Hide.NONE,
+  /** The items whose changes, selections and announcements are not spoken. */
+  val silence: Hide = Hide.NONE,
   val role: String? = null,
   val state: String? = null,
   val hint: String? = null,
@@ -104,6 +113,7 @@ data class ScriptRule(
       listOf(label, speak, role, state, hint, heading, readBefore, readAfter, activate)
         .any { it != null } ||
         hide != Hide.NONE ||
+        silence != Hide.NONE ||
         group
 }
 
@@ -254,7 +264,7 @@ data class ScriptManifest(
     }
 
   companion object {
-    const val API_VERSION = 2
+    const val API_VERSION = 4
 
     fun parse(json: String, strict: Boolean = true): ScriptManifest =
       ManifestParser(strict).parse(json)

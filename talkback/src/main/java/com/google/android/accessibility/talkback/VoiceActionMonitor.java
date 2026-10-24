@@ -35,8 +35,8 @@ import com.google.android.accessibility.utils.monitor.HeadphoneStateMonitor;
 import com.google.android.accessibility.utils.monitor.MediaRecorderMonitor;
 import com.google.android.accessibility.utils.monitor.MediaRecorderMonitor.MicrophoneStateChangedListener;
 import com.google.android.accessibility.utils.monitor.SpeechStateMonitor;
+import com.google.android.accessibility.utils.monitor.RecentUserInput;
 import com.google.android.accessibility.utils.monitor.VoiceActionDelegate;
-import com.google.android.accessibility.utils.output.SpeechController;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -65,8 +65,6 @@ public class VoiceActionMonitor implements VoiceActionDelegate {
   private final SpeechStateMonitor speechStateMonitor;
 
   private boolean skipInterruption = true;
-  // Speech was turned off because a recording started, so it comes back on when the recording ends.
-  private boolean mutedForRecording = false;
 
   /** Defines voice action sources that would interrupt TalkBack audio. */
   @IntDef({
@@ -85,30 +83,15 @@ public class VoiceActionMonitor implements VoiceActionDelegate {
           if (isHeadphoneOn()) {
             return;
           }
+          // A recording usually starts because the user pressed record, so what Backtalk says about
+          // that is left to finish.
           if (isListeningForVoice()) {
             interruptTalkBackAudio(MEDIA_RECORDER);
-            return;
-          }
-          // A recording, which Backtalk speaks through unless the user asked for quiet.
-          SpeechController speech = service.getSpeechController();
-          if (speech != null && !speech.isMute() && mutesSpeechWhileRecording()) {
-            speech.toggleVoiceFeedback();
-            mutedForRecording = true;
           }
         }
 
         @Override
-        public void onMicrophoneDeactivated() {
-          if (!mutedForRecording) {
-            return;
-          }
-          mutedForRecording = false;
-          SpeechController speech = service.getSpeechController();
-          // Unless the user turned speech back on during the recording.
-          if (speech != null && speech.isMute()) {
-            speech.toggleVoiceFeedback();
-          }
-        }
+        public void onMicrophoneDeactivated() {}
       };
 
   private final AudioPlaybackMonitor.AudioPlaybackStateChangedListener
@@ -179,20 +162,29 @@ public class VoiceActionMonitor implements VoiceActionDelegate {
   }
 
   /**
-   * Returns {@code true} if speech would be heard by voice input, such as dictation or voice
-   * commands, and the user is not using a headset. A plain recording doesn't count: Backtalk
-   * silenced only some of its speech during one, which seemed random, so it speaks through unless
-   * the user turns on muting speech while recording.
+   * Returns {@code true} if speech that doesn't answer the user would be picked up by the
+   * microphone without a headset: during voice input, such as dictation or voice commands, and
+   * during a recording if the user chose to keep it quiet. Speech within a moment of something the
+   * user did still counts as answering them, such as the home screen after the gesture that goes
+   * home, or a deletion on the braille keyboard, which the app reports rather than Backtalk.
    */
   public boolean isMicrophoneActiveAndHeadphoneOff() {
-    return isListeningForVoice() && !isHeadphoneOn();
+    if (isHeadphoneOn()) {
+      return false;
+    }
+    if (isListeningForVoice()) {
+      return true;
+    }
+    return mediaRecorderMonitor.isMicrophoneActive()
+        && quietsSpeechWhileRecording()
+        && !RecentUserInput.isRecent();
   }
 
   private boolean isListeningForVoice() {
     return mediaRecorderMonitor.isVoiceRecognitionActive() || speechStateMonitor.isListening();
   }
 
-  private boolean mutesSpeechWhileRecording() {
+  private boolean quietsSpeechWhileRecording() {
     return SharedPreferencesUtils.getBooleanPref(
         SharedPreferencesUtils.getSharedPreferences(service),
         service.getResources(),

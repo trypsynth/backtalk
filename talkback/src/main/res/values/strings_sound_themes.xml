@@ -31,8 +31,6 @@
     <!-- Sound themes: said of a theme that turns control sounds and vibrations off. [CHAR LIMIT=NONE] -->
     <string name="sound_theme_control_sounds_off">Turns control sounds and vibrations off.</string>
 
-    <!-- Sound themes: choice that puts a theme in use. [CHAR LIMIT=50] -->
-    <string name="sound_theme_use">Use this theme</string>
     <!-- Sound themes: choice that tells who made a theme and what it has. [CHAR LIMIT=50] -->
     <string name="sound_theme_about">About this theme</string>
     <!-- Sound themes: choice that saves a theme as a theme file. [CHAR LIMIT=50] -->
@@ -136,6 +134,12 @@
     <string name="theme_sound_choose">Choose a sound file</string>
     <!-- Theme sounds: choice that plays the sound. [CHAR LIMIT=50] -->
     <string name="theme_sound_preview">Preview</string>
+    <!-- Theme sounds: choice that sets an event to play no sound. [CHAR LIMIT=50] -->
+    <string name="theme_sound_none">No sound</string>
+    <!-- Theme sounds: summary of an event set to play no sound. [CHAR LIMIT=60] -->
+    <string name="theme_sound_summary_no_sound">No sound</string>
+    <!-- Theme sounds: accessibility action that sets an event to play no sound. [CHAR LIMIT=50] -->
+    <string name="theme_sound_action_set_none">Set to no sound</string>
     <!-- Theme sounds: choice that goes back to Backtalk's own sound. [CHAR LIMIT=50] -->
     <string name="theme_sound_use_default">Use Backtalk\'s sound</string>
     <!-- Theme sounds: choice that removes the file of a control sound, which Backtalk has no sound for. [CHAR LIMIT=50] -->
@@ -146,4 +150,29 @@
     <string name="theme_sound_not_audio">Backtalk can\'t play that file. Choose a WAV, OGG, MP3 or FLAC sound.</string>
     <!-- Theme sounds: message when the chosen file cannot be read. [CHAR LIMIT=NONE] -->
     <string name="theme_sound_failed">Backtalk couldn\'t read that file.</string>
+    <!-- Sound and vibration: choice of the sound theme in use. [CHAR LIMIT=50] -->
+    <string name="title_pref_sound_scheme">Sound scheme</string>
+    <!-- Sound and vibration: entry that opens the management of sound themes. [CHAR LIMIT=50] -->
+    <string name="title_pref_manage_sound_themes">Manage sound themes</string>
+    <!-- Sound and vibration: summary of the entry that opens the management of sound themes. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_manage_sound_themes">Create, install, export and remove sound themes, and change their settings and sounds.</string>
+    <!-- Manage sound themes: entry that creates a theme. [CHAR LIMIT=50] -->
+    <string name="title_pref_new_sound_theme">New theme</string>
+    <!-- Manage sound themes: summary of the entry that creates a theme. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_new_sound_theme">Make a theme of your own and choose its sounds, hearing each as you set it.</string>
+    <!-- New theme dialog: title and field hints. [CHAR LIMIT=50] -->
+    <string name="new_theme_title">New sound theme</string>
+    <string name="new_theme_name_hint">Name</string>
+    <string name="new_theme_description_hint">Description</string>
+    <string name="new_theme_author_hint">Author</string>
+    <!-- New theme dialog: check box for whether the theme has control sounds. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_control_sounds">Supports control sounds</string>
+    <!-- New theme dialog: button that creates the theme. [CHAR LIMIT=30] -->
+    <string name="new_theme_create">Create</string>
+    <!-- New theme dialog: error when a theme of this name is installed. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_exists">A theme with this name already exists.</string>
+    <!-- New theme dialog: error when the name is empty. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_needs_name">Enter a name.</string>
+    <!-- Theme settings: entry that opens the sounds of the theme. [CHAR LIMIT=50] -->
+    <string name="sound_theme_customisation">Sound customisation</string>
 </resources>

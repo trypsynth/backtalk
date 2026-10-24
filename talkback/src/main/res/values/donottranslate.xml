@@ -22,6 +22,8 @@
     <string name="pref_check_for_updates_key" translatable="false">pref_check_for_updates</string>
     <string name="pref_auto_update_check_key" translatable="false">pref_auto_update_check</string>
     <string name="pref_show_exit_watermark_key">pref_show_exit_watermark</string>
+    <string name="pref_notification_list_key">pref_notification_list</string>
+    <string name="pref_notification_parts_key">pref_notification_parts</string>
     <string name="pref_speech_rate_key">pref_rate_volume</string>
     <string name="pref_speech_rate_seekbar_key_int">pref_speech_rate_seekbar_key_int</string>
     <string name="pref_speech_pitch_key">pref_pitch_volume</string>
@@ -69,6 +71,7 @@
     <string name="pref_tree_debug_key">pref_tree_debug</string>
     <string name="pref_reduce_window_delay_key">pref_reduce_window_delay_key</string>
     <string name="pref_scripts_key" translatable="false">pref_scripts_key</string>
+    <string name="pref_backup_restore_key" translatable="false">pref_backup_restore_key</string>
     <string name="pref_auto_enter_table_navigation_key">pref_auto_enter_table_navigation_key</string>
     <string name="pref_tree_debug_reflect_key">pref_tree_debug_reflect</string>
     <string name="pref_performance_stats_key">pref_performance_stats</string>
@@ -93,6 +96,7 @@
     <string name="pref_category_typing_focus_delay_key" translatable="false">pref_category_typing_focus_delay_key</string>
 
     <string name="pref_phonetic_letters_key">pref_phonetic_letters</string>
+    <string name="pref_phonetic_letters_mode_key" translatable="false">pref_phonetic_letters_mode</string>
     <string name="pref_punctuation_key" translatable="false">pref_punctuation</string>
     <string name="pref_punctuation_verbosity" translatable="false">pref_punctuation_verbosity</string>
     <string name="pref_count_repeated_symbols_key" >pref_collapse_repeated_symbols</string>
@@ -227,8 +231,15 @@
     <string name="pref_selector_change_lift_to_activate_key" translatable="false">pref_selector_change_lift_to_activate_key</string>
     <string name="pref_lift_to_activate_key" translatable="false">pref_lift_to_activate_key</string>
     <string name="pref_selector_wrap_around_key" translatable="false">pref_selector_wrap_around_key</string>
+    <string name="pref_selector_links_controls_web_only_key" translatable="false">pref_selector_links_controls_web_only_key</string>
+    <string name="pref_touch_activation_key" translatable="false">pref_touch_activation</string>
+    <string name="pref_navigation_settings_key" translatable="false">pref_navigation_settings</string>
+    <string name="pref_category_apps_key" translatable="false">pref_category_apps</string>
     <string name="pref_wrap_around_key" translatable="false">pref_wrap_around_key</string>
+    <string name="pref_focus_new_windows_key" translatable="false">pref_focus_new_windows_key</string>
+    <string name="pref_volume_keys_adjust_sliders_key" translatable="false">pref_volume_keys_adjust_sliders_key</string>
     <string name="pref_speak_items_before_scroll_key" translatable="false">pref_speak_items_before_scroll_key</string>
+    <string name="pref_first_item_interrupts_window_name_key" translatable="false">pref_first_item_interrupts_window_name_key</string>
     <string name="pref_selector_tablet_held_up_faces_away_key" translatable="false">pref_selector_tablet_held_up_faces_away_key</string>
     <string name="pref_lift_to_activate_default" translatable="false">0</string>
     <string-array name="pref_lift_to_activate_entries">
@@ -241,7 +252,9 @@
       <item>1</item>
       <item>2</item>
     </string-array>
-    <string name="pref_selector_voice_profile_key" translatable="false">pref_selector_switch_tts_engine_key</string>
+    <string name="pref_selector_switch_tts_engine_key" translatable="false">pref_selector_switch_tts_engine_key</string>
+    <string name="pref_selector_voice_profile_key" translatable="false">pref_selector_voice_profile_key</string>
+    <string name="pref_selector_voice_profile_moved_key" translatable="false">pref_selector_voice_profile_moved</string>
     <string name="pref_selector_control_telling_time" translatable="false">pref_selector_control_telling_time</string>
     <string name="pref_selector_actions_key" translatable="false">pref_selector_actions_key </string>
 
@@ -1044,6 +1057,8 @@
         <item>@string/shortcut_next_window</item>
         <item>@string/shortcut_scroll_back</item>
         <item>@string/shortcut_scroll_forward</item>
+        <item>@string/shortcut_scroll_to_top</item>
+        <item>@string/shortcut_scroll_to_bottom</item>
     </string-array>
 
     <!-- Shortcut preference value of basic navigation -->
@@ -1060,6 +1075,8 @@
         <item>@string/shortcut_value_next_window</item>
         <item>@string/shortcut_value_scroll_back</item>
         <item>@string/shortcut_value_scroll_forward</item>
+        <item>@string/shortcut_value_scroll_to_top</item>
+        <item>@string/shortcut_value_scroll_to_bottom</item>
     </string-array>
 
     <!-- Shortcut preference of system actions -->
@@ -1068,6 +1085,7 @@
         <item>@string/shortcut_back</item>
         <item>@string/shortcut_overview</item>
         <item>@string/shortcut_notifications</item>
+        <item>@string/shortcut_system_notifications</item>
         <item>@string/shortcut_quick_settings</item>
     </string-array>
 
@@ -1077,6 +1095,7 @@
         <item>@string/shortcut_value_back</item>
         <item>@string/shortcut_value_overview</item>
         <item>@string/shortcut_value_notifications</item>
+        <item>@string/shortcut_value_system_notifications</item>
         <item>@string/shortcut_value_quick_settings</item>
     </string-array>
 
@@ -1132,6 +1151,7 @@
         <item>@string/title_edittext_breakout_move_to_beginning</item>
         <item>@string/title_edittext_breakout_move_to_end</item>
         <item>@android:string/selectAll</item>
+        <item>@string/title_clear_selection</item>
         <item>@android:string/copy</item>
         <item>@android:string/cut</item>
         <item>@android:string/paste</item>
@@ -1144,6 +1164,7 @@
         <item>@string/shortcut_value_move_cursor_to_beginning</item>
         <item>@string/shortcut_value_move_cursor_to_end</item>
         <item>@string/shortcut_value_select_all</item>
+        <item>@string/shortcut_value_clear_selection</item>
         <item>@string/shortcut_value_copy</item>
         <item>@string/shortcut_value_cut</item>
         <item>@string/shortcut_value_paste</item>
@@ -1169,6 +1190,8 @@
   <string name="shortcut_value_next_window">NEXT_WINDOW</string>
   <string name="shortcut_value_scroll_back">SCROLL_BACK</string>
   <string name="shortcut_value_scroll_forward">SCROLL_FORWARD</string>
+  <string name="shortcut_value_scroll_to_top">SCROLL_TO_TOP</string>
+  <string name="shortcut_value_scroll_to_bottom">SCROLL_TO_BOTTOM</string>
   <string name="shortcut_value_scroll_up">SCROLL_UP</string>
   <string name="shortcut_value_scroll_down">SCROLL_DOWN</string>
   <string name="shortcut_value_scroll_left">SCROLL_LEFT</string>
@@ -1176,6 +1199,7 @@
   <string name="shortcut_value_home">HOME</string>
   <string name="shortcut_value_overview">OVERVIEW</string>
   <string name="shortcut_value_notifications">NOTIFICATIONS</string>
+  <string name="shortcut_value_system_notifications">SYSTEM_NOTIFICATIONS</string>
   <string name="shortcut_value_quick_settings">QUICK_SETTINGS</string>
   <string name="shortcut_value_show_custom_actions">SHOW_CUSTOM_ACTIONS</string>
   <string name="shortcut_value_editing">EDITING</string>
@@ -1211,6 +1235,7 @@
   <string name="shortcut_value_move_cursor_to_end" translatable="false">MOVE_CURSOR_TO_END</string>
   <string name="shortcut_value_toggle_voice_feedback" translatable="false">TOGGLE_VOICE_FEEDBACK</string>
   <string name="shortcut_value_select_all" translatable="false">SELECT_ALL</string>
+  <string name="shortcut_value_clear_selection" translatable="false">CLEAR_SELECTION</string>
   <string name="shortcut_value_copy" translatable="false">COPY</string>
   <string name="shortcut_value_cut" translatable="false">CUT</string>
   <string name="shortcut_value_paste" translatable="false">PASTE</string>
@@ -1302,6 +1327,23 @@
       <item>2</item>
       <item>3</item>
     </string-array>
+
+    <string-array name="pref_phonetic_letters_mode_entries">
+      <item>@string/phonetic_letters_mode_off</item>
+      <item>@string/phonetic_letters_mode_after_letter_delay</item>
+      <item>@string/phonetic_letters_mode_after_letter_no_delay</item>
+      <item>@string/phonetic_letters_mode_instead_of_letter</item>
+    </string-array>
+
+    <!-- The values of PhoneticLetterMode's constants. -->
+    <string-array name="pref_phonetic_letters_mode_values" translatable="false">
+      <item>off</item>
+      <item>after_letter_delay</item>
+      <item>after_letter_no_delay</item>
+      <item>instead_of_letter</item>
+    </string-array>
+
+    <string name="pref_phonetic_letters_mode_default" translatable="false">after_letter_delay</string>
 
     <string-array name="pref_punctuation_entries">
       <item>@string/punctuation_all</item>
@@ -1438,6 +1480,7 @@
     <bool name="pref_proximity_default">false</bool>
     <bool name="pref_auto_update_check_default">true</bool>
     <bool name="pref_show_exit_watermark_default">true</bool>
+    <bool name="pref_notification_list_default">false</bool>
     <bool name="pref_cache_keyboard_keys_default">false</bool>
     <bool name="pref_vibration_default">true</bool>
     <bool name="pref_soundback_default">true</bool>
@@ -1462,7 +1505,10 @@
     <bool name="pref_echo_recognized_text_default">false</bool>
     <bool name="pref_reduce_window_delay_default">true</bool>
     <bool name="pref_wrap_around_default">true</bool>
+    <bool name="pref_focus_new_windows_default">true</bool>
+    <bool name="pref_volume_keys_adjust_sliders_default">false</bool>
     <bool name="pref_speak_items_before_scroll_default">false</bool>
+    <bool name="pref_first_item_interrupts_window_name_default">false</bool>
     <bool name="pref_auto_enter_table_navigation_default">false</bool>
     <bool name="pref_tree_debug_default">false</bool>
     <bool name="pref_performance_stats_default">false</bool>
@@ -1517,9 +1563,11 @@
     <bool name="pref_selector_a11y_volume_default">false</bool>
     <bool name="pref_selector_brightness_default">true</bool>
     <bool name="pref_selector_typing_focus_latency_default">false</bool>
-    <bool name="pref_selector_lift_to_activate_default">true</bool>
-    <bool name="pref_selector_wrap_around_default">true</bool>
+    <bool name="pref_selector_lift_to_activate_default">false</bool>
+    <bool name="pref_selector_wrap_around_default">false</bool>
+    <bool name="pref_selector_links_controls_web_only_default">false</bool>
     <bool name="pref_selector_tablet_held_up_faces_away_default">false</bool>
+    <bool name="pref_selector_switch_tts_engine_default">false</bool>
     <bool name="pref_selector_voice_profile_default">false</bool>
     <bool name="pref_selector_touch_focus_latency_default">false</bool>
     <bool name="pref_selector_control_telling_time_default">false</bool>
@@ -1840,7 +1888,8 @@
     <string name="selector_lift_to_activate_change" translatable="false">SELECTOR_LIFT_TO_ACTIVATE_CHANGE</string>
     <string name="selector_wrap_around" translatable="false">SELECTOR_WRAP_AROUND</string>
     <string name="selector_tablet_held_up_faces_away" translatable="false">SELECTOR_TABLET_HELD_UP_FACES_AWAY</string>
-    <string name="selector_voice_profile" translatable="false">SELECTOR_SWITCH_TTS_ENGINE</string>
+    <string name="selector_switch_tts_engine" translatable="false">SELECTOR_SWITCH_TTS_ENGINE</string>
+    <string name="selector_voice_profile" translatable="false">SELECTOR_VOICE_PROFILE</string>
     <string name="selector_touch_focus_latency_change" translatable="false">SELECTOR_TOUCH_FOCUS_LATENCY_CHANGE</string>
     <string name="selector_control_telling_time" translatable="false">SELECTOR_CONTROL_TELLING_TIME</string>
     <string name="selector_actions" translatable="false">SELECTOR_ACTIONS</string>

@@ -60,14 +60,23 @@ import com.google.android.accessibility.utils.output.ThemeVibrations
  * is on for the app. A keyboard that is itself in the list, such as a self-voicing braille keyboard,
  * takes touches directly in every app, whether or not direct touch is on.
  *
+ * An app that declares [DirectTouchSettings.REGIONS_CAPABILITY_KEY] gets region mode instead: only
+ * the views it gives the ID [DirectTouchSettings.REGION_VIEW_ID] take touches directly, while they
+ * are on screen. Its own dialogs and popups are cut out of the region rather than turning direct
+ * touch off. Direct touch is on, and said to be, for as long as the app may have it, whether or not
+ * a marked view is showing, so the marked views coming and going are not announced.
+ *
  * Everything comes from Backtalk's own window, screen and display monitors, so there is no tree
- * scan. Turning direct touch off takes effect at once. Turning it on waits [DEBOUNCE_MS] so that a
+ * scan. A region mode app is asked for its marked views by ID, one call per window that the app
+ * answers itself. Turning direct touch off takes effect at once. Turning it on waits [DEBOUNCE_MS] so that a
  * burst of window changes settles first. All callbacks arrive on the main thread.
  */
 class DirectTouchController(
   private val service: AccessibilityService,
   private val prefs: SharedPreferences,
   private val feedback: Pipeline.FeedbackReturner,
+  /** Keeps the package of each window's root, which every look at the screen needs. */
+  private val windowEventInterpreter: WindowEventInterpreter,
 ) :
   WindowEventInterpreter.WindowEventHandler,
   RingerModeAndScreenMonitor.ScreenChangedListener,
@@ -76,12 +85,34 @@ class DirectTouchController(
   private val handler = Handler(Looper.getMainLooper())
   private val reevaluate = Runnable { evaluate() }
   private val recheck = Runnable { evaluate() }
+  private val regionRecheck = Runnable {
+    regionRecheckPending = false
+    evaluate()
+  }
+  private var regionRecheckPending = false
+  private var lastEvaluateTime = 0L
+
+  // The app in front while it is in region mode, whose text fields and content changes are followed.
+  private var regionPackage: String? = null
+  // Whether that app may have direct touch now, so that its content changes can move its region.
+  private var regionAllowed = false
+  // The roots of the region mode app's windows, by window ID, kept while the windows are on screen.
+  // Asking for marked views by ID only needs the root, so it isn't fetched again for every look.
+  private val regionRoots = HashMap<Int, AccessibilityNodeInfo>()
+
+  // The manifest of the last app it was read for. It is read again once another app was asked
+  // about, so that an app updated in the meantime is read afresh.
+  private var capabilityPackage: String? = null
+  private var capability = DirectTouchCapability.NONE
 
   private var mainWindowId = WINDOW_ID_NONE
   private var textFieldFocused = false
   private var screenInteractive = true
   private var displayOn = true
   private var active = false
+  // Whether "Direct touch on" was the last thing said. In region mode it stays on while the region
+  // is empty, so it differs from [active].
+  private var announcedOn = false
   // Whether the passthrough region now holds just the navigation bar or a keyboard in the list,
   // while direct touch is off.
   private var partRegionSent = false
@@ -118,8 +149,8 @@ class DirectTouchController(
   }
 
   /**
-   * Raw events, before Backtalk drops any. Watches for window changes, on or off, and for a text
-   * field taking focus.
+   * Raw events, before Backtalk drops any. Watches for window changes, on or off, for a text field
+   * taking focus, and for a region mode app's views changing or scrolling under its marked areas.
    */
   fun onAccessibilityEvent(event: AccessibilityEvent) {
     if (!FeatureSupport.supportPassthrough()) {
@@ -136,7 +167,13 @@ class DirectTouchController(
       handler.removeCallbacks(recheck)
       handler.postDelayed(recheck, DEBOUNCE_MS)
     }
-    if (!active) {
+    val regionApp = regionPackage != null && event.packageName?.toString() == regionPackage
+    if (regionApp && regionAllowed && DirectTouchRegions.movesMarkedAreas(event.eventType)) {
+      onMarkedAreasMayHaveMoved()
+    }
+    // A region mode app keeps most of its screen with Backtalk, so a text field there can take and
+    // lose focus while its region is empty, and that has to be followed too.
+    if (!active && !regionApp) {
       return
     }
     when (event.eventType) {
@@ -171,12 +208,14 @@ class DirectTouchController(
   private fun onScreenStateChanged() {
     if (!screenInteractive || !displayOn) {
       handler.removeCallbacks(reevaluate)
+      handler.removeCallbacks(regionRecheck)
+      regionRecheckPending = false
       if (active) {
         active = false
         clearRegion()
         partRegionSent = false
-        announce(false)
       }
+      setAnnounced(false)
       return
     }
     if (isNavBarDirect() || DirectTouchSettings.hasEnabledApps(prefs)) {
@@ -192,6 +231,8 @@ class DirectTouchController(
     this.paused = paused
     handler.removeCallbacks(reevaluate)
     handler.removeCallbacks(recheck)
+    handler.removeCallbacks(regionRecheck)
+    regionRecheckPending = false
     if (!paused) {
       evaluate()
     }
@@ -201,6 +242,10 @@ class DirectTouchController(
     prefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
     handler.removeCallbacks(reevaluate)
     handler.removeCallbacks(recheck)
+    handler.removeCallbacks(regionRecheck)
+    regionRecheckPending = false
+    regionRoots.clear()
+    announcedOn = false
     if (active || partRegionSent) {
       active = false
       partRegionSent = false
@@ -218,21 +263,62 @@ class DirectTouchController(
     }
   }
 
+  /**
+   * Looks again after a region mode app's content changed or scrolled. Apps report content changes
+   * all the time, a player's position several times a second, so this looks at most once every
+   * [DEBOUNCE_MS]. A pending look isn't pushed back by later changes, or a steady stream of them
+   * would keep it from ever running. While direct touch is on, the first change in a while is looked
+   * at straight away, so that a marked view going away hands touch back at once.
+   */
+  private fun onMarkedAreasMayHaveMoved() {
+    if (paused || !screenInteractive || !displayOn || regionRecheckPending) {
+      return
+    }
+    val wait = lastEvaluateTime + DEBOUNCE_MS - SystemClock.uptimeMillis()
+    if (active && wait <= 0) {
+      evaluate()
+      return
+    }
+    regionRecheckPending = true
+    handler.postDelayed(regionRecheck, if (active) wait else DEBOUNCE_MS)
+  }
+
   private fun evaluate() {
     handler.removeCallbacks(reevaluate)
+    handler.removeCallbacks(regionRecheck)
+    regionRecheckPending = false
     if (paused || !FeatureSupport.supportPassthrough()) {
       return
     }
+    lastEvaluateTime = SystemClock.uptimeMillis()
     val windows = service.windows.orEmpty()
-    val mainPackage =
-      windows.firstOrNull { it.id == mainWindowId }?.root?.packageName?.toString()
+    val mainPackage = windows.firstOrNull { it.id == mainWindowId }?.let { rootPackage(it) }
+    mainPackage?.let { noteFirstSight(it) }
     val directTyping = mainPackage != null && DirectTouchSettings.isDirectTyping(prefs, mainPackage)
-    val shouldBeActive = mainPackage != null && shouldBeActive(windows, mainPackage)
+    val regionMode = mainPackage != null && isRegionApp(mainPackage)
+    val allowed = mainPackage != null && shouldBeActive(windows, mainPackage, regionMode)
+    regionPackage = mainPackage.takeIf { regionMode }
+    regionAllowed = regionMode && allowed
     val navBarDirect = isNavBarDirect()
     val keyboards = directKeyboards(windows)
+    // In region mode, the app is asked for its marked views only once nothing else keeps direct
+    // touch off.
+    val marked =
+      if (regionAllowed && mainPackage != null) {
+        markedRegion(windows, mainPackage, directTyping)
+      } else {
+        regionRoots.clear()
+        null
+      }
+    val shouldBeActive = allowed && (marked == null || !marked.isEmpty)
     if (shouldBeActive) {
       partRegionSent = false
-      applyRegion(windows, directTyping, navBarDirect, keyboards)
+      if (marked != null) {
+        partBounds(windows, navBarDirect, keyboards).forEach { marked.union(it) }
+        sendRegion(marked)
+      } else {
+        applyRegion(windows, directTyping, navBarDirect, keyboards)
+      }
     }
     if (shouldBeActive != active) {
       active = shouldBeActive
@@ -240,10 +326,20 @@ class DirectTouchController(
         clearRegion()
         partRegionSent = false
       }
-      announce(active)
     }
+    // A region mode app's direct touch starts when the app may have it and ends when it may not.
+    // Its region going empty and back, as a marked view scrolls away or another screen of the app
+    // shows, is not announced.
+    setAnnounced(if (regionMode) allowed else active)
     if (!active) {
       updatePartRegion(windows, navBarDirect, keyboards)
+    }
+  }
+
+  private fun setAnnounced(on: Boolean) {
+    if (on != announcedOn) {
+      announcedOn = on
+      announce(on)
     }
   }
 
@@ -319,7 +415,7 @@ class DirectTouchController(
     navBarDirect: Boolean,
     keyboards: List<AccessibilityWindowInfo>,
   ) {
-    val parts = (if (navBarDirect) navigationBarBounds(windows) else emptyList()) + keyboards.map(::boundsOf)
+    val parts = partBounds(windows, navBarDirect, keyboards)
     if (parts.isNotEmpty()) {
       val region = Region()
       parts.forEach { region.union(it) }
@@ -329,6 +425,89 @@ class DirectTouchController(
       clearRegion()
       partRegionSent = false
     }
+  }
+
+  /**
+   * The navigation bar if lift to activate is on for it, and the keyboards in the direct touch list
+   * that show, which take touches directly whatever the app in front does.
+   */
+  private fun partBounds(
+    windows: List<AccessibilityWindowInfo>,
+    navBarDirect: Boolean,
+    keyboards: List<AccessibilityWindowInfo>,
+  ): List<Rect> =
+    (if (navBarDirect) navigationBarBounds(windows) else emptyList()) + keyboards.map(::boundsOf)
+
+  /**
+   * The parts of the screen that a region mode app marked as direct touch areas, out of the views in
+   * its own windows, minus whatever is on top of them. Each of the app's windows is asked once for
+   * its views with the marking ID. The app searches its own views to answer, so however many views
+   * it has, this costs one call per window, and nothing when it has none with the ID.
+   */
+  private fun markedRegion(
+    windows: List<AccessibilityWindowInfo>,
+    mainPackage: String,
+    directTyping: Boolean,
+  ): Region {
+    val appWindows =
+      windows.filter {
+        it.type == AccessibilityWindowInfo.TYPE_APPLICATION && rootPackage(it) == mainPackage
+      }
+    regionRoots.keys.retainAll(appWindows.map { it.id }.toSet())
+    val viewId = "$mainPackage:id/${DirectTouchSettings.REGION_VIEW_ID}"
+    val marked =
+      appWindows
+        .flatMap { window ->
+          val root =
+            regionRoots[window.id]
+              ?: window.root?.also { regionRoots[window.id] = it }
+              ?: return@flatMap emptyList()
+          root.findAccessibilityNodeInfosByViewId(viewId).orEmpty()
+        }
+        .filter { it.isVisibleToUser }
+        .map { DirectTouchRegions.MarkedArea(it.windowId, Rect().also(it::getBoundsInScreen)) }
+    if (marked.isEmpty()) {
+      return Region()
+    }
+    val layered =
+      windows.map {
+        DirectTouchRegions.LayeredWindow(
+          id = it.id,
+          layer = it.layer,
+          bounds = boundsOf(it),
+          alwaysExcluded = DirectTouchRegions.shouldExcludeWindow(it.type, directTyping),
+        )
+      }
+    return DirectTouchRegions.markedRegion(marked, layered)
+  }
+
+  /** Whether the app in front marks its own direct touch areas, and the user has it on. */
+  private fun isRegionApp(packageName: String): Boolean =
+    packageName !in IGNORED_PACKAGES &&
+      DirectTouchSettings.isMasterEnabled(prefs) &&
+      DirectTouchSettings.isAppEnabled(prefs, packageName) &&
+      capabilityOf(packageName).regions
+
+  /**
+   * The first time an app is in front, turns it on if its manifest asks for direct touch. After that
+   * the user's choice is kept.
+   */
+  private fun noteFirstSight(packageName: String) {
+    if (packageName !in IGNORED_PACKAGES && !DirectTouchSettings.isSeen(prefs, packageName)) {
+      DirectTouchSettings.onFirstSight(prefs, packageName, capabilityOf(packageName).any)
+    }
+  }
+
+  /**
+   * What the app asks for in its manifest. Only an app in front that is new, or turned on, is asked
+   * about, and its manifest is read again only after another app was asked about.
+   */
+  private fun capabilityOf(packageName: String): DirectTouchCapability {
+    if (packageName != capabilityPackage) {
+      capability = DirectTouchCapability.of(service.packageManager, packageName)
+      capabilityPackage = packageName
+    }
+    return capability
   }
 
   /**
@@ -342,8 +521,7 @@ class DirectTouchController(
     }
     return windows.filter { window ->
       window.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD &&
-        window.root?.packageName?.toString()?.let { DirectTouchSettings.isAppEnabled(prefs, it) } ==
-          true
+        rootPackage(window)?.let { DirectTouchSettings.isAppEnabled(prefs, it) } == true
     }
   }
 
@@ -376,21 +554,23 @@ class DirectTouchController(
     }
   }
 
+  /** The package of the window's root, which the window's app is asked for once per window. */
+  private fun rootPackage(window: AccessibilityWindowInfo): String? =
+    windowEventInterpreter.getRootPackageName(window)?.toString()
+
   private fun isSystemUiWindow(window: AccessibilityWindowInfo): Boolean =
-    window.type == AccessibilityWindowInfo.TYPE_SYSTEM &&
-      window.root?.packageName?.toString() == SYSTEM_UI
+    window.type == AccessibilityWindowInfo.TYPE_SYSTEM && rootPackage(window) == SYSTEM_UI
 
   private fun shouldBeActive(
     windows: List<AccessibilityWindowInfo>,
     mainPackage: String,
+    regionMode: Boolean,
   ): Boolean {
     if (mainPackage in IGNORED_PACKAGES) {
       return false
     }
-    val capable = DirectTouchCapability.declaresDirectTouch(service.packageManager, mainPackage)
-    DirectTouchSettings.onFirstSight(prefs, mainPackage, capable)
     // A dialog is a window of its own, so any other application window is either a dialog from the
-    // same app or another app.
+    // same app or another app. In region mode, the app's own dialogs are cut out of the region.
     val otherApplicationWindows =
       windows.filter { it.type == AccessibilityWindowInfo.TYPE_APPLICATION && it.id != mainWindowId }
     val input =
@@ -398,11 +578,11 @@ class DirectTouchController(
         masterEnabled = DirectTouchSettings.isMasterEnabled(prefs),
         appEnabled = DirectTouchSettings.isAppEnabled(prefs, mainPackage),
         screenInteractive = screenInteractive && displayOn,
-        foreignAppWindow =
-          otherApplicationWindows.any { it.root?.packageName?.toString() != mainPackage },
-        systemUiCoversHalf = systemUiCoversHalf(windows),
         dialogShowing = otherApplicationWindows.isNotEmpty(),
         textFieldFocused = textFieldFocused,
+        foreignAppWindow = { otherApplicationWindows.any { rootPackage(it) != mainPackage } },
+        systemUiCoversHalf = { systemUiCoversHalf(windows) },
+        regionMode = regionMode,
       )
     return DirectTouchPolicy.shouldBeActive(input)
   }
@@ -411,11 +591,10 @@ class DirectTouchController(
     val displayHeight = displayBounds().height()
     val bounds = Rect()
     return windows.any { window ->
-      if (!isSystemUiWindow(window)) {
-        return@any false
-      }
       window.getBoundsInScreen(bounds)
-      DirectTouchPolicy.coversHalfScreen(window.isActive, bounds.height(), displayHeight)
+      // Telling System UI apart asks the window's app for its root, so the shape comes first.
+      DirectTouchPolicy.coversHalfScreen(window.isActive, bounds.height(), displayHeight) &&
+        isSystemUiWindow(window)
     }
   }
 
@@ -464,6 +643,11 @@ class DirectTouchController(
     Rect(service.getSystemService(WindowManager::class.java).currentWindowMetrics.bounds)
 
   private fun announce(on: Boolean) {
+    // Only a sound theme gives these sounds, so they play nothing otherwise.
+    feedback.returnFeedback(
+      Performance.EVENT_ID_UNTRACKED,
+      Feedback.sound(if (on) R.id.direct_touch_enter else R.id.direct_touch_exit),
+    )
     if (DirectTouchSettings.isSpeechEnabled(prefs)) {
       val text = service.getString(if (on) R.string.direct_touch_on else R.string.direct_touch_off)
       // A game is always playing audio, and speech is dropped while audio plays unless it is forced.

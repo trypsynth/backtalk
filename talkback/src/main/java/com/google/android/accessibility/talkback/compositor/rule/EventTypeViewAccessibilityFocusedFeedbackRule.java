@@ -47,6 +47,7 @@ import com.google.android.accessibility.talkback.compositor.roledescription.Sams
 import com.google.android.accessibility.talkback.compositor.roledescription.TreeNodesDescription;
 import com.google.android.accessibility.talkback.controlsounds.ControlSounds;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
+import com.google.android.accessibility.talkback.feedbackpolicy.ScreenFeedbackManager;
 import com.google.android.accessibility.talkback.imagecaption.ImageContents;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.Filter;
@@ -299,15 +300,21 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
           String.format("\n    collectionItemTransition={%s}", collectionItemTransition));
     }
 
-    if (!TextUtils.isEmpty(contentDescription)) {
-      outputJoinList.add(contentDescription);
+    // Add phonetic spelling if necessary, or say it in place of the key if the user chose that.
+    Optional<CharSequence> phoneticInPlaceOfKey =
+        processorPhoneticLetters.getPhoneticInPlaceOfKeyboardKey(event);
+    if (phoneticInPlaceOfKey.isPresent()) {
+      outputJoinList.add(phoneticInPlaceOfKey.get());
+      logString.append(String.format("\n    phoneticInPlaceOfKey={%s}", phoneticInPlaceOfKey));
+    } else {
+      if (!TextUtils.isEmpty(contentDescription)) {
+        outputJoinList.add(contentDescription);
+      }
+      Optional<CharSequence> phoneticExample =
+          processorPhoneticLetters.getPhoneticLetterForKeyboardFocusEvent(event);
+      phoneticExample.ifPresent(outputJoinList::add);
+      logString.append(String.format("\n    phoneticExample={%s}", phoneticExample));
     }
-
-    // Add phonetic spelling if necessary.
-    Optional<CharSequence> phoneticExample =
-        processorPhoneticLetters.getPhoneticLetterForKeyboardFocusEvent(event);
-    phoneticExample.ifPresent(outputJoinList::add);
-    logString.append(String.format("\n    phoneticExample={%s}", phoneticExample));
 
     // Prepare Collection item transition state or Node role/heading description for feedback.
     if (!transitionBeforeContent) {
@@ -357,7 +364,7 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
       logString.append(String.format("\n    windowTransition={%s}", windowTransition));
     }
 
-    LogUtils.v(TAG, "viewAccessibilityFocusedDescription: %s", logString.toString());
+    LogUtils.v(TAG, "viewAccessibilityFocusedDescription: %s", logString);
 
     return CompositorUtils.joinCharSequences(
         outputJoinList, CompositorUtils.getSeparator(), PRUNE_EMPTY);
@@ -416,7 +423,7 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
       windowTransitionState = "";
     }
 
-    LogUtils.v(TAG, "windowTransitionState: %s", logString.toString());
+    LogUtils.v(TAG, "windowTransitionState: %s", logString);
     return windowTransitionState;
   }
 
@@ -441,7 +448,11 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
   }
 
   private static int queueMode(boolean isInitialFocus, boolean isDeviceScreenNoTouch) {
-    return (isInitialFocus && !isDeviceScreenNoTouch) ? QUEUE_MODE_QUEUE : QUEUE_MODE_FLUSH_ALL;
+    return (isInitialFocus
+            && !isDeviceScreenNoTouch
+            && !ScreenFeedbackManager.firstItemInterruptsWindowName())
+        ? QUEUE_MODE_QUEUE
+        : QUEUE_MODE_FLUSH_ALL;
   }
 
   private static boolean forceFeedbackEvenIfMicrophoneActive(

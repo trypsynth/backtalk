@@ -318,4 +318,247 @@
   <string name="popup_message_history_consent_dialog_msg">启用后，系统会将通知和闹钟等信息存储在 TalkBack 中。您可以随时更改此设置。</string>
   <string name="popup_message_history_consent_dialog_positive_btn">开启</string>
   <string name="popup_message_history_consent_dialog_negative_btn">不用了</string>
+
+
+
+
+    <!-- Announcement for user turn on braille on screen overlay. [CHAR_LIMIT=50] -->
+
+    <!-- Announcement for user turn off braille on screen overlay. [CHAR_LIMIT=50] -->
+
+    <!-- TODO: Update the string after approval. -->
+
+    <!-- TODO: Update the string after approval. -->
+
+    <!-- TODO: Update the string after approval. -->
+
+    <!-- TODO: Update the string after approval. -->
+
+    <!-- TODO: Update the string after approval. -->
+
+    <!-- TODO: Update or add string for auto-launch learning mode. -->
+
+    <!-- Labels for the accessibility node. -->
+
+
+
+
+
+
+
+
+
+    <string name="bd_affix_label_expanded" translatable="false">-</string>
+
+    <string name="bd_affix_label_collapsed" translatable="false">+</string>
+
+    <string name="bd_affix_label_multiple_line" translatable="false">mln</string>
+
+    <string name="bd_affix_label_percentage" translatable="false">%d %%</string>
+
+    <string name="bd_affix_label_list" translatable="false">lst</string>
+
+    <string name="bd_affix_label_table" translatable="false">tbl</string>
+
+    <string name="bd_affix_label_checkbox" translatable="false">chk</string>
+
+    <string name="bd_affix_label_radiobutton" translatable="false">rbtn</string>
+
+    <string name="bd_affix_label_grid" translatable="false">grd</string>
+
+    <string name="bd_affix_label_grid_template" translatable="false">[<xliff:g id="row_or_column">%s</xliff:g>]</string>
+
+    <string name="bd_affix_label_row" translatable="false">r%d</string>
+
+    <string name="bd_affix_label_col" translatable="false">c%d</string>
+
+    <string name="bd_affix_label_row_count" translatable="false"><xliff:g id="row_count" example="1">%d</xliff:g>r</string>
+
+    <string name="bd_affix_label_column_count" translatable="false"><xliff:g id="column_count" example="1">%d</xliff:g>c</string>
+
+    <!-- Role description of heading. -->
+    <string name="bd_role_description_heading" translatable="false">标题 %d</string>
+
+    <!-- Role description of visited link. -->
+    <string name="bd_role_description_visited_link" translatable="false">已访问的链接</string>
+
+    <!-- Role description of table. -->
+    <string name="bd_role_description_table" translatable="false">表格</string>
+
+    <!-- State description of accessibility node. -->
+    <string name="bd_state_description_in_progress" translatable="false">进行中</string>
+
+    <!-- Role description of graphic. -->
+    <string name="bd_role_description_graphic" translatable="false">图形</string>
+
+    <!-- Keyboard key: Navigate to next ARIA landmark. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_landmark_key" translatable="false">d</string>
+
+    <!-- Keyboard key: Navigate to previous ARIA landmark. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_landmark_key" translatable="false">D</string>
+
+    <!-- Keyboard key: Navigate to next graphic. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_graphic_key" translatable="false">g</string>
+
+    <!-- Keyboard key: Navigate to previous graphic. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_graphic_key" translatable="false">G</string>
+
+    <!-- Keyboard key: Navigate to next list. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_list_key" translatable="false">l</string>
+
+    <!-- Keyboard key: Navigate to previous list. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_list_key" translatable="false">L</string>
+
+    <!-- Keyboard key: Navigate to next list item. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_list_item_key" translatable="false">i</string>
+
+    <!-- Keyboard key: Navigate to previous list item. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_list_item_key" translatable="false">I</string>
+
+    <!-- Keyboard key: Navigate to next table. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_table_key" translatable="false">t</string>
+
+    <!-- Keyboard key: Navigate to previous table. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_table_key" translatable="false">T</string>
+
+    <!-- Keyboard key: Navigate to next heading. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_key" translatable="false">h</string>
+
+    <!-- Keyboard key: Navigate to previous heading. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_key" translatable="false">H</string>
+
+    <!-- Keyboard key: Navigate to next heading level 1. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_1_key" translatable="false">1</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 1. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_1_key" translatable="false">Shift+1</string>
+
+    <!-- Keyboard key: Navigate to next heading level 2. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_2_key" translatable="false">2</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 2. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_2_key" translatable="false">Shift+2</string>
+
+    <!-- Keyboard key: Navigate to next heading level 3. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_3_key" translatable="false">3</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 3. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_3_key" translatable="false">Shift+3</string>
+
+    <!-- Keyboard key: Navigate to next heading level 4. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_4_key" translatable="false">4</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 4. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_4_key" translatable="false">Shift+4</string>
+
+    <!-- Keyboard key: Navigate to next heading level 5. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_5_key" translatable="false">5</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 5. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_5_key" translatable="false">Shift+5</string>
+
+    <!-- Keyboard key: Navigate to next heading level 6. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_heading_6_key" translatable="false">6</string>
+
+    <!-- Keyboard key: Navigate to previous heading level 6. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_heading_6_key" translatable="false">Shift+6</string>
+
+    <!-- Keyboard key: Navigate to next control. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_control_key" translatable="false">f</string>
+
+    <!-- Keyboard key: Navigate to previous control. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_control_key" translatable="false">F</string>
+
+    <!-- Keyboard key: Navigate to next button. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_button_key" translatable="false">b</string>
+
+    <!-- Keyboard key: Navigate to previous button. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_button_key" translatable="false">B</string>
+
+    <!-- Keyboard key: Navigate to next checkbox. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_checkbox_key" translatable="false">x</string>
+
+    <!-- Keyboard key: Navigate to previous checkbox. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_checkbox_key" translatable="false">X</string>
+
+    <!-- Keyboard key: Navigate to next radio button. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_radio_button_key" translatable="false">r</string>
+
+    <!-- Keyboard key: Navigate to previous radio button. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_radio_button_key" translatable="false">R</string>
+
+    <!-- Keyboard key: Navigate to next combo box. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_combo_box_key" translatable="false">c</string>
+
+    <!-- Keyboard key: Navigate to previous combo box. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_combo_box_key" translatable="false">C</string>
+
+    <!-- Keyboard key: Navigate to next edit field. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_edit_field_key" translatable="false">e</string>
+
+    <!-- Keyboard key: Navigate to previous edit field. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_edit_field_key" translatable="false">E</string>
+
+    <!-- Keyboard key: Navigate to next link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_link_key" translatable="false">k</string>
+
+    <!-- Keyboard key: Navigate to previous link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_link_key" translatable="false">K</string>
+
+    <!-- Keyboard key: Navigate to next visited link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_visited_link_key" translatable="false">v</string>
+
+    <!-- Keyboard key: Navigate to previous visited link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_visited_link_key" translatable="false">V</string>
+
+    <!-- Keyboard key: Navigate to next unvisited link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_next_unvisited_link_key" translatable="false">u</string>
+
+    <!-- Keyboard key: Navigate to previous unvisited link. [CHAR_LIMIT=100]-->
+    <string name="bd_cmd_previous_unvisited_link_key" translatable="false">U</string>
+
+    <!-- Braille key: Pan down. -->
+    <string name="bd_key_pan_down" translatable="false">向下平移</string>
+
+    <!-- Braille key: Pan up. -->
+    <string name="bd_key_pan_up" translatable="false">向上平移</string>
+
+    <!-- Braille key: routing key. -->
+    <string name="bd_key_route" translatable="false">光标路由键</string>
+
+    <!-- Braille key: space. -->
+    <string name="bd_key_space" translatable="false">空格</string>
+
+    <!-- Name of the notification channel for braille displays that other apps provide.  [CHAR_LIMIT=50] -->
+    <string name="external_display_channel">来自其他应用的盲文显示器</string>
+
+    <!-- Asks whether an app may be a braille display for Backtalk.  [CHAR_LIMIT=100] -->
+    <string name="external_display_ask_title">允许 <xliff:g id="app" example="Notetaker">%1$s</xliff:g> 作为 Backtalk 的盲文显示器吗？</string>
+
+    <!-- Text of the notification that asks whether an app may be a braille display.  [CHAR_LIMIT=100] -->
+    <string name="external_display_ask_text">在你允许之前，Backtalk 不会使用它。</string>
+
+    <!-- Warns what an app can do as a braille display, before the user allows it.  [CHAR_LIMIT=NONE] -->
+    <string name="external_display_warning"><xliff:g id="app" example="Notetaker">%1$s</xliff:g> 将能够读取 Backtalk 以盲文显示的所有内容，这可能是屏幕上的任何内容，包括消息和你输入的内容。它还能像使用盲文显示器一样控制你的设备：输入、打开应用以及执行任何 Backtalk 命令。只允许你信任的应用。</string>
+
+    <!-- Button that lets an app be a braille display.  [CHAR_LIMIT=20] -->
+    <string name="external_display_allow">允许</string>
+
+    <!-- Button that doesn't let an app be a braille display.  [CHAR_LIMIT=20] -->
+    <string name="external_display_deny">不允许</string>
+
+    <!-- Notification shown while an app is Backtalk's braille display.  [CHAR_LIMIT=60] -->
+    <string name="external_display_in_use_title"><xliff:g id="app" example="Notetaker">%1$s</xliff:g> 正在作为你的盲文显示器</string>
+
+    <!-- Notification text shown while an app is Backtalk's braille display.  [CHAR_LIMIT=100] -->
+    <string name="external_display_in_use_text">在 Backtalk 使用它期间，<xliff:g id="app" example="Notetaker">%1$s</xliff:g> 可以读取屏幕并控制设备。</string>
+
+    <!-- Title of the setting that lists the apps that can be braille displays.  [CHAR_LIMIT=50] -->
+    <string name="external_displays_title">来自其他应用的显示器</string>
+
+    <!-- Explains the list of apps that can be braille displays.  [CHAR_LIMIT=NONE] -->
+    <string name="external_displays_summary">你允许的应用可以作为 Backtalk 的盲文显示器。作为盲文显示器的应用可以读取屏幕并控制设备。</string>
+
+    <!-- Shown when no installed app can be a braille display.  [CHAR_LIMIT=60] -->
+    <string name="external_displays_none">没有应用可作为盲文显示器。</string>
 </resources>
