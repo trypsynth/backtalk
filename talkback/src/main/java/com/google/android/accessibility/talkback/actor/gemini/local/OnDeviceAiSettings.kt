@@ -23,6 +23,7 @@ object OnDeviceAiSettings {
   const val PREF_PROVIDER = "pref_on_device_ai_provider"
   const val PREF_MODEL = "pref_on_device_ai_model"
   const val PREF_GPU = "pref_on_device_ai_gpu"
+  const val PREF_NPU = "pref_on_device_ai_npu"
   const val PREF_SHORT_PROMPTS = "pref_on_device_ai_short_prompts"
   const val PREF_TIMEOUT = "pref_on_device_ai_timeout_seconds"
   const val PREF_IGNORE_MEMORY_LIMITS = "pref_on_device_ai_ignore_memory_limits"
@@ -32,6 +33,9 @@ object OnDeviceAiSettings {
 
   /** Android reports a little less RAM than the phone's label says, so allow for that. */
   private const val RAM_SLACK = 0.85
+
+  /** Fraction of the file size an NPU model needs as free CPU memory (see [hasFreeMemoryForModel]). */
+  private const val NPU_MEMORY_FACTOR = 0.6
 
   fun isOnDevice(prefs: SharedPreferences): Boolean =
     prefs.getString(PREF_PROVIDER, PROVIDER_CLOUD) == PROVIDER_DEVICE
@@ -62,17 +66,47 @@ object OnDeviceAiSettings {
     !lowMemory && availableBytes >= modelBytes
 
   /**
-   * The models to offer on a phone with [totalRamBytes] of RAM: the ones that fit, and any that
-   * are already on the phone, so that they can still be chosen or deleted.
+   * Same as [hasFreeMemoryFor] but for a known [model]. NPU weights stay on Hexagon SRAM and the
+   * CPU footprint is close to the GPU one (model card: GPU 676 MB vs CPU 1733 MB for E2B), so the
+   * required free memory is scaled to 60%%. Without this, NPU phones fail the check even though
+   * the load would succeed.
    */
-  fun modelsFor(totalRamBytes: Long, isInstalled: (LocalModel) -> Boolean): List<LocalModel> =
-    LocalModel.entries.filter { fits(it, totalRamBytes) || isInstalled(it) }
+  fun hasFreeMemoryForModel(model: LocalModel, availableBytes: Long, lowMemory: Boolean): Boolean {
+    if (lowMemory) return false
+    val required =
+      if (model.requiresNpu) (model.sizeBytes * NPU_MEMORY_FACTOR).toLong() else model.sizeBytes
+    return availableBytes >= required
+  }
 
   /**
-   * The model to use when the user has not chosen one: Gemma 4 E2B when it fits, otherwise the
-   * largest model that fits, preferring ones that are not experimental.
+   * The models to offer on a phone with [totalRamBytes] of RAM: the ones that fit, and any that
+   * are already on the phone, so that they can still be chosen or deleted.
+   *
+   * NPU-optimized files only run on their own SoC via `Backend.NPU`, so only the matching one is
+   * ever offered (plus any already installed, so they can still be deleted).
+   */
+  fun modelsFor(totalRamBytes: Long, isInstalled: (LocalModel) -> Boolean): List<LocalModel> =
+    LocalModel.entries.filter { model ->
+      (fits(model, totalRamBytes) || isInstalled(model)) && socMatches(model, isInstalled)
+    }
+
+  /** Whether [model]'s SoC requirement is met by this phone. Portable files always match. */
+  private fun socMatches(model: LocalModel, isInstalled: (LocalModel) -> Boolean): Boolean {
+    val soc = model.socModel ?: return true
+    if (isInstalled(model)) return true
+    // Only offer the NPU file that matches this phone's chip; others could never load.
+    return NpuDetector.socModel() == soc
+  }
+
+  /**
+   * The model to use when the user has not chosen one: the NPU build when this phone has one and
+   * it fits, otherwise Gemma 4 E2B when it fits, otherwise the largest model that fits, preferring
+   * ones that are not experimental.
    */
   fun defaultModel(totalRamBytes: Long): LocalModel {
+    npuModelForThisPhone()?.takeIf { fits(it, totalRamBytes) }?.let {
+      return it
+    }
     if (fits(LocalModel.E2B, totalRamBytes)) {
       return LocalModel.E2B
     }
@@ -91,6 +125,24 @@ object OnDeviceAiSettings {
   fun setUseGpu(prefs: SharedPreferences, useGpu: Boolean) {
     prefs.edit().putBoolean(PREF_GPU, useGpu).apply()
   }
+
+  /**
+   * Whether to run NPU-optimized models on the Snapdragon Hexagon NPU via `Backend.NPU`.
+   * Only applies when the chosen [LocalModel] [requiresNpu][LocalModel.requiresNpu]; portable
+   * CPU/GPU models ignore it. Off falls back to [useGpu]/CPU, so answers still work when the NPU
+   * libraries are missing.
+   */
+  fun useNpu(prefs: SharedPreferences): Boolean = prefs.getBoolean(PREF_NPU, true)
+
+  fun setUseNpu(prefs: SharedPreferences, useNpu: Boolean) {
+    prefs.edit().putBoolean(PREF_NPU, useNpu).apply()
+  }
+
+  /**
+   * The NPU model for this phone's SoC, or null when its chip has no NPU build. Used to offer
+   * only the matching NPU file and to hide the NPU switch on other phones.
+   */
+  fun npuModelForThisPhone(): LocalModel? = NpuDetector.npuModelForThisPhone()
 
   /** Whether Describe screen asks for less detail, to answer sooner. Off keeps the full prompt. */
   fun shortPrompts(prefs: SharedPreferences): Boolean = prefs.getBoolean(PREF_SHORT_PROMPTS, false)
@@ -127,11 +179,14 @@ object OnDeviceAiSettings {
     /** The model library only ships for 64-bit ARM. */
     UNSUPPORTED_CPU,
     NOT_ENOUGH_RAM,
+    /** An NPU-optimized file for a different SoC; it could never load here. */
+    UNSUPPORTED_SOC,
   }
 
   fun support(model: LocalModel, totalRamBytes: Long, supportedAbis: List<String>): Support =
     when {
       "arm64-v8a" !in supportedAbis -> Support.UNSUPPORTED_CPU
+      model.socModel != null && NpuDetector.socModel() != model.socModel -> Support.UNSUPPORTED_SOC
       !fits(model, totalRamBytes) -> Support.NOT_ENOUGH_RAM
       else -> Support.OK
     }

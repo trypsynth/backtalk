@@ -94,11 +94,16 @@ internal class ScreenOverviewRequester(
 
   fun requestQuery(command: GeminiCommand.ScreenQuery, safetySettings: JSONArray) {
     val style = style()
+    // Chat history otherwise grows without bound: every turn resends all previous turns plus the
+    // screenshot, so long sessions blow the KV cache and slow every answer. Keep only the tail
+    // that fits the budget; the current screen and question matter most.
     val history =
-      command.chatHistory.orEmpty().joinToString(separator = "\n") {
-        val speaker = if (it.messageType == MessageType.USER) "USER" else "MODEL"
-        "$speaker: ${it.message}"
-      }
+      cappedHistory(
+        command.chatHistory.orEmpty().joinToString(separator = "\n") {
+          val speaker = if (it.messageType == MessageType.USER) "USER" else "MODEL"
+          "$speaker: ${it.message}"
+        }
+      )
     val instructions =
       when (style) {
         PromptStyle.CLOUD -> QUERY_INSTRUCTIONS
@@ -218,8 +223,21 @@ internal class ScreenOverviewRequester(
     "Write all text in ${Locale.getDefault().getDisplayLanguage(Locale.ENGLISH)}. " +
       "Do not use markdown."
 
+  /**
+   * Keeps the tail of a joined chat history within [MAX_HISTORY_CHARS], cutting at a line
+   * boundary so the model never sees a half turn. On-device prompts bill every character as
+   * prefill work, and the image is resent each turn anyway, so old turns are the cheapest tokens
+   * to drop.
+   */
+  private fun cappedHistory(joined: String): String {
+    if (joined.length <= MAX_HISTORY_CHARS) return joined
+    val tail = joined.takeLast(MAX_HISTORY_CHARS)
+    return tail.substringAfter("\n", tail)
+  }
+
   companion object {
     private const val TAG = "ScreenOverviewRequester"
+    private const val MAX_HISTORY_CHARS = 2000
     private const val UI_ELEMENT_FORMAT =
       """Each UI element is an object with these fields:
 - "label": the name of the control as shown on screen.

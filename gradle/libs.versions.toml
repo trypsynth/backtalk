@@ -48,6 +48,7 @@ zxing-core = "com.google.zxing:core:3.5.4"
 
 # On-device AI
 litertlm = "com.google.ai.edge.litertlm:litertlm-android:0.18.0"
+litert-npu-qualcomm = "com.google.ai.edge.litert:litert-npu-runtime-qualcomm:2.3.0"
 
 # Cloud services
 volley = "com.android.volley:volley:1.2.1"

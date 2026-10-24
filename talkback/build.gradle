@@ -18,6 +18,9 @@ dependencies {
     wearImplementation project(':materialtheme')
     phoneImplementation project(':quickjs')
     implementation libs.litertlm
+    // Qualcomm Hexagon NPU dispatch runtime for Snapdragon NPU acceleration (Backend.NPU).
+    // Only loaded when an NPU-optimized model is used; adds ~0.5 MB.
+    phoneImplementation libs.litert.npu.qualcomm
     testImplementation libs.junit
     testImplementation libs.json
     testImplementation libs.robolectric

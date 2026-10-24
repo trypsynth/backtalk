@@ -20,6 +20,7 @@ import com.google.android.accessibility.talkback.actor.gemini.GeminiRestRequestP
 import com.google.android.accessibility.talkback.actor.gemini.local.LocalLlm
 import com.google.android.accessibility.talkback.actor.gemini.local.LocalLlmCancelledException
 import com.google.android.accessibility.talkback.actor.gemini.local.LocalLlmMemoryException
+import java.io.ByteArrayOutputStream
 import java.util.Base64
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
@@ -96,7 +97,12 @@ internal class LocalGemmaRunner(
         }
         return
       }
-      val raw = model.generate(job.prompt, job.jpeg)
+      // Screenshots arrive at full phone resolution (e.g. 1080x2400) encoded for the cloud at
+      // JPEG 80. The on-device vision encoder bills every pixel as prefill work, so shrink to
+      // at most MAX_IMAGE_SIDE before inference. Cloud requests are untouched: this only
+      // affects the bytes handed to the local model. Falls back to the original on any failure.
+      val image = job.jpeg?.let { downscaleForOnDevice(it) }
+      val raw = model.generate(job.prompt, image)
       val text = if (job.json) extractJson(raw) else raw.trim()
       if (job.cancelled.get()) {
         report(job) { callback.onCancelled() }
@@ -155,6 +161,65 @@ internal class LocalGemmaRunner(
   }
 
   companion object {
+    /**
+     * Longest image side handed to the on-device model. 1024 keeps text in screenshots legible
+     * for Gemma 4 E2B while cutting vision prefill to roughly a quarter of a 1080x2400 capture.
+     * The cloud keeps the original bytes; only the local path is shrunk.
+     */
+    const val MAX_IMAGE_SIDE = 1024
+    private const val ON_DEVICE_JPEG_QUALITY = 72
+
+    /**
+     * Shrinks [jpeg] so its longest side is at most [MAX_IMAGE_SIDE], re-encoded at
+     * [ON_DEVICE_JPEG_QUALITY]. Returns the original bytes when already small or when decoding
+     * fails (e.g. in unit tests without native bitmap support), so callers never break.
+     */
+    fun downscaleForOnDevice(jpeg: ByteArray): ByteArray {
+      return try {
+        val options =
+          android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        android.graphics.BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size, options)
+        val width = options.outWidth
+        val height = options.outHeight
+        if (width <= 0 || height <= 0) return jpeg
+        val longest = maxOf(width, height)
+        if (longest <= MAX_IMAGE_SIDE) return jpeg
+        // inSampleSize must be a power of two and gets us close; exact scaling happens below.
+        var sample = 1
+        while (longest / (sample * 2) >= MAX_IMAGE_SIDE) sample *= 2
+        val decodeOptions =
+          android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
+        val bitmap =
+          android.graphics.BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size, decodeOptions)
+            ?: return jpeg
+        try {
+          val scale = MAX_IMAGE_SIDE.toFloat() / maxOf(bitmap.width, bitmap.height)
+          val targetWidth = (bitmap.width * scale).toInt().coerceAtLeast(1)
+          val targetHeight = (bitmap.height * scale).toInt().coerceAtLeast(1)
+          val scaled =
+            android.graphics.Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true)
+          try {
+            val out = ByteArrayOutputStream()
+            if (!scaled.compress(
+                android.graphics.Bitmap.CompressFormat.JPEG,
+                ON_DEVICE_JPEG_QUALITY,
+                out,
+              )
+            ) {
+              return jpeg
+            }
+            out.toByteArray()
+          } finally {
+            if (scaled !== bitmap) scaled.recycle()
+          }
+        } finally {
+          bitmap.recycle()
+        }
+      } catch (e: Exception) {
+        jpeg
+      }
+    }
+
     /**
      * Models often wrap JSON in a markdown fence or add a sentence around it, which the parser does
      * not accept. Keeps the text from the first "{" to the last "}".
