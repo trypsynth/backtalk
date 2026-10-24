@@ -758,6 +758,8 @@ public class FailoverTextToSpeech {
       ensureQueueFlush();
       tts.speak("", SPEECH_FLUSH_ALL, null);
       unfinishedUtterances.clear();
+      // No utterance callbacks reach us after a flush-all, so stale chunks must not persist.
+      speechChunks.clear();
     } catch (Exception e) {
       // Don't care, we're not speaking.
     }
@@ -1214,18 +1216,39 @@ public class FailoverTextToSpeech {
               LogUtils.d(TAG, "consume suspend queue speakRequest= %s: ", speakRequest);
               mHandler.post(
                   () -> {
-                    if (isReady()) {
-                      attemptSetLanguage(speakRequest.locale);
-                      ttsSpeak(
-                          speakRequest.text,
-                          speakRequest.queueMode,
-                          speakRequest.bundle,
-                          utteranceId);
-                    }
+                     if (isReady()) {
+                       attemptSetLanguage(speakRequest.locale);
+                       ttsSpeak(
+                           speakRequest.text,
+                           speakRequest.queueMode,
+                           speakRequest.bundle,
+                           // Use the queued request's own id: the completing id names
+                           // the cached utterance, not the queued one.
+                           speakRequest.utteranceId());
+                     }
                   });
             }
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ true);
           } else if (state == SpeechCachePlayer.STATE_STOPPED) {
+            mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
+          } else if (state == SpeechCachePlayer.STATE_ERROR) {
+            // A failed cached speech will not send a completion callback either, so the
+            // queued speech behind it has to resume and its own completion must be sent.
+            List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
+            suspendQueue.clear();
+            for (SpeakRequest speakRequest : suspendQueueCopy) {
+              mHandler.post(
+                  () -> {
+                     if (isReady()) {
+                       attemptSetLanguage(speakRequest.locale);
+                       ttsSpeak(
+                           speakRequest.text,
+                           speakRequest.queueMode,
+                           speakRequest.bundle,
+                           speakRequest.utteranceId());
+                     }
+                  });
+            }
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
           }
         }
@@ -1800,6 +1823,8 @@ public class FailoverTextToSpeech {
     LogUtils.e(TAG, "TTS engine %s said nothing for %d ms, so it is hung", ttsEngine, quiet);
     engineQuietSince = 0;
     unfinishedUtterances.clear();
+    // A hung engine never sends the final chunk's callback, so stale chunks must not persist.
+    speechChunks.clear();
     boolean lowLatency = hungUtteranceId != null && lowLatencyRequests.containsKey(hungUtteranceId);
     // Speech waiting on the hung engine stops, so that it holds up nothing.
     mHandler.removeCallbacks(dropHeldSpeech);
@@ -2177,6 +2202,8 @@ public class FailoverTextToSpeech {
     lowLatencyStreams.clear();
     lowLatencyRequests.clear();
     respokenUtterances.clear();
+    // An engine that is gone never completes its chunks, so stale chunks must not persist.
+    speechChunks.clear();
     LowLatencyAudio.stopAllStreams();
     mHandler.removeCallbacks(checkEngineHang);
     engineQuietSince = 0;
@@ -2786,7 +2813,7 @@ public class FailoverTextToSpeech {
     @Override
     public void onStart(String utteranceId) {
       progressEstimator.onStarted(utteranceId, SystemClock.uptimeMillis());
-      if (utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
+      if (utteranceId == null || utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
         return;
       }
       SpeechChunk chunk = toOriginal(utteranceId);

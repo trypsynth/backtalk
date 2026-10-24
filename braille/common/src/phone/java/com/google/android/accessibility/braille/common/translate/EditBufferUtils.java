@@ -36,8 +36,8 @@ public class EditBufferUtils {
 
   /** Determines whether emit single characters feedback. */
   public static boolean shouldEmitPerCharacterFeedback(ImeConnection imeConnection) {
-    return imeConnection.announceType != SILENCE
-        || !BrailleCommonUtils.isTextField(imeConnection.editorInfo);
+    // Non-text fields only get IME-emitted feedback, but the user's echo setting still wins.
+    return imeConnection.announceType != SILENCE;
   }
 
   /** Returns cursor position of the edit field. */
