@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -34,36 +35,79 @@ import org.robolectric.annotation.Config
 class AccessibilityVolumeStepTest {
   private lateinit var audioManager: AudioManager
 
+  private var volume: Int
+    get() = audioManager.getStreamVolume(STREAM_ACCESSIBILITY)
+    set(value) = audioManager.setStreamVolume(STREAM_ACCESSIBILITY, value, 0)
+
+  private fun raise() = AccessibilityVolumeStep.step(audioManager, decrease = false, flags = 0)
+
+  private fun lower() = AccessibilityVolumeStep.step(audioManager, decrease = true, flags = 0)
+
   @Before
   fun setUp() {
     audioManager =
       RuntimeEnvironment.getApplication().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    shadowOf(audioManager).setStreamMaxVolume(MAX)
   }
 
   @Test
   fun raisesAndLowersByOneStep() {
-    audioManager.setStreamVolume(STREAM_ACCESSIBILITY, 5, 0)
+    volume = 5
 
-    assertTrue(AccessibilityVolumeStep.step(audioManager, decrease = false, flags = 0))
-    assertEquals(6, audioManager.getStreamVolume(STREAM_ACCESSIBILITY))
-    assertTrue(AccessibilityVolumeStep.step(audioManager, decrease = true, flags = 0))
-    assertEquals(5, audioManager.getStreamVolume(STREAM_ACCESSIBILITY))
+    assertTrue(raise())
+    assertEquals(6, volume)
+    assertTrue(lower())
+    assertEquals(5, volume)
   }
 
   @Test
   fun stopsAtTheHighestStep() {
-    val max = audioManager.getStreamMaxVolume(STREAM_ACCESSIBILITY)
-    audioManager.setStreamVolume(STREAM_ACCESSIBILITY, max, 0)
+    volume = MAX
 
-    assertFalse(AccessibilityVolumeStep.step(audioManager, decrease = false, flags = 0))
-    assertEquals(max, audioManager.getStreamVolume(STREAM_ACCESSIBILITY))
+    assertFalse(raise())
+    assertEquals(MAX, volume)
+    assertTrue(lower())
+    assertEquals(MAX - 1, volume)
   }
 
   @Test
   fun neverGoesSilent() {
-    audioManager.setStreamVolume(STREAM_ACCESSIBILITY, 1, 0)
+    volume = 1
 
-    assertFalse(AccessibilityVolumeStep.step(audioManager, decrease = true, flags = 0))
-    assertEquals(1, audioManager.getStreamVolume(STREAM_ACCESSIBILITY))
+    assertFalse(lower())
+    assertEquals(1, volume)
+    assertTrue(raise())
+    assertEquals(2, volume)
+  }
+
+  @Test
+  fun stopsAtTheStreamMinimum() {
+    shadowOf(audioManager).setStreamMinVolume(3)
+    volume = 3
+
+    assertFalse(lower())
+    assertEquals(3, volume)
+  }
+
+  @Test
+  fun raisesASilentStream() {
+    volume = 0
+
+    assertTrue(raise())
+    assertEquals(1, volume)
+  }
+
+  @Test
+  fun leavesASingleStepStreamAlone() {
+    shadowOf(audioManager).setStreamMaxVolume(1)
+    volume = 1
+
+    assertFalse(raise())
+    assertFalse(lower())
+    assertEquals(1, volume)
+  }
+
+  private companion object {
+    const val MAX = 15
   }
 }
