@@ -10794,17 +10794,6 @@
     <issue
         id="NewApi"
         message="Call requires API level 28 (current min is 26): `android.media.AudioManager#getStreamMinVolume`"
-        errorLine1="    int minVolume = Math.max(audioManager.getStreamMinVolume(streamTypeToAdjust), 1);"
-        errorLine2="                                          ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/google/android/accessibility/talkback/actor/VolumeAdjustor.java"
-            line="73"
-            column="43"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 28 (current min is 26): `android.media.AudioManager#getStreamMinVolume`"
         errorLine1="    int minVolume = Math.max(audioManager.getStreamMinVolume(STREAM_ACCESSIBILITY), 1);"
         errorLine2="                                          ~~~~~~~~~~~~~~~~~~">
         <location
