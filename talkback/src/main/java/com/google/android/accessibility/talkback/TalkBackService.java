@@ -2139,6 +2139,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             globalVariables,
             processorPhoneticLetters,
             getCompositorFlavor());
+    accessibilityEventProcessor.setCompositor(compositor);
     // TODO: Make pipeline run Compositor, which returns speech feedback, no callback.
 
     analytics =

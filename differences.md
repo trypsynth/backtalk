@@ -12,6 +12,10 @@ When you swiped to an item, TalkBack waited for the app to confirm the new focus
 
 This doesn't apply when focus moves to another window, when the screen changes, or during continuous reading. Keys on the keyboard, sliders, progress bars, pages in a pager, and web content still wait for the app.
 
+### Click sound and vibration at once
+
+When you double-tap, the app reports the click, and TalkBack then waited 150 ms before it played the click sound and vibration, so that it could read the item's new state, such as "on" or "off". Backtalk plays the sound and vibration as soon as the click is reported, and waits only to say the new state. On an emulator, the median time from lifting your finger to the click vibration went from about 206 ms to about 45 ms.
+
 ### Next swipe prepared in advance
 
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.

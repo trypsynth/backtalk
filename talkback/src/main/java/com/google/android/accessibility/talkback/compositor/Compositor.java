@@ -299,6 +299,7 @@ public class Compositor {
 
   private final GlobalVariables globalVariables;
   private final TextComposer textComposer = this::parseTTSText;
+  private final EarlyClickCues earlyClickCues = new EarlyClickCues();
 
   /////////////////////////////////////////////////////////////////////////////////
   // Inner classes
@@ -463,6 +464,29 @@ public class Compositor {
   }
 
   /**
+   * Gives the sound and vibration for a click as soon as its event arrives. The event is handled
+   * about 150 ms later, once the clicked item has updated, and then only says its new state.
+   */
+  public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
+    // Without the source, the click rule gives its cues and no speech.
+    EventFeedback feedback =
+        getEventFeedback(EVENT_TYPE_VIEW_CLICKED, new HandleEventOptions().object(event));
+    if (feedback.earcon() == -1 && feedback.haptic() == -1) {
+      return;
+    }
+    SpeakOptions speakOptions = SpeakOptions.create();
+    if (feedback.earcon() != -1) {
+      speakOptions.setEarcons(Set.of(feedback.earcon()));
+    }
+    if (feedback.haptic() != -1) {
+      speakOptions.setHaptics(Set.of(feedback.haptic()));
+    }
+    speakOptions.mFlags |= FeedbackItem.FLAG_NO_SPEECH;
+    speak("", eventId, speakOptions);
+    earlyClickCues.given(event.getEventTime());
+  }
+
+  /**
    * Handles an event made inside Backtalk for {@code sourceNode}, which the event cannot hold. If
    * {@code preparedFeedback} is not null, it is the feedback that {@link #getFeedback} returned for
    * the same event earlier, and is used instead of working it out again.
@@ -519,9 +543,14 @@ public class Compositor {
       return;
     }
 
+    boolean cuesGiven =
+        event == EVENT_TYPE_VIEW_CLICKED
+            && options.eventObject != null
+            && earlyClickCues.take(options.eventObject.getEventTime());
+
     // Compose earcons.
     SpeakOptions speakOptions = null;
-    int earcon = eventFeedback.earcon();
+    int earcon = cuesGiven ? -1 : eventFeedback.earcon();
     if (earcon != -1) {
       if (speakOptions == null) {
         speakOptions = SpeakOptions.create();
@@ -557,7 +586,7 @@ public class Compositor {
     }
 
     // Compose haptics.
-    int haptic = eventFeedback.haptic();
+    int haptic = cuesGiven ? -1 : eventFeedback.haptic();
     if (haptic != -1) {
       if (speakOptions == null) {
         speakOptions = SpeakOptions.create();
