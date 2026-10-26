@@ -469,20 +469,7 @@ public class Compositor {
    */
   public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
     // Without the source, the click rule gives its cues and no speech.
-    EventFeedback feedback =
-        getEventFeedback(EVENT_TYPE_VIEW_CLICKED, new HandleEventOptions().object(event));
-    if (feedback.earcon() == -1 && feedback.haptic() == -1) {
-      return;
-    }
-    SpeakOptions speakOptions = SpeakOptions.create();
-    if (feedback.earcon() != -1) {
-      speakOptions.setEarcons(Set.of(feedback.earcon()));
-    }
-    if (feedback.haptic() != -1) {
-      speakOptions.setHaptics(Set.of(feedback.haptic()));
-    }
-    speakOptions.mFlags |= FeedbackItem.FLAG_NO_SPEECH;
-    speak("", eventId, speakOptions);
+    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
     earlyClickCues.given(event.getEventTime());
   }
 

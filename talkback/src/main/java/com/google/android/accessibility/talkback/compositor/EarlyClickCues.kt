@@ -36,7 +36,9 @@ class EarlyClickCues(clock: () -> Long = SystemClock::uptimeMillis) {
   fun take(eventTime: Long): Boolean = given.remove(eventTime)
 
   private companion object {
-    const val MAX_CLICKS = 8
-    const val MAX_AGE_MS = 2_000L
+    // Generous, since a busy app can hold the event back well past its 150 ms delay, and an event
+    // time never comes back, so remembering a click longer cannot skip the cues of another.
+    const val MAX_CLICKS = 16
+    const val MAX_AGE_MS = 10_000L
   }
 }

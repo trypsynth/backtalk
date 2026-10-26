@@ -55,7 +55,7 @@ class EarlyClickCuesTest {
   @Test
   fun aClickWhoseEventNeverCameIsForgotten() {
     cues.given(100L)
-    now = 5_000L
+    now = 20_000L
     assertFalse(cues.take(100L))
   }
 }
