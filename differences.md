@@ -26,6 +26,8 @@ Backtalk doesn't prepare anything for the first swipe on a screen or after the s
 
 When a swipe moves to a list item that is only partly on screen, the list scrolls it into view. By default, Backtalk then waits for the app to confirm the new focus, as TalkBack does, so these swipes don't get the faster speech above. Speaking straight away would come before the list had scrolled, when the item's text can still be off screen, and only its place in the list, such as "20 of 80", would be said.
 
+This doesn't apply to parts that an app hides inside an item that is fully on screen, such as the volume slider in each row of Sound settings. No scroll will show them, so Backtalk speaks those rows straight away.
+
 When you turn on **Controls** > **Touch and activation** > **Reduce delay** > **Speak items before they scroll into view**, Backtalk speaks these items straight away too, including the parts that are still past the edge of the list, since they will be on screen once it has scrolled. Parts the app has hidden are still left out. Apps that follow Android's conventions work correctly with this setting on. It is off by default to protect you from apps that don't: in those, a part that the app keeps out of sight by moving it outside the item, instead of hiding it, is read even though it isn't shown, and so is a part that stays off screen when the list can't scroll the whole item into view.
 
 ### Reading order kept between swipes

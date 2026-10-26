@@ -444,18 +444,7 @@ public class EventFilter {
     // An item only partly on screen, which the swipe is about to scroll into view, can have all
     // its text in children still off screen, which descriptions leave out unless they are spoken
     // as they will be after the scroll. Otherwise the app's event, after the scroll, says it.
-    return speakItemsBeforeScroll || !hasChildOffScreen(node);
-  }
-
-  /** Whether a child of {@code node} is off screen. */
-  private static boolean hasChildOffScreen(AccessibilityNodeInfoCompat node) {
-    for (int i = 0; i < node.getChildCount(); i++) {
-      AccessibilityNodeInfoCompat child = node.getChild(i);
-      if (child != null && !child.isVisibleToUser()) {
-        return true;
-      }
-    }
-    return false;
+    return speakItemsBeforeScroll || !OffScreenChildren.hasAny(node);
   }
 
   /** Prepares the announcements of the nodes next to {@code node}, which focus just moved to. */
