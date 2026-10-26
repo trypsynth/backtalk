@@ -225,6 +225,8 @@ TalkBack marked its notices that it was updated, or that gestures changed, as on
 
 Backtalk keeps your choice when devices connect or disconnect, or when other apps start playing. If the device that you chose isn't connected, Backtalk uses another external device, and the setting shows "(disconnected)" next to the device name. During phone calls, Android decides where audio plays.
 
+To switch quickly, add **Audio output device** in **Reading controls**. Swiping up or down with it goes through **System default**, **Phone speaker** and each connected device, and changes the same setting.
+
 ### Accessibility volume on Bluetooth headphones
 
 On some phones, such as Samsung's, TalkBack's accessibility volume gestures, its **Accessibility volume** reading control, and volume keys pressed while touching the screen change the media volume instead of the accessibility volume while Bluetooth headphones are connected. Backtalk changes the accessibility volume the way the system volume panel's slider does, so these work the same with or without headphones.

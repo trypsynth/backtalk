@@ -847,6 +847,21 @@ class AudioDeviceRouter @JvmOverloads constructor(
     }
 
     /**
+     * Returns the index in [options] of the output that the preference [value] chooses, or -1. A
+     * device matches by name when its type has changed, and "any external device" matches the first
+     * external device, which is where it routes.
+     */
+    @JvmStatic
+    fun indexOfOption(options: List<OutputOption>, value: String?): Int =
+      when (val target = AudioTarget.parse(value)) {
+        is AudioTarget.SystemDefault -> options.indexOfFirst { it.prefValue == "default" }
+        is AudioTarget.PhoneSpeaker -> options.indexOfFirst { it.prefValue == "speaker" }
+        is AudioTarget.SpecificDevice ->
+          options.indexOfFirst { it.prefValue == value || it.prefValue.endsWith(":${target.name}") }
+        is AudioTarget.AnyExternal -> options.indexOfFirst { it.prefValue.startsWith("device:") }
+      }
+
+    /**
      * Dynamically populates entries and entry values for the audio output device [ListPreference].
      */
     @JvmStatic
@@ -863,11 +878,7 @@ class AudioDeviceRouter @JvmOverloads constructor(
           is AudioTarget.PhoneSpeaker ->
             context.getString(R.string.value_audio_output_device_speaker)
           is AudioTarget.SpecificDevice -> {
-            val match =
-              options.firstOrNull {
-                it.prefValue == preference.value ||
-                  it.prefValue.endsWith(":${currentTarget.name}")
-              }
+            val match = options.getOrNull(indexOfOption(options, preference.value))
             if (match != null) {
               match.displayName
             } else {

@@ -85,8 +85,8 @@ import com.google.android.accessibility.talkback.Interpretation;
 import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.UserInterface.UserInputEventListener;
-import com.google.android.accessibility.talkback.audio.AudioDeviceRouter;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
+import com.google.android.accessibility.talkback.audio.AudioDeviceRouter;
 import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.compositor.CompositorUtils;
 import com.google.android.accessibility.talkback.contextmenu.ContextMenu;
@@ -2093,13 +2093,7 @@ public class SelectorController implements UserInputEventListener {
             context.getResources(),
             R.string.pref_audio_output_device_key,
             R.string.pref_audio_output_device_default);
-    int currentIndex = -1;
-    for (int i = 0; i < options.size(); i++) {
-      if (options.get(i).getPrefValue().equals(currentValue)) {
-        currentIndex = i;
-        break;
-      }
-    }
+    int currentIndex = AudioDeviceRouter.indexOfOption(options, currentValue);
     int nextIndex =
         (currentIndex < 0)
             ? (isNext ? 0 : options.size() - 1)
