@@ -61,7 +61,8 @@
         <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
             android:defaultValue="@bool/pref_selector_links_controls_web_only_default"
             android:key="@string/pref_selector_links_controls_web_only_key"
-            android:title="@string/title_pref_selector_links_controls_web_only"/>
+            android:title="@string/title_pref_selector_links_controls_web_only"
+            android:summary="@string/summary_selector_links_controls_web_only"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_granularity_windows_default"
@@ -150,7 +151,8 @@
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_voice_profile_default"
             android:key="@string/pref_selector_voice_profile_key"
-            android:title="@string/title_selector_voice_profile"/>
+            android:title="@string/title_selector_voice_profile"
+            android:summary="@string/summary_selector_voice_profile"/>
     </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
     <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
         android:key="@string/pref_show_selector_menu_web_navigation_category_key"
@@ -301,7 +303,8 @@
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_audio_output_device_default"
             android:key="@string/pref_selector_audio_output_device_key"
-            android:title="@string/title_pref_audio_output_device"/>
+            android:title="@string/title_pref_audio_output_device"
+            android:summary="@string/summary_selector_audio_output_device"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_brightness_default"

@@ -60,6 +60,8 @@
     <string name="summary_selector_switch_tts_engine">Switch between installed speech engines</string>
     <!-- Title for the reading control that switches between voice profiles. [CHAR LIMIT=NONE] -->
     <string name="title_selector_voice_profile">Voice profile</string>
+    <!-- Summary for the reading control that switches between voice profiles. [CHAR LIMIT=70] -->
+    <string name="summary_selector_voice_profile">Switch between your saved voice profiles</string>
     <!--
       Title for the screen of voice profiles: sets of speech settings, each with its own speech
       engine, language, voice, volume, rate and pitch, that the user can switch between. [CHAR LIMIT=NONE]
@@ -1367,6 +1369,8 @@
       Description: Title of the audio output device setting. [CHAR LIMIT=35]
     -->
     <string name="title_pref_audio_output_device">Audio output device</string>
+    <!-- Summary for the reading control that changes the audio output device. [CHAR LIMIT=70] -->
+    <string name="summary_selector_audio_output_device">Change where Backtalk speaks, like the phone speaker or headphones</string>
     <!--
       Source: Dialog title when choosing the audio output device.
       Description: Dialog title for selecting audio output target. [CHAR LIMIT=45]
@@ -2533,6 +2537,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_pref_touch_stops_speech">Stop speech when touching the screen</string>
     <!-- Title of the switch that removes Links and Controls from the reading controls when the focused item is not in web content. [CHAR LIMIT=NONE] -->
     <string name="title_pref_selector_links_controls_web_only">Links and Controls only in web content</string>
+    <!-- Summary for the setting that limits Links and Controls to web content. [CHAR LIMIT=70] -->
+    <string name="summary_selector_links_controls_web_only">Limit the Links and Controls settings to web content</string>
     <!-- Title of the switch that moves accessibility focus into a window when it opens or comes back, such as when an app opens or you go back. [CHAR LIMIT=NONE] -->
     <string name="title_pref_focus_new_windows">Move focus to new windows</string>
     <!-- Title of the switch that makes the volume keys adjust the focused slider instead of the volume. [CHAR LIMIT=NONE] -->
