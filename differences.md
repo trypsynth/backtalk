@@ -18,7 +18,7 @@ When you double-tap, the app reports the click, and TalkBack then waited 150 ms 
 
 ### New state said as soon as you double-tap
 
-When you double-tap a switch, a checkbox, or an item that opens and closes, most apps change its state before they finish the click. Backtalk reads the state again right then and says it, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 128 ms to about 55 ms. Apps that change the state later still have it said when they report it, as before.
+When you double-tap a switch, a checkbox, or an item that opens and closes, most apps change its state before they finish the click. Backtalk reads the state again right then and says it, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 128 ms to about 60 ms. Apps that change the state later still have it said when they report it, as before.
 
 ### Next swipe prepared in advance
 

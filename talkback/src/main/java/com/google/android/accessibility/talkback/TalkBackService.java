@@ -2310,8 +2310,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                     new LocalGemmaRequestPerformer(this, this::speakOnDeviceAiProblem)),
             new AiCoreEndpoint(this));
 
-    KeyboardActor keyboardActor = new KeyboardActor(this);    NodeActionPerformer nodeActionPerformer = new NodeActionPerformer();
-    nodeActionPerformer.earlyClickState = new EarlyClickState(compositor::sayClickStateEarly);
+    KeyboardActor keyboardActor = new KeyboardActor(this);
 
     // Construct pipeline.
     pipeline =
@@ -2365,7 +2364,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 directionNavigationActor,
                 editor,
                 labelManager,
-                nodeActionPerformer,
+                new NodeActionPerformer(new EarlyClickState(compositor::sayClickStateEarly)),
                 new SystemActionPerformer(this),
                 languageActor,
                 passThroughModeActor,

@@ -58,4 +58,34 @@ class EarlyClickCuesTest {
     now = 20_000L
     assertFalse(cues.take(100L))
   }
+
+  @Test
+  fun aClickSaidEarlyIsSkippedOnce() {
+    now = 105L
+    cues.saidEarly("switch")
+    assertTrue(cues.takeSaidEarly("switch", eventTime = 100L))
+    assertFalse(cues.takeSaidEarly("switch", eventTime = 100L))
+  }
+
+  @Test
+  fun aLaterClickOnTheSameItemIsNotTakenForOneSaidEarly() {
+    now = 105L
+    cues.saidEarly("switch")
+    assertFalse(cues.takeSaidEarly("switch", eventTime = 400L))
+  }
+
+  @Test
+  fun aClickOnAnotherItemIsNotTakenForOneSaidEarly() {
+    now = 105L
+    cues.saidEarly("switch")
+    assertFalse(cues.takeSaidEarly("button", eventTime = 100L))
+  }
+
+  @Test
+  fun aSlowEventIsStillTakenForTheClickSaidEarly() {
+    now = 105L
+    cues.saidEarly("switch")
+    now = 3_000L
+    assertTrue(cues.takeSaidEarly("switch", eventTime = 100L))
+  }
 }

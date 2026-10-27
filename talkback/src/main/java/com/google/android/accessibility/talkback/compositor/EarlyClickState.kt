@@ -17,7 +17,7 @@
 package com.google.android.accessibility.talkback.compositor
 
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
+import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils
 import com.google.android.accessibility.utils.Performance.EventId
 
 /**
@@ -39,53 +39,51 @@ class EarlyClickState(private val speaker: Speaker) {
     )
   }
 
+  /**
+   * The clicked item and those of its children that have a state, with that state, read before the
+   * click.
+   */
+  class Before
+  internal constructor(
+    internal val nodes: List<AccessibilityNodeInfoCompat>,
+    internal val states: List<NodeState>,
+  )
+
   /** The state of a clicked item, or null if a click says no state for it. */
-  fun before(target: AccessibilityNodeInfoCompat): List<NodeState>? =
-    read(target, refresh = false).map { it.second }.takeIf { states -> states.any { it.hasState } }
+  fun before(target: AccessibilityNodeInfoCompat): Before? {
+    val nodes = ArrayList<AccessibilityNodeInfoCompat>(target.childCount + 1)
+    @Suppress("DEPRECATION") // obtain(): copy, so that refreshing it leaves the caller's node alone.
+    nodes += AccessibilityNodeInfoCompat.obtain(target)
+    val states = arrayListOf(NodeState.of(target))
+    for (i in 0 until target.childCount) {
+      val child = target.getChild(i) ?: continue
+      val state = NodeState.of(child)
+      // Only children with a state, so that a click on an item with many children reads few.
+      if (state.hasState) {
+        nodes += child
+        states += state
+      }
+    }
+    return if (states.any { it.hasState }) Before(nodes, states) else null
+  }
 
   /**
-   * Called when the app has carried out the click on [target], whose state was [before]. Says the
-   * new state if it changed, of the item itself or else of the child that changed.
+   * Called when the app has carried out the click read in [before]. Reads the same items again from
+   * the app, since the saved copies are only updated by the app's later events, and says the new
+   * state if it changed, of the item itself or else of the child that changed.
    */
-  fun after(target: AccessibilityNodeInfoCompat, before: List<NodeState>, eventId: EventId?) {
-    @Suppress("DEPRECATION") // obtain(): copy, so that the caller's node is left as it was.
-    val node = AccessibilityNodeInfoCompat.obtain(target)
-    if (!node.refresh()) {
+  fun after(before: Before, eventId: EventId?) {
+    if (!before.nodes.all { it.refresh() }) {
       return
     }
-    val after = read(node, refresh = true)
     // A child is said itself, since the item's own copy of it is not read again.
-    val changed = firstChange(before, after.map { it.second }) ?: return
-    speaker.speak(node, after[changed].first, eventId)
+    val changed = firstChange(before.states, before.nodes.map(NodeState::of)) ?: return
+    speaker.speak(before.nodes[0], before.nodes[changed], eventId)
   }
 
-  /**
-   * The place of the first item whose state changed from [before] to [after], or null if none did,
-   * or if children came or went, as then the lists don't match.
-   */
+  /** The place of the first item whose state changed from [before] to [after], or null. */
   internal fun firstChange(before: List<NodeState>, after: List<NodeState>): Int? =
-    if (after.size != before.size) null else after.indices.firstOrNull { after[it] != before[it] }
-
-  /**
-   * The state of [node] and of its children, which the click rule says. A child is read again from
-   * the app if [refresh] is set, since the saved copy is only updated by the app's later event.
-   */
-  private fun read(
-    node: AccessibilityNodeInfoCompat,
-    refresh: Boolean,
-  ): List<Pair<AccessibilityNodeInfoCompat, NodeState>> {
-    val states = ArrayList<Pair<AccessibilityNodeInfoCompat, NodeState>>(node.childCount + 1)
-    states += node to NodeState.of(node)
-    for (i in 0 until node.childCount) {
-      val child = node.getChild(i) ?: continue
-      // Only children with a state, so that a click on an item with many children reads few.
-      if (!NodeState.of(child).hasState || (refresh && !child.refresh())) {
-        continue
-      }
-      states += child to NodeState.of(child)
-    }
-    return states
-  }
+    after.indices.firstOrNull { after[it] != before[it] }
 
   /** What a click says of one item: whether it is checked, its state, and whether it is open. */
   data class NodeState(
@@ -100,16 +98,14 @@ class EarlyClickState(private val speaker: Speaker) {
       get() = checkable || expandable || collapsible
 
     companion object {
-      fun of(node: AccessibilityNodeInfoCompat): NodeState {
-        val actions = node.actionList
-        return NodeState(
+      fun of(node: AccessibilityNodeInfoCompat) =
+        NodeState(
           checkable = node.isCheckable,
           checked = node.isChecked,
-          stateDescription = node.stateDescription?.toString(),
-          expandable = actions.any { it.id == AccessibilityActionCompat.ACTION_EXPAND.id },
-          collapsible = actions.any { it.id == AccessibilityActionCompat.ACTION_COLLAPSE.id },
+          stateDescription = AccessibilityNodeInfoUtils.getState(node)?.toString(),
+          expandable = AccessibilityNodeInfoUtils.isExpandable(node),
+          collapsible = AccessibilityNodeInfoUtils.isCollapsible(node),
         )
-      }
     }
   }
 }

@@ -301,8 +301,6 @@ public class Compositor {
   private final GlobalVariables globalVariables;
   private final TextComposer textComposer = this::parseTTSText;
   private final EarlyClickCues earlyClickCues = new EarlyClickCues();
-  private final RecentItems<AccessibilityNodeInfoCompat> clicksSaidEarly =
-      new RecentItems<>(4, 1000L, SystemClock::uptimeMillis);
 
   /////////////////////////////////////////////////////////////////////////////////
   // Inner classes
@@ -473,7 +471,7 @@ public class Compositor {
   public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
     @Nullable AccessibilityNodeInfoCompat source = AccessibilityEventUtils.sourceCompat(event);
     // Cues given with the state by sayClickStateEarly() are not given again.
-    if (source == null || clicksSaidEarly.removeFirst(source::equals) == null) {
+    if (source == null || !earlyClickCues.takeSaidEarly(source, event.getEventTime())) {
       // Without the source, the click rule gives its cues and no speech.
       handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
     }
@@ -489,7 +487,7 @@ public class Compositor {
       AccessibilityNodeInfoCompat target,
       AccessibilityNodeInfoCompat changed,
       @Nullable EventId eventId) {
-    clicksSaidEarly.add(target);
+    earlyClickCues.saidEarly(target);
     HandleEventOptions options = new HandleEventOptions().source(changed);
     EventFeedback feedback = getEventFeedback(EVENT_TYPE_VIEW_CLICKED, options);
     if (TextUtils.isEmpty(feedback.ttsOutput().orElse(null))) {

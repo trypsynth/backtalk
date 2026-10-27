@@ -43,7 +43,7 @@ class EarlyClickStateTest {
   @Test
   fun aSwitchHasAState() {
     val node = node().apply { isCheckable = true }
-    assertEquals(listOf(switchOff), earlyClickState.before(node))
+    assertEquals(listOf(switchOff), earlyClickState.before(node)?.states)
   }
 
   @Test
@@ -76,10 +76,5 @@ class EarlyClickStateTest {
   @Test
   fun nothingChanged() {
     assertNull(earlyClickState.firstChange(listOf(row, switchOff), listOf(row, switchOff)))
-  }
-
-  @Test
-  fun childrenThatCameOrWentAreNoChange() {
-    assertNull(earlyClickState.firstChange(listOf(row, switchOff), listOf(row)))
   }
 }
