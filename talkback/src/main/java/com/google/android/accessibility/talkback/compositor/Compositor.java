@@ -490,9 +490,9 @@ public class Compositor {
     earlyClickCues.saidEarly(target);
     HandleEventOptions options = new HandleEventOptions().source(changed);
     EventFeedback feedback = getEventFeedback(EVENT_TYPE_VIEW_CLICKED, options);
-    if (TextUtils.isEmpty(feedback.ttsOutput().orElse(null))) {
-      // The click rule leaves a state that the app describes to the app's state event, which
-      // comes later and says the same.
+    // The click rule leaves a state that the app describes to the app's state event, which comes
+    // later and says the same, unless a script silences it.
+    if (TextUtils.isEmpty(feedback.ttsOutput().orElse(null)) && !Scripts.isSilenced(changed)) {
       CharSequence state =
           AccessibilityNodeFeedbackUtils.getNodeStateDescription(changed, mContext, globalVariables);
       feedback = feedback.toBuilder().setTtsOutput(Optional.of(state)).build();
