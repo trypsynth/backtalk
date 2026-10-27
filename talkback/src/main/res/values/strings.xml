@@ -401,8 +401,6 @@
     <string name="title_pref_speech_control">Let other apps speak</string>
     <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speech_control">Apps that you allow can say text in your Backtalk voice. Nothing is said while the device is locked.</string>
-    <!-- Title of the setting that plays a sound before each thing another app says through Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="title_pref_speech_control_sound">Play a sound before other apps speak</string>
     <!-- Heading of the list of apps that asked to speak through Backtalk. [CHAR LIMIT=NONE] -->
     <string name="speech_control_apps_category">Apps</string>
     <!-- Shown in that list before any app has asked to speak. [CHAR LIMIT=NONE] -->

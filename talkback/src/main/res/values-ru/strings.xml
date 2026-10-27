@@ -1513,7 +1513,6 @@
   <string name="summary_pref_speakerphone_needs_permission">Требуется разрешение, которое Android не выдаёт программам чтения с экрана. Чтобы предоставить его, выполните эту команду через adb или Shizuku, затем вернитесь на этот экран: %1$s</string>
   <string name="title_pref_speech_control">Разрешить другим приложениям озвучивать текст</string>
   <string name="summary_pref_speech_control">Разрешённые приложения могут озвучивать текст голосом Backtalk. Пока устройство заблокировано, текст не озвучивается.</string>
-  <string name="title_pref_speech_control_sound">Воспроизводить звук перед озвучиванием из других приложений</string>
   <string name="speech_control_apps_category">Приложения</string>
   <string name="speech_control_no_apps">Ни одно приложение пока не запрашивало озвучивание текста.</string>
   <string name="speech_control_ask_title">Разрешить приложению <xliff:g id="app" example="Tasker">%1$s</xliff:g> озвучивать текст через Backtalk?</string>

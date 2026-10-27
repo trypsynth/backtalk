@@ -1731,8 +1731,6 @@
     <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speech_control">你允许的应用可以用你的 Backtalk 声音朗读文本。设备锁定时不朗读任何内容。</string>
 
-    <!-- Title of the setting that plays a sound before each thing another app says through Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="title_pref_speech_control_sound">其他应用说话前播放提示音</string>
 
     <!-- Heading of the list of apps that asked to speak through Backtalk. [CHAR LIMIT=NONE] -->
     <string name="speech_control_apps_category">应用</string>
