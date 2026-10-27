@@ -172,6 +172,8 @@ public abstract class EventFeedback {
         StringBuilderUtils.optionalTag("inlineFormatting", inlineFormatting()));
   }
 
+  public abstract Builder toBuilder();
+
   public static EventFeedback.Builder builder() {
     return new AutoValue_EventFeedback.Builder()
         .setTtsOutput(Optional.of(""))

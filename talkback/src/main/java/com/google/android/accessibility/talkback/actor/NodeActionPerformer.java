@@ -3,12 +3,14 @@ package com.google.android.accessibility.talkback.actor;
 import android.os.SystemClock;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.google.android.accessibility.talkback.Feedback.NodeAction;
+import com.google.android.accessibility.talkback.compositor.EarlyClickState;
 import com.google.android.accessibility.talkback.compositor.PreparedFocusSpeech;
 import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCache;
 import com.google.android.accessibility.utils.AccessibilityNode;
 import com.google.android.accessibility.utils.Performance;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
+import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -18,6 +20,7 @@ public class NodeActionPerformer {
   private static final String TAG = "NodeActionPerformer";
 
   private @Nullable NodeActionRecord actionRecord = null;
+  public @Nullable EarlyClickState earlyClickState = null;
 
   /** Creates node-action-record. */
   public static class NodeActionRecord {
@@ -60,8 +63,15 @@ public class NodeActionPerformer {
     if (nodeActionTarget != null) {
       TraversalTreeCache.onNodeAction(nodeAction.actionId());
       PreparedFocusSpeech.onNodeAction(nodeAction.actionId());
+      @Nullable List<EarlyClickState.NodeState> stateBefore =
+          (earlyClickState != null && nodeAction.actionId() == AccessibilityNodeInfo.ACTION_CLICK)
+              ? earlyClickState.before(nodeActionTarget.getCompat())
+              : null;
       long time = SystemClock.uptimeMillis();
       success = nodeActionTarget.performAction(nodeAction.actionId(), nodeAction.args(), eventId);
+      if (success && stateBefore != null) {
+        earlyClickState.after(nodeActionTarget.getCompat(), stateBefore, eventId);
+      }
       Performance.getInstance()
           .onAccessibilityActionPerformed(
               eventId, nodeAction.actionId(), time, success, nodeActionTarget);

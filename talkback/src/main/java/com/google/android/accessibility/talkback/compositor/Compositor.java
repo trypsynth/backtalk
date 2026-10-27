@@ -51,6 +51,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -300,6 +301,8 @@ public class Compositor {
   private final GlobalVariables globalVariables;
   private final TextComposer textComposer = this::parseTTSText;
   private final EarlyClickCues earlyClickCues = new EarlyClickCues();
+  private final RecentItems<AccessibilityNodeInfoCompat> clicksSaidEarly =
+      new RecentItems<>(4, 1000L, SystemClock::uptimeMillis);
 
   /////////////////////////////////////////////////////////////////////////////////
   // Inner classes
@@ -468,9 +471,36 @@ public class Compositor {
    * about 150 ms later, once the clicked item has updated, and then only says its new state.
    */
   public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
-    // Without the source, the click rule gives its cues and no speech.
-    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
+    @Nullable AccessibilityNodeInfoCompat source = AccessibilityEventUtils.sourceCompat(event);
+    // Cues given with the state by sayClickStateEarly() are not given again.
+    if (source == null || clicksSaidEarly.removeFirst(source::equals) == null) {
+      // Without the source, the click rule gives its cues and no speech.
+      handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
+    }
     earlyClickCues.given(event.getEventTime());
+  }
+
+  /**
+   * Gives the cues and new state of {@code target}, which Backtalk clicked, as soon as the app has
+   * carried out the click. {@code changed} is the target or the child whose state changed. The
+   * click event's cues are then skipped, and its speech is the same, so it is not said again.
+   */
+  public void sayClickStateEarly(
+      AccessibilityNodeInfoCompat target,
+      AccessibilityNodeInfoCompat changed,
+      @Nullable EventId eventId) {
+    clicksSaidEarly.add(target);
+    HandleEventOptions options = new HandleEventOptions().source(changed);
+    EventFeedback feedback = getEventFeedback(EVENT_TYPE_VIEW_CLICKED, options);
+    if (TextUtils.isEmpty(feedback.ttsOutput().orElse(null))) {
+      // The click rule leaves a state that the app describes to the app's state event, which
+      // comes later and says the same.
+      CharSequence state =
+          AccessibilityNodeFeedbackUtils.getNodeStateDescription(changed, mContext, globalVariables);
+      feedback = feedback.toBuilder().setTtsOutput(Optional.of(state)).build();
+    }
+    options.preparedFeedback = feedback;
+    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, options);
   }
 
   /**

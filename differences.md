@@ -16,6 +16,10 @@ This doesn't apply when focus moves to another window, when the screen changes, 
 
 When you double-tap, the app reports the click, and TalkBack then waited 150 ms before it played the click sound and vibration, so that it could read the item's new state, such as "on" or "off". Backtalk plays the sound and vibration as soon as the click is reported, and waits only to say the new state. On an emulator, the median time from lifting your finger to the click vibration went from about 206 ms to about 45 ms.
 
+### New state said as soon as you double-tap
+
+When you double-tap a switch, a checkbox, or an item that opens and closes, most apps change its state before they finish the click. Backtalk reads the state again right then and says it, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 128 ms to about 55 ms. Apps that change the state later still have it said when they report it, as before.
+
 ### Next swipe prepared in advance
 
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.
