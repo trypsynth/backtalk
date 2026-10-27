@@ -43,7 +43,6 @@ object OffScreenChildren {
    * inside its parent, is not: some apps report a slider in a list item that way, such as the
    * volume rows in Sound settings, and no scroll would change it.
    */
-  @JvmStatic
-  fun isOffScreen(visible: Boolean, bounds: Rect, parentBounds: Rect): Boolean =
+  internal fun isOffScreen(visible: Boolean, bounds: Rect, parentBounds: Rect): Boolean =
     !visible && (bounds.isEmpty || !parentBounds.contains(bounds))
 }
