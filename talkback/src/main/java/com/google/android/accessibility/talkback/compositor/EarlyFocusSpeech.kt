@@ -72,6 +72,12 @@ class EarlyFocusSpeech(clock: () -> Long = SystemClock::uptimeMillis) {
    */
   fun forget(node: AccessibilityNodeInfoCompat) = records.forget(node)
 
+  /**
+   * Forgets [node], whose focus the app refused after it was handled early, and returns whether it
+   * was spoken.
+   */
+  fun forgetSpoken(node: AccessibilityNodeInfoCompat): Boolean = records.forgetSpoken(node)
+
   /** Forgets every node, such as when the events waiting to be spoken are thrown away. */
   fun clear() = records.clear()
 
@@ -127,6 +133,9 @@ class EarlyFocusRecords<T>(maxItems: Int, maxAgeMs: Long, clock: () -> Long) {
   }
 
   fun forget(item: T) = entries.removeAll { it.item == item }
+
+  /** Forgets [item], and returns whether it was remembered as spoken. */
+  fun forgetSpoken(item: T): Boolean = entries.removeFirst { it.item == item }?.spoken == true
 
   fun clear() = entries.clear()
 

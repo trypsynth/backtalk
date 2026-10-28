@@ -276,6 +276,15 @@ public class EventFilter {
   }
 
   /**
+   * Forgets {@code node}, whose focus the app refused after {@link #onAccessibilityFocusSet}.
+   *
+   * @return whether it was spoken, so that the speech names an item that is not focused
+   */
+  public boolean onAccessibilityFocusFailed(AccessibilityNodeInfoCompat node) {
+    return earlyFocusSpeech.forgetSpoken(node);
+  }
+
+  /**
    * Speaks the accessibility focus that a swipe or other user navigation just set on {@code node},
    * without waiting for the app's focus event, which takes a round trip to the app and every event
    * listener before it would be spoken. The focus event, when it arrives, is then not spoken again.
@@ -424,6 +433,10 @@ public class EventFilter {
         || role == Role.ROLE_KEYBOARD_KEY
         || role == Role.ROLE_SEEK_CONTROL
         || role == Role.ROLE_PROGRESS_BAR
+        // Described as an image only once focused, and this comes before the app focuses it.
+        || (role == Role.ROLE_IMAGE
+            && AccessibilityNodeInfoUtils.supportsAction(
+                node, AccessibilityNodeInfoCompat.ACTION_SELECT))
         || AccessibilityNodeInfoUtils.isPage(node)
         || WebInterfaceUtils.supportsWebActions(node)) {
       return false;

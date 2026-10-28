@@ -117,6 +117,7 @@ import com.google.android.accessibility.talkback.actor.DirectionNavigationActor;
 import com.google.android.accessibility.talkback.actor.FocusActor;
 import com.google.android.accessibility.talkback.actor.FocusActorForScreenStateChange;
 import com.google.android.accessibility.talkback.actor.FocusActorForTapAndTouchExploration;
+import com.google.android.accessibility.talkback.actor.FocusManagerInternal;
 import com.google.android.accessibility.talkback.actor.FullScreenReadActor;
 import com.google.android.accessibility.talkback.actor.GestureReporter;
 import com.google.android.accessibility.talkback.actor.ImageCaptioner;
@@ -2666,21 +2667,41 @@ public class TalkBackService extends AccessibilityServiceCompat
       focuser.setBeforeActivationListener(screenFocusRestorer::rememberBeforeActivation);
     }
     focuser.setFocusSetListener(
-        (node, info, eventId, actionTime) -> {
-          screenOnSpeechSuppression.onFocusAction(info);
-          FocusActionInfo speechInfo =
-              screenOnSpeechSuppression.shouldSuppressFocus(node, info)
-                  ? new FocusActionInfo.Builder(info).setForceMuteFeedback(true).build()
-                  : info;
-          eventFilter.onAccessibilityFocusSet(
-              node,
-              speechInfo,
-              eventId,
-              actionTime,
-              /* continuousReading= */ fullScreenReadActor != null
-                  && fullScreenReadActor.isActive());
-          if (screenFocusRestorer != null) {
-            screenFocusRestorer.onFocusSet(node, info, actionTime);
+        new FocusManagerInternal.FocusSetListener() {
+          @Override
+          public void onAccessibilityFocusStarting(
+              AccessibilityNodeInfoCompat node,
+              FocusActionInfo info,
+              @Nullable EventId eventId,
+              long actionTime) {
+            screenOnSpeechSuppression.onFocusAction(info);
+            FocusActionInfo speechInfo =
+                screenOnSpeechSuppression.shouldSuppressFocus(node, info)
+                    ? new FocusActionInfo.Builder(info).setForceMuteFeedback(true).build()
+                    : info;
+            eventFilter.onAccessibilityFocusSet(
+                node,
+                speechInfo,
+                eventId,
+                actionTime,
+                /* continuousReading= */ fullScreenReadActor != null
+                    && fullScreenReadActor.isActive());
+          }
+
+          @Override
+          public void onAccessibilityFocusSet(
+              AccessibilityNodeInfoCompat node, FocusActionInfo info, long actionTime) {
+            if (screenFocusRestorer != null) {
+              screenFocusRestorer.onFocusSet(node, info, actionTime);
+            }
+          }
+
+          @Override
+          public void onAccessibilityFocusFailed(AccessibilityNodeInfoCompat node) {
+            // It was spoken before the app refused it, so the speech names an item not focused.
+            if (eventFilter.onAccessibilityFocusFailed(node)) {
+              speechController.interrupt(/* stopTtsSpeechCompletely= */ false);
+            }
           }
         });
     eventFilter.setTargetPredictor(directionNavigationActor::predictTarget);

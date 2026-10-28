@@ -51,6 +51,18 @@ class EarlyFocusRecordsTest {
   }
 
   @Test
+  fun aRefusedFocusTellsWhetherItWasSpoken() {
+    records.addSpoken("a", actionTime = 1_000L)
+    records.addStateUpdated("b", actionTime = 1_010L)
+    assertEquals(true, records.forgetSpoken("a"))
+    assertEquals(false, records.forgetSpoken("b"))
+    assertEquals(false, records.forgetSpoken("c"))
+    // Forgotten, so a later focus of either is spoken.
+    assertEquals(NONE, records.match("a", eventTime = 1_500L, consume = true))
+    assertEquals(NONE, records.match("b", eventTime = 1_500L, consume = true))
+  }
+
+  @Test
   fun clearingForgetsEveryNode() {
     records.addSpoken("a", actionTime = 1_000L)
     records.addSpoken("b", actionTime = 1_010L)

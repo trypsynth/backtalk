@@ -113,17 +113,27 @@ public class FocusManagerInternal {
     this.pipeline = pipeline;
   }
 
-  /** Told when accessibility focus has been set, before the app's focus event for it arrives. */
+  /** Told when accessibility focus is set, before the app's focus event for it arrives. */
   public interface FocusSetListener {
     /**
+     * Told just before the app is asked to focus {@code node}, so that speech can start while the
+     * app takes the focus, which can keep Backtalk waiting for tens of milliseconds.
+     *
      * @param actionTime when the focus action started, in {@link SystemClock#uptimeMillis()} time,
      *     before the app could send its focus event for it
      */
-    void onAccessibilityFocusSet(
+    void onAccessibilityFocusStarting(
         AccessibilityNodeInfoCompat node,
         FocusActionInfo info,
         @Nullable EventId eventId,
         long actionTime);
+
+    /** Told once the app has taken the focus that {@link #onAccessibilityFocusStarting} began. */
+    void onAccessibilityFocusSet(
+        AccessibilityNodeInfoCompat node, FocusActionInfo info, long actionTime);
+
+    /** Told when the app refused the focus that {@link #onAccessibilityFocusStarting} began. */
+    void onAccessibilityFocusFailed(AccessibilityNodeInfoCompat node);
   }
 
   private @Nullable FocusSetListener focusSetListener;
@@ -474,20 +484,30 @@ public class FocusManagerInternal {
       @NonNull FocusActionInfo focusActionInfo,
       @Nullable EventId eventId) {
     long currentTime = SystemClock.uptimeMillis();
+    // Worked out before the action, so that speech can start while the app takes the focus. The
+    // mute it uses up is kept for the next focus if the app refuses this one.
+    boolean wasMutingNextFocus = muteNextFocus;
+    FocusActionInfo updatedInfo = updateFocusActionInfoIfNecessary(focusActionInfo, node);
+    if (focusSetListener != null) {
+      focusSetListener.onAccessibilityFocusStarting(node, updatedInfo, eventId, currentTime);
+    }
     boolean result =
         pipeline.returnFeedback(
             eventId,
             Feedback.nodeAction(node, AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS));
     if (result) {
-      focusActionInfo = updateFocusActionInfoIfNecessary(focusActionInfo, node);
-      // Told first, so that speech can start before the history walks the node's ancestors. The
-      // history only has to be ready by the time the app's focus event arrives.
+      focusActionInfo = updatedInfo;
       if (focusSetListener != null) {
-        focusSetListener.onAccessibilityFocusSet(node, focusActionInfo, eventId, currentTime);
+        focusSetListener.onAccessibilityFocusSet(node, focusActionInfo, currentTime);
       }
       // AccessibilityFocusActionHistory makes copy of the node, no need to obtain() here.
       history.onAccessibilityFocusAction(
           node, focusActionInfo, currentTime, screenState.getStableScreenState());
+    } else {
+      muteNextFocus |= wasMutingNextFocus;
+      if (focusSetListener != null) {
+        focusSetListener.onAccessibilityFocusFailed(node);
+      }
     }
     LogUtils.d(
         TAG,
