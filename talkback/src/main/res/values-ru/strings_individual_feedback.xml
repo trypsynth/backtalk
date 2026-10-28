@@ -45,4 +45,14 @@
   <string name="individual_vibration_braille_hold">Клавиатура Брайля: удержание пальцев на экране</string>
   <string name="individual_vibration_braille_gesture">Клавиатура Брайля: другие жесты</string>
   <string name="individual_vibration_braille_nothing_to_delete">Клавиатура Брайля: нечего удалять</string>
+
+  <string name="individual_sound_screen_on">Экран включён</string>
+  <string name="individual_sound_rotor_next">Следующий параметр</string>
+  <string name="individual_sound_rotor_previous">Предыдущий параметр</string>
+  <string name="individual_sound_keyboard_show">Клавиатура открыта</string>
+  <string name="individual_sound_keyboard_hide">Клавиатура скрыта</string>
+  <string name="individual_sound_direct_touch_enter">Прямое касание включено</string>
+  <string name="individual_sound_direct_touch_exit">Прямое касание отключено</string>
+  <string name="individual_sound_wrap_forward">Переход к началу</string>
+  <string name="individual_sound_wrap_back">Переход к концу</string>
 </resources>

@@ -18,7 +18,7 @@ package com.google.android.accessibility.talkback.gesture
 
 import android.util.Log
 import android.view.MotionEvent
-import com.google.android.accessibility.talkback.BuildConfig
+import com.google.android.libraries.accessibility.utils.log.LogUtils
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -171,7 +171,7 @@ class TwoFingerRotationTracker(
     lastAngle = angleDegrees(x0, y0, x1, y1)
     accumulated = 0f
     state = State.TRACKING
-    if (BuildConfig.DEBUG) {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(DEBUG_TAG, "Rotation tracking started: distance=%.0f".format(startDistance))
     }
   }
@@ -251,7 +251,7 @@ class TwoFingerRotationTracker(
   }
 
   private fun debugLog(result: String, arc: Float, translation: Float, radial: Float) {
-    if (BuildConfig.DEBUG) {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(
         DEBUG_TAG,
         ("Rotation $result: angle=%.1f arc=%.0f translation=%.0f radial=%.0f slop=%.0f " +

@@ -522,7 +522,7 @@ public class TouchInteractionMonitor
         waitFirstMotionEvent = false;
       }
       if (clearGestureDetectorOnNextDown && event.getActionMasked() == ACTION_DOWN) {
-        if (BuildConfig.DEBUG) {
+        if (LogUtils.shouldLog(Log.DEBUG)) {
           Log.d(DEBUG_GESTURE_TAG, "New touch after a dispatched gesture, clearing matchers");
         }
         clearGestureDetectorOnNextDown = false;
@@ -657,7 +657,7 @@ public class TouchInteractionMonitor
   @SuppressWarnings("Override")
   @Override
   public void onStateChanged(int state) {
-    if (BuildConfig.DEBUG) {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(
           DEBUG_GESTURE_TAG,
           TouchInteractionController.stateToString(this.state)
@@ -973,7 +973,7 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureCompleted(AccessibilityGestureEvent gestureEvent) {
-    if (BuildConfig.DEBUG) {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(
           DEBUG_GESTURE_TAG,
           "Gesture "
@@ -1119,7 +1119,7 @@ public class TouchInteractionMonitor
         && (state != STATE_TOUCH_INTERACTING
             || gestureStarted
             || !gestureDetector.isMultiFingerGesturesEnabled())) {
-      if (BuildConfig.DEBUG && event.getActionMasked() == ACTION_POINTER_DOWN) {
+      if (LogUtils.shouldLog(Log.DEBUG) && event.getActionMasked() == ACTION_POINTER_DOWN) {
         Log.d(
             DEBUG_GESTURE_TAG,
             "Rotation not possible: state="
@@ -1135,7 +1135,7 @@ public class TouchInteractionMonitor
     }
     if (!wasRotating) {
       // The rotation starts. No other gesture, touch exploration or passthrough for this touch.
-      if (BuildConfig.DEBUG) {
+      if (LogUtils.shouldLog(Log.DEBUG)) {
         Log.d(DEBUG_GESTURE_TAG, "Two-finger rotation started");
       }
       keepMonitorTouchExplore = false;
@@ -1152,7 +1152,7 @@ public class TouchInteractionMonitor
   private void onRotationStep(boolean clockwise) {
     int gestureId =
         clockwise ? GESTURE_2_FINGER_ROTATE_CLOCKWISE : GESTURE_2_FINGER_ROTATE_COUNTERCLOCKWISE;
-    if (BuildConfig.DEBUG) {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(
           DEBUG_GESTURE_TAG,
           "Gesture " + AccessibilityServiceCompatUtils.gestureIdToString(gestureId));

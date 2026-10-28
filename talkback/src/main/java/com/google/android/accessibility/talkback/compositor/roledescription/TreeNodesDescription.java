@@ -291,6 +291,14 @@ public class TreeNodesDescription {
         TextUtils.isEmpty(
             AccessibilityNodeFeedbackUtils.getNodeContentDescription(
                 node, context, globalVariables));
+    // A supplemental description describes the node's contents, so they aren't read again. So
+    // does the text Chrome gives a web element named by its page, such as an X post named with
+    // aria-labelledby.
+    boolean isDescriptionEmpty =
+        isContentDescriptionEmpty
+            && TextUtils.isEmpty(AccessibilityNodeFeedbackUtils.getSupplementalDescription(node))
+            && (TextUtils.isEmpty(AccessibilityNodeInfoUtils.getChromeRole(node))
+                || TextUtils.isEmpty(node.getText()));
     // Samsung labels the notification card with its title but leaves the message in a child.
     // Read the body before the time; general child aggregation would repeat title/time.
     if (!isContentDescriptionEmpty) {
@@ -318,7 +326,7 @@ public class TreeNodesDescription {
         && (role == Role.ROLE_GRID
             || role == Role.ROLE_LIST
             || role == Role.ROLE_PAGER
-            || isContentDescriptionEmpty)) {
+            || isDescriptionEmpty)) {
       // Append the node description if needed. It recurse on all visible & un-focusable children,
       // ascending.
       ReorderedChildrenIterator childIterator =
@@ -368,7 +376,7 @@ public class TreeNodesDescription {
       }
     }
 
-    LogUtils.v(TAG, "      treeNodesDescription:  %s", logString.toString());
+    LogUtils.v(TAG, "      treeNodesDescription:  %s", logString);
 
     CharSequence description =
         CompositorUtils.joinCharSequences(joinList, CompositorUtils.getSeparator(), PRUNE_EMPTY);

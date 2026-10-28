@@ -247,6 +247,16 @@ public class ScreenFeedbackManager
           com.google.android.accessibility.talkback.Feedback.interrupt(HINT, /* level= */ 2));
     }
 
+    // Only a sound theme gives these sounds, so they play nothing otherwise.
+    if (interpretation.getShouldAnnounceInputMethodChange()) {
+      pipeline.returnFeedback(
+          eventId,
+          com.google.android.accessibility.talkback.Feedback.sound(
+              interpretation.getInputMethod().getId() == WINDOW_ID_NONE
+                  ? R.id.keyboard_hide
+                  : R.id.keyboard_show));
+    }
+
     // This will throw exception if has no any speaker.
     checkSpeaker();
 

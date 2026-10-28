@@ -75,10 +75,7 @@
   <string name="script_log_copy">Скопировать журнал</string>
   <string name="script_log_copied">Журнал скопирован</string>
   <string name="script_log_entry"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="level">%2$s</xliff:g></string>
-  <string name="script_api_too_old">Требуется API скриптов версии <xliff:g id="needed">%1$d</xliff:g> или выше. В этой версии Backtalk используется API версии <xliff:g id="current">%2$d</xliff:g>, поэтому некоторые части скрипта могут не работать.</string>
-  <string name="script_api_untested">Скрипт проверен с API скриптов до версии <xliff:g id="tested">%1$d</xliff:g>. В этой версии Backtalk используется API версии <xliff:g id="current">%2$d</xliff:g>, поэтому скрипт может работать не так, как ожидается.</string>
   <string name="script_state_incompatible">Может не работать с этой версией Backtalk</string>
-  <string name="script_api_range">API скриптов: от <xliff:g id="min">%1$d</xliff:g> до <xliff:g id="tested">%2$d</xliff:g></string>
   <string name="script_compatibility_title">Совместимость</string>
   <string name="script_install_anyway">Всё равно установить</string>
   <string name="script_update_anyway">Всё равно обновить</string>

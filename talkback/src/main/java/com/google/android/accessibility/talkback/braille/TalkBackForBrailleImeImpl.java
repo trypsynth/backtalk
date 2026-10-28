@@ -186,15 +186,7 @@ public class TalkBackForBrailleImeImpl implements TalkBackForBrailleIme {
           Performance.EVENT_ID_UNTRACKED,
           Feedback.passThroughMode(LOCK_PASS_THROUGH, /* region= */ null));
     } else {
-      boolean ebtEnabled =
-          SharedPreferencesUtils.getBooleanPref(
-              prefs,
-              service.getResources(),
-              R.string.pref_explore_by_touch_key,
-              R.bool.pref_explore_by_touch_default);
-      if (ebtEnabled) {
-        talkBackPrivateMethodProvider.requestTouchExploration(true);
-      }
+      talkBackPrivateMethodProvider.requestTouchExploration(true);
     }
   }
 

@@ -32,6 +32,9 @@ import androidx.preference.Preference;
 import androidx.preference.TwoStatePreference;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.audio.AudioDeviceRouter;
+import com.google.android.accessibility.talkback.soundthemes.SoundTheme;
+import com.google.android.accessibility.talkback.soundthemes.SoundThemes;
+import com.google.android.accessibility.talkback.soundthemes.SoundThemesFragment;
 import com.google.android.accessibility.talkback.speakerphone.SpeakerphoneSettings;
 import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.PreferenceSettingsUtils;
@@ -118,6 +121,32 @@ public class SoundAndVibrationFragment extends TalkbackBaseFragment {
     }
   }
 
+  /** Lists the installed sound themes, and puts the one chosen in use. */
+  private void updateSoundSchemePreference() {
+    Context context = getContext();
+    Preference pref = findPreference(SoundThemes.PREF_ACTIVE);
+    if (context == null || !(pref instanceof ListPreference)) {
+      return;
+    }
+    ListPreference listPref = (ListPreference) pref;
+    java.util.List<SoundTheme> themes = SoundThemes.installed(context);
+    CharSequence[] names = new CharSequence[themes.size()];
+    CharSequence[] ids = new CharSequence[themes.size()];
+    for (int i = 0; i < themes.size(); i++) {
+      names[i] = SoundThemesFragment.nameOf(context, themes.get(i));
+      ids[i] = themes.get(i).getId();
+    }
+    listPref.setEntries(names);
+    listPref.setEntryValues(ids);
+    listPref.setValue(SoundThemes.active(context, prefs).getId());
+    listPref.setOnPreferenceChangeListener(
+        (p, newValue) -> {
+          SoundThemes.activate(context, prefs, (String) newValue);
+          listPref.setValue((String) newValue);
+          return false;
+        });
+  }
+
   private void updateAudioOutputPreference() {
     FragmentActivity activity = getActivity();
     if (activity == null) {
@@ -154,6 +183,7 @@ public class SoundAndVibrationFragment extends TalkbackBaseFragment {
 
     updateAudioOutputPreference();
     updateSpeakerphonePreference();
+    updateSoundSchemePreference();
     Preference audioPref =
         PreferenceSettingsUtils.findPreference(activity, getString(R.string.pref_audio_output_device_key));
     if (audioPref instanceof ListPreference) {

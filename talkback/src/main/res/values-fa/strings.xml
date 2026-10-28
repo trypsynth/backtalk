@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">جستجو لغو شد.</string>
   <string name="notification_type_status_started">شروع شد</string>
   <string name="notification_type_status_stopped">متوقف شده</string>
-  <string name="notification_type_status_connected">متصل شد</string>
-  <string name="notification_battery_level_unknown">نامشخص</string>
   <string name="notification_battery_saver_mode">«بهینه‌سازی باتری» روشن است</string>
   <string name="template_no_text_selected">نوشتاری انتخاب نشده است</string>
   <string name="template_charging">در حال شارژ %1$s سطح باتری %2$s درصد.</string>
   <string name="template_charging_lite">درحال شارژ شدن %1$s</string>
-  <string name="template_battery_state">برق %1$s %2$s درصد %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">زنگ لرزشی.</string>
   <string name="value_ringer_silent">بی‌صدا کردن زنگ.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">اعلام کردن زمان</string>
   <string name="pref_speak_time_summary">وقتی صفحه‌نمایش را روشن می‌کنید</string>
   <string name="summary_speak_container_element_positions">حاوی اطلاعات درحین وارد و خارج شدن از فهرست‌ها، شبکه‌ها، و دیگر محتوی‌ها است</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">«تأخیر در تمرکز» به کنترل خواندن اضافه شد</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">با ۳ انگشت تند بکشید تا از «کنترل خواندن» استفاده شود و هرزمان خواستید مدت زمان «تأخیر در تمرکز» را تغییر دهید</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">از «تایپ با بلند کردن انگشت» استفاده شود؟</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">‏وقتی «تأخیر در تمرکز هنگام تایپ» روی کمتر از ۰٫۳ ثانیه تنظیم شده باشد، تایپ کردن با دو تک‌ضرب زدن بسیار دشوار خواهد بود. «عوض شود» را انتخاب کنید تا به‌طور خودکار از «تایپ با بلند کردن انگشت» استفاده شود.\n\nبرای استفاده از «تایپ با بلند کردن انگشت»، انگشتتان را روی کلید موردنظر نگه دارید تا انتخاب شود، سپس انگشتتان را بلند کنید تا حرف مربوطه تایپ شود.\n\nمی‌توانید این مورد را در تنظیمات TalkBack سفارشی‌سازی کنید.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">«تأخیر در تمرکز هنگام تایپ» به کنترل خواندن اضافه شد</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">اگر برای دو تک‌ضرب زدن هنگام تایپ با مشکل روبرو هستید، با ۳ انگشت تند بکشید تا از کنترل خواندن استفاده شود و مدت زمان «تأخیر در تمرکز» را افزایش دهید</string>
   <string name="gestures_announce_typing_focus_wont_change">«تأخیر در تمرکز هنگام تایپ» بدون «تایپ با بلند کردن انگشت» کار نمی‌کند.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">متوجهم</string>
   <string name="reset_letency_reduction_settings_dialog_title">تنظیمات تأخیر بازنشانی شود؟</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">با این کار، همه تنظیمات تأخیر به حالت پیش‌فرض بازنشانی خواهد شد</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">بازنشانی</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">خواندن همه به‌روزرسانی‌های پیشرفت</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">حاوی به‌روزرسانی درحین بارگیری، دنبال کردن مسیرهای رانندگی، و موارد دیگر است. وقتی خاموش باشد، همچنان به‌روزرسانی دریافت خواهید کرد اما به دفعات کمتر.</string>
   <string name="pref_speak_system_window_titles_summary">پنجره‌های سیستم و ورودی بلند خوانده می‌شود، مثل زمانی‌که به نوار وضعیت، اعلان، یا صفحه‌کلید دیگری می‌روید</string>
-  <string name="title_pref_explore_by_touch">کاوش با لمس</string>
   <string name="title_pref_category_visual">تصویری</string>
   <string name="title_pref_category_controls">کنترل‌ها</string>
   <string name="title_pref_category_braille">بریل</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">برای استفاده از کنترل‌های خواندن، تند به‌سمت بالا و سپس پایین بکشید.</string>
   <string name="title_pref_manage_keyboard_shortcuts">میان‌برهای صفحه‌کلید</string>
   <string name="title_pref_export_custom_labels">صادر کردن برچسب‌های سفارشی</string>
-  <string name="title_pref_play_store">‏باز کردن TalkBack در «فروشگاه Play»</string>
-  <string name="summary_pref_play_store">‏نسخه کنونی TalkBack‏: %1$s</string>
   <string name="title_pref_help_and_feedback">راهنما و بازخورد</string>
   <string name="title_pref_gup">‏تماس با «تیم پشتیبانی از ناتوانان در Google»</string>
   <string name="subtitle_pref_gup">‏برای استفاده از TalkBack راهنمایی دریافت کنید یا مشکلات را گزارش کنید</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">‏‫TalkBack اعلام‌ها را پیش‌بار می‌کند تا هنگام تایپ کردن تأخیر را کاهش دهد</string>
   <string name="summary_cache_keyboard_keys_disabled">‏برای استفاده از این ویژگی، از «نوشتار به گفتار Google» استفاده کنید</string>
   <string name="value_direction_down">پایین</string>
-  <string name="value_direction_down_and_right">پایین سپس راست</string>
   <string name="title_pref_shortcut_up">تند کشیدن به‌بالا</string>
   <string name="title_pref_shortcut_up_xr">به داخل چرخاندن کف دست دوم، به‌هم نزدیک کردن انگشتان، و تند بالا کشیدن</string>
   <string name="title_pref_shortcut_down">تند کشیدن به‌پایین</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">سفارشی‌سازی اشاره‌ها</string>
   <string name="button_disable_all_events">غیرفعال کردن همه موارد</string>
   <string name="button_enable_all_events">فعال کردن همه موارد</string>
-  <string name="dialog_title_disable_exploration">کاوش با لمس را غیرفعال می‌کنید؟</string>
-  <string name="dialog_message_disable_exploration">‏مطمئنید می‌خواهید کاوش با لمس را خاموش کنید؟\n\nدیگر وقتی صفحه را لمس می‌کنید دستگاهتان به اشاره‌های میان‌بر یا موارد گفتاری پاسخی نمی‌دهد.</string>
   <string name="dialog_title_enable_tree_debug">اشکال‌زدایی سر شاخه را فعال می‌کنید؟</string>
   <string name="dialog_message_enable_tree_debug">‏مطمئنید می‌خواهید اشکال‌زدایی سرشاخه را روشن کنید؟\n\nاشکال‌زدایی سرشاخه محتوای صفحه نمایش شما را در گزارش‌های دستگاهتان نمایش می‌دهد که ممکن است سایر برنامه‌ها آن را بخوانند.</string>
   <string name="dialog_title_enable_tree_debug_gesture">اشاره سه تک‌ضرب زدن با ۴ انگشت دوباره اختصاص داده شود؟</string>
@@ -912,8 +898,6 @@
   <string name="typing_echo_change">‫%1$s صدای صفحه‌کلید فیزیکی ایجاد می‌کنند</string>
   <string name="reading_control_toggle_prefix_xr">برای روشن/خاموش کردن حالت کنترل خواندن، کف دست دوم را به داخل بچرخانید و طولانی فشار دهید.</string>
   <string name="gesture_1_or_2">%1$s یا %2$s</string>
-  <string name="select_setting_hint">برای انتخاب تنظیمی دیگر، %1$s</string>
-  <string name="adjust_setting_hint">برای تغییر تنظیم، %1$s</string>
   <string name="adjust_granularity_hint">برای یک‌به‌یک خواندن %2$s، %1$s</string>
   <string name="adjust_typo_hint">برای پیشنهادها، %1$s.</string>
   <string name="use_action_hint">برای انجام کنش، دو تک‌ضرب بزنید</string>
@@ -1235,8 +1219,6 @@
   <string name="wear_training_typing_text5">در زیر آن را امتحان کنید</string>
   <string name="wear_training_typing_practice_button_content_description">تایپ کردن با صفحه کلید</string>
   <string name="wear_training_end_tutorial_title">‏حالا می‌توانید از TalkBack استفاده کنید</string>
-  <string name="talkback_updated_notification_title">‏TalkBack به‌روزرسانی شده است</string>
-  <string name="talkback_updated_notification_content">برای اطلاعات بیشتر، تک‌ضرب بزنید</string>
   <string name="wear_new_feature_page_title">‏به نسخه به‌روزشده TalkBack خوش آمدید</string>
   <string name="wear_new_feature_page_content">چند رفع اشکال و تغییراتی در نحوه حرکت کردن تمرکز خواهید دید</string>
   <string name="wear_new_feature_page_button_content_description">پایان</string>

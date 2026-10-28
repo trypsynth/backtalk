@@ -4,7 +4,6 @@
   <string name="summary_custom_action">現在の項目についてのカスタム アクションが存在する場合に表示されます。</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack ジェスチャー更新完了</string>
   <string name="notification_message_talkback_gestures_changed">TalkBack を開いて詳細をご確認ください</string>
-  <string name="talkback_updated_notification_content">詳しくは TalkBack を開いてください</string>
   <string name="new_feature_in_talkback_title">新機能</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">OK</string>
   <string name="turn_off_talkback">OFF にする</string>

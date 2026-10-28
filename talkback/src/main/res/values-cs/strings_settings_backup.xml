@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_backup_title">Zálohování a obnovení</string>
+    <string name="settings_backup_export">Exportovat nastavení</string>
+    <string name="settings_backup_export_summary">Uložit všechna nastavení do souboru.</string>
+    <string name="settings_backup_import">Importovat nastavení</string>
+    <string name="settings_backup_import_summary">Nahradit aktuální nastavení nastavením ze souboru, který jste exportovali. Nastavení vázaná na tento telefon, například spárované braillské řádky a váš klíč Gemini API, zůstanou beze změny.</string>
+    <string name="settings_backup_export_done">Nastavení exportováno</string>
+    <string name="settings_backup_export_failed">Nastavení se nepodařilo exportovat</string>
+    <string name="settings_backup_import_done">Nastavení importováno</string>
+    <string name="settings_backup_import_restart">Některá importovaná nastavení vyžadují pro použití vypnout a znovu zapnout Backtalk.</string>
+    <string name="settings_backup_import_failed">Tento soubor se nepodařilo načíst</string>
+</resources>

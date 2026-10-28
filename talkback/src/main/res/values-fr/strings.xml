@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Recherche annulée</string>
   <string name="notification_type_status_started">Commencé</string>
   <string name="notification_type_status_stopped">Arrêté</string>
-  <string name="notification_type_status_connected">connecté</string>
-  <string name="notification_battery_level_unknown">inconnu</string>
   <string name="notification_battery_saver_mode">Économiseur de batterie activé</string>
   <string name="template_no_text_selected">Aucun texte sélectionné</string>
   <string name="template_charging">Chargement en cours : %1$s. Niveau de la batterie : %2$s pour cent.</string>
   <string name="template_charging_lite">Chargement : %1$s</string>
-  <string name="template_battery_state">Alimentation : %1$s %2$s pour cent %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Sonnerie en mode vibreur</string>
   <string name="value_ringer_silent">Sonnerie en mode silencieux</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Dire l\'heure</string>
   <string name="pref_speak_time_summary">Lorsque vous allumez l\'écran</string>
   <string name="summary_speak_container_element_positions">Énonce les informations quand vous entrez dans des listes, grilles et autres types de conteneurs ou les quittez</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Délai du focus ajouté au contrôle de lecture</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Balayez l\'écran avec trois doigts pour utiliser le contrôle de la lecture et modifier le délai de focus à tout moment</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Utiliser la saisie par glissement ?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Lorsque le délai du focus pour la saisie est inférieur à 0,3 seconde, il est très difficile d\'utiliser le double appui pour taper du texte. Sélectionnez \"Changer\" pour passer automatiquement à la saisie par glissement.\n\nPour utiliser la saisie par glissement, appuyez de manière prolongée sur une touche pour la sélectionner, puis faites glisser votre doigt pour saisir.\n\nVous pouvez personnaliser cette fonction dans les paramètres TalkBack.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Délai du focus pour la saisie ajouté au contrôle de lecture</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Si vous rencontrez des problèmes avec le double appui lors de la saisie, balayez l\'écran avec trois doigts pour utiliser le contrôle de lecture et passez à un délai plus long de focus pour la saisie</string>
   <string name="gestures_announce_typing_focus_wont_change">Le délai du focus pour la saisie ne fonctionne pas sans la saisie par glissement.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">OK</string>
   <string name="reset_letency_reduction_settings_dialog_title">Réinitialiser les paramètres de délai ?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Tous les paramètres de délai seront rétablis par défaut</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Réinitialiser</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Énoncer toute mise à jour de progression</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Cela inclut les mises à jour lorsque vous téléchargez, suivez un itinéraire et plus. Si cette option est désactivée, vous recevrez tout de même des mises à jour moins fréquentes.</string>
   <string name="pref_speak_system_window_titles_summary">Énoncer le nom des fenêtres système et de saisie, par exemple lorsque vous passez à la barre d\'état, aux notifications ou à un autre clavier</string>
-  <string name="title_pref_explore_by_touch">Explorer au toucher</string>
   <string name="title_pref_category_visual">Visuel</string>
   <string name="title_pref_category_controls">Commandes</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Pour utiliser les commandes de lecture, balayez l\'écran vers le haut, puis vers le bas.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Raccourcis clavier</string>
   <string name="title_pref_export_custom_labels">Exporter les libellés personnalisés</string>
-  <string name="title_pref_play_store">Ouvrir TalkBack sur le Play Store</string>
-  <string name="summary_pref_play_store">Version TalkBack actuelle : %1$s</string>
   <string name="title_pref_help_and_feedback">Aide et commentaires</string>
   <string name="title_pref_gup">Contacter l\'assistance Google dédiée au handicap</string>
   <string name="subtitle_pref_gup">Obtenez de l\'aide pour utiliser TalkBack ou signalez des problèmes</string>
@@ -639,7 +628,6 @@ Avec un délai inférieur à 0,3 seconde, l\'appui double d\'activation sera re
   <string name="summary_cache_keyboard_keys">TalkBack précharge les annonces pour réduire le délai lorsque vous saisissez du texte</string>
   <string name="summary_cache_keyboard_keys_disabled">Utilisez cette fonctionnalité grâce à la synthèse vocale Google</string>
   <string name="value_direction_down">vers le bas</string>
-  <string name="value_direction_down_and_right">vers le bas puis la droite</string>
   <string name="title_pref_shortcut_up">Balayer l\'écran vers le haut</string>
   <string name="title_pref_shortcut_up_xr">Paume de la main secondaire vers vous, pincer et balayer vers le haut</string>
   <string name="title_pref_shortcut_down">Balayer l\'écran vers le bas</string>
@@ -777,8 +765,6 @@ Avec un délai inférieur à 0,3 seconde, l\'appui double d\'activation sera re
   <string name="button_customize_gesture_mappings">Personnaliser les gestes</string>
   <string name="button_disable_all_events">Tout désactiver</string>
   <string name="button_enable_all_events">Tout activer</string>
-  <string name="dialog_title_disable_exploration">Désactiver la fonctionnalité Explorer au toucher ?</string>
-  <string name="dialog_message_disable_exploration">Voulez-vous vraiment désactiver la fonctionnalité Explorer au toucher ?\n\nVotre appareil ne répondra plus aux gestes de raccourci et n\'énoncera plus les éléments lorsque vous toucherez l\'écran.</string>
   <string name="dialog_title_enable_tree_debug">Activer le débogage de l\'arborescence des nœuds ?</string>
   <string name="dialog_message_enable_tree_debug">Voulez-vous vraiment activer le débogage de l\'arborescence de nœuds ?\n\nSi vous utilisez cette fonctionnalité, les journaux de votre appareil auront accès au contenu affiché sur votre écran, qui pourra être lu par d\'autres applications.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Réattribuer le triple appui à quatre doigts ?</string>
@@ -911,8 +897,6 @@ Avec un délai inférieur à 0,3 seconde, l\'appui double d\'activation sera re
   <string name="typing_echo_change">Écho %1$s du clavier physique</string>
   <string name="reading_control_toggle_prefix_xr">Paume de la main secondaire vers vous, appuyer de manière prolongée pour activer/désactiver le mode contrôle de lecture.</string>
   <string name="gesture_1_or_2">%1$s ou %2$s</string>
-  <string name="select_setting_hint">%1$s pour sélectionner un autre paramètre</string>
-  <string name="adjust_setting_hint">%1$s pour ajuster le paramètre</string>
   <string name="adjust_granularity_hint">%1$s pour lire un(e) %2$s à la fois</string>
   <string name="adjust_typo_hint">%1$s pour obtenir des suggestions.</string>
   <string name="use_action_hint">Appuyez deux fois pour effectuer l\'action</string>
@@ -1234,8 +1218,6 @@ Avec un délai inférieur à 0,3 seconde, l\'appui double d\'activation sera re
   <string name="wear_training_typing_text5">Essayez ci-dessous.</string>
   <string name="wear_training_typing_practice_button_content_description">Saisie au clavier</string>
   <string name="wear_training_end_tutorial_title">Vous pouvez commencer à utiliser TalkBack</string>
-  <string name="talkback_updated_notification_title">TalkBack a été mis à jour</string>
-  <string name="talkback_updated_notification_content">Appuyez pour en savoir plus</string>
   <string name="wear_new_feature_page_title">Bienvenue dans la nouvelle version de TalkBack</string>
   <string name="wear_new_feature_page_content">Vous remarquerez quelques corrections de bugs et des modifications quant au déplacement du curseur.</string>
   <string name="wear_new_feature_page_button_content_description">Terminer</string>

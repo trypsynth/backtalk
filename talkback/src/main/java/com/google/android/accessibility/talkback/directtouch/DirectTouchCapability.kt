@@ -19,21 +19,42 @@ package com.google.android.accessibility.talkback.directtouch
 import android.content.pm.PackageManager
 import android.os.Bundle
 
-object DirectTouchCapability {
-  /** Whether the app, or its launch activity, sets [DirectTouchSettings.CAPABILITY_KEY] to true. */
-  fun declaresDirectTouch(pm: PackageManager, packageName: String): Boolean {
-    try {
-      val appInfo = pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-      if (declares(appInfo.metaData)) {
-        return true
-      }
-      val component = pm.getLaunchIntentForPackage(packageName)?.component ?: return false
-      return declares(pm.getActivityInfo(component, PackageManager.GET_META_DATA).metaData)
-    } catch (_: Exception) {
-      return false
-    }
-  }
+/** What an app asks for in its manifest, on its application or its launch activity. */
+data class DirectTouchCapability(
+  /** It sets [DirectTouchSettings.CAPABILITY_KEY], for direct touch on the whole screen. */
+  val wholeScreen: Boolean,
+  /** It sets [DirectTouchSettings.REGIONS_CAPABILITY_KEY], for direct touch on the views it marks. */
+  val regions: Boolean,
+) {
+  /** Whether it asks for direct touch at all, so that it is turned on the first time it's seen. */
+  val any: Boolean
+    get() = wholeScreen || regions
 
-  private fun declares(metaData: Bundle?): Boolean =
-    metaData?.getBoolean(DirectTouchSettings.CAPABILITY_KEY, false) == true
+  /** What either this or [other] asks for. */
+  operator fun plus(other: DirectTouchCapability): DirectTouchCapability =
+    DirectTouchCapability(wholeScreen || other.wholeScreen, regions || other.regions)
+
+  companion object {
+    val NONE = DirectTouchCapability(wholeScreen = false, regions = false)
+
+    /** What the app asks for, in its application or launch activity meta-data. */
+    fun of(pm: PackageManager, packageName: String): DirectTouchCapability {
+      try {
+        val app = fromMetaData(pm.getApplicationInfo(packageName, PackageManager.GET_META_DATA).metaData)
+        if (app.wholeScreen && app.regions) {
+          return app
+        }
+        val component = pm.getLaunchIntentForPackage(packageName)?.component ?: return app
+        return app + fromMetaData(pm.getActivityInfo(component, PackageManager.GET_META_DATA).metaData)
+      } catch (_: Exception) {
+        return NONE
+      }
+    }
+
+    fun fromMetaData(metaData: Bundle?): DirectTouchCapability =
+      DirectTouchCapability(
+        wholeScreen = metaData?.getBoolean(DirectTouchSettings.CAPABILITY_KEY, false) == true,
+        regions = metaData?.getBoolean(DirectTouchSettings.REGIONS_CAPABILITY_KEY, false) == true,
+      )
+  }
 }

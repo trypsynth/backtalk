@@ -53,9 +53,10 @@ jobs:
 
       # The app's lint also checks the library modules. Issues already in lint-baseline.xml are
       # allowed, so this fails only on new errors, such as a call that needs a newer Android than
-      # minSdk without a version check.
+      # minSdk without a version check. The watch is linted too: it has code of its own and a
+      # higher minSdk, and the baseline covers both.
       - name: Run lint
-        run: ./gradlew :lintPhoneDebug --console=plain
+        run: ./gradlew :lintPhoneDebug :lintWearDebug --console=plain
 
       - uses: actions/upload-artifact@v7
         if: failure()
@@ -64,6 +65,7 @@ jobs:
           path: |
             **/build/reports/tests/
             build/reports/lint-results-phoneDebug.html
+            build/reports/lint-results-wearDebug.html
 
       - uses: actions/upload-artifact@v7
         with:

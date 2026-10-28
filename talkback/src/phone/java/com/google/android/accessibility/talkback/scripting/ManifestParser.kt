@@ -21,6 +21,17 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class ManifestParser(private val strict: Boolean) {
+  /**
+   * Fields this Backtalk doesn't know, from a script written for a newer one. What holds them is
+   * left out: an unknown field of a rule or navigation item is ignored, and a match with one drops
+   * its rule, action or navigation item, since ignoring the field would match more items.
+   */
+  val unsupported = LinkedHashSet<String>()
+
+  // Counts every field left out, so that a rule can tell whether it lost any.
+  private var leftOut = 0
+
+  private class UnsupportedField(val field: String) : Exception()
 
   fun parse(json: String): ScriptManifest {
     val obj =
@@ -37,9 +48,8 @@ class ManifestParser(private val strict: Boolean) {
       obj.stringList("permissions")
         .map { ScriptPermission.fromKey(it) ?: manifestError("Unknown permission: $it") }
         .toSet()
-    val minApi = apiVersion(obj, "minApiVersion", 1)
-    val testedApi = apiVersion(obj, "testedApiVersion", minApi)
-    manifestCheck(testedApi >= minApi) { "testedApiVersion cannot be lower than minApiVersion" }
+    // minApiVersion and testedApiVersion, from before minBuild, are ignored.
+    val minBuild = minBuild(obj)
     val homepage = obj.optionalString("homepage")
     manifestCheck(homepage == null || HOMEPAGE_PATTERN.matches(homepage)) {
       "The homepage must be an http or https address: $homepage"
@@ -51,64 +61,69 @@ class ManifestParser(private val strict: Boolean) {
       description = obj.optionalString("description"),
       author = if (strict) obj.requiredString("author") else obj.optionalString("author") ?: "?",
       homepage = homepage,
-      minApiVersion = minApi,
-      testedApiVersion = testedApi,
+      minBuild = minBuild,
       apps = apps(obj.opt("apps")),
       permissions = permissions,
       settings = settings(obj.optJSONArray("settings")),
       rules = rules(obj.optJSONArray("rules")),
       commands = commands(obj.optJSONArray("commands"), permissions),
       navigation = navigation(obj.optJSONArray("navigation"), permissions),
+      unsupported = unsupported.toList(),
       json = obj.toString(),
     )
   }
 
-  fun rule(json: JSONObject): ScriptRule {
-    json.allowOnly(RULE_KEYS, "rule")
+  /** Returns the rule, or null if it has nothing left once [unsupported] fields are left out. */
+  fun rule(json: JSONObject): ScriptRule? {
+    val leftOutBefore = leftOut
+    json.unknownKeys(RULE_KEYS).forEach(::leaveOut)
     val rule =
-      ScriptRule(
-        id = json.optionalString("id"),
-        match = json.optJSONObject("match")?.let { query(it) },
-        window = json.optionalString("window"),
-        activity = json.optionalString("activity"),
-        label = json.optionalString("label"),
-        speak = json.optionalString("speak"),
-        hide = hideOf(json.opt("hide"), "hide"),
-        silence = hideOf(json.opt("silence"), "silence"),
-        role = json.optionalString("role"),
-        state = json.optionalString("state"),
-        hint = json.optionalString("hint"),
-        heading = if (json.isNull("heading")) null else json.getBoolean("heading"),
-        group = json.optBoolean("group", false),
-        readBefore = targetOf(json.opt("readBefore")),
-        readAfter = targetOf(json.opt("readAfter")),
-        actions = itemActions(json.optJSONArray("actions")),
-        activate = json.optJSONObject("activate")?.let { query(it) },
-      )
+      unlessUnsupported {
+        ScriptRule(
+          id = json.optionalString("id"),
+          match = json.optJSONObject("match")?.let { query(it) },
+          window = json.optionalString("window"),
+          activity = json.optionalString("activity"),
+          label = json.optionalString("label"),
+          speak = json.optionalString("speak"),
+          hide = hideOf(json.opt("hide"), "hide"),
+          silence = hideOf(json.opt("silence"), "silence"),
+          role = json.optionalString("role"),
+          state = json.optionalString("state"),
+          hint = json.optionalString("hint"),
+          heading = if (json.isNull("heading")) null else json.getBoolean("heading"),
+          group = json.optBoolean("group", false),
+          readBefore = targetOf(json.opt("readBefore")),
+          readAfter = targetOf(json.opt("readAfter")),
+          actions = itemActions(json.optJSONArray("actions")),
+          activate = json.optJSONObject("activate")?.let { query(it) },
+          liftToActivate = json.optBoolean("liftToActivate", false),
+          longPressAfter = longPressAfterOf(json.opt("longPressAfter")),
+        )
+      } ?: return null
     with(rule) {
       manifestCheck(id != null || match != null) { "A rule needs id or match" }
       checkRole(role)
       manifestCheck(readBefore == null || readAfter == null) {
         "The rule for $target has both readBefore and readAfter"
       }
+      if (!changesItem && actions.isEmpty() && leftOut > leftOutBefore) return null
       manifestCheck(changesItem || actions.isNotEmpty()) {
         "The rule for $target needs label, speak, hide, silence, role, state, hint, heading, " +
-          "group, readBefore, readAfter, activate or actions"
+          "group, readBefore, readAfter, activate, liftToActivate, longPressAfter or actions"
       }
     }
     return rule
   }
 
-  private fun apiVersion(obj: JSONObject, key: String, fallback: Int): Int =
-    if (!strict && !obj.has(key)) {
-      fallback
+  private fun minBuild(obj: JSONObject): Int? =
+    if (obj.isNull("minBuild")) {
+      null
     } else {
-      (obj.opt(key) as? Number)
+      (obj.opt("minBuild") as? Number)
         ?.takeIf { it.toDouble() == it.toInt().toDouble() && it.toInt() >= 1 }
         ?.toInt()
-        ?: manifestError(
-          "The manifest needs $key, a script API version such as ${ScriptManifest.API_VERSION}"
-        )
+        ?: manifestError("minBuild is a Backtalk build number, such as ${ScriptManifest.BUILD}")
     }
 
   private fun apps(value: Any?): List<AppMatcher> =
@@ -166,7 +181,7 @@ class ManifestParser(private val strict: Boolean) {
     }
 
   private fun rules(array: JSONArray?): List<ScriptRule> {
-    val rules = array.objects("rule", MAX_RULES).map(::rule)
+    val rules = array.objects("rule", MAX_RULES).mapNotNull(::rule)
     manifestCheck(rules.count { it.match != null } <= MAX_MATCH_RULES) {
       "A script can have at most $MAX_MATCH_RULES rules with match"
     }
@@ -174,7 +189,7 @@ class ManifestParser(private val strict: Boolean) {
   }
 
   private fun query(json: JSONObject, nested: Boolean = false): NodeQuery {
-    json.allowOnly(NodeQuery.KEYS, "match")
+    json.unknownKeys(NodeQuery.KEYS).firstOrNull()?.let { throw UnsupportedField(it) }
     manifestCheck(!json.has("inside") || json.opt("inside") is JSONObject) {
       "inside is an object, like match"
     }
@@ -198,13 +213,15 @@ class ManifestParser(private val strict: Boolean) {
     }
 
   private fun itemActions(array: JSONArray?): List<RuleItemAction> =
-    array.objects("action", MAX_RULE_ACTIONS).map(::itemAction)
+    array.objects("action", MAX_RULE_ACTIONS).mapNotNull { unlessUnsupported { itemAction(it) } }
 
-  private fun itemAction(json: JSONObject): RuleItemAction {
+  private fun itemAction(json: JSONObject): RuleItemAction? {
     val verbs = RuleItemAction.Verb.entries
-    json.allowOnly(verbs.map { it.key }.toSet() + "title", "action")
+    val unknown = json.unknownKeys(verbs.map { it.key }.toSet() + "title")
+    unknown.forEach(::leaveOut)
     val title = json.optionalString("title")?.trim().orEmpty()
     manifestCheck(title.isNotEmpty()) { "An action needs a title" }
+    if (unknown.isNotEmpty() && verbs.none { json.has(it.key) }) return null
     val verb =
       verbs.singleOrNull { json.has(it.key) }
         ?: manifestError("The action $title needs one of ${verbs.joinToString { it.key }}")
@@ -228,6 +245,21 @@ class ManifestParser(private val strict: Boolean) {
       is String -> NodeQuery(id = value.ifEmpty { manifestError("An item id can't be empty") })
       is JSONObject -> query(value)
       else -> manifestError("An item is named by an id or a match")
+    }
+
+  private fun longPressAfterOf(value: Any?): Int? =
+    when (value) {
+      null,
+      JSONObject.NULL -> null
+      else ->
+        (value as? Number)
+          ?.takeIf { it.toDouble() == it.toInt().toDouble() }
+          ?.toInt()
+          ?.takeIf { it in MIN_LONG_PRESS_AFTER..MAX_LONG_PRESS_AFTER }
+          ?: manifestError(
+            "longPressAfter is a number of milliseconds from $MIN_LONG_PRESS_AFTER to " +
+              "$MAX_LONG_PRESS_AFTER"
+          )
     }
 
   private fun hideOf(value: Any?, key: String): Hide =
@@ -279,10 +311,12 @@ class ManifestParser(private val strict: Boolean) {
     manifestCheck(list.isEmpty() || ScriptPermission.INPUT in permissions) {
       "navigation needs the input permission"
     }
-    return list.map { json ->
-      json.allowOnly(NAVIGATION_KEYS, "navigation")
+    return list.mapNotNull { json ->
+      json.unknownKeys(NAVIGATION_KEYS).forEach(::leaveOut)
       val title = json.requiredString("title")
-      val match = json.optJSONObject("match")?.let { query(it) } ?: NodeQuery()
+      val match =
+        unlessUnsupported { json.optJSONObject("match")?.let { query(it) } ?: NodeQuery() }
+          ?: return@mapNotNull null
       val query = json.optionalString("id")?.let { match.copy(id = it) } ?: match
       manifestCheck(query != NodeQuery()) { "The navigation item $title needs id or match" }
       ScriptNavigation(title, query)
@@ -299,10 +333,22 @@ class ManifestParser(private val strict: Boolean) {
   private fun packageName(name: String): String =
     name.also { manifestCheck(it.isNotBlank() && ' ' !in it) { "Not a package name: $it" } }
 
-  private fun JSONObject.allowOnly(keys: Set<String>, what: String) {
-    val unknown = keys().asSequence().filterNot { it in keys }.toList()
-    manifestCheck(unknown.isEmpty()) { "Unknown $what fields: ${unknown.joinToString()}" }
+  private fun JSONObject.unknownKeys(known: Set<String>): List<String> =
+    keys().asSequence().filterNot { it in known }.toList()
+
+  private fun leaveOut(field: String) {
+    unsupported += field
+    leftOut++
   }
+
+  /** Returns what [parse] gives, or null if a match in it has an unsupported field. */
+  private inline fun <T : Any> unlessUnsupported(parse: () -> T?): T? =
+    try {
+      parse()
+    } catch (e: UnsupportedField) {
+      leaveOut(e.field)
+      null
+    }
 
   private fun JSONObject.requiredString(key: String): String =
     optionalString(key)?.takeIf { it.isNotBlank() } ?: manifestError("The manifest needs $key")
@@ -337,6 +383,8 @@ class ManifestParser(private val strict: Boolean) {
     const val MAX_RULE_ACTIONS = 10
     const val MAX_COMMANDS = 50
     const val MAX_NAVIGATION = 20
+    const val MIN_LONG_PRESS_AFTER = 100
+    const val MAX_LONG_PRESS_AFTER = 10_000
     val NAVIGATION_KEYS = setOf("title", "id", "match")
     val RULE_KEYS =
       setOf(
@@ -357,6 +405,8 @@ class ManifestParser(private val strict: Boolean) {
         "readAfter",
         "actions",
         "activate",
+        "liftToActivate",
+        "longPressAfter",
       )
   }
 }

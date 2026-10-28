@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Որոնումը չեղարկվեց:</string>
   <string name="notification_type_status_started">Մեկնարկ</string>
   <string name="notification_type_status_stopped">Դադարեցված է</string>
-  <string name="notification_type_status_connected">միացված է</string>
-  <string name="notification_battery_level_unknown">անհայտ</string>
   <string name="notification_battery_saver_mode">Մարտկոցի տնտեսումը միացված է</string>
   <string name="template_no_text_selected">Տեքստ չի ընտրվել</string>
   <string name="template_charging">Լիցքավորումը՝ %1$s Մարտկոցի լիցքավորման աստիճանը՝ %2$s տոկոս:</string>
   <string name="template_charging_lite">Լիցքավորումը %1$s</string>
-  <string name="template_battery_state">Մարտկոց․ %1$s %2$s տոկոս %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Զանգակի թրթռոց:</string>
   <string name="value_ringer_silent">Զանգակը լռեցված է:</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Հնչեցնել ժամանակը</string>
   <string name="pref_speak_time_summary">Երբ դուք միացնում եք էկրանը</string>
   <string name="summary_speak_container_element_positions">Ներառում է տեղեկություններ՝ ցանկեր, ցանցեր և այլ կոնտեյներներ բացելու և փակելու ժամանակ</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Ընթերցման կառավարման մեջ ավելացվել է տարրի ընտրության հապաղում</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Երեք մատի սահեցման միջոցով ցանկացած ժամանակ կարող եք բացել ընթերցման կառավարման ընտրացանկը և փոխել տարրի ընտրության հապաղման ժամանակը</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Օգտագործե՞լ «Բարձրացնել մատը՝ տեքստ մուտքագրելու համար» գործառույթը</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Եթե տեքստ մուտքագրելիս տարրի ընտրության հապաղումը 0,3 վայրկյանից կարճ է, ակտիվացման համար կրկնակի հպումը չափազանց դժվար կլինի։ Ընտրեք «Փոխել», որպեսզի «Բարձրացնել մատը՝ տեքստ մուտքագրելու համար» գործառույթն ավտոմատ ակտիվանա։\n\nԵթե ուզում եք օգտագործել այս գործառույթը, հպեք և պահեք մատը՝ որևէ ստեղն ընտրելու համար, այնուհետև բարձրացրեք մատը՝ տեքստ մուտքագրելու համար։\n\nԱյս գործառույթը կարող եք հարմարեցնել TalkBack-ի կարգավորումներում։</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Ընթերցման կառավարման մեջ ավելացվել է մուտքագրման ընթացքում տարրի ընտրության հապաղում</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Եթե խնդիրներ են առաջացել կրկնակի հպումով մուտքագրման հետ, երեք մատը սահեցնելով՝ բացեք ընթերցման կառավարման ընտրացանկը և մեծացրեք տարրի ընտրության հապաղման ժամանակը</string>
   <string name="gestures_announce_typing_focus_wont_change">Տեքստ մուտքագրելիս տարրի ընտրության հապաղումը չի աշխատում առանց «Բարձրացնել մատը՝ տեքստ մուտքագրելու համար» գործառույթի։</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">Եղավ</string>
   <string name="reset_letency_reduction_settings_dialog_title">Զրոյացնե՞լ հապաղման կարգավորումները</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Զրոյացման արդյունքում կվերականգնվեն հապաղման կանխադրված կարգավորումները</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Զրոյացնել</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Հնչեցնել ընթացքի բոլոր ծանուցումները</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Ներառում է ներբեռնման, նավիգացիայի և այլ գործողությունների ժամանակ ցուցադրվող ծանուցումները։ Երբ կարգավորումն անջատված է, դուք ավելի քիչ ծանուցումներ կստանաք։</string>
   <string name="pref_speak_system_window_titles_summary">Հնչեցնել պատուհանները (համակարգային և տեղեկությունների մուտքագրման), օրինակ՝ կարգավիճակի գոտուն, ծանուցումներին կամ այլ ստեղնաշարի անցնելիս։</string>
-  <string name="title_pref_explore_by_touch">Հպումով ուսումնասիրում</string>
   <string name="title_pref_category_visual">Տեսողական</string>
   <string name="title_pref_category_controls">Կառավարման տարրեր</string>
   <string name="title_pref_category_braille">Բրայլյան գրեր</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Ընթերցման կառավարման տարրերն օգտագործելու համար մատը սահեցրեք վերև, ապա ներքև։</string>
   <string name="title_pref_manage_keyboard_shortcuts">Ստեղնային դյուրանցումներ</string>
   <string name="title_pref_export_custom_labels">Արտահանել հատուկ պիտակները</string>
-  <string name="title_pref_play_store">Բացել TalkBack-ը Play Խանութում</string>
-  <string name="summary_pref_play_store">TalkBack-ի ներկայիս տարբերակը՝ %1$s</string>
   <string name="title_pref_help_and_feedback">Օգնություն և հետադարձ կապ</string>
   <string name="title_pref_gup">Կապվեք «Google-ը հատուկ կարիքներով անձանց համար» նախագծի աջակցման ծառայության հետ</string>
   <string name="subtitle_pref_gup">Ստացեք TalkBack-ի օգտագործման հետ կապված օգնություն կամ հաղորդեք խնդիրների մասին</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">TalkBack-ը նախապես բեռնում է հայտարարությունները՝ տեքստի մուտքագրման ընթացքում հապաղումները նվազեցնելու համար</string>
   <string name="summary_cache_keyboard_keys_disabled">Այս գործառույթն օգտագործելու համար միացրեք Google Տեքստի հնչեցումը</string>
   <string name="value_direction_down">ներքև</string>
-  <string name="value_direction_down_and_right">ներքև, ապա աջ</string>
   <string name="title_pref_shortcut_up">Վերև</string>
   <string name="title_pref_shortcut_up_xr">Պասիվ ձեռքի ափը թեքել դեպի ձեզ և մատներն իրար միացնել և սահեցնել վերև</string>
   <string name="title_pref_shortcut_down">Ներքև</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Հարմարեցնել ժեստերը</string>
   <string name="button_disable_all_events">Անջատել բոլորը</string>
   <string name="button_enable_all_events">Միացնել բոլորը</string>
-  <string name="dialog_title_disable_exploration">Անջատե՞լ գործառույթը</string>
-  <string name="dialog_message_disable_exploration">Իսկապե՞ս ուզում եք անջատել «Հպումով ուսումնասիրում» գործիքը:\n\nՁեր սարքն այլևս չի արձագանքի կարճուղի ժեստերին կամ ձայնային տարրերին՝ էկրանին հպվելու ժամանակ:</string>
   <string name="dialog_title_enable_tree_debug">Միացնե՞լ Հանգույցի ծառի կարգաբերումը:</string>
   <string name="dialog_message_enable_tree_debug">Իսկապե՞ս ուզում եք միացնել հանգույցի ծառի կարգաբերումը:\n\nՀանգույցի ծառի կարգաբերումը ձեր էկրանի բովանդակությունը կարտապատկերի սարքի գրանցամատյաններում, որոնք կարող են ընթերցվել այլ ծրագրերի կողմից:</string>
   <string name="dialog_title_enable_tree_debug_gesture">Վերանշանակե՞լ 4 մատով եռակի հպման ժեստը</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s․ ֆիզիկական ստեղնաշարի վրա սեղմած ստեղների հնչյունավորում</string>
   <string name="reading_control_toggle_prefix_xr">Ընթերցման կառավարման ռեժիմը փոխելու համար պասիվ ձեռքի ափը թեքեք դեպի ձեզ և սեղմեք կոճակը։</string>
   <string name="gesture_1_or_2">%1$s կամ %2$s</string>
-  <string name="select_setting_hint">Այլ կարգավորում ընտրելու համար %1$s</string>
-  <string name="adjust_setting_hint">Կարգավորելու համար %1$s</string>
   <string name="adjust_granularity_hint">%2$sով ընթերցելու համար %1$s</string>
   <string name="adjust_typo_hint">%1$s առաջարկների համար։</string>
   <string name="use_action_hint">Գործողությունը կատարելու համար կրկնակի հպեք</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">Փորձեք այստեղ։</string>
   <string name="wear_training_typing_practice_button_content_description">Ստեղնաշարով մուտքագրում</string>
   <string name="wear_training_end_tutorial_title">Այժմ դուք գիտեք, թե ինչպես օգտվել TalkBack-ից</string>
-  <string name="talkback_updated_notification_title">TalkBack-ը թարմացվել է</string>
-  <string name="talkback_updated_notification_content">Հպեք՝ ավելին իմանալու համար</string>
   <string name="wear_new_feature_page_title">Ներկայացնում ենք թարմացված TalkBack-ը</string>
   <string name="wear_new_feature_page_content">Մենք շտկել ենք որոշ վրիպակներ և փոխել այն, թե ինչպես է տեղաշարժվում ֆոկուսը</string>
   <string name="wear_new_feature_page_button_content_description">Ավարտել</string>

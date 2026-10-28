@@ -6,6 +6,16 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="settings_backup_title" />
+        <ignore regexp="settings_backup_export" />
+        <ignore regexp="settings_backup_export_summary" />
+        <ignore regexp="settings_backup_import" />
+        <ignore regexp="settings_backup_import_summary" />
+        <ignore regexp="settings_backup_export_done" />
+        <ignore regexp="settings_backup_export_failed" />
+        <ignore regexp="settings_backup_import_done" />
+        <ignore regexp="settings_backup_import_restart" />
+        <ignore regexp="settings_backup_import_failed" />
         <ignore regexp="title_pref_mute_speech_while_recording" />
         <ignore regexp="summary_pref_mute_speech_while_recording" />
         <ignore regexp="title_pref_category_feedback" />
@@ -46,5 +56,100 @@
         <ignore regexp="phonetic_letters_mode_after_letter_delay" />
         <ignore regexp="phonetic_letters_mode_after_letter_no_delay" />
         <ignore regexp="phonetic_letters_mode_instead_of_letter" />
+        <ignore regexp="title_pref_touch_activation" />
+        <ignore regexp="title_pref_navigation" />
+        <ignore regexp="title_pref_focus_new_windows" />
+        <ignore regexp="title_pref_category_apps" />
+        <ignore regexp="individual_sound_screen_on" />
+        <ignore regexp="individual_sound_rotor_next" />
+        <ignore regexp="individual_sound_rotor_previous" />
+        <ignore regexp="individual_sound_keyboard_show" />
+        <ignore regexp="individual_sound_keyboard_hide" />
+        <ignore regexp="individual_sound_direct_touch_enter" />
+        <ignore regexp="individual_sound_direct_touch_exit" />
+        <ignore regexp="individual_sound_wrap_forward" />
+        <ignore regexp="individual_sound_wrap_back" />
+        <ignore regexp="individual_sound_actions_available" />
+        <ignore regexp="title_pref_actions_sound_timing" />
+        <ignore regexp="value_actions_sound_timing_" />
+        <ignore regexp="theme_sound_none" />
+        <ignore regexp="theme_sound_summary_no_sound" />
+        <ignore regexp="theme_sound_action_set_none" />
+        <ignore regexp="title_pref_sound_scheme" />
+        <ignore regexp="title_pref_manage_sound_themes" />
+        <ignore regexp="summary_pref_manage_sound_themes" />
+        <ignore regexp="title_pref_new_sound_theme" />
+        <ignore regexp="summary_pref_new_sound_theme" />
+        <ignore regexp="new_theme_title" />
+        <ignore regexp="new_theme_name_hint" />
+        <ignore regexp="new_theme_description_hint" />
+        <ignore regexp="new_theme_author_hint" />
+        <ignore regexp="new_theme_control_sounds" />
+        <ignore regexp="new_theme_create" />
+        <ignore regexp="new_theme_exists" />
+        <ignore regexp="new_theme_needs_name" />
+        <ignore regexp="sound_theme_customisation" />
+        <ignore regexp="title_pref_sound_theme_install_source" />
+        <ignore regexp="summary_pref_sound_theme_install_source" />
+        <ignore regexp="sound_theme_sources" />
+        <ignore regexp="sound_theme_source_empty" />
+        <ignore regexp="sound_theme_source_failed" />
+        <ignore regexp="sound_theme_source_remove_message" />
+        <ignore regexp="title_pref_ai_service" />
+        <ignore regexp="summary_pref_ai_service_set" />
+        <ignore regexp="summary_pref_ai_service_not_set" />
+        <ignore regexp="ai_service_dialog_message" />
+        <ignore regexp="ai_service_address_hint" />
+        <ignore regexp="ai_service_model_hint" />
+        <ignore regexp="ai_service_api_key_hint" />
+        <ignore regexp="ai_service_address_invalid" />
+        <ignore regexp="dialog_message_ai_service_consent" />
+        <ignore regexp="ai_service_error_api_key" />
+        <ignore regexp="ai_service_error_quota" />
+        <ignore regexp="ai_service_error_busy" />
+        <ignore regexp="ai_service_error_timeout" />
+        <ignore regexp="ai_service_error_with_code" />
+        <ignore regexp="ai_service_error_with_details" />
+        <ignore regexp="summary_pref_gemini_api_key_other_service" />
+        <ignore regexp="title_pref_gemini_model" />
+        <ignore regexp="gemini_model_dialog_message" />
+        <ignore regexp="title_pref_touch_stops_speech" />
+        <ignore regexp="title_pref_selector_links_controls_web_only" />
+        <ignore regexp="shortcut_scroll_to_top" />
+        <ignore regexp="shortcut_scroll_to_bottom" />
+        <ignore regexp="script_needs_build" />
+        <ignore regexp="script_unsupported" />
+        <ignore regexp="script_min_build" />
+        <ignore regexp="title_pref_notification_list" />
+        <ignore regexp="title_pref_notification_parts" />
+        <ignore regexp="notification_part_title" />
+        <ignore regexp="notification_part_text" />
+        <ignore regexp="notification_part_app" />
+        <ignore regexp="notification_part_time" />
+        <ignore regexp="notification_part_playback" />
+        <ignore regexp="notification_list_title" />
+        <ignore regexp="notification_list_empty" />
+        <ignore regexp="notification_list_no_access" />
+        <ignore regexp="notification_list_grant_access" />
+        <ignore regexp="notification_list_quick_settings" />
+        <ignore regexp="notification_list_dismiss" />
+        <ignore regexp="notification_list_clear_all" />
+        <ignore regexp="notification_list_send" />
+        <ignore regexp="notification_list_playing" />
+        <ignore regexp="notification_list_paused" />
+        <ignore regexp="notification_list_play" />
+        <ignore regexp="notification_list_pause" />
+        <ignore regexp="notification_list_previous" />
+        <ignore regexp="notification_list_next" />
+        <ignore regexp="notification_list_group_count" />
+        <ignore regexp="shortcut_system_notifications" />
+        <ignore regexp="image_qna_button_text_ai" />
+        <ignore regexp="image_qna_typing_button_text_ai" />
     </issue>
+    <!--
+      R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
+      sound themes and other code look resources up by name. Lint's quick fix for this check
+      also crashes the report (it looks for minifyEnabled in settings.gradle), failing the build.
+    -->
+    <issue id="NotShrinkingResources" severity="ignore" />
 </lint>

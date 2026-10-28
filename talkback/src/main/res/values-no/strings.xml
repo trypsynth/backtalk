@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Søket er avbrutt.</string>
   <string name="notification_type_status_started">Startet</string>
   <string name="notification_type_status_stopped">Stoppet</string>
-  <string name="notification_type_status_connected">tilkoblet</string>
-  <string name="notification_battery_level_unknown">ukjent</string>
   <string name="notification_battery_saver_mode">batterisparing er på</string>
   <string name="template_no_text_selected">Ingen tekst er valgt</string>
   <string name="template_charging">Lader %1$s Batterinivå %2$s prosent.</string>
   <string name="template_charging_lite">Lader %1$s</string>
-  <string name="template_battery_state">Strøm %1$s %2$s prosent %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Vibreringsmodus.</string>
   <string name="value_ringer_silent">Stillemodus.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Les opp klokkeslettet</string>
   <string name="pref_speak_time_summary">Når du slår på skjermen</string>
   <string name="summary_speak_container_element_positions">Inkluderer informasjon når du går inn i og ut av lister, rutenett og andre beholdere</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Fokusforsinkelse er lagt til i lesekontrollen</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Sveip med tre fingre for å bruke lesekontrollen og endre fokusforsinkelsen når som helst</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Vil du bytte til løfting for å skrive?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Når fokushastigheten for skriving er satt til under 0,3 sekunder, blir det veldig vanskelig å dobbelttrykke for å skrive. Velg «Bytt» for å bytte til løfting for å skrive automatisk.\n\nFor å bruke løfting for å skrive, hold fingeren nede for å velge en tast, og løft fingeren for å skrive.\n\nDu kan tilpasse dette i TalkBack-innstillingene.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Forsinkelse av skrivefokus er lagt til i lesekontrollen</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Hvis du har problemer med å bruke dobbelttrykk mens du skriver, kan du sveipe med tre fingre for å bruke lesekontrollen og bytte til en lengre forsinkelse for skrivefokus</string>
   <string name="gestures_announce_typing_focus_wont_change">Forsinkelse for skrivefokus fungerer ikke uten løfting for å skrive.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">Greit</string>
   <string name="reset_letency_reduction_settings_dialog_title">Vil du tilbakestille innstillingene for forsinkelse?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Dette tilbakestiller alle innstillingene for forsinkelse til standard</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Tilbakestill</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Les opp alle fremdriftsoppdateringer</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Dette inkluderer oppdateringer under nedlasting, følging av veibeskrivelser med mer. Når dette er slått av, får du fortsatt oppdateringer, men sjeldnere.</string>
   <string name="pref_speak_system_window_titles_summary">Les opp system- og innenhetvinduer, for eksempel når du bytter til statusfeltet, varsler eller et annet tastatur</string>
-  <string name="title_pref_explore_by_touch">Berøringsutforskning</string>
   <string name="title_pref_category_visual">Visuelt</string>
   <string name="title_pref_category_controls">Kontroller</string>
   <string name="title_pref_category_braille">Punktskrift</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">For å bruke lesekontrollene, sveip opp og så ned.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Hurtigtaster</string>
   <string name="title_pref_export_custom_labels">Eksportér tilpassede etiketter</string>
-  <string name="title_pref_play_store">Åpne TalkBack i Play-butikken</string>
-  <string name="summary_pref_play_store">Nåværende TalkBack-versjon: %1$s</string>
   <string name="title_pref_help_and_feedback">Hjelp og tilbakemelding</string>
   <string name="title_pref_gup">Kontakt Google brukerstøtte for personer med nedsatt funksjonsevne</string>
   <string name="subtitle_pref_gup">Få hjelp med å bruke TalkBack, eller rapporter problemer</string>
@@ -639,7 +628,6 @@ Hvis forsinkelsen er under 0,3 sekunder, endres dobbelttrykk for å aktivere ti
   <string name="summary_cache_keyboard_keys">TalkBack forhåndsinnlaster kunngjøringer for å redusere forsinkelsen når du skriver</string>
   <string name="summary_cache_keyboard_keys_disabled">Bruk Google tekst til tale for å bruke denne funksjonen</string>
   <string name="value_direction_down">ned</string>
-  <string name="value_direction_down_and_right">ned og deretter til høyre</string>
   <string name="title_pref_shortcut_up">Sveip opp</string>
   <string name="title_pref_shortcut_up_xr">Sekundær håndflate innover, klyp og sveip opp</string>
   <string name="title_pref_shortcut_down">Sveip ned</string>
@@ -777,8 +765,6 @@ Hvis forsinkelsen er under 0,3 sekunder, endres dobbelttrykk for å aktivere ti
   <string name="button_customize_gesture_mappings">Tilpass bevegelser</string>
   <string name="button_disable_all_events">Slå av alle</string>
   <string name="button_enable_all_events">Slå på alle</string>
-  <string name="dialog_title_disable_exploration">Vil du slå av berøringsutforskning?</string>
-  <string name="dialog_message_disable_exploration">Er du sikker på at du vil slå av berøringsutforskning?\n\nEnheten kommer ikke lenger til å reagere på snarveisbevegelser eller uttale elementer når du trykker på skjermen.</string>
   <string name="dialog_title_enable_tree_debug">Vil du slå på nodetre-feilsøking?</string>
   <string name="dialog_message_enable_tree_debug">Er du sikker på at du vil slå på nodetre-feilsøking?\n\nNodetre-feilsøking eksponerer innholdet på skjermen din for loggene til enheten din, og disse kan leses av andre apper.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Vil du endre tilordningen for trippeltrykk med fire fingre?</string>
@@ -911,8 +897,6 @@ Hvis forsinkelsen er under 0,3 sekunder, endres dobbelttrykk for å aktivere ti
   <string name="typing_echo_change">%1$s-ekko for fysisk tastatur</string>
   <string name="reading_control_toggle_prefix_xr">Sekundær håndflate inn, trykk lenge for å slå av/på lesekontrollmodus.</string>
   <string name="gesture_1_or_2">%1$s eller %2$s</string>
-  <string name="select_setting_hint">%1$s for å velge en annen innstilling</string>
-  <string name="adjust_setting_hint">%1$s for å justere innstillingen</string>
   <string name="adjust_granularity_hint">%1$s for å lese basert på %2$s</string>
   <string name="adjust_typo_hint">%1$s for forslag.</string>
   <string name="use_action_hint">Dobbelttrykk for å utføre handlingen</string>
@@ -1234,8 +1218,6 @@ Hvis forsinkelsen er under 0,3 sekunder, endres dobbelttrykk for å aktivere ti
   <string name="wear_training_typing_text5">Prøv det nedenfor.</string>
   <string name="wear_training_typing_practice_button_content_description">Skriver med tastaturet</string>
   <string name="wear_training_end_tutorial_title">Nå kan du bruke TalkBack</string>
-  <string name="talkback_updated_notification_title">TalkBack er oppdatert</string>
-  <string name="talkback_updated_notification_content">Trykk for å finne ut mer</string>
   <string name="wear_new_feature_page_title">Velkommen til oppdaterte TalkBack</string>
   <string name="wear_new_feature_page_content">Du kommer til å legge merke til noen feilrettinger og endringer i hvordan fokuset beveger seg</string>
   <string name="wear_new_feature_page_button_content_description">Fullfør</string>

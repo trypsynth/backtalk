@@ -322,4 +322,15 @@
   <string name="popup_message_history_consent_dialog_msg">Dzięki temu niektóre wiadomości, np. powiadomienia i alarmy, będą przechowywane przez Backtalk. W każdej chwili możesz zmienić to ustawienie.</string>
   <string name="popup_message_history_consent_dialog_positive_btn">Włącz</string>
   <string name="popup_message_history_consent_dialog_negative_btn">Nie, dziękuję</string>
+  <string name="external_display_channel">Monitory brajlowskie z innych aplikacji</string>
+  <string name="external_display_ask_title">Zezwolić aplikacji <xliff:g id="app" example="Notetaker">%1$s</xliff:g> na pełnienie roli monitora brajlowskiego Backtalka?</string>
+  <string name="external_display_ask_text">Backtalk nie będzie z niej korzystać bez Twojej zgody.</string>
+  <string name="external_display_warning">Aplikacja <xliff:g id="app" example="Notetaker">%1$s</xliff:g> będzie mogła odczytywać wszystko, co Backtalk wyświetla w brajlu. Może to obejmować dowolne treści ekranu, w tym wiadomości i wpisywany tekst. Będzie też mogła sterować urządzeniem tak jak monitor brajlowski: wpisywać tekst, otwierać aplikacje i wykonywać dowolne polecenia Backtalka. Zezwalaj na to tylko zaufanym aplikacjom.</string>
+  <string name="external_display_allow">Zezwól</string>
+  <string name="external_display_deny">Nie zezwalaj</string>
+  <string name="external_display_in_use_title"><xliff:g id="app" example="Notetaker">%1$s</xliff:g> działa jako monitor brajlowski</string>
+  <string name="external_display_in_use_text">Gdy Backtalk korzysta z aplikacji <xliff:g id="app" example="Notetaker">%1$s</xliff:g>, może ona odczytywać ekran i sterować urządzeniem.</string>
+  <string name="external_displays_title">Monitory brajlowskie z innych aplikacji</string>
+  <string name="external_displays_summary">Aplikacje, którym zezwolisz, mogą działać jako monitory brajlowskie Backtalka. Mogą wtedy odczytywać ekran i sterować urządzeniem.</string>
+  <string name="external_displays_none">Żadna aplikacja nie może pełnić roli monitora brajlowskiego.</string>
 </resources>

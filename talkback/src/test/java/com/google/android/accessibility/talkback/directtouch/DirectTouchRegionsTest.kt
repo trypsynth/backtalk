@@ -23,6 +23,14 @@ import org.junit.Test
 
 class DirectTouchRegionsTest {
   @Test
+  fun contentChangesAndScrollsCanMoveMarkedAreas() {
+    assertTrue(DirectTouchRegions.movesMarkedAreas(AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED))
+    assertTrue(DirectTouchRegions.movesMarkedAreas(AccessibilityEvent.TYPE_VIEW_SCROLLED))
+    assertFalse(DirectTouchRegions.movesMarkedAreas(AccessibilityEvent.TYPE_VIEW_FOCUSED))
+    assertFalse(DirectTouchRegions.movesMarkedAreas(AccessibilityEvent.TYPE_VIEW_CLICKED))
+  }
+
+  @Test
   fun windowEventsReassertTheRegion() {
     // Other services clear the shared region on these, like Narwhal does when a volume slider opens.
     assertTrue(DirectTouchRegions.reassertsRegion(AccessibilityEvent.TYPE_WINDOWS_CHANGED))

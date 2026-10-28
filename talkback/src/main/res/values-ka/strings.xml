@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">ძიება გაუქმდა.</string>
   <string name="notification_type_status_started">დაწყება</string>
   <string name="notification_type_status_stopped">შეჩერდა</string>
-  <string name="notification_type_status_connected">დაკავშირებული</string>
-  <string name="notification_battery_level_unknown">უცნობი</string>
   <string name="notification_battery_saver_mode">ბატარეის დამზოგი ჩართულია</string>
   <string name="template_no_text_selected">ტექსტი არჩეული არ არის</string>
   <string name="template_charging">დატენვა %1$s ბატარეის დონე %2$s პროცენტი.</string>
   <string name="template_charging_lite">დატენა %1$s</string>
-  <string name="template_battery_state">ბატარეის %1$s %2$s პროცენტი %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">ვიბრაციის რეჟიმი.</string>
   <string name="value_ringer_silent">უხმო რეჟიმი.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">დროის წარმოთქმა</string>
   <string name="pref_speak_time_summary">ეკრანის ჩართვისას</string>
   <string name="summary_speak_container_element_positions">შეიცავს ინფორმაციას სიებში, ბადეებში და სხვა კონტეინერებში შესვლისა და გასვლის დროს</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">ფოკუსის დაყოვნება დამატებულია კითხვის მართვაზე</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">გადაფურცლეთ 3 თითით, რათა გამოიყენოთ კითხვის მართვა და შეცვალოთ ფოკუსის დაყოვნება ნებისმიერ დროს</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">გსურთ ასაკრეფად აშვებაზე გადართვა?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">როცა აკრეფისას ფოკუსის დაყოვნება დაყენებულია 0,3 წამზე დაბლა, ასაკრეფად ორმაგი შეხება ძალიან რთული იქნება. აირჩიეთ „გადართვა“, რათა ავტომატურად გადართოთ ასაკრეფად აშვებაზე.\n\nასაკრეფად აშვების გამოსაყენებლად, თითის ხანგრძლივად დაჭერით აირჩიეთ ნებისმიერი კლავიში, შემდეგ კი ასწიეთ ასაკრეფად.\n\nამის მორგება TalkBack-ის პარამეტრებში შეგიძლიათ.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">აკრეფის ფოკუსის დაყოვნება დამატებულია კითხვის მართვაზე</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">თუ აწყდებით ხარვეზებს ორმაგი შეხებით აკრეფისას, გადაფურცლეთ სამი თითით, რათა გამოიყენოთ კითხვის მართვა და ფოკუსის დაყოვნება უფრო ხანგრძლივზე შეცვალეთ</string>
   <string name="gestures_announce_typing_focus_wont_change">აკრეფის ფოკუსირების დაყოვნება არ ფუნქციონირებს ასაკრეფად აშვების გარეშე.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">გასაგებია</string>
   <string name="reset_letency_reduction_settings_dialog_title">გსურთ დაყოვნების პარამეტრების გადაყენება?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">ეს გადააყენებს დაყოვნების ყველა პარამეტრს ნაგულისხმევზე</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">გადაყენება</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">პროგრესის განახლების ხმამაღალი განცხ.</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">შეიცავს განახლებებს ჩამოტვირთვისას, საავტომობილო მარშრუტებისთვის თვალის დევნებისას და ა.შ. როცა გამორთულია, ისევ მიიღებთ განახლებებს უფრო იშვიათად.</string>
   <string name="pref_speak_system_window_titles_summary">სისტემისა და შეყვანის ფანჯრების წარმოთქმა, მაგალითად, როდესაც გადაერთვებით სტატუსის ზოლზე, შეტყობინებებზე ან სხვა კლავიატურაზე</string>
-  <string name="title_pref_explore_by_touch">შეხებით დათვალიერება</string>
   <string name="title_pref_category_visual">ვიზუალი</string>
   <string name="title_pref_category_controls">მართვის საშუალებები</string>
   <string name="title_pref_category_braille">ბრაილი</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">წაკითხვის მართვის საშუალებების გამოსაყენებლად გადაფურცლეთ ზემოთ, შემდეგ კი ქვემოთ.</string>
   <string name="title_pref_manage_keyboard_shortcuts">კლავიატურის მალსახმობები</string>
   <string name="title_pref_export_custom_labels">მორგებული ლეიბლების ექსპორტი</string>
-  <string name="title_pref_play_store">TalkBack-ის გახსნა Play Store-ში</string>
-  <string name="summary_pref_play_store">მიმდინარე TalkBack ვერსია: %1$s</string>
   <string name="title_pref_help_and_feedback">დახმარება და გამოხმაურება</string>
   <string name="title_pref_gup">Google-ის შშმ მომხმარებლების მხარდაჭერის გუნდთან დაკავშირება</string>
   <string name="subtitle_pref_gup">დახმარების მიღება ან პრობლემების მოხსენება TalkBack-ის საშუალებით</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">TalkBack წინასწარ ტვირთავს განცხადებებს აკრეფის დროს დაყოვნების შესამცირებლად</string>
   <string name="summary_cache_keyboard_keys_disabled">გამოიყენეთ Google Text-to-speech ამ ფუნქციის გამოსაყენებლად</string>
   <string name="value_direction_down">ქვევით</string>
-  <string name="value_direction_down_and_right">ქვემოთ, შემდეგ მარჯვნივ</string>
   <string name="title_pref_shortcut_up">ზემოთ გადაფურცვლა</string>
   <string name="title_pref_shortcut_up_xr">არადომ. ხელისგული თქვენკენ, თითებით მასშტაბირება და ზევით გადაფურცვლა</string>
   <string name="title_pref_shortcut_down">ქვემოთ გადაფურცვლა</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ჟესტების მორგება</string>
   <string name="button_disable_all_events">ყველას გამორთვა</string>
   <string name="button_enable_all_events">ყველას ჩართვა</string>
-  <string name="dialog_title_disable_exploration">გამოირთოს შეხებით დათვალიერება?</string>
-  <string name="dialog_message_disable_exploration">დარწმუნებული ბრძანდებით, რომ გსურთ შეხებით დათვალიერების გამორთვა?\n\nთქვენი მოწყობილობა აღარ მოახდენს რეაგირებას ჟესტებზე და არ წარმოთქვამს ერთეულების დასახელებას, როცა ეკრანს შეეხებით.</string>
   <string name="dialog_title_enable_tree_debug">გსურთ კვანძების იერარქიის გამართვის ჩართვა?</string>
   <string name="dialog_message_enable_tree_debug">დარწმუნდებული ხართ, რომ გსურთ კვანძების იერარქიის გამართვის რეჟიმის ჩართვა?\n\nკვანძების იერარქიის გამართვა თქვენი ეკრანის ქონთენთს ასახავს თქვენი მოწყობილობის ჟურნალში, რაც შესაძლოა სხვა აპლიკაციების მიერ იქნეს წაკითხული.</string>
   <string name="dialog_title_enable_tree_debug_gesture">გსურთ 4 თითის ჟესტის გამოყენებით სამმაგი შეხების ხელახლა მინიჭება?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s ექოს ფიზიკური კლავიატურა</string>
   <string name="reading_control_toggle_prefix_xr">შეაბრუნეთ არადომინანტი ხელისგული თქვენკენ, ხანგრძლივად დააჭირეთ, რათა ჩართოთ კითხვის მართვის რეჟიმი.</string>
   <string name="gesture_1_or_2">%1$s ან %2$s</string>
-  <string name="select_setting_hint">%1$s სხვა პარამეტრის ასარჩევად</string>
-  <string name="adjust_setting_hint">%1$s პარამეტრის დასარეგულირებლად</string>
   <string name="adjust_granularity_hint">%1$s, რომელსაც წაიკითხავს %2$s</string>
   <string name="adjust_typo_hint">%1$s შეთავაზებებისთვის.</string>
   <string name="use_action_hint">შეეხეთ ორმაგად ამ მოქმედების განსახორციელებლად</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">ცადეთ ქვემოთ.</string>
   <string name="wear_training_typing_practice_button_content_description">კლავიატურით აკრეფა</string>
   <string name="wear_training_end_tutorial_title">თქვენ მზად ხართ, რომ დაიწყოთ TalkBack-ის გამოყენება</string>
-  <string name="talkback_updated_notification_title">TalkBack განახლდა</string>
-  <string name="talkback_updated_notification_content">შეეხეთ მეტი ინფორმაციისთვის</string>
   <string name="wear_new_feature_page_title">წარმოგიდგენთ განახლებულ TalkBack-ს</string>
   <string name="wear_new_feature_page_content">შეცდომების აღმოფხვრებს და ფოკუსში მოქცევის მოძრაობის წესებში გარკვეული ცვლილებები შევიდა</string>
   <string name="wear_new_feature_page_button_content_description">დასრულება</string>

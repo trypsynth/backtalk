@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">অনুসন্ধান কার্য বাতিল কৰা হ’ল।</string>
   <string name="notification_type_status_started">কাৰ্য আৰম্ভ হ’ল</string>
   <string name="notification_type_status_stopped">কাৰ্য বন্ধ হ’ল</string>
-  <string name="notification_type_status_connected">সংযুক্ত আছে</string>
-  <string name="notification_battery_level_unknown">অজ্ঞাত</string>
   <string name="notification_battery_saver_mode">বেটাৰী সঞ্চয়কাৰী অন আছে</string>
   <string name="template_no_text_selected">কোনো পাঠ বাছনি কৰা হোৱা নাই</string>
   <string name="template_charging">%1$s চাৰ্জ হৈ আছে , বেটাৰীৰ স্তৰ %2$s শতাংশ।</string>
   <string name="template_charging_lite">চাৰ্জ হৈ আছে %1$s</string>
-  <string name="template_battery_state">পাৱাৰ %1$s %2$s শতাংশ %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">ৰিংগাৰ কম্পন অৱস্থাত আছে৷</string>
   <string name="value_ringer_silent">ৰিংগাৰ নীৰৱ অৱস্থাত আছে৷</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">সময় কৈ শুনোৱাৰ সুবিধা</string>
   <string name="pref_speak_time_summary">আপুনি স্ক্ৰীনখন অন কৰিলে</string>
   <string name="summary_speak_container_element_positions">সূচী, গ্ৰিড আৰু অন্য কণ্টেইনাৰত সোমোৱা আৰু বাহিৰ হোৱাৰ সৈতে সম্পৰ্কিত তথ্য অন্তৰ্ভুক্ত কৰে</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">পঢ়াৰ নিয়ন্ত্ৰণত ফ’কাছ বিলম্ব যোগ দিয়া হৈছে</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">যিকোনো সময়তে পঢ়াৰ নিয়ন্ত্ৰণ ব্যৱহাৰ কৰিবলৈ ৩ টা আঙুলিৰে ছোৱাইপ কৰক আৰু এটা দীঘলীয়া টাইপিং ফ’কাছ বিলম্বলৈ সলনি কৰক</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">টাইপ কৰিলৈ আঙুলি উঠাওকলৈ সলনি কৰিব নেকি?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">টাইপ কৰাৰ ফ’কাছ বিলম্ব ০.৩ ছেকেণ্ডৰ তলত ছেট কৰা থাকিলে, টাইপ কৰিবলৈ দুবাৰ টিপা কাৰ্যটো অতি কঠিন হৈ পৰিব। টাইপ কৰিবলৈ আঙুলি উঠাওকলৈ স্বয়ংক্ৰিয়ভাৱে সলনি কৰিবলৈ \"সলনি কৰক\" বাছনি কৰক।\n\nটাইপ কৰিবলৈ আঙুলি উঠাওক ব্যৱহাৰ কৰিবলৈ, যিকোনো কী বাছনি কৰিবলৈ আপোনাৰ আঙুলিৰে ধৰি ৰাখক আৰু তাৰ পাছত টাইপ কৰিবলৈ আঙুলিটো উঠাওক।\n\nআপুনি TalkBackৰ ছেটিঙত এইটো কাষ্টমাইজ কৰিব পাৰে।</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">পঢ়াৰ নিয়ন্ত্ৰণত টাইপিং ফ’কাছ বিলম্ব যোগ দিয়া হৈছে</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">যদি আপুনি টাইপ কৰি থাকোঁতে দুবাৰ টিপাৰ ক্ষেত্ৰত সমস্যাৰ সন্মুখীন হয়, তেন্তে পঢ়াৰ নিয়ন্ত্ৰণ ব্যৱহাৰ কৰিবলৈ ৩ টা আঙুলিৰে ছোৱাইপ কৰক আৰু এটা দীঘলীয়া টাইপিং ফ’কাছ বিলম্বলৈ সলনি কৰক</string>
   <string name="gestures_announce_typing_focus_wont_change">টাইপ কৰিবলৈ আঙুলি উঠাওক সুবিধাৰ অবিহনে টাইপ কৰাৰ ফ’কাছ বিলম্ব সুবিধাটোৱে কাম কৰা নাই।</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">বুজি পালোঁ</string>
   <string name="reset_letency_reduction_settings_dialog_title">বিলম্বৰ ছেটিং ৰিছেট কৰিবনে?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">এইটোৱে বিলম্বতাৰ আটাইবোৰ ছেটিং ডিফ’ল্টলৈ ৰিছেট কৰিব</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">ৰিছেট কৰক</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">আটাইবোৰ প্ৰগতিৰ আপডে\'ট কওক</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ডাউনল’ড কৰি থকা, গাড়ী চলাই থাকোঁতে পোৱা দিক্-নিৰ্দেশনা অনুসৰণ কৰি থকা আৰু অধিক কাম কৰাৰ সময়ত দিয়া আপডে’ট অন্তর্ভুক্ত। অফ কৰিলে, আপুনি তথাপি কম সঘনে আপডে’ট পাব।</string>
   <string name="pref_speak_system_window_titles_summary">ছিষ্টেম আৰু ইনপুট ৱিণ্ড’সমূহ কওক, যেনে- আপুনি স্থিতি দণ্ড, জাননী অথবা অন্য কীব’ৰ্ড ব্যৱহাৰ কৰিবলৈ লয়</string>
-  <string name="title_pref_explore_by_touch">স্পৰ্শৰ দ্বাৰা অন্বেষণ কৰক</string>
   <string name="title_pref_category_visual">ভিজুৱেল</string>
   <string name="title_pref_category_controls">নিয়ন্ত্ৰণসমূহ</string>
   <string name="title_pref_category_braille">ব্ৰেইল</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">পঢ়াৰ নিয়ন্ত্ৰণ ব্যৱহাৰ কৰিবলৈ ওপৰলৈ আৰু তাৰ পাছত তললৈ ছোৱাইপ কৰক।</string>
   <string name="title_pref_manage_keyboard_shortcuts">কীব\'ৰ্ডৰ শ্বৰ্টকাটসমূহ</string>
   <string name="title_pref_export_custom_labels">উপযোগিতা অনুসৰি বনোৱা লেবেল ৰপ্তানি কৰক</string>
-  <string name="title_pref_play_store">Play Storeত TalkBack খোলক</string>
-  <string name="summary_pref_play_store">বর্তমানৰ TalkBackৰ সংস্কৰণ: %1$s</string>
   <string name="title_pref_help_and_feedback">সহায় আৰু প্ৰতিক্ৰিয়া</string>
   <string name="title_pref_gup">বিশেষভাৱে সক্ষম লোকৰ বাবে Googleৰ সহায় দলৰ সৈতে যোগাযোগ কৰক</string>
   <string name="subtitle_pref_gup">TalkBack ব্যৱহাৰ কৰি সহায় লাভ কৰক বা সমস্যাসমূহৰ অভিযোগ দিয়ক</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">আপুনি লিখাৰ সময়ত পলম হোৱাটো হ্ৰাস কৰিবলৈ TalkBack সুবিধাই ঘোষণাসমূহ আগৰেপৰা ল’ড কৰে</string>
   <string name="summary_cache_keyboard_keys_disabled">এই সুবিধাটো ব্যৱহাৰ কৰিবলৈ Googleৰ পাঠৰ পৰা কথন ব্যৱহাৰ কৰক</string>
   <string name="value_direction_down">তললৈ ছোৱাইপ কৰক</string>
-  <string name="value_direction_down_and_right">প্ৰথমে তললৈ তাৰ পাছত সোঁফালে ছোৱাইপ কৰক</string>
   <string name="title_pref_shortcut_up">ওপৰলৈ ছোৱাইপ কৰক</string>
   <string name="title_pref_shortcut_up_xr">গৌণ হাতৰ তলুৱা ভিতৰলৈ ঘূৰাওক, তাত পিঞ্চ কৰি ওপৰলৈ ছোৱাইপ কৰক</string>
   <string name="title_pref_shortcut_down">তললৈ ছোৱাইপ কৰক</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">আঙুলিৰ স্পৰ্শৰে দিয়া নিৰ্দেশসমূহ কাষ্টমাইজ কৰক</string>
   <string name="button_disable_all_events">আটাইবোৰ অক্ষম কৰক</string>
   <string name="button_enable_all_events">আটাইবোৰ সক্ষম কৰক</string>
-  <string name="dialog_title_disable_exploration">স্পৰ্শৰ দ্বাৰা অন্বেষণ কার্য অক্ষম কৰিবনে?</string>
-  <string name="dialog_message_disable_exploration">স্পৰ্শৰ দ্বাৰা অন্বেষণ কৰা সুবিধা অফ কৰিবনে?\n\n আপুনি স্ক্ৰীন স্পর্শ কৰিলে আপোনাৰ ডিভাইচে ভৱিষ্যতে শ্বর্টকার্ট নিৰ্দেশসমূহৰ প্ৰতি আৰু সঁহাৰি নজনাব বা বস্তুবোৰ নকব।</string>
   <string name="dialog_title_enable_tree_debug">ন\'ড ট্ৰীৰ ডিবাগিং সক্ষম কৰিবনে?</string>
   <string name="dialog_message_enable_tree_debug">আপুনি ন\'ড ট্ৰীৰ ডিবাগিং অন কৰিবলৈ নিশ্চিতনে?\n\nন\'ড ট্ৰীৰ ডিবাগিংএ আপোনাৰ স্ক্ৰীনৰ সমল ডিভাইচৰ ল\'গবোৰত প্ৰদর্শন কৰে, যিবোৰ অন্য এপ্লিকেশ্বনসমূহে পঢ়িব পাৰে।</string>
   <string name="dialog_title_enable_tree_debug_gesture">৪ টা আঙুলিৰ নিৰ্দেশেৰে তিনিবাৰ টিপাটো পুনৰ আৱণ্টন কৰিব নেকি?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s প্ৰতিধ্বনি কায়িক কীব’ৰ্ড</string>
   <string name="reading_control_toggle_prefix_xr">গৌণ হাতৰ তলুৱা ভিতৰলৈ ঘূৰাওক, পঢ়াৰ নিয়ন্ত্ৰণ ম’ড ট’গল কৰিবলৈ দীঘলীয়াকৈ টিপি থাকক।</string>
   <string name="gesture_1_or_2">%1$s অথবা %2$s</string>
-  <string name="select_setting_hint">এটা বেলেগ ছেটিং বাছনি কৰিবলৈ %1$s</string>
-  <string name="adjust_setting_hint">ছেটিংটো মিলাবলৈ %1$s</string>
   <string name="adjust_granularity_hint">%2$s হিচাপে পঢ়িবলৈ %1$s</string>
   <string name="adjust_typo_hint">পৰামৰ্শৰ বাবে %1$s।</string>
   <string name="use_action_hint">কাৰ্যটো কৰিবলৈ দুবাৰ টিপক</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">এইটো তলত কৰি চাওক।</string>
   <string name="wear_training_typing_practice_button_content_description">কীব’ৰ্ডৰ জৰিয়তে টাইপ কৰা</string>
   <string name="wear_training_end_tutorial_title">আপুনি TalkBack ব্যৱহাৰ কৰা আৰম্ভ কৰিবলৈ সাজু</string>
-  <string name="talkback_updated_notification_title">TalkBack আপডে’ট কৰা হ’ল</string>
-  <string name="talkback_updated_notification_content">অধিক জানিবৰ বাবে টিপক</string>
   <string name="wear_new_feature_page_title">আপডে’ট কৰা TalkBackলৈ স্বাগতম</string>
   <string name="wear_new_feature_page_content">আপুনি কিছুমান বাগ সমাধান আৰু ফ’কাছ কেনেকৈ গতি কৰে সেই বিষয়ে সালসলনি দেখা পাব</string>
   <string name="wear_new_feature_page_button_content_description">সমাপ্ত কৰক</string>

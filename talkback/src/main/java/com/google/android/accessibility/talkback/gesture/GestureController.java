@@ -93,6 +93,7 @@ import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.SpeechRateAndPitchActor;
+import com.google.android.accessibility.talkback.actor.SystemActionPerformer;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
@@ -169,6 +170,7 @@ public class GestureController {
   private final SpeechControllerImpl speaker;
   private final ScreenStateMonitor.State screenState;
   private final ProcessorPhoneticLetters processorPhoneticLetters;
+  private final ListEdgeScroller listEdgeScroller;
 
   private final @NonNull Map<Integer, Integer> captureGestureIdToAnnouncements = new HashMap<>();
   private final @NonNull Map<Integer, Integer> captureFingerprintGestureIdToAnnouncements =
@@ -220,6 +222,17 @@ public class GestureController {
     this.speaker = speaker;
     this.screenState = screenState;
     this.processorPhoneticLetters = processorPhoneticLetters;
+    listEdgeScroller = new ListEdgeScroller(service, pipeline, accessibilityFocusMonitor);
+  }
+
+  /** Stops what gestures started that is still going on. */
+  public void shutdown() {
+    listEdgeScroller.cancel();
+  }
+
+  /** Stops scrolling to the top or bottom when the user touches the screen or presses a key. */
+  public void onUserInputStarted() {
+    listEdgeScroller.cancel();
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,6 +334,10 @@ public class GestureController {
       result = pipeline.returnFeedback(eventId, Feedback.focusTop(INPUT_MODE_TOUCH));
     } else if (action.equals(service.getString(R.string.shortcut_value_last_in_screen))) {
       result = pipeline.returnFeedback(eventId, Feedback.focusBottom(INPUT_MODE_TOUCH));
+    } else if (action.equals(service.getString(R.string.shortcut_value_scroll_to_top))) {
+      result = listEdgeScroller.scroll(/* toStart= */ true, eventId);
+    } else if (action.equals(service.getString(R.string.shortcut_value_scroll_to_bottom))) {
+      result = listEdgeScroller.scroll(/* toStart= */ false, eventId);
     } else if (action.equals(service.getString(R.string.shortcut_value_media_control))) {
       result =
           pipeline.returnFeedback(
@@ -385,6 +402,11 @@ public class GestureController {
       result =
           pipeline.returnFeedback(
               eventId, Feedback.systemAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS));
+    } else if (action.equals(service.getString(R.string.shortcut_value_system_notifications))) {
+      result =
+          pipeline.returnFeedback(
+              eventId,
+              Feedback.systemAction(SystemActionPerformer.GLOBAL_ACTION_SYSTEM_NOTIFICATIONS));
     } else if (action.equals(service.getString(R.string.shortcut_value_quick_settings))) {
       result =
           pipeline.returnFeedback(

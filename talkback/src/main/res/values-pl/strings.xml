@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Wyszukiwanie anulowane.</string>
   <string name="notification_type_status_started">Rozpoczęto</string>
   <string name="notification_type_status_stopped">Zatrzymano</string>
-  <string name="notification_type_status_connected">Podłączono</string>
-  <string name="notification_battery_level_unknown">nieznany</string>
   <string name="notification_battery_saver_mode">Oszczędzanie baterii jest włączone</string>
   <string name="template_no_text_selected">Nie zaznaczono tekstu</string>
   <string name="template_charging">%1$s ładowanie. Poziom baterii %2$s procent.</string>
   <string name="template_charging_lite">Ładowanie %1$s</string>
-  <string name="template_battery_state">%1$s do zasilania, poziom baterii %2$s procent. %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Dzwonek wibrujący.</string>
   <string name="value_ringer_silent">Dzwonek wyciszony.</string>
@@ -41,7 +38,7 @@
   <string name="summary_pref_verbose_scroll_announcement">Odczytuj liczbę elementów niezależnie od metody przewijania</string>
   <string name="title_pref_cover_proximity_sensor">Zakryj czujnik zbliżeniowy, by zatrzymać wypowiedź</string>
   <string name="title_pref_phonetic_letters">Odczytuj litery z przykładami</string>
-  <string name="summary_pref_phonetic_letters">Podczas wybierania przycisków klawiatury ekranowej lub przechodzenia po poszczególnych znakach usłyszysz każdą literę wraz z przykładem, np. „h – hotel”.</string>
+  <string name="summary_pref_phonetic_letters">Podczas wybierania przycisków klawiatury ekranowej lub przechodzenia po poszczególnych znakach usłyszysz każdą literę wraz z przykładem, np. „h – Henryk”.</string>
   <string name="title_pref_punctuation">Odczytuj znaki interpunkcyjne i symbole</string>
   <string name="punctuation_all">Wszystkie</string>
   <string name="punctuation_most">Większość</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Wypowiadaj godzinę</string>
   <string name="pref_speak_time_summary">Po włączeniu ekranu</string>
   <string name="summary_speak_container_element_positions">Dotyczy m.in. informacji dostępnych po wybraniu lub opuszczeniu list, siatek i innych kontenerów</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Dodano opóźnienie zaznaczenia do sterowania czytaniem</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Przesuń 3 palcami, aby włączyć sterowanie czytaniem i móc w dowolnym momencie zmienić opóźnienie zaznaczenia</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Przełączyć się na wpisywanie po puszczeniu?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Jeśli opóźnienie zaznaczenia podczas pisania zostanie ustawione na mniej niż 0,3 sekundy, dwukrotne kliknięcie w celu wpisania tekstu będzie bardzo trudne. Wybierz „Przełącz”, aby automatycznie przełączyć się na wpisywanie po puszczeniu.\n\nGdy używasz tej funkcji, przytrzymaj palec na ekranie w celu wybrania przycisku klawiatury, a następnie puść, aby wpisać znak.\n\nMożesz dostosować działanie w ustawieniach Backtalka.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Dodano opóźnienie zaznaczenia przy wpisywaniu do sterowania czytaniem</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Jeśli masz problemy z dwukrotnym kliknięciem podczas pisania, przesuń 3 palcami, aby włączyć sterowanie czytaniem i zwiększyć opóźnienie zaznaczenia podczas pisania</string>
   <string name="gestures_announce_typing_focus_wont_change">Opóźnienie zaznaczenia podczas pisania nie działa bez funkcji wpisywania po puszczeniu.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">OK</string>
   <string name="reset_letency_reduction_settings_dialog_title">Zresetować ustawienia opóźnienia?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Spowoduje to zresetowanie wszystkich ustawień opóźnienia do wartości domyślnych</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Zresetuj</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Wypowiadaj informacje o wszystkich zmianach postępu</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Obejmuje to zmiany dotyczące pobierania, postępowanie według wskazówek dojazdu i inne informacje. Nawet jeśli wyłączysz tę funkcję, będziesz otrzymywać informacje o mniej częstych zmianach.</string>
   <string name="pref_speak_system_window_titles_summary">Wypowiadaj nazwy okien systemowych i okien wprowadzania, np. przy przełączaniu na pasek stanu, powiadomienia lub inną klawiaturę</string>
-  <string name="title_pref_explore_by_touch">Czytanie dotykiem</string>
   <string name="title_pref_category_visual">Wizualne</string>
   <string name="title_pref_category_controls">Elementy sterujące</string>
   <string name="title_pref_category_braille">Brajl</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Aby użyć elementów sterujących czytaniem, przesuń palcem w górę, a potem w dół.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Skróty klawiszowe</string>
   <string name="title_pref_export_custom_labels">Eksportuj niestandardowe etykiety</string>
-  <string name="title_pref_play_store">Otwórz Backtalka w Sklepie Play</string>
-  <string name="summary_pref_play_store">Bieżąca wersja Backtalka: %1$s</string>
   <string name="title_pref_help_and_feedback">Pomoc i opinie</string>
   <string name="title_pref_gup">Skontaktuj się z zespołem pomocy Google dla osób z niepełnosprawnością</string>
   <string name="subtitle_pref_gup">Uzyskaj pomoc w używaniu Backtalka lub zgłoś problemy</string>
@@ -639,7 +628,6 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="summary_cache_keyboard_keys">Backtalk wstępnie wczytuje komunikaty, aby zmniejszyć opóźnienie podczas pisania</string>
   <string name="summary_cache_keyboard_keys_disabled">Aby korzystać z tej funkcji, użyj Zamiany tekstu na mowę Google</string>
   <string name="value_direction_down">w dół</string>
-  <string name="value_direction_down_and_right">w dół, a potem w prawo</string>
   <string name="title_pref_shortcut_up">Przesuń w górę</string>
   <string name="title_pref_shortcut_up_xr">Obróć drugą dłoń do wewnątrz, zetknij palce i przesuń w górę</string>
   <string name="title_pref_shortcut_down">Przesuń w dół</string>
@@ -777,8 +765,6 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="button_customize_gesture_mappings">Dostosuj gesty</string>
   <string name="button_disable_all_events">Wyłącz wszystko</string>
   <string name="button_enable_all_events">Włącz wszystko</string>
-  <string name="dialog_title_disable_exploration">Wyłączyć Czytanie dotykiem?</string>
-  <string name="dialog_message_disable_exploration">Na pewno chcesz wyłączyć Czytanie dotykiem?\n\nUrządzenie nie będzie już reagować na gesty skrótów ani odczytywać elementów dotykanych na ekranie.</string>
   <string name="dialog_title_enable_tree_debug">Włączyć debugowanie drzewa węzłów?</string>
   <string name="dialog_message_enable_tree_debug">Na pewno chcesz włączyć debugowanie drzewa węzłów?\n\nUjawni to zawartość ekranu w dziennikach urządzenia, które mogą odczytać inne aplikacje.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Ponownie przypisać 3-krotne dotknięcie do gestu 4 palców?</string>
@@ -911,8 +897,6 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="typing_echo_change">Echo klawiatury fizycznej: %1$s</string>
   <string name="reading_control_toggle_prefix_xr">Obróć drugą dłoń do wewnątrz i przytrzymaj, aby przełączyć tryb sterowania czytaniem.</string>
   <string name="gesture_1_or_2">%1$s i %2$s</string>
-  <string name="select_setting_hint">%1$s, aby wybrać inne ustawienie.</string>
-  <string name="adjust_setting_hint">%1$s, aby zmienić ustawienie.</string>
   <string name="adjust_granularity_hint">%1$s, aby czytać zawartość ekranu na następującym poziomie: %2$s</string>
   <string name="adjust_typo_hint">%1$s, aby wyświetlić podpowiedzi.</string>
   <string name="use_action_hint">Kliknij dwukrotnie, aby wykonać czynność</string>
@@ -1036,7 +1020,7 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="tutorial_link">Ustawienia Backtalka &gt; Samouczek Backtalka</string>
   <string name="tutorial_link_tts">Ustawienia Backtalka, a następnie Samouczek Backtalka</string>
   <string name="tutorial_entry_point_title">Samouczek</string>
-  <string name="welcome_to_talkback_title">Witamy w Backtalku</string>
+  <string name="welcome_to_talkback_title">Witamy w Backtalk</string>
   <string name="talkback_is_on">Funkcja Backtalk jest włączona</string>
   <string name="talkback_turn_off_description">Backtalk odczytuje na głos treści z ekranu i zmienia sposób działania nawigacji na urządzeniu. Aby wyłączyć tę funkcję, 2 razy kliknij „Wyłącz Backtalka”.</string>
   <string name="turn_off_talkback">Wyłącz Backtalka</string>
@@ -1107,7 +1091,7 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="change_typing_preference_text">Zmień ustawienia pisania</string>
   <string name="moving_cursor_title">Przenoszenie kursora</string>
   <string name="moving_cursor_text">Po aktywowaniu pola tekstowego możesz przenosić kursor między literami, przesuwając palcem w górę lub w dół.\n\nSpróbuj zrobić to teraz w polu tekstowym poniżej.</string>
-  <string name="edit_box_text">Witamy w Backtalku</string>
+  <string name="edit_box_text">Witamy w Backtalk</string>
   <string name="selecting_text_title">Zaznaczanie tekstu</string>
   <string name="selecting_text_text">W polu tekstowym przesuń kursor na początek tekstu, który chcesz zaznaczyć.\n\nKliknij dwukrotnie i przytrzymaj 2 palcami, aby uruchomić tryb zaznaczania. Następnie przenieś kursor na koniec tekstu. Ponownie kliknij dwukrotnie i przytrzymaj 2 palcami, by zamknąć tryb zaznaczania.\n\nW polu tekstowym poniżej spróbuj zaznaczyć słowo „Witamy”.</string>
   <string name="selecting_text_text_pre_r">W polu tekstowym przenieś kursor na początek tekstu, który chcesz zaznaczyć.\n\nPrzesuń palcem w dół, a następnie w prawo, aby otworzyć menu Backtalka. Kliknij dwukrotnie „Czynności”, a następnie uruchom tryb zaznaczania. Przesuń kursor na koniec tekstu.\n\nPonownie otwórz menu Backtalka i kliknij dwukrotnie „Czynności”, aby zakończyć tryb zaznaczania.\n\nW polu tekstowym poniżej spróbuj zaznaczyć słowo „Witamy”.</string>
@@ -1234,8 +1218,6 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="wear_training_typing_text5">Spróbuj to zrobić poniżej.</string>
   <string name="wear_training_typing_practice_button_content_description">Pisanie za pomocą klawiatury</string>
   <string name="wear_training_end_tutorial_title">Możesz już zacząć korzystać z Backtalka</string>
-  <string name="talkback_updated_notification_title">Backtalk został zaktualizowany</string>
-  <string name="talkback_updated_notification_content">Dotknij, by dowiedzieć się więcej</string>
   <string name="wear_new_feature_page_title">Witamy w nowej wersji Backtalka</string>
   <string name="wear_new_feature_page_content">Dodaliśmy poprawki błędów i zmiany dotyczące zaznaczania elementów</string>
   <string name="wear_new_feature_page_button_content_description">Zakończ</string>

@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">தேடல் ரத்துசெய்யப்பட்டது.</string>
   <string name="notification_type_status_started">தொடங்கியது</string>
   <string name="notification_type_status_stopped">நிறுத்தப்பட்டது</string>
-  <string name="notification_type_status_connected">இணைக்கப்பட்டது</string>
-  <string name="notification_battery_level_unknown">தெரியவில்லை</string>
   <string name="notification_battery_saver_mode">பேட்டரி சேமிப்பு ஆன் செய்யப்பட்டுள்ளது</string>
   <string name="template_no_text_selected">உரை தேர்ந்தெடுக்கப்படவில்லை</string>
   <string name="template_charging">சார்ஜிங் %1$s பேட்டரி அளவு %2$s சதவீதம்.</string>
   <string name="template_charging_lite">சார்ஜ் ஆகிறது %1$s</string>
-  <string name="template_battery_state">பவர் %1$s %2$s சதவீதம்%3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">ரிங்கர் அதிர்வு.</string>
   <string name="value_ringer_silent">ரிங்கர் சைலன்ட்.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">நேரத்தை வாசித்தல்</string>
   <string name="pref_speak_time_summary">திரையை இயக்கும்போது</string>
   <string name="summary_speak_container_element_positions">பட்டியல்கள், கட்டங்கள் மற்றும் பிற கண்டெய்னர்களில் நுழையும்போதும் வெளியேறும்போதும் தகவல்களைச் சேர்க்கும்</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">வாசிப்புக் கட்டுப்பாட்டில் ஃபோகஸ் தாமதம் சேர்க்கப்பட்டுள்ளது</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">3 விரல்களால் ஸ்வைப் செய்து வாசிப்புக் கட்டுப்பாட்டைத் திறந்து அதில் ஃபோகஸுக்கான தாமத நேரத்தை எப்போது வேண்டுமானாலும் மாற்றிக்கொள்ளலாம்</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">திரையிலிருந்து விரலை எடுத்து டைப் செய்யும் முறைக்கு மாற்றவா?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">டைப்பிங் ஃபோகஸ் தாமதம் 0.3 வினாடிகளுக்குக் குறைவாக அமைக்கப்பட்டிருந்தால், இருமுறை தட்டி டைப் செய்வது மிகக் கடினமாக இருக்கும். திரையிலிருந்து விரலை எடுத்து டைப் செய்யும் முறைக்குத் தானாக மாற \"மாற்று\" என்பதைத் தேர்ந்தெடுங்கள்.\n\nதிரையிலிருந்து விரலை எடுத்து டைப் செய்யும் முறையைப் பயன்படுத்த, ஏதேனுமொரு பட்டனின் மீது விரலை அழுத்திப் பிடித்துத் தேர்வுசெய்து, பின் டைப் செய்ய விரலை அதிலிருந்து எடுக்கவும்.\n\nTalkBack அமைப்புகளில் நீங்கள் இதைப் பிரத்தியேகமாக்கலாம்.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">வாசிப்புக் கட்டுப்பாட்டில் டைப்பிங் ஃபோகஸ் தாமதம் சேர்க்கப்பட்டுள்ளது</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">டைப் செய்யும்போது இருமுறை தட்டுவதில் சிக்கல்கள் இருந்தால், 3 விரல்களால் ஸ்வைப் செய்து வாசிப்புக் கட்டுப்பாட்டைத் திறந்து அதில் ஃபோகஸுக்கான தாமத நேரத்தை அதிகரியுங்கள்</string>
   <string name="gestures_announce_typing_focus_wont_change">திரையிலிருந்து விரலை எடுத்து டைப் செய்யும் முறை இல்லாமல் டைப்பிங் ஃபோகஸ் தாமதம் வேலை செய்யாது.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">சரி</string>
   <string name="reset_letency_reduction_settings_dialog_title">தாமத அமைப்புகளை மீட்டமைக்கவா?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">தாமத அமைப்புகள் அனைத்தையும் இது இயல்புநிலைக்கு மீட்டமைக்கும்</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">மீட்டமை</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">செயல்பாடு குறித்த அறிவிப்புகளை வாசித்தல்</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">பதிவிறக்குவது, வாகன வழிகளைப் பின்பற்றுவது மற்றும் பல அறிவிப்புகள் இதிலடங்கும். முடக்கப்பட்டால் அவ்வப்போது குறைவான அறிவிப்புகளைப் பெறுவீர்கள்.</string>
   <string name="pref_speak_system_window_titles_summary">நிலைப் பட்டி, அறிவிப்புகள் அல்லது மற்றொரு கீபோர்டுக்கு மாறும்போது சிஸ்டம் மற்றும் உள்ளீட்டுச் சாளரங்களை வாசிக்கும்</string>
-  <string name="title_pref_explore_by_touch">தொடுவதன் மூலம் அறிக</string>
   <string name="title_pref_category_visual">விஷுவல்</string>
   <string name="title_pref_category_controls">கட்டுப்பாடுகள்</string>
   <string name="title_pref_category_braille">பிரெய்ல்</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">வாசிப்புக் கட்டுப்பாடுகளைப் பயன்படுத்த, மேல்நோக்கி ஸ்வைப் செய்துவிட்டு கீழ்நோக்கி ஸ்வைப் செய்யுங்கள்.</string>
   <string name="title_pref_manage_keyboard_shortcuts">கீபோர்டு ஷார்ட்கட்கள்</string>
   <string name="title_pref_export_custom_labels">பிரத்தியேக லேபிள்களை ஏற்று</string>
-  <string name="title_pref_play_store">Play Storeரில் TalkBackகைத் திற</string>
-  <string name="summary_pref_play_store">நடப்பு TalkBack பதிப்பு: %1$s</string>
   <string name="title_pref_help_and_feedback">உதவி &amp; கருத்து</string>
   <string name="title_pref_gup">மாற்றுத்திறனாளிகளுக்கான Google உதவிக் குழுவைத் தொடர்புகொள்ளுங்கள்</string>
   <string name="subtitle_pref_gup">TalkBackகைப் பயன்படுத்தி உதவி பெறலாம் அல்லது சிக்கல்களைப் புகாரளிக்கலாம்</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">நீங்கள் டைப் செய்யும்போது தாமதத்தைக் குறைக்க, அறிவிப்புகளை TalkBack முன்கூட்டியே ஏற்றும்</string>
   <string name="summary_cache_keyboard_keys_disabled">இந்த அம்சத்தைப் பயன்படுத்த, Google Text-to-speech சேவையைப் பயன்படுத்தும்</string>
   <string name="value_direction_down">கீழே</string>
-  <string name="value_direction_down_and_right">முதலில் கீழாகப் பிறகு வலதுபுறமாக</string>
   <string name="title_pref_shortcut_up">மேல்நோக்கி ஸ்வைப் செய்தல்</string>
   <string name="title_pref_shortcut_up_xr">இரண்டாம்நிலை உள்ளங்கையை உள்நோக்கித் திருப்பி, பின்ச் செய்து மேலே ஸ்வைப் செய்தல்</string>
   <string name="title_pref_shortcut_down">கீழ்நோக்கி ஸ்வைப் செய்தல்</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">சைகைகளைப் பிரத்தியேகமாக்கு</string>
   <string name="button_disable_all_events">எல்லாவற்றையும் முடக்கு</string>
   <string name="button_enable_all_events">எல்லாவற்றையும் இயக்கு</string>
-  <string name="dialog_title_disable_exploration">தொடுவதன் மூலம் அறிவதை முடக்கவா?</string>
-  <string name="dialog_message_disable_exploration">தொடுவதன் மூலம் அறிக அம்சத்தை முடக்க விரும்புகிறீர்களா?\n\nஉங்கள் சாதனம் இனிமேல் ஷார்ட்கட் சைகைகளைச் செயல்படுத்தாது அல்லது திரையைத் தொடும்போது அதைக் கூறாது.</string>
   <string name="dialog_title_enable_tree_debug">நோடு ட்ரீ பிழைதிருத்தத்தை இயக்கவா?</string>
   <string name="dialog_message_enable_tree_debug">நோடு ட்ரீ பிழைதிருத்தத்தை நிச்சயமாக இயக்க விரும்புகிறீர்களா?\n\nநோடு ட்ரீ பிழைதிருத்தம் உங்கள் திரையின் உள்ளடக்கத்தை, உங்கள் சாதனத்தின் பதிவுகளில் சேர்க்கும், இதனைப் பிற ஆப்ஸ் படிக்கக்கூடும்.</string>
   <string name="dialog_title_enable_tree_debug_gesture">மூன்று முறை தட்டுதலை 4 விரல்கள் சைகையாக மாற்றவா?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s எதிரொலி கீபோர்டு</string>
   <string name="reading_control_toggle_prefix_xr">வாசிப்புக் கட்டுப்பாட்டுப் பயன்முறைக்கு மாற இரண்டாம்நிலை உள்ளங்கையை உள்நோக்கித் திருப்பி அழுத்திப் பிடிக்கவும்.</string>
   <string name="gesture_1_or_2">%1$s அல்லது %2$s</string>
-  <string name="select_setting_hint">வேறு அமைப்பைத் தேர்ந்தெடுக்க %1$s</string>
-  <string name="adjust_setting_hint">அமைப்பை மாற்ற %1$s</string>
   <string name="adjust_granularity_hint">%2$s மூலம் படிக்க %1$s</string>
   <string name="adjust_typo_hint">பரிந்துரைகளுக்கு %1$s.</string>
   <string name="use_action_hint">செயலைச் செய்வதற்கு இருமுறை தட்டவும்</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">கீழே முயன்று பாருங்கள்.</string>
   <string name="wear_training_typing_practice_button_content_description">கீபோர்டு மூலம் டைப் செய்யலாம்</string>
   <string name="wear_training_end_tutorial_title">TalkBackகைப் பயன்படுத்தத் தயாராகிவிட்டீர்கள்</string>
-  <string name="talkback_updated_notification_title">TalkBack புதுப்பிக்கப்பட்டது</string>
-  <string name="talkback_updated_notification_content">மேலும் கண்டறிய தட்டவும்</string>
   <string name="wear_new_feature_page_title">புதுப்பிக்கப்பட்ட TalkBack அம்சத்திற்கு வரவேற்கிறோம்</string>
   <string name="wear_new_feature_page_content">ஃபோகஸ் மாறும் முறையில் செய்யப்பட்டுள்ள சில பிழைதிருத்தங்களையும் மாற்றங்களையும் பார்ப்பீர்கள்</string>
   <string name="wear_new_feature_page_button_content_description">நிறைவுசெய்யும்</string>

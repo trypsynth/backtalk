@@ -50,6 +50,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -381,6 +382,7 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
         final int cancelsAtStart = focusHintCancels;
         final CharSequence hintTTSOutput = part.speech().hint();
         final int hintFlags = part.speech().hintSpeakOptions().mFlags;
+        final Set<Integer> hintEarcons = part.speech().hintSpeakOptions().mEarcons;
         @InterruptGroup final int hintInterruptGroup = part.speech().hintInterruptGroup();
         @InterruptLevel final int hintInterruptLevel = part.speech().hintInterruptLevel();
         part.speech()
@@ -412,6 +414,7 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
                                   SpeechController.SpeakOptions.create()
                                       .setQueueMode(SpeechController.QUEUE_MODE_QUEUE)
                                       .setFlags(hintFlags)
+                                      .setEarcons(hintEarcons)
                                       .setUtteranceGroup(SpeechController.UTTERANCE_GROUP_DEFAULT))
                               .build()));
                 });

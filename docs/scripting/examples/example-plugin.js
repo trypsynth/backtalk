@@ -4,8 +4,6 @@ export const manifest = {
   version: '1.0',
   author: 'Backtalk',
   homepage: 'https://github.com/trypsynth/backtalk/blob/master/docs/scripting/examples/example-plugin.js',
-  minApiVersion: 1,
-  testedApiVersion: 1,
   description: 'Says the name of each app you switch to, and counts how often you open each one.',
   // screen: a script for all apps is told which app is in front. speech: backtalk.speak.
   permissions: ['screen', 'speech'],

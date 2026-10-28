@@ -75,10 +75,7 @@
     <string name="script_log_copy">Kopírovat protokol</string>
     <string name="script_log_copied">Protokol zkopírován</string>
     <string name="script_log_entry"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="level">%2$s</xliff:g></string>
-    <string name="script_api_too_old">Vyžaduje skriptovací API <xliff:g id="needed">%1$d</xliff:g> nebo novější. Tento Backtalk má <xliff:g id="current">%2$d</xliff:g>, takže některé části nemusí fungovat.</string>
-    <string name="script_api_untested">Testováno do skriptovacího API <xliff:g id="tested">%1$d</xliff:g>. Tento Backtalk má <xliff:g id="current">%2$d</xliff:g>, takže skript nemusí fungovat podle očekávání.</string>
     <string name="script_state_incompatible">S tímto Backtalkem nemusí fungovat</string>
-    <string name="script_api_range">Skriptovací API <xliff:g id="min">%1$d</xliff:g> až <xliff:g id="tested">%2$d</xliff:g></string>
     <string name="script_compatibility_title">Kompatibilita</string>
     <string name="script_install_anyway">Přesto nainstalovat</string>
     <string name="script_update_anyway">Přesto aktualizovat</string>

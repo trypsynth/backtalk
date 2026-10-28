@@ -33,6 +33,9 @@ android {
         // a watch, so they are not debuggable. Debug logging in the libraries stays on.
         debug {
             debuggable = false
+            // Shrinks and optimizes the libraries, so there is less code to load and compile.
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     packaging {
@@ -49,8 +52,9 @@ android {
         checkReleaseBuilds = false
         // Lint the library modules too, where most of the code is, in one report.
         checkDependencies = true
-        // The issues that were already there when lint was added to CI. Only new ones fail the
-        // build. To accept new ones on purpose, run ./gradlew updateLintBaselinePhoneDebug.
+        // The issues that were already there when lint was added to CI, for the phone and the
+        // watch. Only new ones fail the build. After accepting new ones on purpose with
+        // ./gradlew updateLintBaseline, check that :lintPhoneDebug and :lintWearDebug both pass.
         baseline = file("lint-baseline.xml")
         abortOnError = true
     }

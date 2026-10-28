@@ -23,7 +23,6 @@ import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import com.google.android.accessibility.talkback.Feedback
 import com.google.android.accessibility.talkback.Pipeline
-import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.talkback.pause.PauseController
 import com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED
 import com.google.android.accessibility.utils.SharedPreferencesUtils
@@ -64,7 +63,6 @@ object SpeechControl {
 
   /** Must match pref_speech_control_key. */
   const val PREF_ENABLED = "pref_speech_control"
-  const val PREF_SOUND = "pref_speech_control_sound"
 
   private var context: Context? = null
   private var feedback: Pipeline.FeedbackReturner? = null
@@ -102,10 +100,6 @@ object SpeechControl {
 
   fun isEnabled(context: Context): Boolean =
     SharedPreferencesUtils.getSharedPreferences(context).getBoolean(PREF_ENABLED, false)
-
-  /** Whether a sound plays before each thing another app says. Off unless the user turns it on. */
-  fun playsSound(context: Context): Boolean =
-    SharedPreferencesUtils.getSharedPreferences(context).getBoolean(PREF_SOUND, false)
 
   /**
    * Says [text] for the first of [apps], the caller's packages, that the user allowed, and asks
@@ -151,8 +145,6 @@ object SpeechControl {
       )
     options.setUtteranceGroup(UTTERANCE_GROUP_OTHER_APPS)
     val speech = Feedback.speech(say, options)
-    // The sound marks the speech as another app's.
-    if (playsSound(context)) speech.sound(R.raw.chime_up)
     return feedback.returnFeedback(EVENT_ID_UNTRACKED, speech)
   }
 

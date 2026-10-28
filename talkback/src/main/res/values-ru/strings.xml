@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Поиск отменён.</string>
   <string name="notification_type_status_started">Начато</string>
   <string name="notification_type_status_stopped">Остановлено</string>
-  <string name="notification_type_status_connected">подключено</string>
-  <string name="notification_battery_level_unknown">неизвестно</string>
   <string name="notification_battery_saver_mode">Режим энергосбережения включён</string>
   <string name="template_no_text_selected">Текст не выделен</string>
   <string name="template_charging">Зарядка: %1$s. Заряд батареи в процентах: %2$s.</string>
   <string name="template_charging_lite">Статус зарядки: %1$s</string>
-  <string name="template_battery_state">Питание: %1$s, процент заряда %2$s, %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Вибровызов.</string>
   <string name="value_ringer_silent">Беззвучный режим.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Озвучивать время</string>
   <string name="pref_speak_time_summary">Когда вы включаете экран</string>
   <string name="summary_speak_container_element_positions">Сообщать о входе в списки, сетки и другие контейнеры и выходе из них</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">В управление чтением добавлена задержка выбора элемента</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Чтобы изменить задержку выбора элемента, проведите по экрану тремя пальцами и откройте настройки управления чтением.</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Вводить текст, отпуская клавиши?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Если задержка выбора элемента меньше 0,3 секунды, нажать дважды для ввода текста будет очень сложно. Вы можете активировать ввод текста при отпускании клавиши.\n\nЧтобы ввести символ, удерживайте палец на клавише, а затем уберите его.\n\nЗадать параметры этого способа ввода можно в настройках Backtalk.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">В управление чтением добавлена задержка выбора элемента при вводе</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Если у вас не получается набирать текст, дважды нажимая на клавиши, то проведите по экрану тремя пальцами, чтобы открыть меню управления чтением, и увеличьте задержку выбора элемента при вводе.</string>
   <string name="gestures_announce_typing_focus_wont_change">Задержка выбора элемента при вводе работает, только когда включён ввод текста при отпускании клавиши.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">ОК</string>
   <string name="reset_letency_reduction_settings_dialog_title">Сбросить настройки задержки?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Для всех параметров задержки будут восстановлены значения по умолчанию.</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Сбросить</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Озвучивать уведомления о ходе выполнения</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Сюда входят уведомления во время скачивания, навигации и не только. Когда параметр отключён, вы будете получать меньше уведомлений.</string>
   <string name="pref_speak_system_window_titles_summary">Озвучивать названия системных окон и окон ввода, например при переходе к строке состояния, уведомлениям или клавиатуре</string>
-  <string name="title_pref_explore_by_touch">Изучение касанием</string>
   <string name="title_pref_category_visual">Визуальные</string>
   <string name="title_pref_category_controls">Управление</string>
   <string name="title_pref_category_braille">Шрифт Брайля</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Чтобы использовать элементы управления чтением, проведите вверх, а затем вниз</string>
   <string name="title_pref_manage_keyboard_shortcuts">Быстрые клавиши</string>
   <string name="title_pref_export_custom_labels">Экспортировать персональные ярлыки</string>
-  <string name="title_pref_play_store">Страница Backtalk в Google Play</string>
-  <string name="summary_pref_play_store">Текущая версия Backtalk: %1$s</string>
   <string name="title_pref_help_and_feedback">Справка/отзыв</string>
   <string name="title_pref_gup">Связаться со службой поддержки проекта \"Google Специальные возможности\"</string>
   <string name="subtitle_pref_gup">Получить помощь по работе с Backtalk или сообщить о проблеме</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">Backtalk предварительно загружает данные озвучивания, чтобы уменьшить задержку при вводе текста.</string>
   <string name="summary_cache_keyboard_keys_disabled">Чтобы использовать эту функцию, включите Синтезатор речи Google.</string>
   <string name="value_direction_down">вниз</string>
-  <string name="value_direction_down_and_right">вниз, затем вправо</string>
   <string name="title_pref_shortcut_up">Вверх</string>
   <string name="title_pref_shortcut_up_xr">Повернуть ладонь неведущ. руки к себе, свести 2 пальца, провести вверх</string>
   <string name="title_pref_shortcut_down">Вниз</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Настроить жесты</string>
   <string name="button_disable_all_events">Отключить все</string>
   <string name="button_enable_all_events">Включить все</string>
-  <string name="dialog_title_disable_exploration">Отключить Изучение касанием?</string>
-  <string name="dialog_message_disable_exploration">Вы действительно хотите отключить Изучение касанием?\n\nУстройство больше не будет реагировать на жесты и называть элементы при касании экрана.</string>
   <string name="dialog_title_enable_tree_debug">Включить отладку дерева узлов?</string>
   <string name="dialog_message_enable_tree_debug">Вы действительно хотите включить отладку дерева узлов?\n\nВ этом случае содержимое экрана может сохраняться в журналах устройства, доступных другим приложениям.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Назначить тройное нажатие четырьмя пальцами?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">Режим озвучивания нажимаемых клавиш на физической клавиатуре: %1$s</string>
   <string name="reading_control_toggle_prefix_xr">Чтобы переключить режим управления чтением, поверните ладонь неведущ. руки на себя и зажмите кнопку.</string>
   <string name="gesture_1_or_2">%1$s или %2$s</string>
-  <string name="select_setting_hint">%1$s, чтобы выбрать другую настройку</string>
-  <string name="adjust_setting_hint">%1$s, чтобы отрегулировать эту настройку</string>
   <string name="adjust_granularity_hint">%1$s для чтения по %2$s</string>
   <string name="adjust_typo_hint">%1$s, чтобы перейти к подсказкам.</string>
   <string name="use_action_hint">Чтобы выполнить действие, дважды нажмите на экран</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">Попробуйте ниже.</string>
   <string name="wear_training_typing_practice_button_content_description">Ввод текста с помощью клавиатуры</string>
   <string name="wear_training_end_tutorial_title">Вы готовы начать пользоваться Backtalk</string>
-  <string name="talkback_updated_notification_title">Программа Backtalk обновлена</string>
-  <string name="talkback_updated_notification_content">Нажмите, чтобы узнать больше.</string>
   <string name="wear_new_feature_page_title">Функция Backtalk обновлена</string>
   <string name="wear_new_feature_page_content">Мы исправили некоторые ошибки и изменили то, как перемещается фокус.</string>
   <string name="wear_new_feature_page_button_content_description">Готово</string>
@@ -1528,7 +1510,6 @@
   <string name="summary_pref_speakerphone_needs_permission">Требуется разрешение, которое Android не выдаёт программам чтения с экрана. Чтобы предоставить его, выполните эту команду через adb или Shizuku, затем вернитесь на этот экран: %1$s</string>
   <string name="title_pref_speech_control">Разрешить другим приложениям озвучивать текст</string>
   <string name="summary_pref_speech_control">Разрешённые приложения могут озвучивать текст голосом Backtalk. Пока устройство заблокировано, текст не озвучивается.</string>
-  <string name="title_pref_speech_control_sound">Воспроизводить звук перед озвучиванием из других приложений</string>
   <string name="speech_control_apps_category">Приложения</string>
   <string name="speech_control_no_apps">Ни одно приложение пока не запрашивало озвучивание текста.</string>
   <string name="speech_control_ask_title">Разрешить приложению <xliff:g id="app" example="Tasker">%1$s</xliff:g> озвучивать текст через Backtalk?</string>
@@ -1652,4 +1633,14 @@
   <string name="permission_braille_display_label">запрашивать разрешение на работу в качестве дисплея Брайля для Backtalk</string>
   <string name="permission_braille_display_description">Позволяет приложению запрашивать разрешение на работу в качестве дисплея Брайля для Backtalk. Если вы предоставите разрешение в Backtalk, приложение сможет читать всё содержимое экрана и управлять устройством. Backtalk сначала запросит ваше согласие.</string>
   <string name="title_clear_selection">Снять выделение</string>
+
+  <string name="title_pref_category_apps">Приложения</string>
+  <string name="title_pref_touch_activation">Касания и активация</string>
+  <string name="title_pref_navigation">Навигация</string>
+  <string name="action_copy_command">Скопировать команду</string>
+  <string name="command_copied">Команда скопирована</string>
+  <string name="title_pref_focus_new_windows">Перемещать фокус в новые окна</string>
+  <string name="title_pref_volume_keys_adjust_sliders">Изменять значения ползунков кнопками громкости</string>
+  <string name="summary_pref_volume_keys_adjust_sliders">Когда фокус находится на ползунке, кнопки увеличения и уменьшения громкости изменяют его значение вместо громкости</string>
+  <string name="title_pref_first_item_interrupts_window_name">Озвучивать первый элемент, не дожидаясь окончания озвучивания названия окна</string>
 </resources>

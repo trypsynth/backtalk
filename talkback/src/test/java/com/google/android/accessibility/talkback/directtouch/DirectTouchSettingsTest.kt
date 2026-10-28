@@ -58,34 +58,6 @@ class DirectTouchSettingsTest {
   }
 
   @Test
-  fun backupRoundTrip() {
-    DirectTouchSettings.setAppEnabled(prefs, "a.b", true)
-    DirectTouchSettings.setDirectTyping(prefs, "a.b", true)
-    DirectTouchSettings.setMasterEnabled(prefs, false)
-    val json = DirectTouchSettings.exportJson(prefs)
-    val other = FakeSharedPreferences()
-    assertTrue(DirectTouchSettings.importJson(other, json))
-    assertTrue(DirectTouchSettings.isAppEnabled(other, "a.b"))
-    assertTrue(DirectTouchSettings.isDirectTyping(other, "a.b"))
-    assertFalse(DirectTouchSettings.isMasterEnabled(other))
-  }
-
-  @Test
-  fun importReplacesExistingTyping() {
-    DirectTouchSettings.setDirectTyping(prefs, "old.app", true)
-    val json = DirectTouchSettings.exportJson(FakeSharedPreferences())
-    assertTrue(DirectTouchSettings.importJson(prefs, json))
-    assertFalse(DirectTouchSettings.isDirectTyping(prefs, "old.app"))
-  }
-
-  @Test
-  fun importRejectsGarbage() {
-    assertFalse(DirectTouchSettings.importJson(prefs, "not json"))
-    assertFalse(DirectTouchSettings.importJson(prefs, "{\"version\":2}"))
-    assertTrue(DirectTouchSettings.isMasterEnabled(prefs))
-  }
-
-  @Test
   fun oldNavBarSettingTurnsOnLiftToActivateForTheNavigationBar() {
     val prefs = FakeSharedPreferences()
     prefs.edit().putBoolean("pref_direct_touch_nav_bar", true).apply()

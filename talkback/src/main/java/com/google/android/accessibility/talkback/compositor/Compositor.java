@@ -532,6 +532,9 @@ public class Compositor {
       if (eventFeedback.secondEarcon() != -1) {
         earcons.add(eventFeedback.secondEarcon());
       }
+      if (eventFeedback.actionsEarcon() != -1) {
+        earcons.add(eventFeedback.actionsEarcon());
+      }
       speakOptions.setEarcons(earcons);
 
       Bundle nonSpeechParams = new Bundle();

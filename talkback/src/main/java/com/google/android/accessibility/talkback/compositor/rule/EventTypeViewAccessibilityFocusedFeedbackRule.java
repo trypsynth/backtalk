@@ -49,10 +49,12 @@ import com.google.android.accessibility.talkback.controlsounds.ControlSounds;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
 import com.google.android.accessibility.talkback.feedbackpolicy.ScreenFeedbackManager;
 import com.google.android.accessibility.talkback.imagecaption.ImageContents;
+import com.google.android.accessibility.talkback.soundthemes.ActionsSoundSettings;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.Filter;
 import com.google.android.accessibility.utils.FormFactorUtils;
 import com.google.android.accessibility.utils.Role;
+import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.SpannableUtils;
 import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
@@ -204,6 +206,12 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
         .setPreventDeviceSleep(true)
         .setEarcon(earcon)
         .setSecondEarcon(secondEarcon)
+        .setActionsEarcon(
+            AccessibilityNodeInfoUtils.getCustomActions(srcNode).isEmpty()
+                    || ActionsSoundSettings.isWithHint(
+                        SharedPreferencesUtils.getSharedPreferences(context))
+                ? -1
+                : R.id.actions_available)
         .setEarconX(earconPosition == null ? -1 : earconPosition[0])
         .setEarconY(earconPosition == null ? -1 : earconPosition[1])
         .setEarconVibrates(earconVibrates)
@@ -364,7 +372,7 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
       logString.append(String.format("\n    windowTransition={%s}", windowTransition));
     }
 
-    LogUtils.v(TAG, "viewAccessibilityFocusedDescription: %s", logString.toString());
+    LogUtils.v(TAG, "viewAccessibilityFocusedDescription: %s", logString);
 
     return CompositorUtils.joinCharSequences(
         outputJoinList, CompositorUtils.getSeparator(), PRUNE_EMPTY);
@@ -423,7 +431,7 @@ public final class EventTypeViewAccessibilityFocusedFeedbackRule {
       windowTransitionState = "";
     }
 
-    LogUtils.v(TAG, "windowTransitionState: %s", logString.toString());
+    LogUtils.v(TAG, "windowTransitionState: %s", logString);
     return windowTransitionState;
   }
 

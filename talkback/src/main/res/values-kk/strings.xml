@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Іздеуден бас тартылды.</string>
   <string name="notification_type_status_started">Басталды</string>
   <string name="notification_type_status_stopped">Тоқтатылды</string>
-  <string name="notification_type_status_connected">қосылды</string>
-  <string name="notification_battery_level_unknown">белгісіз</string>
   <string name="notification_battery_saver_mode">Батареяны үнемдеу режимі қосулы</string>
   <string name="template_no_text_selected">Мәтін таңдалмады</string>
   <string name="template_charging">Зарядталуда %1$s Батарея деңгейі %2$s пайыз.</string>
   <string name="template_charging_lite">Зарядталуда %1$s</string>
-  <string name="template_battery_state">Қуат %1$s. %2$s пайыз. %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Қоңырауда дірілдету.</string>
   <string name="value_ringer_silent">Қоңырау үнсіз.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Сөйлеу уақыты</string>
   <string name="pref_speak_time_summary">Сіз экранды қосқан кезде</string>
   <string name="summary_speak_container_element_positions">Тізімдерге, торларға және басқа да контейнерлерге кірген және шыққан кездегі ақпаратты қамтиды.</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Оқуды басқару параметріне ерекшелеу кідірісі қосылды</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Оқуды басқару параметрін пайдалану және ерекшелеу кідірісін кез келген уақытта өзгерту үшін 3 саусақпен сырғытыңыз.</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Мәтін теру үшін көтеру режиміне ауыстыру қажет пе?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Теруді ерекшелеу кідірісі 0,3 секундтан аз уақытқа орнатылған кезде, теру үшін екі рет түрту өте қиын болады. Мәтін теру үшін көтеру режиміне автоматты түрде ауыстыру үшін \"Ауыстыру\" опциясын таңдаңыз.\n\nТеру үшін көтеру режимін пайдалану мақсатында саусағыңызды ұстап тұрып, кез келген түймені таңдаңыз, содан кейін теру үшін көтеріңіз.\n\nМұны TalkBack параметрлерінде бейімдеуге болады.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Оқуды басқару параметріне теруді ерекшелеу кідірісі қосылды</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Теру кезінде екі рет түртуге қатысты мәселелер пайда болса, оқуды басқару параметрін пайдалану және теруді ұзағырақ ерекшелеу кідірісіне өзгерту үшін 3 саусақпен сырғытыңыз.</string>
   <string name="gestures_announce_typing_focus_wont_change">Теруді ерекшелеу кідірісі мәтін теру үшін көтеру режимінсіз істемейді.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">Түсінікті</string>
   <string name="reset_letency_reduction_settings_dialog_title">Кідіріс параметрлерін бастапқы күйге қайтару қажет пе?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Кідірістің барлық параметрі әдепкі мәніне қайтарылады.</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Қайтару</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Прогресс туралы жаңартуларды дыбыстау</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Жүктеп алу кезіндегі хабарландыруларды, автокөлікпен жүру бағыттарын және т.б. қамтиды. Параметр өшірулі кезде, хабарландыру сирегірек келеді.</string>
   <string name="pref_speak_system_window_titles_summary">Күй жолағына, хабарландыруларға немесе басқа пернетақтаға ауысу кезінде жүйе және енгізу терезелерін дауыстап айту</string>
-  <string name="title_pref_explore_by_touch">Түртілген элементтерді дыбыстау</string>
   <string name="title_pref_category_visual">Визуалдық параметрлер</string>
   <string name="title_pref_category_controls">Басқару элементтері</string>
   <string name="title_pref_category_braille">Брайль</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Оқуды басқару құралдарын пайдалану үшін жоғары, одан кейін төмен сырғытыңыз.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Перне тіркесімдері</string>
   <string name="title_pref_export_custom_labels">Арнаулы белгілерді экспорттау</string>
-  <string name="title_pref_play_store">TalkBack қолданбасын Play Store-дан ашу</string>
-  <string name="summary_pref_play_store">Қазіргі TalkBack нұсқасы: %1$s</string>
   <string name="title_pref_help_and_feedback">Анықтама және пікір</string>
   <string name="title_pref_gup">Google-дың мүмкіндігі шектеулі адамдарға арналған қолдау көрсету қызметіне хабарласу</string>
   <string name="subtitle_pref_gup">TalkBack көмегімен анықтама алыңыз немесе мәселе туралы хабар жіберіңіз.</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">Терген кездегі кідірісті азайту үшін TalkBack хабарландыруларды алдын ала жүктейді.</string>
   <string name="summary_cache_keyboard_keys_disabled">Бұл функцияны пайдалану үшін Google Text-to-speech қолданыңыз</string>
   <string name="value_direction_down">төменге</string>
-  <string name="value_direction_down_and_right">төмен, содан кейін оңға</string>
   <string name="title_pref_shortcut_up">Жоғары сырғыту</string>
   <string name="title_pref_shortcut_up_xr">Бағыныңқы алақанды ішке қаратып, екі саусақты қосып, жоғары жылжыту</string>
   <string name="title_pref_shortcut_down">Төмен сырғыту</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Қимылдарды теңшеу</string>
   <string name="button_disable_all_events">Барлығын өшіру</string>
   <string name="button_enable_all_events">Барлығын қосу</string>
-  <string name="dialog_title_disable_exploration">Түртілген элементтерді дыбыстау функциясын өшіру керек пе?</string>
-  <string name="dialog_message_disable_exploration">Түртілген элементтерді дыбыстау функциясы өшіріле берсін бе?\n\nҚұрылғы енді қимылдарға жауап бермейді немесе экранды түрткенде элементтерді дыбыстамайды.</string>
   <string name="dialog_title_enable_tree_debug">Түйін тармағының күйін келтіруді қосу керек пе?</string>
   <string name="dialog_message_enable_tree_debug">Түйін тармағының күйін келтіруді қосу керек пе?\n\nТүйін тармағының күйін келтіру экран контентін құрылғы журналдарына ашады, оларды басқа қолданбалар оқуы мүмкін.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 саусақпен үш рет түрту қимылын қайта тағайындау керек пе?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">Физикалық пернетақтаның жаңғырық мәні — %1$s.</string>
   <string name="reading_control_toggle_prefix_xr">Оқуды басқару режимін ауыстыру үшін бағыныңқы алақанды ішке қаратып, басып тұрыңыз.</string>
   <string name="gesture_1_or_2">%1$s немесе %2$s</string>
-  <string name="select_setting_hint">Басқа параметрді таңдау үшін %1$s</string>
-  <string name="adjust_setting_hint">Параметрді реттеу үшін %1$s</string>
   <string name="adjust_granularity_hint">%2$s бойынша оқу үшін %1$s</string>
   <string name="adjust_typo_hint">Ұсыныстарды көру қимылы: %1$s.</string>
   <string name="use_action_hint">Әрекетті орындау үшін екі рет түртіңіз.</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">Төменде пайдаланып көріңіз.</string>
   <string name="wear_training_typing_practice_button_content_description">Пернетақтамен теру</string>
   <string name="wear_training_end_tutorial_title">Сіз TalkBack функциясын пайдалануға дайынсыз</string>
-  <string name="talkback_updated_notification_title">TalkBack жаңартылды</string>
-  <string name="talkback_updated_notification_content">Толық ақпарат алу үшін түртіңіз.</string>
   <string name="wear_new_feature_page_title">TalkBack функциясының жаңа нұсқасына қош келдіңіз</string>
   <string name="wear_new_feature_page_content">Кейбір қателердің түзетілгенін және фокус қозғалысына қандай өзгерістер енгізілгенін байқайсыз.</string>
   <string name="wear_new_feature_page_button_content_description">Аяқтау</string>

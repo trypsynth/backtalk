@@ -4,7 +4,6 @@
   <string name="summary_custom_action">தற்போது தேர்ந்தெடுத்த உரைக்குப் பிரத்தியேகமான செயல்கள் இருந்தால் இந்த மெனுவைக் காட்டும்.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack சைகைகள் மாற்றப்பட்டன</string>
   <string name="notification_message_talkback_gestures_changed">கூடுதல் தகவல்களுக்கு TalkBack அம்சத்தைத் திறங்கள்</string>
-  <string name="talkback_updated_notification_content">விவரங்களுக்கு TalkBack அம்சத்தைத் திறங்கள்</string>
   <string name="new_feature_in_talkback_title">புதிதாக உள்ளவை</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">சரி</string>
   <string name="turn_off_talkback">ஆஃப் செய்</string>

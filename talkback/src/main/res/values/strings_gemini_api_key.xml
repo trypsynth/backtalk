@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Title of the setting, and of its dialog, for the Gemini API key. [CHAR LIMIT=40] -->
     <string name="title_pref_gemini_api_key">Gemini API key</string>
     <!-- Summary of the Gemini API key setting when the user has entered a key. [CHAR LIMIT=NONE] -->
@@ -18,4 +18,46 @@
     <string name="gemini_api_key_get">Get a key</string>
     <!-- Link text in the AI consent dialogs, to the terms that cover requests to the Gemini API. -->
     <string name="gemini_api_terms_link">Gemini API Additional Terms of Service</string>
+
+    <!-- Button that asks a question by voice about a described image or screen, when Other AI service is set up instead of Gemini. [CHAR LIMIT=25] -->
+    <string name="image_qna_button_text_ai">Ask AI</string>
+    <!-- Button and field hint for typing a question about a described image or screen, when Other AI service is set up instead of Gemini. [CHAR LIMIT=40] -->
+    <string name="image_qna_typing_button_text_ai">Type question for AI</string>
+
+    <!-- Title of the setting, and its dialog, for an AI service other than Gemini that Describe image and Describe screen use. [CHAR LIMIT=50] -->
+    <string name="title_pref_ai_service">Other AI service</string>
+    <!-- Summary of the Other AI service setting when one is set up. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_ai_service_set">Describe image and describe screen use <xliff:g id="model" example="google/gemma-3-27b-it">%1$s</xliff:g></string>
+    <!-- Summary of the Other AI service setting when none is set up. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_ai_service_not_set">Not set. Gemini is used</string>
+    <!-- Message of the dialog that sets up another AI service. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_dialog_message">A service with an OpenAI-compatible chat API and image input, such as OpenRouter (https://openrouter.ai/api/v1), Groq (https://api.groq.com/openai/v1), Mistral (https://api.mistral.ai/v1), Ollama Cloud (https://ollama.com/v1) or Claude (https://api.anthropic.com/v1). Images and questions are sent to it. To use Gemini again, clear the address.</string>
+    <!-- Hint of the field for the address of the AI service. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_address_hint">Address, such as https://openrouter.ai/api/v1</string>
+    <!-- Hint of the field for the model the AI service runs. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_model_hint">Model</string>
+    <!-- Hint of the field for the API key of the AI service. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_api_key_hint">API key</string>
+    <!-- Shown when the address entered for the AI service is not an https address. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_address_invalid">The address must start with https://. Nothing was saved.</string>
+    <!-- Message of the dialogs that ask before images or screenshots are sent to be described, when another AI service is set up. [CHAR LIMIT=NONE] -->
+    <string name="dialog_message_ai_service_consent">Images and screenshots are sent to <xliff:g id="host" example="openrouter.ai">%1$s</xliff:g> to be described, which takes several seconds. Its own terms and privacy policy apply. Generative AI is experimental, so it will make mistakes.</string>
+    <!-- Spoken when the other AI service rejects the API key. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_api_key">The AI service didn\'t accept the API key. Check Other AI service in Automatic descriptions settings.</string>
+    <!-- Spoken when the usage limit of the other AI service is reached. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_quota">The usage limit of the AI service has been reached. Try again later.</string>
+    <!-- Spoken when the other AI service is overloaded. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_busy">The AI service is busy right now. Try again in a moment.</string>
+    <!-- Spoken when the other AI service does not answer in time. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_timeout">The AI service took too long to answer. Try again.</string>
+    <!-- Spoken when the other AI service answers with an HTTP error that has no explanation. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_with_code">The AI service couldn\'t answer, error <xliff:g id="http_status" example="404">%1$d</xliff:g>.</string>
+    <!-- Spoken when the other AI service answers with an HTTP error and its explanation, which may be in English. [CHAR LIMIT=NONE] -->
+    <string name="ai_service_error_with_details">The AI service couldn\'t answer, error <xliff:g id="http_status" example="404">%1$d</xliff:g>: <xliff:g id="details" example="The model does not exist.">%2$s</xliff:g></string>
+    <!-- Summary of the Gemini API key setting while another AI service is set up. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_gemini_api_key_other_service">Not used while Other AI service is set</string>
+    <!-- Title of the setting, and of its dialog, for the Gemini model that Describe image and Describe screen use. [CHAR LIMIT=40] -->
+    <string name="title_pref_gemini_model">Gemini model</string>
+    <!-- Message in the dialog where the user enters a Gemini model name. The model built into the app is filled in. [CHAR LIMIT=NONE] -->
+    <string name="gemini_model_dialog_message">If Gemini keeps saying it\'s busy, or that the model doesn\'t exist, enter another model\'s name from Google AI Studio, such as gemini-3.5-flash. Clear the field and save to use <xliff:g id="model" example="gemini-3.5-flash">%1$s</xliff:g> again.</string>
 </resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="title_pref_gemini_api_key">Klíč API Gemini</string>
     <string name="summary_pref_gemini_api_key_set">Nastaven. Popis obrázku a popis obrazovky používají Gemini</string>
     <string name="summary_pref_gemini_api_key_built_in">Používá se klíč zabudovaný v této aplikaci</string>
@@ -8,4 +8,21 @@
     <string name="gemini_api_key_hint">Klíč API</string>
     <string name="gemini_api_key_save">Uložit</string>
     <string name="gemini_api_key_get">Získat klíč</string>
+
+    <string name="title_pref_ai_service">Jiná služba AI</string>
+    <string name="summary_pref_ai_service_set">Popis obrázku a popis obrazovky používají <xliff:g id="model" example="google/gemma-3-27b-it">%1$s</xliff:g></string>
+    <string name="summary_pref_ai_service_not_set">Nenastaveno. Používá se Gemini</string>
+    <string name="ai_service_dialog_message">Služba s chatovacím API kompatibilním s OpenAI a podporou vstupu obrázků, například OpenRouter (https://openrouter.ai/api/v1), Groq (https://api.groq.com/openai/v1), Mistral (https://api.mistral.ai/v1), Ollama Cloud (https://ollama.com/v1) nebo Claude (https://api.anthropic.com/v1). Odesílají se jí obrázky a dotazy. Chcete-li znovu používat Gemini, vymažte adresu.</string>
+    <string name="ai_service_address_hint">Adresa, například https://openrouter.ai/api/v1</string>
+    <string name="ai_service_model_hint">Model</string>
+    <string name="ai_service_api_key_hint">Klíč API</string>
+    <string name="ai_service_address_invalid">Adresa musí začínat https://. Nic nebylo uloženo.</string>
+    <string name="dialog_message_ai_service_consent">Obrázky a snímky obrazovky se kvůli popisu odesílají službě <xliff:g id="host" example="openrouter.ai">%1$s</xliff:g>, což trvá několik sekund. Platí její vlastní smluvní podmínky a zásady ochrany soukromí. Generativní AI je experimentální, takže bude dělat chyby.</string>
+    <string name="ai_service_error_api_key">Služba AI klíč API nepřijala. Zkontrolujte nastavení Jiná služba AI v nastavení Automatické popisy.</string>
+    <string name="ai_service_error_quota">Byl dosažen limit používání služby AI. Zkuste to později.</string>
+    <string name="ai_service_error_busy">Služba AI je právě zaneprázdněná. Zkuste to za chvíli znovu.</string>
+    <string name="ai_service_error_timeout">Službě AI odpověď trvala příliš dlouho. Zkuste to znovu.</string>
+    <string name="ai_service_error_with_code">Služba AI nemohla odpovědět, chyba <xliff:g id="http_status" example="404">%1$d</xliff:g>.</string>
+    <string name="ai_service_error_with_details">Služba AI nemohla odpovědět, chyba <xliff:g id="http_status" example="404">%1$d</xliff:g>: <xliff:g id="details" example="The model does not exist.">%2$s</xliff:g></string>
+    <string name="summary_pref_gemini_api_key_other_service">Nepoužívá se, dokud je nastavena Jiná služba AI</string>
 </resources>

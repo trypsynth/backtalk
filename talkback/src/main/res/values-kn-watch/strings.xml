@@ -4,7 +4,6 @@
   <string name="summary_custom_action">ಪ್ರಸ್ತುತ ಐಟಂಗಾಗಿ ಕಸ್ಟಮ್ ಕ್ರಿಯೆಗಳು ಅಸ್ತಿತ್ವದಲ್ಲಿದ್ದಾಗ ತೋರಿಸುತ್ತದೆ.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack ಗೆಸ್ಚರ್‌ಗಳನ್ನು ಅಪ್‌ಡೇಟ್‌ ಮಾಡಲಾಗಿದೆ</string>
   <string name="notification_message_talkback_gestures_changed">ಹೆಚ್ಚಿನ ವಿವರಗಳಿಗಾಗಿ Talkback ಅನ್ನು ತೆರೆಯಿರಿ</string>
-  <string name="talkback_updated_notification_content">ವಿವರಗಳಗಾಗಿ TalkBack ಅನ್ನು ತೆರೆಯಿರಿ</string>
   <string name="new_feature_in_talkback_title">ಹೊಸದೇನಿದೆ</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">ಸರಿ</string>
   <string name="turn_off_talkback">ಆಫ್ ಮಾಡಿ</string>

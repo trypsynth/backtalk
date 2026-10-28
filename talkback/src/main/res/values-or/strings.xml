@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">ସର୍ଚ୍ଚ ବାତିଲ କରାଯାଇଛି।</string>
   <string name="notification_type_status_started">ଆରମ୍ଭ ହେଲା</string>
   <string name="notification_type_status_stopped">ବନ୍ଦ ହେଲା</string>
-  <string name="notification_type_status_connected">କନେକ୍ଟ କରାଯାଇଛି</string>
-  <string name="notification_battery_level_unknown">ଅଜଣା</string>
   <string name="notification_battery_saver_mode">ବେଟେରୀ ସେଭର ଚାଲୁ ଅଛି</string>
   <string name="template_no_text_selected">ପରବର୍ତ୍ତୀ ଟେକ୍ସଟ୍‌ ଚୟନ କରାଯାଇଛି</string>
   <string name="template_charging">ଚାର୍ଜ କରାଯାଉଛି %1$s ବ୍ୟାଟେରୀ ସ୍ତର %2$s ପ୍ରତିଶତ।</string>
   <string name="template_charging_lite">%1$s ଚାର୍ଜ ହେଉଛି</string>
-  <string name="template_battery_state">ପାୱାର %1$s %2$s ଶତକଡ଼ା %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">ରିଙ୍ଗର୍‌ ଭାଇବ୍ରେଟ୍‌ରେ ଅଛି।</string>
   <string name="value_ringer_silent">ରିଂଗର ସାଇଲେଣ୍ଟ ଅଛି।</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">ସମୟ କୁହ</string>
   <string name="pref_speak_time_summary">ଆପଣ ସ୍କ୍ରିନରେ ଚାଲୁ କରିବା ସମୟରେ</string>
   <string name="summary_speak_container_element_positions">ତାଲିକା, ଗ୍ରିଡ ଓ ଅନ୍ୟ କଣ୍ଟେନର ଏଣ୍ଟର କରିବା ଏବଂ ବାହାରି ଯିବା ସମୟରେ ସୂଚନା ଅନ୍ତର୍ଭୁକ୍ତ କରେ</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">ପଢ଼ିବା ନିୟନ୍ତ୍ରଣ ପାଇଁ ଫୋକସ ବିଳମ୍ବ ଯୋଗ କରାଯାଇଛି</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">ପଢ଼ିବା ନିୟନ୍ତ୍ରଣ ବ୍ୟବହାର କରିବାକୁ 3 ଆଙ୍ଗୁଠିରେ ସ୍ୱାଇପ କରନ୍ତୁ ଏବଂ ଯେ କୌଣସି ସମୟରେ ଫୋକସ ବିଳମ୍ବ ପରିବର୍ତ୍ତନ କରନ୍ତୁ</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">ଟାଇପ-କରିବାକୁ-ଉଠାନ୍ତୁକୁ ସ୍ୱିଚ କରିବେ?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">ଟାଇପିଂ ଫୋକସ ବିଳମ୍ବ 0.3 ସେକେଣ୍ଡରୁ କମରେ ସେଟ ହୋଇଥିଲେ, ଟାଇପ କରିବାକୁ ଦୁଇଥର-ଟାପ କରିବା ବହୁତ କଷ୍ଟକର ହୋଇଯିବ। ଟାଇପ କରିବାକୁ ଉଠାନ୍ତୁକୁ ସ୍ୱତଃ ସ୍ୱିଚ କରିବାକୁ \"ସ୍ୱିଚ କରନ୍ତୁ\"କୁ ବାଛନ୍ତୁ।\n\nଟାଇପ-କରିବାକୁ-ଉଠାନ୍ତୁକୁ ବ୍ୟବହାର କରିବା ପାଇଁ, ଯେ କୌଣସି କୀ ଚୟନ କରିବାକୁ ଆପଣଙ୍କ ଆଙ୍ଗୁଠିକୁ ଧରି ରଖନ୍ତୁ, ତା\'ପରେ ଟାଇପ କରିବା ପାଇଁ ଉଠାନ୍ତୁ।\n\nଆପଣ ଏହାକୁ TalkBack ସେଟିଂସରେ କଷ୍ଟମାଇଜ କରିପାରିବେ।</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">ପଢ଼ିବା ନିୟନ୍ତ୍ରଣ ପାଇଁ ଟାଇପିଂ ଫୋକସ ବିଳମ୍ବ ଯୋଗ କରାଯାଇଛି</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">ଯଦି ଆପଣ ଟାଇପ କରିବା ସମୟରେ ଦୁଇଥର-ଟାପ କରିବାରେ ସମସ୍ୟାର ସମ୍ମୁଖୀନ ହୁଅନ୍ତି, ତେବେ ପଢ଼ିବା ନିୟନ୍ତ୍ରଣ ବ୍ୟବହାର କରିବାକୁ 3 ଆଙ୍ଗୁଠିରେ ସ୍ୱାଇପ କରନ୍ତୁ ଏବଂ ଅଧିକ ସମୟ ପାଇଁ ଟାଇପିଂ ଫୋକସ ବିଳମ୍ବକୁ ପରିବର୍ତ୍ତନ କରନ୍ତୁ</string>
   <string name="gestures_announce_typing_focus_wont_change">ଟାଇପ-କରିବାକୁ-ଉଠାନ୍ତୁ ବିନା ଟାଇପିଂ ଫୋକସ ବିଳମ୍ବ ଫଙ୍କସନ କରୁନାହିଁ।</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">ବୁଝିଗଲି</string>
   <string name="reset_letency_reduction_settings_dialog_title">ବିଳମ୍ବ ସେଟିଂସକୁ ରିସେଟ କରିବେ?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">ଏହା ସମସ୍ତ ବିଳମ୍ବ ସେଟିଂସକୁ ଡିଫଲ୍ଟରେ ରିସେଟ କରିବ</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">ରିସେଟ କରନ୍ତୁ</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ସମସ୍ତ ପ୍ରୋଗ୍ରେସ ଅପଡେଟ କୁହନ୍ତୁ</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ଏହା ଡାଉନଲୋଡ, ଡ୍ରାଇଭିଂ ଦିଗନିର୍ଦ୍ଦେଶଗୁଡ଼ିକୁ ଫଲୋ କରିବା ଏବଂ ଆହୁରି ଅନେକ କିଛି କରିବା ସମୟରେ ଅପଡେଟଗୁଡ଼ିକ ଅନ୍ତର୍ଭୁକ୍ତ କରେ। ବନ୍ଦ କଲେ, ଆପଣ ଏବେ ବି କମ ଥର ଅପଡେଟ ପାଇବେ।</string>
   <string name="pref_speak_system_window_titles_summary">ଉଦାହରଣ ସ୍ୱରୂପ, ଆପଣ ଷ୍ଟାଟସ ବାର, ବିଜ୍ଞପ୍ତି କିମ୍ବା ଅନ୍ୟ ଏକ କୀବୋର୍ଡକୁ ସ୍ୱିଚ କରିବା ସମୟରେ ସିଷ୍ଟମ ଏବଂ ଇନପୁଟ ୱିଣ୍ଡୋଗୁଡ଼ିକର ନାମ କୁହନ୍ତୁ</string>
-  <string name="title_pref_explore_by_touch">ସ୍ପର୍ଶ ଦ୍ୱାରା ଅନ୍ୱେଷଣ କରନ୍ତୁ</string>
   <string name="title_pref_category_visual">ଭିଜୁଆଲ</string>
   <string name="title_pref_category_controls">ନିୟନ୍ତ୍ରଣ</string>
   <string name="title_pref_category_braille">ବ୍ରେଲି</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">ପଢ଼ିବା ନିୟନ୍ତ୍ରଣଗୁଡ଼ିକୁ ବ୍ୟବହାର କରିବା ପାଇଁ, ଉପରକୁ ତା\'ପରେ ତଳକୁ ସ୍ୱାଇପ୍ କରନ୍ତୁ।</string>
   <string name="title_pref_manage_keyboard_shortcuts">କୀବୋର୍ଡ ସର୍ଟକଟ</string>
   <string name="title_pref_export_custom_labels">କଷ୍ଟମ୍ ଲେବଲ୍‌କୁ ଏକ୍ସପୋର୍ଟ କରନ୍ତୁ</string>
-  <string name="title_pref_play_store">Play Storeରେ TalkBack‌ ଖୋଲନ୍ତୁ</string>
-  <string name="summary_pref_play_store">ବର୍ତ୍ତମାନର TalkBack‌ ଭର୍ସନ: %1$s</string>
   <string name="title_pref_help_and_feedback">ସହାୟତା ଓ ମତାମତ</string>
   <string name="title_pref_gup">Google ଅକ୍ଷମତା ସହାୟତା ଟିମ ସହ କଣ୍ଟାକ୍ଟ କରନ୍ତୁ</string>
   <string name="subtitle_pref_gup">TalkBack ବ୍ୟବହାର କରି ସହାୟତା ପାଆନ୍ତୁ କିମ୍ବା ସମସ୍ୟାଗୁଡ଼ିକର ରିପୋର୍ଟ କରନ୍ତୁ</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">ଆପଣ ଟାଇପ କରିବା ସମୟରେ ବିଳମ୍ବ ହ୍ରାସ କରିବା ପାଇଁ TalkBack ଘୋଷଣାଗୁଡ଼ିକୁ ପ୍ରି-ଲୋଡ କରେ</string>
   <string name="summary_cache_keyboard_keys_disabled">ଏହି ଫିଚର ବ୍ୟବହାର କରିବାକୁ Google ଟେକ୍ସଟ-ଟୁ-ସ୍ପିଚ ବ୍ୟବହାର କରନ୍ତୁ</string>
   <string name="value_direction_down">ତଳ</string>
-  <string name="value_direction_down_and_right">ତଳକୁ ତା’ପରେ ଡାହାଣକୁ</string>
   <string name="title_pref_shortcut_up">ଉପରକୁ ସ୍ୱାଇପ କରନ୍ତୁ</string>
   <string name="title_pref_shortcut_up_xr">ଦ୍ୱିତୀୟ ପାପୁଲିକୁ ଭିତରକୁ ନିଅନ୍ତୁ, ପିଞ୍ଚ କରି ଉପରକୁ ସ୍ୱାଇପ କରନ୍ତୁ</string>
   <string name="title_pref_shortcut_down">ତଳକୁ ସ୍ୱାଇପ୍‌ କରନ୍ତୁ</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ଜେଶ୍ଚର୍‍ କଷ୍ଟମାଇଜ୍ କରନ୍ତୁ</string>
   <string name="button_disable_all_events">ସବୁଗୁଡ଼ିକୁ ଅକ୍ଷମ କରନ୍ତୁ</string>
   <string name="button_enable_all_events">ସବୁଗୁଡ଼ିକୁ ସକ୍ଷମ କରନ୍ତୁ</string>
-  <string name="dialog_title_disable_exploration">ସ୍ପର୍ଶ କରିବା ଦ୍ୱାରା ଅଧିକ ଜାଣିବାକୁ ଅକ୍ଷମ କରିବେ କି?</string>
-  <string name="dialog_message_disable_exploration">ଆପଣ ସ୍ପର୍ଶ କରିବା ଦ୍ୱାରା ଅଧିକ ଜାଣିବାକୁ ଅଫ୍‌ କରିବା ପାଇଁ ନିଶ୍ଚିତ କି?\n\n ଯେତେବେଳେ ଆପଣ ସ୍କ୍ରୀନ୍‌କୁ ସ୍ପର୍ଶ କରିବେ, ଆପଣଙ୍କ ଡିଭାଇସ୍‌ରେ ଆଉ ଶର୍ଟକଟ୍‌ ଜେଶ୍ଚର୍‍ କିମ୍ୱା କଥାକୁହା ଆଇଟମ୍‌ଗୁଡ଼ିକ କାମ କରିବ ନାହିଁ।</string>
   <string name="dialog_title_enable_tree_debug">ନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗ ସକ୍ଷମ କରିବେ?</string>
   <string name="dialog_message_enable_tree_debug">ନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗକୁ ଅନ୍‌ କରିବା ପାଇଁ ଆପଣ ନିଶ୍ଚିତ କି?\n\nନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗ ଆପଣଙ୍କ ସ୍କ୍ରୀନ୍‌ର ବିଷୟକୁ ନିଜ ଡିଭାଇସ୍‌ର ଲଗ୍‌ରେ ଦେଖାଇଥାଏ, ଯାହାକୁ ଅନ୍ୟ ଆପ୍ଲିକେଶନ୍ ସାହାଯ୍ୟରେ ପଢ଼ାଯାଇପାରିବ।</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 ଆଙ୍ଗୁଠି ଜେଶ୍ଚର ସହ ତିନି ଥର-ଟାପକୁ ପୁଣି ଆସାଇନ କରିବେ?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s ଇକୋ ଫିଜିକାଲ କୀବୋର୍ଡ</string>
   <string name="reading_control_toggle_prefix_xr">ପଢ଼ିବା ନିୟନ୍ତ୍ରଣ ମୋଡକୁ ଟୋଗଲ କରିବା ପାଇଁ ଦ୍ୱିତୀୟ ପାପୁଲିକୁ ଭିତରକୁ ନେଇ ଅଧିକ ସମୟ ଧରି ଦବାଇ ରଖନ୍ତୁ।</string>
   <string name="gesture_1_or_2">%1$s କିମ୍ବା %2$s</string>
-  <string name="select_setting_hint">ଏକ ଭିନ୍ନ ସେଟିଂ ଟୟନ କରିବାକୁ %1$s</string>
-  <string name="adjust_setting_hint">ସେଟିଂ ଆଡଜଷ୍ଟ କରିବାକୁ %1$s</string>
   <string name="adjust_granularity_hint">%2$s ଭାବରେ ପଢ଼ିବାକୁ %1$s</string>
   <string name="adjust_typo_hint">ପରାମର୍ଶ ପାଇଁ %1$s।</string>
   <string name="use_action_hint">କାର୍ଯ୍ୟ କରିବାକୁ ଦୁଇଥର-ଟାପ କରନ୍ତୁ</string>
@@ -1233,8 +1217,6 @@
   <string name="wear_training_typing_text5">ତଳେ ଏହାକୁ ବ୍ୟବହାର କରି ଦେଖନ୍ତୁ।</string>
   <string name="wear_training_typing_practice_button_content_description">କୀବୋର୍ଡରେ ଟାଇପ କରାଯାଉଛି</string>
   <string name="wear_training_end_tutorial_title">ଆପଣ TalkBack ବ୍ୟବହାର କରିବା ଆରମ୍ଭ କରିବା ପାଇଁ ପ୍ରସ୍ତୁତ ଅଟନ୍ତି</string>
-  <string name="talkback_updated_notification_title">TalkBackକୁ ଅପଡେଟ କରାଯାଇଛି</string>
-  <string name="talkback_updated_notification_content">ଅଧିକ ଜାଣିବାକୁ ଟାପ କରନ୍ତୁ</string>
   <string name="wear_new_feature_page_title">ଅପଡେଟ୍ ହୋଇଥିବା TalkBackକୁ ସ୍ୱାଗତ</string>
   <string name="wear_new_feature_page_content">ଆପଣ କିଛି ବଗ ସମାଧାନ ଏବଂ ଫୋକସ କିପରି ମୁଭ ହୁଏ ସେଥିରେ ପରିବର୍ତ୍ତନଗୁଡ଼ିକ ନୋଟିସ କରିବେ</string>
   <string name="wear_new_feature_page_button_content_description">ସମ୍ପୂର୍ଣ୍ଣ କରନ୍ତୁ</string>
