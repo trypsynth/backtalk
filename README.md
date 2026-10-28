@@ -50,7 +50,7 @@ Google's source release does not include the Gemini settings, so **Describe imag
 
 To remove the key, clear the field and save.
 
-If you build Backtalk yourself, you can also build a key into the APK instead. Add `gemini.api.key=YOUR_KEY` to `local.properties` in the project folder, then build and install Backtalk again. A key entered in settings takes the place of the built-in key. Git ignores `local.properties`, so your key is not committed, but do not share an APK that contains your key. To use a different model, add `gemini.model=MODEL_NAME`. The default is `gemini-flash-latest`.
+If you build Backtalk yourself, you can also build a key into the APK instead. Add `gemini.api.key=YOUR_KEY` to `local.properties` in the project folder, then build and install Backtalk again. A key entered in settings takes the place of the built-in key. Git ignores `local.properties`, so your key is not committed, but do not share an APK that contains your key. To build in a different model, add `gemini.model=MODEL_NAME`. The default is `gemini-3.5-flash`. You can also change the model without building, in **Automatic descriptions** > **Gemini model**.
 
 Images and screenshots that you describe are sent to Google. On the free tier, Google can use this data to improve its products.
 

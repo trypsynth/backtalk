@@ -56,4 +56,8 @@
     <string name="ai_service_error_with_details">The AI service couldn\'t answer, error <xliff:g id="http_status" example="404">%1$d</xliff:g>: <xliff:g id="details" example="The model does not exist.">%2$s</xliff:g></string>
     <!-- Summary of the Gemini API key setting while another AI service is set up. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_gemini_api_key_other_service">Not used while Other AI service is set</string>
+    <!-- Title of the setting, and of its dialog, for the Gemini model that Describe image and Describe screen use. [CHAR LIMIT=40] -->
+    <string name="title_pref_gemini_model">Gemini model</string>
+    <!-- Message in the dialog where the user enters a Gemini model name. The model built into the app is filled in. [CHAR LIMIT=NONE] -->
+    <string name="gemini_model_dialog_message">If Gemini keeps saying it\'s busy, or that the model doesn\'t exist, enter another model\'s name from Google AI Studio, such as gemini-3.5-flash. Clear the field and save to use <xliff:g id="model" example="gemini-3.5-flash">%1$s</xliff:g> again.</string>
 </resources>

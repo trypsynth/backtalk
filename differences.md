@@ -432,7 +432,7 @@ Audio games need raw touch, but explore by touch captures taps and swipes before
 
 Direct touch is all of [NVGT Bridge](https://github.com/trypsynth/nvgt-bridge), the accessibility service that gives audio games direct touch, built into Backtalk. Because Backtalk is the screen reader and already knows what's on the screen, direct touch works better than running NVGT Bridge alongside Backtalk.
 
-There's nothing extra to install or turn on in Accessibility settings, and no second service that can undo Backtalk's touch setting. Direct touch shares that setting with the pass-through gesture and the braille keyboard, so none of them cancels another. NVGT Bridge searches each window's views for dialogs and text fields, and looks only five levels deep. Backtalk already follows the windows, the keyboard, and the screen state, so it hands touch back to you as soon as they change, with no depth limit. Backtalk's own speech says "Direct touch on" and "Direct touch off", even while the game plays audio. An app that shows native items, such as buttons, keeps touch with Backtalk while they show, so its menus read normally and only a screen without them, like a play field, gets direct touch.
+There's nothing extra to install or turn on in Accessibility settings, and no second service that can undo Backtalk's touch setting. Direct touch shares that setting with the pass-through gesture and the braille keyboard, so none of them cancels another. NVGT Bridge searches each window's views for dialogs and text fields, and looks only five levels deep. Backtalk already follows the windows, the keyboard, and the screen state, so it hands touch back to you as soon as they change, with no depth limit. Backtalk's own speech says "Direct touch on" and "Direct touch off", even while the game plays audio. A game that shows native items, such as buttons, over its play field keeps touch with Backtalk while they show, so its menus read normally. An app without a play field, such as a launcher you use for its gestures, gets direct touch even though it shows labels.
 
 ### Choose your games
 
@@ -566,7 +566,7 @@ Backtalk only uses a display from an app once you allow it, after a warning that
 
 ### Gemini API key
 
-Google's source release doesn't include working Gemini support, so without an API key, **Describe image** only reads text in images and **Describe screen** doesn't work. Backtalk adds **Automatic descriptions** > **Gemini API key**, where you can add your own key, and its own Describe screen with follow-up questions. For more information, see [Image descriptions with Gemini](README.md#image-descriptions-with-gemini).
+Google's source release doesn't include working Gemini support, so without an API key, **Describe image** only reads text in images and **Describe screen** doesn't work. Backtalk adds **Automatic descriptions** > **Gemini API key**, where you can add your own key, **Gemini model**, where you can switch to another model when Google retires or overloads one, and its own Describe screen with follow-up questions. For more information, see [Image descriptions with Gemini](README.md#image-descriptions-with-gemini).
 
 ### On-device AI
 

@@ -30,7 +30,7 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.withInputStream { localProperties.load(it) }
 }
 def geminiApiKey = localProperties.getProperty('gemini.api.key', '')
-def geminiModel = localProperties.getProperty('gemini.model', 'gemini-flash-latest')
+def geminiModel = localProperties.getProperty('gemini.model', 'gemini-3.5-flash')
 
 android {
     namespace = "com.google.android.accessibility.talkback"
