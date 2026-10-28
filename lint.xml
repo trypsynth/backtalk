@@ -115,6 +115,10 @@
         <ignore regexp="summary_pref_restore_focus_on_back" />
         <ignore regexp="title_pref_scroll_to_restore_previous_focus" />
         <ignore regexp="summary_pref_scroll_to_restore_previous_focus" />
+        <ignore regexp="category_collapsed" />
+        <ignore regexp="category_expanded" />
+        <ignore regexp="title_selector_vertical_navigation" />
+        <ignore regexp="summary_selector_vertical_navigation" />
         <ignore regexp="title_pref_gemini_model" />
         <ignore regexp="gemini_model_dialog_message" />
         <ignore regexp="title_pref_touch_stops_speech" />
