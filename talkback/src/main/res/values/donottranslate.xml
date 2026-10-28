@@ -117,6 +117,7 @@
     <string name="pref_allow_frequent_content_change_announcement_key">pref_allow_frequent_content_change_announcement_key</string>
     <string name="pref_verbose_scroll_announcement_key">pref_verbose_scroll_announcement_key</string>
     <string name="pref_single_tap_key">pref_single_tap</string>
+    <string name="pref_direct_click_key">pref_direct_click</string>
     <string name="pref_dim_when_talkback_enabled_key">pref_dim_when_talkback_enabled_key</string>
     <string name="pref_shake_to_read_key">pref_shake_to_read</string> <!-- Deprecated by pref_shake_to_read_threshold_key -->
     <string name="pref_shake_to_read_threshold_key">pref_shake_to_read_threshold</string>
@@ -1532,6 +1533,7 @@
     <bool name="pref_speak_system_window_titles_default">true</bool>
     <bool name="pref_allow_frequent_content_change_announcement_default">true</bool>
     <bool name="pref_single_tap_default">false</bool>
+    <bool name="pref_direct_click_default">false</bool>
     <bool name="pref_radial_menu_default">false</bool>
     <bool name="pref_dim_when_talkback_enabled_default">false</bool>
     <bool name="pref_shake_to_read_default">false</bool>

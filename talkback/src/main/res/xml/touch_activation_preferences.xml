@@ -20,6 +20,11 @@
       android:summary="@string/summary_pref_single_tap"
       android:title="@string/title_pref_single_tap" />
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+      android:defaultValue="@bool/pref_direct_click_default"
+      android:key="@string/pref_direct_click_key"
+      android:summary="@string/summary_pref_direct_click"
+      android:title="@string/title_pref_direct_click" />
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_touch_stops_speech_default"
       android:key="@string/pref_touch_stops_speech_key"
       android:title="@string/title_pref_touch_stops_speech" />

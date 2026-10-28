@@ -153,6 +153,11 @@ public class TalkBackPreferenceFilter {
     SCRIPTS(R.string.pref_scripts_key, HIDDEN_ON_WATCH),
     SINGLE_TAP_ACTIVATION(
         R.string.pref_single_tap_key, HIDDEN_ON_TV | HIDDEN_ON_XR),
+    // Only Backtalk's own gesture detection lets it touch the item on a double tap; without it,
+    // Android clicks the item itself.
+    DIRECT_CLICK(
+        R.string.pref_direct_click_key,
+        HIDDEN_ON_TV | HIDDEN_ON_XR | SHOW_IF_SERVICE_GESTURE_DETECTION),
     REDUCE_WINDOW_DELAY(
         R.string.pref_reduce_window_delay_key, HIDE_IF_NO_USER_DISABLING_OF_GLOBAL_ANIMATIONS),
     KEYBOARD_SHORTCUTS(

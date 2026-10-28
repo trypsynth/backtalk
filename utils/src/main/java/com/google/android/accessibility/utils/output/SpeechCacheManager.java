@@ -106,7 +106,7 @@ public class SpeechCacheManager {
    *     otherwise.
    */
   public boolean handleOnDone(String utteranceId) {
-    if (!utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
+    if (utteranceId == null || !utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
       return false;
     }
 
@@ -352,7 +352,7 @@ public class SpeechCacheManager {
    * @return {@code true} if the utterance ID was handled by this manager, {@code false} otherwise.
    */
   public boolean handleOnError(String utteranceId) {
-    if (!utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
+    if (utteranceId == null || !utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
       return false;
     }
     LogUtils.w(TAG, "onError :" + utteranceId);
@@ -368,7 +368,7 @@ public class SpeechCacheManager {
    * @return {@code true} if the utterance ID was handled by this manager, {@code false} otherwise.
    */
   public boolean handleOnStop(String utteranceId, boolean interrupted) {
-    if (!utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
+    if (utteranceId == null || !utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
       return false;
     }
     LogUtils.d(TAG, "handleOnStop -- utteranceId= %s , interrupted=%s :", utteranceId, interrupted);

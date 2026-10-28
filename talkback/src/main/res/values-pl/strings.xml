@@ -90,6 +90,8 @@
   <string name="reset_latency_settings_title">Zresetuj wszystkie ustawienia opóźnienia</string>
   <string name="title_pref_single_tap">Kliknij raz, aby uaktywnić</string>
   <string name="summary_pref_single_tap">Kliknij zaznaczony element raz, aby go uaktywnić. Jest to szybsza metoda niż dwukrotne kliknięcie.</string>
+  <string name="title_pref_direct_click">Kliknięcie bezpośrednie</string>
+  <string name="summary_pref_direct_click">Podwójne stuknięcie dotyka elementu z fokusem na ekranie, tak jak palec, zamiast prosić aplikację o jego aktywowanie. Pomaga przy przyciskach, które nie reagują na podwójne stuknięcie. Pola tekstowe i suwaki są nadal aktywowane w zwykły sposób.</string>
   <string name="pref_verbosity_title">Szczegółowość</string>
   <string name="pref_punctuation_title">Odczytuj znaki interpunkcyjne i symbole</string>
   <string name="title_pref_category_manage_focus_indicator">Zmień wskaźnik zaznaczenia</string>

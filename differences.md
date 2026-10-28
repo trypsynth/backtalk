@@ -324,6 +324,10 @@ With **Only on navigation bar** on Android 11 and later, touches on the navigati
 
 **Lift to activate** is also a reading control, so you can change it with a swipe up or down.
 
+### Direct click
+
+Some controls ignore the screen reader's click and only react to a finger, such as **Add to favorites** in TikTok, which works out the button from where the finger lands. With **Controls** > **Touch and activation** > **Direct click** on, activating the focused item, with a double tap, the activation key or a braille display, touches the middle of it on the screen like a finger instead. Text fields, sliders, items off screen, magnified screens and other displays are still activated the usual way, and so is any item whose touch doesn't reach the app. A direct click takes about 100 ms longer than the usual one. It needs Android 13 or later and is off by default.
+
 ### Wrap around
 
 When you swipe past the last item on the screen, TalkBack stops once and then goes back to the first item. To stop at the end instead, turn off **Controls** > **Navigation** > **Wrap around**. Each swipe past the end then plays the end sound. This also applies to moving by heading, link, or control in apps, and to moving with a keyboard. Web pages can still wrap by themselves.
