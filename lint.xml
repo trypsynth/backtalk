@@ -111,6 +111,10 @@
         <ignore regexp="ai_service_error_with_code" />
         <ignore regexp="ai_service_error_with_details" />
         <ignore regexp="summary_pref_gemini_api_key_other_service" />
+        <ignore regexp="title_pref_restore_focus_on_back" />
+        <ignore regexp="summary_pref_restore_focus_on_back" />
+        <ignore regexp="title_pref_scroll_to_restore_previous_focus" />
+        <ignore regexp="summary_pref_scroll_to_restore_previous_focus" />
         <ignore regexp="title_pref_gemini_model" />
         <ignore regexp="gemini_model_dialog_message" />
         <ignore regexp="title_pref_touch_stops_speech" />
