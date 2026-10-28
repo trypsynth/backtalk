@@ -50,6 +50,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -246,6 +247,14 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
   /** Asynchronous message-handler to delay executing feedback. */
   private final FeedbackDelayer feedbackDelayer;
 
+  /**
+   * Counts cancellations of focus hints by feedback that speaks nothing, such as a key press or a
+   * click. Stopping speech posts the stopped utterance's completion, so the completion can run
+   * after the cancellation that should have dropped its hint. A completion that runs after such a
+   * cancellation doesn't schedule the hint.
+   */
+  private volatile int focusHintCancels = 0;
+
   /** Collection of delayed-feedback, to ensure cancelled delayed-feedback can be logged. */
   @VisibleForTesting
   final HashMap<Integer, List<Feedback.Part>> messageIdToDelayedFeedback = new HashMap<>();
@@ -370,8 +379,10 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
           && (part.speech().hintSpeakOptions() != null)
           && (part.speech().hint() != null)
           && speakUsageHints(context)) {
+        final int cancelsAtStart = focusHintCancels;
         final CharSequence hintTTSOutput = part.speech().hint();
         final int hintFlags = part.speech().hintSpeakOptions().mFlags;
+        final Set<Integer> hintEarcons = part.speech().hintSpeakOptions().mEarcons;
         @InterruptGroup final int hintInterruptGroup = part.speech().hintInterruptGroup();
         @InterruptLevel final int hintInterruptLevel = part.speech().hintInterruptLevel();
         part.speech()
@@ -387,6 +398,9 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
                       || (status == SpeechController.STATUS_INTERRUPTED))) {
                     return;
                   }
+                  if (focusHintCancels != cancelsAtStart) {
+                    return;
+                  }
                   execute(
                       Feedback.create(
                           EVENT_ID_UNTRACKED,
@@ -400,6 +414,7 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
                                   SpeechController.SpeakOptions.create()
                                       .setQueueMode(SpeechController.QUEUE_MODE_QUEUE)
                                       .setFlags(hintFlags)
+                                      .setEarcons(hintEarcons)
                                       .setUtteranceGroup(SpeechController.UTTERANCE_GROUP_DEFAULT))
                               .build()));
                 });
@@ -409,6 +424,11 @@ public class Pipeline implements AccessibilityEventListener, AccessibilityEventI
       if (part.interruptGroup() != Feedback.DEFAULT) {
         cancelDelay(part.interruptGroup(), part.interruptLevel(), part.senderName());
         actors.clearHintUtteranceCompleteAction(part.interruptGroup(), part.interruptLevel());
+        if (part.speech() == null
+            && part.interruptGroup() == Feedback.HINT
+            && part.interruptLevel() >= 2) {
+          focusHintCancels++;
+        }
       }
       // Interrupt playing sound / vibration / speech.
       if (part.interruptAllFeedback()) {

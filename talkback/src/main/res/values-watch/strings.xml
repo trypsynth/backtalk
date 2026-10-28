@@ -22,9 +22,6 @@
     -->
     <string name="notification_message_talkback_gestures_changed">Open Backtalk for more details</string>
 
-    <!-- The context of notification to notify users that TalkBack has been updated. [CHAR_LIMIT=120]-->
-    <string name="talkback_updated_notification_content">Open Backtalk for details</string>
-
     <!-- A item in settings page to introduce TalkBack new features. [CHAR_LIMIT=NONE]-->
     <string name="new_feature_in_talkback_title">What\'s new</string>
 

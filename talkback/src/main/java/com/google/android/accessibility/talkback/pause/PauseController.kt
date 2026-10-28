@@ -70,7 +70,9 @@ class PauseController(
 
   /** What the service does when Backtalk pauses or resumes. */
   interface Host {
-    /** Stops reading, menus and queued feedback, before Backtalk says it is pausing. */
+    /**
+     * Stops reading, menus, queued feedback and image captions, before Backtalk says it is pausing.
+     */
     fun stopForPause()
 
     /** Turns explore by touch and the parts that depend on it off, or back on. */

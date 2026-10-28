@@ -16,14 +16,13 @@
 
 package com.google.android.accessibility.talkback.actor;
 
-import static android.media.AudioManager.ADJUST_LOWER;
-import static android.media.AudioManager.ADJUST_RAISE;
 import static android.media.AudioManager.STREAM_ACCESSIBILITY;
 
 import android.content.Context;
 import android.media.AudioManager;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import com.google.android.accessibility.talkback.AccessibilityVolumeStep;
 import com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType;
 import com.google.android.accessibility.utils.FormFactorUtils;
 
@@ -61,25 +60,11 @@ public class VolumeAdjustor {
     if (audioManager == null) {
       return false;
     }
-    int streamTypeToAdjust;
-    switch (streamType) {
-      case STREAM_TYPE_ACCESSIBILITY -> streamTypeToAdjust = STREAM_ACCESSIBILITY;
-      default -> {
-        // Not supported
-        return false;
-      }
-    }
-    int maxVolume = Math.max(audioManager.getStreamMaxVolume(streamTypeToAdjust), 1);
-    int minVolume = Math.max(audioManager.getStreamMinVolume(streamTypeToAdjust), 1);
-    int currentVolume = audioManager.getStreamVolume(streamTypeToAdjust);
-
-    if ((maxVolume <= minVolume)
-        || (decrease && currentVolume <= minVolume)
-        || (!decrease && currentVolume >= maxVolume)) {
-      return false;
-    }
-    audioManager.adjustStreamVolume(streamTypeToAdjust, decrease ? ADJUST_LOWER : ADJUST_RAISE, 0);
-    return true;
+    return switch (streamType) {
+      // Bluetooth headphones ignore adjustStreamVolume for this stream, so set it instead.
+      case STREAM_TYPE_ACCESSIBILITY -> AccessibilityVolumeStep.step(audioManager, decrease, 0);
+      default -> false; // Not supported
+    };
   }
 
   /**

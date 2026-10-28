@@ -24,6 +24,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
+import com.google.android.accessibility.talkback.AccessibilityVolumeStep;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
@@ -195,7 +196,11 @@ public class ProcessorVolumeStream
       }
     }
 
-    if (shouldRouteToTalkBackStream) {
+    if (shouldRouteToTalkBackStream && talkBackStream == AudioManager.STREAM_ACCESSIBILITY) {
+      // Bluetooth headphones ignore adjustStreamVolume for this stream, so set it instead.
+      AccessibilityVolumeStep.step(
+          audioManager, direction == AudioManager.ADJUST_LOWER, DEFAULT_FLAGS_FOR_TALKBACK_STREAM);
+    } else if (shouldRouteToTalkBackStream) {
       AudioManagerCompatUtils.adjustStreamVolume(
           audioManager,
           talkBackStream,

@@ -25,7 +25,7 @@ import com.google.android.accessibility.talkback.controlsounds.ControlSounds
  * vibration_backtalk.xml.
  */
 object SoundVibrations {
-  /** Sounds that play without a vibration: the braille display's sounds. */
+  /** Sounds that play without a vibration: the braille display's sounds, screen on and the rotor. */
   val WITHOUT_VIBRATION: Set<String> =
     setOf(
       "display_connected",
@@ -34,6 +34,16 @@ object SoundVibrations {
       "turn_on",
       "turn_off",
       "calibration_done",
+      "screen_on",
+      "rotor_next",
+      "rotor_previous",
+      "keyboard_show",
+      "keyboard_hide",
+      "direct_touch_enter",
+      "direct_touch_exit",
+      "wrap_forward",
+      "wrap_back",
+      "actions_available",
     )
 
   /**

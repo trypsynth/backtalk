@@ -38,7 +38,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.view.accessibility.AccessibilityEventCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityRecordCompat;
-import com.google.android.accessibility.talkback.BuildConfig;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
@@ -64,6 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Runs a collection of AccessibilityEventListeners on each event. */
 public class AccessibilityEventProcessor implements DisplayStateChangedListener {
@@ -109,6 +109,13 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
    * so it is OK if it is a tad long.
    */
   public static final long DELAY_SELECTED_AFTER_FOCUS = 200;
+
+  /**
+   * How long after a selected event the same one again is dropped. Some apps send the same
+   * selected event over and over, such as Samsung's equalizer about every 10 ms, and each one
+   * would be spoken. Each repeat starts the time over, so a steady stream stays quiet.
+   */
+  @VisibleForTesting static final long REPEATED_SELECTED_MS = 1000;
 
   /**
    * Delay (ms) to wait for the state to catch up before processing events that match the mask
@@ -157,6 +164,9 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
 
   private long lastWindowStateChanged;
   private AccessibilityEvent lastFocusedEvent;
+  private @Nullable String lastSelectedSignature;
+  private @Nullable AccessibilityNodeInfo lastSelectedSource;
+  private long lastSelectedTime;
 
   private boolean speakWhenScreenOff = false;
 
@@ -400,6 +410,12 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
       return true;
     }
 
+    if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_SELECTED
+        && isRepeatedSelectedEvent(event)) {
+      LogUtils.v(TAG, "Drop selected event that repeats the last one");
+      return true;
+    }
+
     if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_FOCUSED
         && EventState.getInstance()
             .checkAndClearRecentFlag(EVENT_SKIP_FOCUS_SYNC_FROM_VIEW_FOCUSED)) {
@@ -514,6 +530,45 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
    * @param event The view-selected event to consider retaining.
    * @return Whether to retain the event.
    */
+  /**
+   * Returns whether a selected event says nothing new: the same item, with the same text and
+   * position, within {@link #REPEATED_SELECTED_MS} of the last selected event.
+   */
+  private boolean isRepeatedSelectedEvent(AccessibilityEvent event) {
+    String signature = selectedSignature(event);
+    long time = event.getEventTime();
+    boolean sameAsLast =
+        signature.equals(lastSelectedSignature) && time - lastSelectedTime < REPEATED_SELECTED_MS;
+    @Nullable AccessibilityNodeInfo source = event.getSource();
+    sameAsLast = sameAsLast && source != null && source.equals(lastSelectedSource);
+    lastSelectedSignature = signature;
+    lastSelectedSource = source;
+    lastSelectedTime = time;
+    return sameAsLast;
+  }
+
+  private static String selectedSignature(AccessibilityEvent event) {
+    return event.getPackageName()
+        + "\u0000"
+        + event.getWindowId()
+        + "\u0000"
+        + event.getClassName()
+        + "\u0000"
+        + event.getText()
+        + "\u0000"
+        + event.getContentDescription()
+        + "\u0000"
+        + event.getItemCount()
+        + "\u0000"
+        + event.getCurrentItemIndex()
+        + "\u0000"
+        + event.getFromIndex()
+        + "\u0000"
+        + event.getToIndex()
+        + "\u0000"
+        + event.isChecked();
+  }
+
   private boolean shouldKeepViewSelectedEvent(final AccessibilityEvent event) {
     if (lastFocusedEvent == null) {
       return true;
@@ -577,7 +632,8 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
     }
 
     // Send events to the only those processors which handle them.
-    if (BuildConfig.DEBUG) {
+    boolean trace = LogUtils.shouldLog(Log.DEBUG);
+    if (trace) {
       Trace.beginSection(AccessibilityEvent.eventTypeToString(event.getEventType()));
     }
     Iterator<AccessibilityEventListener> iterator = accessibilityEventListeners.iterator();
@@ -585,16 +641,16 @@ public class AccessibilityEventProcessor implements DisplayStateChangedListener 
       AccessibilityEventListener eventProcessor = iterator.next();
       int eventTypesHandled = eventProcessor.getEventTypes();
       if (AccessibilityEventUtils.eventMatchesAnyType(event, eventTypesHandled)) {
-        if (BuildConfig.DEBUG) {
+        if (trace) {
           Trace.beginSection(eventProcessor.getClass().getSimpleName());
         }
         eventProcessor.onAccessibilityEvent(event, eventId);
-        if (BuildConfig.DEBUG) {
+        if (trace) {
           Trace.endSection();
         }
       }
     }
-    if (BuildConfig.DEBUG) {
+    if (trace) {
       Trace.endSection();
     }
   }

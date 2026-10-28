@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Sökning avbruten.</string>
   <string name="notification_type_status_started">Har startats</string>
   <string name="notification_type_status_stopped">Har stoppats</string>
-  <string name="notification_type_status_connected">ansluten</string>
-  <string name="notification_battery_level_unknown">okänd</string>
   <string name="notification_battery_saver_mode">Batterisparläge på</string>
   <string name="template_no_text_selected">Ingen text har markerats</string>
   <string name="template_charging">Laddar %1$s Batterinivå %2$s procent.</string>
   <string name="template_charging_lite">Laddar %1$s</string>
-  <string name="template_battery_state">Strömkälla %1$s, %2$s procent, %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Vibrerande ringsignal.</string>
   <string name="value_ringer_silent">Tyst ringsignal.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Läs upp tiden</string>
   <string name="pref_speak_time_summary">När du aktiverar skärmen</string>
   <string name="summary_speak_container_element_positions">Inkluderar information när du öppnar och stänger listor, rutnät och andra behållare</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Fokusfördröjning har lagts till i läsinställningarna</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Svep med tre fingrar för att öppna läsinställningarna och ändra fokusfördröjningen när som helst</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Vill du byta till Skriv genom att lyfta?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">När fokusfördröjningen för att skriva är inställd på mindre än 0,3 sekunder är det mycket svårt att skriva genom att dubbeltrycka. Välj Byt för att automatiskt byta till Skriv genom att lyfta.\n\nOm du vill använda Skriv genom att lyfta håller du ned fingret för att välja en tangent och lyfter sedan fingret för att skriva.\n\nDu kan anpassa detta i TalkBack-inställningarna.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Fokusfördröjning för att skriva har lagts till i läsinställningarna</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Om du har problem med att dubbeltrycka när du skriver kan du svepa med tre fingrar för att öppna läsinställningarna och ändra till en längre fokusfördröjning för att skriva</string>
   <string name="gestures_announce_typing_focus_wont_change">Fokusfördröjningen för att skriva fungerar inte utan Skriv genom att lyfta.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">OK</string>
   <string name="reset_letency_reduction_settings_dialog_title">Vill du återställa inställningarna för fördröjning?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Detta återställer alla inställningar för fördröjning till standard</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Återställ</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Läs upp alla förloppsuppdateringar</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Omfattar uppdateringar vid nedladdning, vägbeskrivningar med mera. Du får fortfarande uppdateringar när inställningen är av, men inte lika ofta.</string>
   <string name="pref_speak_system_window_titles_summary">Läs upp namn på system- och ingångsfönster, till exempel när du byter till statusfältet, aviseringar eller ett annat tangentbord</string>
-  <string name="title_pref_explore_by_touch">Upptäck genom beröring</string>
   <string name="title_pref_category_visual">Visuellt</string>
   <string name="title_pref_category_controls">Kontroller</string>
   <string name="title_pref_category_braille">Punktskrift</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Du öppnar läsinställningarna genom att svepa uppåt och sedan nedåt.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Kortkommandon</string>
   <string name="title_pref_export_custom_labels">Exportera anpassade etiketter</string>
-  <string name="title_pref_play_store">Öppna TalkBack i Play Butik</string>
-  <string name="summary_pref_play_store">Aktuell TalkBack-version: %1$s</string>
   <string name="title_pref_help_and_feedback">Hjälp och feedback</string>
   <string name="title_pref_gup">Kontakta Googles support för användare med funktionsnedsättning</string>
   <string name="subtitle_pref_gup">Få hjälp med att använda TalkBack eller rapportera problem</string>
@@ -639,7 +628,6 @@ Om fördröjningen är kortare än 0,3 sekunder ändras Aktivera genom att dubbe
   <string name="summary_cache_keyboard_keys">TalkBack läser in meddelanden i förväg för att minska fördröjningen när du skriver</string>
   <string name="summary_cache_keyboard_keys_disabled">Använd Google Text till tal för att använda den här funktionen</string>
   <string name="value_direction_down">nedåt</string>
-  <string name="value_direction_down_and_right">nedåt, sedan åt höger</string>
   <string name="title_pref_shortcut_up">Svep uppåt</string>
   <string name="title_pref_shortcut_up_xr">Sekundär handflata inåt, nyp ihop fingrarna och svep uppåt</string>
   <string name="title_pref_shortcut_down">Svep nedåt</string>
@@ -777,8 +765,6 @@ Om fördröjningen är kortare än 0,3 sekunder ändras Aktivera genom att dubbe
   <string name="button_customize_gesture_mappings">Anpassa rörelser</string>
   <string name="button_disable_all_events">Inaktivera alla</string>
   <string name="button_enable_all_events">Aktivera alla</string>
-  <string name="dialog_title_disable_exploration">Vill du inaktivera Explore by touch?</string>
-  <string name="dialog_message_disable_exploration">Är du säker på att du vill inaktivera Explore by touch?\n\nEnheten kommer inte längre att reagera på rörelser för genvägar eller beskriva vad som finns på skärmen.</string>
   <string name="dialog_title_enable_tree_debug">Vill du aktivera felsökning av nodträd?</string>
   <string name="dialog_message_enable_tree_debug">Vill du aktivera felsökning av nodträd?\n\nMed felsökning av nodträd blir innehåll på din skärm tillgängligt i enhetens loggar som kan läsas av andra appar.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Vill du ändra tilldelning för rörelsen där du trippeltrycker med fyra fingrar?</string>
@@ -911,8 +897,6 @@ Om fördröjningen är kortare än 0,3 sekunder ändras Aktivera genom att dubbe
   <string name="typing_echo_change">Fysiskt tangentbordseko för %1$s</string>
   <string name="reading_control_toggle_prefix_xr">Sekundär handflata inåt, tryck länge för att växla mellan läsinställningar.</string>
   <string name="gesture_1_or_2">%1$s eller %2$s</string>
-  <string name="select_setting_hint">%1$s för att välja en annan inställning</string>
-  <string name="adjust_setting_hint">%1$s för att ändra inställningen</string>
   <string name="adjust_granularity_hint">%1$s för att läsa %2$s</string>
   <string name="adjust_typo_hint">%1$s för att se förslag</string>
   <string name="use_action_hint">Dubbeltryck för att utföra åtgärden</string>
@@ -1234,8 +1218,6 @@ Om fördröjningen är kortare än 0,3 sekunder ändras Aktivera genom att dubbe
   <string name="wear_training_typing_text5">Testa nedan.</string>
   <string name="wear_training_typing_practice_button_content_description">Skriva med tangentbordet</string>
   <string name="wear_training_end_tutorial_title">Du kan börja använda TalkBack</string>
-  <string name="talkback_updated_notification_title">TalkBack har uppdaterats</string>
-  <string name="talkback_updated_notification_content">Tryck här för mer information</string>
   <string name="wear_new_feature_page_title">Välkommen till den nya versionen av TalkBack</string>
   <string name="wear_new_feature_page_content">Vi har gjort några felkorrigeringar och ändringar av hur fokus flyttas</string>
   <string name="wear_new_feature_page_button_content_description">Slutför</string>

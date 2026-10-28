@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the settings screen and its entry in the main list, for saving and restoring all settings. [CHAR LIMIT=40] -->
+    <string name="settings_backup_title">备份与恢复</string>
+    <!-- Backup and restore: saves all settings to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export">导出设置</string>
+    <!-- Summary of the export action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_export_summary">把你所有的设置保存到一个文件。</string>
+    <!-- Backup and restore: loads all settings from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import">导入设置</string>
+    <!-- Summary of the import action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_summary">用你导出的文件里的设置替换当前设置。与这部手机绑定的设置，比如已配对的盲文显示器和你的 Gemini API 密钥，会保持原样。</string>
+    <!-- Toast after the settings were saved to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export_done">设置已导出</string>
+    <!-- Toast when the settings could not be saved to a file. [CHAR LIMIT=60] -->
+    <string name="settings_backup_export_failed">无法导出设置</string>
+    <!-- Toast after the settings were restored from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import_done">设置已导入</string>
+    <!-- Dialog message after the settings were restored, when some of them only take effect once Backtalk is turned off and on again. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_restart">你导入的部分设置需要把 Backtalk 关掉再打开才能生效。</string>
+    <!-- Toast when a file could not be read as a settings backup. [CHAR LIMIT=60] -->
+    <string name="settings_backup_import_failed">无法读取该文件</string>
+</resources>

@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Vyhledávání bylo zrušeno.</string>
   <string name="notification_type_status_started">Zahájeno</string>
   <string name="notification_type_status_stopped">Zastaveno</string>
-  <string name="notification_type_status_connected">připojeno</string>
-  <string name="notification_battery_level_unknown">neznámé</string>
   <string name="notification_battery_saver_mode">Je zapnutý Spořič baterie</string>
   <string name="template_no_text_selected">Nebyl vybrán žádný text</string>
   <string name="template_charging">Nabíjení %1$s Nabití baterie: %2$s procent.</string>
   <string name="template_charging_lite">Nabíjení %1$s</string>
-  <string name="template_battery_state">Napájení %1$s %2$s procent %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Vibrační vyzvánění.</string>
   <string name="value_ringer_silent">Tiché vyzvánění.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Říkat čas nahlas</string>
   <string name="pref_speak_time_summary">Když zapnete obrazovku</string>
   <string name="summary_speak_container_element_positions">Říkat, když vstoupíte do seznamu, mřížky nebo jiného kontejneru nebo je opustíte</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Do ovládání čtení byla přidána prodleva po označení</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Prodlevu po označení teď můžete kdykoli změnit pomocí ovládání čtení.</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Přepnout na psaní zvednutím prstu?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Pokud je prodleva po označení při psaní nastavená na méně než 0,3 sekundy, bude psaní dvojitým klepnutím velmi obtížné. Pokud chcete automaticky přepnout na psaní zvednutím prstu, vyberte Přepnout.\n\nPři psaní zvednutím prstu vyberte podržením prstu požadovanou klávesu a pak příslušný znak zvednutím prstu napište.\n\nTuto funkci si můžete přizpůsobit v nastavení aplikace Backtalk.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Do ovládání čtení byla přidána prodleva po označení při psaní</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Pokud dvojité klepnutí při psaní nefunguje spolehlivě, můžete kdykoli pomocí ovládání čtení nastavit delší prodlevu po označení při psaní.</string>
   <string name="gestures_announce_typing_focus_wont_change">Bez psaní zvednutím prstu prodleva po označení při psaní nefunguje.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">Rozumím</string>
   <string name="reset_letency_reduction_settings_dialog_title">Resetovat nastavení prodlev?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Veškerá nastavení prodlev se resetují na výchozí hodnoty</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Resetovat</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Vyslovovat všechny aktualizace stavu</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Zahrnuje aktualizace při stahování, sledování trasy jízdy apod. Pokud tato možnost bude vypnuta, stále budete dostávat méně časté aktualizace.</string>
   <string name="pref_speak_system_window_titles_summary">Číst systémová okna a okna pro zadávání, například když přepnete na stavový řádek, oznámení nebo jinou klávesnici</string>
-  <string name="title_pref_explore_by_touch">Prozkoumání dotykem</string>
   <string name="title_pref_category_visual">Vizuální</string>
   <string name="title_pref_category_controls">Ovládací prvky</string>
   <string name="title_pref_category_braille">Braillovo písmo</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Přejetím nahoru a potom dolů nebo dolů a potom nahoru zvolte ovládání čtení. Potom ho změňte přejetím nahoru nebo dolů.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Klávesové zkratky</string>
   <string name="title_pref_export_custom_labels">Exportovat vlastní štítky</string>
-  <string name="title_pref_play_store">Otevřít Backtalk v Obchodě Play</string>
-  <string name="summary_pref_play_store">Aktuální verze aplikace Backtalk: %1$s</string>
   <string name="title_pref_help_and_feedback">Nápověda a zpětná vazba</string>
   <string name="title_pref_gup">Kontaktovat podporu Google pro osoby s postižením</string>
   <string name="subtitle_pref_gup">Získat pomoc s používáním funkce Backtalk nebo nahlásit problémy</string>
@@ -639,7 +628,6 @@ Při nastavení prodlevy kratší než 0,3 sekundy se aktivace dvojitým klepnu
   <string name="summary_cache_keyboard_keys">Aby se zkrátila prodleva při psaní, načítá Backtalk oznámení předem</string>
   <string name="summary_cache_keyboard_keys_disabled">K použití této funkce použijte Převod textu na řeč Google</string>
   <string name="value_direction_down">dolů</string>
-  <string name="value_direction_down_and_right">dolů a pak doprava</string>
   <string name="title_pref_shortcut_up">Přejetí nahoru</string>
   <string name="title_pref_shortcut_up_xr">Druhá dlaň směrem dovnitř, stáhnout prsty a přejet nahoru</string>
   <string name="title_pref_shortcut_down">Přejetí dolů</string>
@@ -777,8 +765,6 @@ Při nastavení prodlevy kratší než 0,3 sekundy se aktivace dvojitým klepnu
   <string name="button_customize_gesture_mappings">Přizpůsobit gesta</string>
   <string name="button_disable_all_events">Deaktivovat vše</string>
   <string name="button_enable_all_events">Aktivovat vše</string>
-  <string name="dialog_title_disable_exploration">Vypnout Prozkoumání dotykem?</string>
-  <string name="dialog_message_disable_exploration">Opravdu chcete funkci Prozkoumání dotykem vypnout?\n\nZařízení již nebude reagovat na gesta ani nebude poskytovat hlasovou zpětnou vazbu, když se dotknete obrazovky.</string>
   <string name="dialog_title_enable_tree_debug">Zapnout ladění stromu uzlů?</string>
   <string name="dialog_message_enable_tree_debug">Opravdu chcete zapnout ladění stromu uzlů?\n\nLadění stromu uzlů odhalí obsah obrazovky protokolům zařízení, které mohou číst jiné aplikace.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Chcete změnit přiřazení gesta trojitého klepnutí čtyřmi prsty?</string>
@@ -911,8 +897,6 @@ Při nastavení prodlevy kratší než 0,3 sekundy se aktivace dvojitým klepnu
   <string name="typing_echo_change">Vyslovování zadávaného textu: %1$s</string>
   <string name="reading_control_toggle_prefix_xr">Druhá dlaň směrem dovnitř, dlouhým stisknutím přepnete režim ovládání čtení.</string>
   <string name="gesture_1_or_2">%1$s nebo %2$s</string>
-  <string name="select_setting_hint">%1$s vyberete jiné nastavení</string>
-  <string name="adjust_setting_hint">%1$s upravíte nastavení</string>
   <string name="adjust_granularity_hint">%1$s spustíte čtení po %2$s</string>
   <string name="adjust_typo_hint">Gesto pro návrhy: %1$s.</string>
   <string name="use_action_hint">Dvojitým klepnutím provedete akci</string>
@@ -1234,8 +1218,6 @@ Při nastavení prodlevy kratší než 0,3 sekundy se aktivace dvojitým klepnu
   <string name="wear_training_typing_text5">Vyzkoušejte si to níže.</string>
   <string name="wear_training_typing_practice_button_content_description">Psaní na klávesnici</string>
   <string name="wear_training_end_tutorial_title">Jste připraveni začít používat Backtalk</string>
-  <string name="talkback_updated_notification_title">Aplikace Backtalk byla aktualizována</string>
-  <string name="talkback_updated_notification_content">Klepnutím zobrazíte další informace</string>
   <string name="wear_new_feature_page_title">Vítá vás aktualizovaná aplikace Backtalk</string>
   <string name="wear_new_feature_page_content">Opravili jsme některé chyby a změnili způsob pohybu zaměření</string>
   <string name="wear_new_feature_page_button_content_description">Dokončit</string>

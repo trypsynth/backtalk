@@ -433,6 +433,14 @@ public class EventFilter {
         == AccessibilityWindowInfo.TYPE_INPUT_METHOD) {
       return false;
     }
+    // Some apps fill in an item's description after it is focused, such as the rows of a chat list.
+    // With nothing to say but its place in the list, speaking it now would say that alone and hide
+    // the app's event, which comes with the text.
+    if (TextUtils.isEmpty(node.getText())
+        && TextUtils.isEmpty(node.getContentDescription())
+        && node.getChildCount() == 0) {
+      return false;
+    }
     // An item only partly on screen, which the swipe is about to scroll into view, can have all
     // its text in children still off screen, which descriptions leave out unless they are spoken
     // as they will be after the scroll. Otherwise the app's event, after the scroll, says it.

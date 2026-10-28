@@ -22,8 +22,7 @@ import com.google.android.accessibility.talkback.R
 fun Context.scriptSummary(script: InstalledScript): String =
   listOfNotNull(
       getString(if (script.enabled) R.string.script_state_on else R.string.script_state_off),
-      getString(R.string.script_state_incompatible)
-        .takeIf { script.manifest.compatibility != ApiCompatibility.COMPATIBLE },
+      getString(R.string.script_state_incompatible).takeIf { !script.manifest.isCompatible },
       runsIn(script.manifest),
       getString(R.string.script_version, script.manifest.version),
     )
@@ -35,7 +34,7 @@ fun Context.scriptAbout(manifest: ScriptManifest): String =
       runsIn(manifest),
       getString(R.string.script_version, manifest.version),
       getString(R.string.script_author, manifest.author),
-      getString(R.string.script_api_range, manifest.minApiVersion, manifest.testedApiVersion),
+      manifest.minBuild?.let { getString(R.string.script_min_build, it) },
     )
     .joinToString(". ")
 

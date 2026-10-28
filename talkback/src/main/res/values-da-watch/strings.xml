@@ -4,7 +4,6 @@
   <string name="summary_custom_action">Vises, når der er tilpassede handlinger for det aktuelle element.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack-bevægelser opdateret</string>
   <string name="notification_message_talkback_gestures_changed">Åbn Talkback for at få flere oplysninger</string>
-  <string name="talkback_updated_notification_content">Åbn TalkBack for at få flere oplysninger</string>
   <string name="new_feature_in_talkback_title">Nyheder</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">OK</string>
   <string name="turn_off_talkback">Deaktiver</string>

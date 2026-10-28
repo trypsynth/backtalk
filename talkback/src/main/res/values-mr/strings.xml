@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">शोध रद्द केला.</string>
   <string name="notification_type_status_started">सुरू झाला</string>
   <string name="notification_type_status_stopped">थांबले</string>
-  <string name="notification_type_status_connected">कनेक्ट केले आहे</string>
-  <string name="notification_battery_level_unknown">अज्ञात</string>
   <string name="notification_battery_saver_mode">बॅटरी सेव्हर सुरू आहे</string>
   <string name="template_no_text_selected">कोणताही मजकूर निवडला नाही</string>
   <string name="template_charging">चार्ज होत आहे %1$s बॅटरी पातळी %2$s टक्के.</string>
   <string name="template_charging_lite">चार्ज करणे %1$s</string>
-  <string name="template_battery_state">पॉवरशी %1$s %2$s टक्के %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">रिंगर व्हायब्रेट.</string>
   <string name="value_ringer_silent">रिंगर मूक.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">बोलून वेळ सांगा</string>
   <string name="pref_speak_time_summary">तुम्ही स्क्रीन सुरू करता, तेव्हा</string>
   <string name="summary_speak_container_element_positions">सद्य सूची, ग्रिड आणि इतर कंटनेर एंटर करताना आणि बाहेर पडताना माहिती समाविष्ट करते</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">फोकसमध्ये होणारा विलंब वाचन नियंत्रणामध्ये जोडला आहे</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">वाचन नियंत्रण वापरण्यासाठी ३ बोटांनी स्वाइप करा आणि फोकसमध्ये होणारा विलंब कोणत्याही वेळी बदला</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">टाइप करण्यासाठी बोट उचला यावर स्विच करायचे आहे का?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">टायपिंग फोकसमध्ये होणारा विलंब ०.३ सेकंदाहून कमी कालावधीसाठी सेट केल्यावर, टाइप करण्यासाठी दोनदा टॅप करणे खूप कठीण होईल. टाइप करण्यासाठी बोट उचला यावर आपोआप स्विच करण्याकरिता \"स्विच\" निवडा.\n\nटाइप करण्यासाठी बोट उचला वापरण्याकरिता, कोणतीही की निवडण्यासाठी तुमचे बोट धरून ठेवा, त्यानंतर टाइप करण्यासाठी उचला.\n\nतुम्ही हे TalkBack सेटिंग्जमध्ये कस्टमाइझ करू शकता.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">टाइप करताना फोकसमध्ये होणारा विलंब वाचन नियंत्रणामध्ये जोडला आहे</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">टाइप करताना दोनदा टॅप करा यात तुम्हाला समस्या येत असल्यास, वाचन नियंत्रण वापरण्यासाठी ३ बोटांनी स्वाइप करा आणि टाइप करताना फोकसमध्ये होणारा विलंब वाढवा</string>
   <string name="gestures_announce_typing_focus_wont_change">टायपिंग फोकसमध्ये होणारा विलंब, टाइप करण्यासाठी बोट उचला याशिवाय काम करत नाही.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">समजले</string>
   <string name="reset_letency_reduction_settings_dialog_title">विलंबासंबंधित सेटिंग्ज रीसेट करायची आहेत का?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">यामुळे विलंबासंबंधित सर्व सेटिंग्ज डीफॉल्टवर रीसेट होतील</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">रीसेट करा</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">प्रगतीसंबंधित सर्व अपडेट बोला</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">डाउनलोड, चालकांसाठी दिशानिर्देश फॉलो आणि आणखी बरेच काही करताना अपडेटचा समावेश आहे. बंद केल्यावर, तुम्हाला तरीही कमी वारंवार अपडेट मिळतील.</string>
   <string name="pref_speak_system_window_titles_summary">तुम्ही स्टेटस बार, नोटिफिकेशन किंवा दुसरा कीबोर्ड यावर स्विच करता, तेव्हा सिस्टीम आणि इनपुट विंडोची नावे बोला</string>
-  <string name="title_pref_explore_by_touch">स्‍पर्श करून एक्‍सप्‍लोर करा</string>
   <string name="title_pref_category_visual">व्हिज्युअल</string>
   <string name="title_pref_category_controls">नियंत्रणे</string>
   <string name="title_pref_category_braille">ब्रेल</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">वाचन नियंत्रणे वापरण्यासाठी आधी खाली मग वर स्‍वाइप करा.</string>
   <string name="title_pref_manage_keyboard_shortcuts">कीबोर्ड शॉर्टकट</string>
   <string name="title_pref_export_custom_labels">कस्टम लेबल एक्सपोर्ट करा</string>
-  <string name="title_pref_play_store">Play Store मध्ये TalkBack उघडा</string>
-  <string name="summary_pref_play_store">वर्तमान TalkBack आवृत्ती: %1$s</string>
   <string name="title_pref_help_and_feedback">मदत आणि अभिप्राय</string>
   <string name="title_pref_gup">Google ची भिन्नक्षमतेशी संबंधित सपोर्ट टीम याच्याशी संपर्क साधा</string>
   <string name="subtitle_pref_gup">TalkBack वापरून मदत मिळवा किंवा समस्यांची तक्रार करा</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">तुम्ही टाइप करताना होणारा विलंब कमी करण्यासाठी TalkBack घोषणा आधीच लोड करते</string>
   <string name="summary_cache_keyboard_keys_disabled">हे वैशिष्‍ट्य वापरण्यासाठी Google टेक्‍स्‍ट-टू-स्‍पीच वापरा</string>
   <string name="value_direction_down">खाली</string>
-  <string name="value_direction_down_and_right">खाली नंतर उजवीकडे</string>
   <string name="title_pref_shortcut_up">वर स्वाइप करा</string>
   <string name="title_pref_shortcut_up_xr">दुय्यम पाम आतील बाजूस, पिंच करून वर स्‍वाइप करा</string>
   <string name="title_pref_shortcut_down">खाली स्वाइप करा</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">जेश्चर कस्टम करा</string>
   <string name="button_disable_all_events">सर्व अक्षम करा</string>
   <string name="button_enable_all_events">सर्व सुरू करा</string>
-  <string name="dialog_title_disable_exploration">स्पर्श करून एक्सप्लोर करा अक्षम करायचे?</string>
-  <string name="dialog_message_disable_exploration">तुम्ही स्पर्श करून एक्सप्लोर करा बंद करू इच्छिता याची तुम्हाला खात्री आहे?\n\nतुम्ही स्क्रीनला स्पर्श कराल तेव्हा तुमचे डिव्हाइस यापुढे शॉर्टकट जेश्चरना किंवा बोललेल्या आयटमला प्रतिसाद देणार नाही.</string>
   <string name="dialog_title_enable_tree_debug">नोड ट्री डीबग करणे सक्षम करायचे?</string>
   <string name="dialog_message_enable_tree_debug">तुम्हाला खात्री आहे, की तुम्ही नोड ट्री डीबग करणे सुरू करू इच्छित आहात?\n\nनोड ट्री डीबग करणे तुमच्या डिव्हाइसच्या लॉगवर तुमच्या स्क्रीनचा आशय प्रदर्शित करते, जो इतर ॲप्लिकेशनद्वारे वाचला जाऊ शकतो.</string>
   <string name="dialog_title_enable_tree_debug_gesture">४ बोटांच्या जेश्चरने तीन वेळा टॅप करा हे पुन्हा असाइन करायचे आहे का?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s इको प्रत्यक्ष कीबोर्ड</string>
   <string name="reading_control_toggle_prefix_xr">वाचन नियंत्रण मोड टॉगल करण्यासाठी दुय्यम पाम आतील बाजूस करा आणि प्रेस करून ठेवा.</string>
   <string name="gesture_1_or_2">%1$s किंवा %2$s</string>
-  <string name="select_setting_hint">एखादे वेगळे सेटिंग निवडण्यासाठी %1$s</string>
-  <string name="adjust_setting_hint">सेटिंग अ‍ॅडजस्ट करण्यासाठी %1$s</string>
   <string name="adjust_granularity_hint">%2$s वाचण्यासाठी %1$s</string>
   <string name="adjust_typo_hint">सूचनांसाठी %1$s.</string>
   <string name="use_action_hint">कृती करण्यासाठी दोनदा टॅप करा</string>
@@ -1237,8 +1221,6 @@ TalkBack सेटिंग्जमध्ये TalkBack मेनू आणि
   <string name="wear_training_typing_text5">खाली वापरून पहा.</string>
   <string name="wear_training_typing_practice_button_content_description">कीबोर्ड वापरून टाइप करणे</string>
   <string name="wear_training_end_tutorial_title">तुम्ही TalkBack वापरण्यासाठी तयार आहात</string>
-  <string name="talkback_updated_notification_title">TalkBack अपडेट करण्यात आले आहे</string>
-  <string name="talkback_updated_notification_content">अधिक माहिती मिळवण्यासाठी टॅप करा</string>
   <string name="wear_new_feature_page_title">अपडेट केलेल्या TalkBack मध्ये तुमचे स्वागत आहे</string>
   <string name="wear_new_feature_page_content">काही बग फिक्स आणि फोकस कसा हलतो यामधील बदल तुमच्या लक्षात येतील</string>
   <string name="wear_new_feature_page_button_content_description">पूर्ण करा</string>

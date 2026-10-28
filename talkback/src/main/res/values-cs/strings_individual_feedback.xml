@@ -21,6 +21,16 @@
   <string name="individual_sound_hyperlink">Odkaz</string>
   <string name="individual_sound_formatting">Formátovaný text</string>
   <string name="individual_sound_screen_off">Obrazovka vypnutá</string>
+  <string name="individual_sound_screen_on">Obrazovka zapnutá</string>
+  <string name="individual_sound_rotor_next">Další nastavení</string>
+  <string name="individual_sound_rotor_previous">Předchozí nastavení</string>
+  <string name="individual_sound_keyboard_show">Klávesnice zobrazena</string>
+  <string name="individual_sound_keyboard_hide">Klávesnice skryta</string>
+  <string name="individual_sound_direct_touch_enter">Přímý dotyk zapnut</string>
+  <string name="individual_sound_direct_touch_exit">Přímý dotyk vypnut</string>
+  <string name="individual_sound_wrap_forward">Přechod na začátek</string>
+  <string name="individual_sound_wrap_back">Přechod na konec</string>
+  <string name="individual_sound_actions_available">Dostupné akce</string>
   <string name="individual_sound_loading">Načítání</string>
   <string name="individual_sound_browse_mode_on">Režim procházení zapnut</string>
   <string name="individual_sound_browse_mode_off">Režim procházení vypnut</string>

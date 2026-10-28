@@ -32,6 +32,9 @@ import androidx.preference.Preference;
 import androidx.preference.TwoStatePreference;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.audio.AudioDeviceRouter;
+import com.google.android.accessibility.talkback.soundthemes.SoundTheme;
+import com.google.android.accessibility.talkback.soundthemes.SoundThemes;
+import com.google.android.accessibility.talkback.soundthemes.SoundThemesFragment;
 import com.google.android.accessibility.talkback.speakerphone.SpeakerphoneSettings;
 import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.PreferenceSettingsUtils;
@@ -93,7 +96,8 @@ public class SoundAndVibrationFragment extends TalkbackBaseFragment {
 
   /**
    * The speakerphone setting needs a permission that the user grants with adb, and Android only has
-   * it from Android 12. Until it is granted, the setting is off and says how to grant it.
+   * it from Android 12. Until it is granted, the setting is off, says how to grant it and has an
+   * action that copies the command.
    */
   private void updateSpeakerphonePreference() {
     Preference pref = findPreference(getString(R.string.pref_speakerphone_away_from_ear_key));
@@ -106,13 +110,41 @@ public class SoundAndVibrationFragment extends TalkbackBaseFragment {
       return;
     }
     boolean granted = SpeakerphoneSettings.INSTANCE.canControlCalls(getContext());
+    String command = SpeakerphoneSettings.INSTANCE.grantCommand(getContext());
     pref.setEnabled(granted);
     pref.setSummary(
         granted
             ? getString(R.string.summary_pref_speakerphone_away_from_ear)
-            : getString(
-                R.string.summary_pref_speakerphone_needs_permission,
-                SpeakerphoneSettings.INSTANCE.grantCommand(getContext())));
+            : getString(R.string.summary_pref_speakerphone_needs_permission, command));
+    if (pref instanceof CommandSwitchPreference) {
+      ((CommandSwitchPreference) pref).setCommand(granted ? null : command);
+    }
+  }
+
+  /** Lists the installed sound themes, and puts the one chosen in use. */
+  private void updateSoundSchemePreference() {
+    Context context = getContext();
+    Preference pref = findPreference(SoundThemes.PREF_ACTIVE);
+    if (context == null || !(pref instanceof ListPreference)) {
+      return;
+    }
+    ListPreference listPref = (ListPreference) pref;
+    java.util.List<SoundTheme> themes = SoundThemes.installed(context);
+    CharSequence[] names = new CharSequence[themes.size()];
+    CharSequence[] ids = new CharSequence[themes.size()];
+    for (int i = 0; i < themes.size(); i++) {
+      names[i] = SoundThemesFragment.nameOf(context, themes.get(i));
+      ids[i] = themes.get(i).getId();
+    }
+    listPref.setEntries(names);
+    listPref.setEntryValues(ids);
+    listPref.setValue(SoundThemes.active(context, prefs).getId());
+    listPref.setOnPreferenceChangeListener(
+        (p, newValue) -> {
+          SoundThemes.activate(context, prefs, (String) newValue);
+          listPref.setValue((String) newValue);
+          return false;
+        });
   }
 
   private void updateAudioOutputPreference() {
@@ -151,6 +183,7 @@ public class SoundAndVibrationFragment extends TalkbackBaseFragment {
 
     updateAudioOutputPreference();
     updateSpeakerphonePreference();
+    updateSoundSchemePreference();
     Preference audioPref =
         PreferenceSettingsUtils.findPreference(activity, getString(R.string.pref_audio_output_device_key));
     if (audioPref instanceof ListPreference) {

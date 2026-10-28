@@ -62,6 +62,17 @@ class ThemeLinksTest {
   }
 
   @Test
+  fun aFileOnGitLabIsNamedAfterTheFileNotRaw() {
+    assertEquals(
+      "Soft",
+      ThemeLinks.download(
+          "https://gitlab.com/api/v4/projects/1/repository/files/themes%2FSoft.zip/raw?ref=main"
+        )
+        ?.name,
+    )
+  }
+
+  @Test
   fun onlyHttpsLinks() {
     assertNull(ThemeLinks.download("http://example.com/Soft.zip"))
     assertNull(ThemeLinks.download("ftp://example.com/Soft.zip"))

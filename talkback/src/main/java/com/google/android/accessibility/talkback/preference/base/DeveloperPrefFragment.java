@@ -16,18 +16,12 @@
 
 package com.google.android.accessibility.talkback.preference.base;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
-import android.database.ContentObserver;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import androidx.fragment.app.FragmentManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,7 +30,6 @@ import androidx.preference.Preference;
 import androidx.preference.Preference.OnPreferenceChangeListener;
 import androidx.preference.TwoStatePreference;
 import com.google.android.accessibility.talkback.R;
-import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
@@ -69,16 +62,10 @@ public class DeveloperPrefFragment extends TalkbackBaseFragment {
   /** AlertDialog to ask if user really wants to enable performance statistics. */
   private A11yAlertDialogWrapper performanceStatsDialog;
 
-  /** AlertDialog to ask if user really wants to disable explore by touch. */
-  private A11yAlertDialogWrapper exploreByTouchDialog;
-
   /** AlertDialog to ask if user is willing to opt in the debug support. */
   private A11yAlertDialogWrapper logLevelOptInDialog;
 
   private int logOptInLevel = Log.ERROR;
-
-  /** Flag whether content-observer is watching system touch-explore setting. */
-  private boolean contentObserverRegistered = false;
 
   public DeveloperPrefFragment() {
     super(R.xml.developer_preferences);
@@ -105,7 +92,6 @@ public class DeveloperPrefFragment extends TalkbackBaseFragment {
 
     // Remove preferences for features that are not supported by device.
     checkTelevision();
-    initTouchExplorationPreference();
 
     final @Nullable Preference prefVersion =
         findPreference(getString(R.string.pref_developer_version_code_key));
@@ -343,171 +329,6 @@ public class DeveloperPrefFragment extends TalkbackBaseFragment {
   public void onResume() {
     super.onResume();
     updateDumpA11yEventPreferenceSummary();
-
-    // Monitor the touch-explore system-setting.
-    @Nullable TalkBackService talkBackService = TalkBackService.getInstance();
-    if (talkBackService == null || !talkBackService.supportsTouchScreen()) {
-      return;
-    }
-
-    Uri uri = Settings.Secure.getUriFor(Settings.Secure.TOUCH_EXPLORATION_ENABLED);
-    context.getContentResolver().registerContentObserver(uri, false, touchExploreObserver);
-    contentObserverRegistered = true;
-  }
-
-  @Override
-  public void onPause() {
-    // Stop monitoring the touch-explore system-setting.
-    if (contentObserverRegistered) {
-      context.getContentResolver().unregisterContentObserver(touchExploreObserver);
-    }
-
-    super.onPause();
-  }
-
-  //////////////////////////////////////////////////////////////////////////////////////////////
-  // Touch-explore preference methods.
-
-  private final ContentObserver touchExploreObserver =
-      new ContentObserver(new Handler()) {
-        @Override
-        public void onChange(boolean selfChange) {
-          if (selfChange) {
-            return;
-          }
-
-          // The actual state of touch exploration has changed.
-          updateTouchExplorationDisplay();
-        }
-      };
-
-  /** Assigns the appropriate intent to the touch exploration preference. */
-  private void initTouchExplorationPreference() {
-    final TwoStatePreference prefTouchExploration =
-        (TwoStatePreference) findPreference(getString(R.string.pref_explore_by_touch_reflect_key));
-    if (prefTouchExploration == null) {
-      return;
-    }
-
-    // Ensure that changes to the reflected preference's checked state never
-    // trigger content observers.
-    prefTouchExploration.setPersistent(false);
-
-    // Synchronize the reflected state.
-    updateTouchExplorationDisplay();
-
-    // Set up listeners that will keep the state synchronized.
-    prefTouchExploration.setOnPreferenceChangeListener(touchExplorationChangeListener);
-
-    // Initialize preference dialog
-    exploreByTouchDialog =
-        A11yAlertDialogWrapper.materialDialogBuilder(context, fragmentManager)
-            .setTitle(R.string.dialog_title_disable_exploration)
-            .setMessage(R.string.dialog_message_disable_exploration)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setOnCancelListener(null)
-            .setPositiveButton(
-                android.R.string.ok,
-                (DialogInterface dialog, int which) -> {
-                  if (setTouchExplorationRequested(false)) {
-                    prefTouchExploration.setChecked(false);
-                  }
-                })
-            .create();
-  }
-
-  /**
-   * Updates the preferences state to match the actual state of touch exploration. This is called
-   * once when the preferences activity launches and again whenever the actual state of touch
-   * exploration changes.
-   */
-  private void updateTouchExplorationDisplay() {
-    TwoStatePreference prefTouchExploration =
-        (TwoStatePreference) findPreference(getString(R.string.pref_explore_by_touch_reflect_key));
-    if (prefTouchExploration == null) {
-      return;
-    }
-
-    ContentResolver resolver = context.getContentResolver();
-    Resources res = getResources();
-    SharedPreferences prefs = SharedPreferencesUtils.getSharedPreferences(context);
-
-    boolean requestedState =
-        SharedPreferencesUtils.getBooleanPref(
-            prefs, res, R.string.pref_explore_by_touch_key, R.bool.pref_explore_by_touch_default);
-    boolean reflectedState = prefTouchExploration.isChecked();
-    boolean actualState =
-        TalkBackService.isServiceActive() ? isTouchExplorationEnabled(resolver) : requestedState;
-
-    // If touch exploration is actually off and we requested it on, the user
-    // must have declined the "Enable touch exploration" dialog. Update the
-    // requested value to reflect this.
-    if (requestedState != actualState) {
-      LogUtils.d(TAG, "Set touch exploration preference to reflect actual state %b", actualState);
-      SharedPreferencesUtils.putBooleanPref(
-          prefs, res, R.string.pref_explore_by_touch_key, actualState);
-    }
-
-    // Ensure that the check box preference reflects the requested state,
-    // which was just synchronized to match the actual state.
-    if (reflectedState != actualState) {
-      prefTouchExploration.setChecked(actualState);
-    }
-  }
-
-  private final OnPreferenceChangeListener touchExplorationChangeListener =
-      new OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-          final boolean requestedState = Boolean.TRUE.equals(newValue);
-
-          // If the user is trying to turn touch exploration off, show
-          // a confirmation dialog and don't change anything.
-          if (!requestedState) {
-            exploreByTouchDialog.show();
-            return false;
-          }
-
-          return setTouchExplorationRequested(true); // requestedState
-        }
-      };
-
-  /**
-   * Updates the preference that controls whether TalkBack will attempt to request Explore by Touch.
-   *
-   * @param requestedState The state requested by the user.
-   * @return Whether to update the reflected state.
-   */
-  private boolean setTouchExplorationRequested(boolean requestedState) {
-
-    final SharedPreferences prefs = SharedPreferencesUtils.getSharedPreferences(context);
-
-    // Update the "requested" state. This will trigger a listener in
-    // TalkBack that changes the "actual" state.
-    SharedPreferencesUtils.putBooleanPref(
-        prefs, getResources(), R.string.pref_explore_by_touch_key, requestedState);
-
-    // If TalkBack is inactive, we should immediately reflect the change in
-    // "requested" state.
-    if (!TalkBackService.isServiceActive()) {
-      return true;
-    }
-
-    TalkBackService talkBackService = TalkBackService.getInstance();
-    if (requestedState && talkBackService != null && talkBackService.shouldShowTutorial()) {
-      talkBackService.showTutorial();
-    }
-
-    // If accessibility is on, we should wait for the "actual" state to
-    // change, then reflect that change. If the user declines the system's
-    // touch exploration dialog, the "actual" state will not change and
-    // nothing needs to happen.
-    LogUtils.d(TAG, "TalkBack active, waiting for EBT request to take effect");
-    return false;
-  }
-
-  private static boolean isTouchExplorationEnabled(ContentResolver resolver) {
-    return Settings.Secure.getInt(resolver, Settings.Secure.TOUCH_EXPLORATION_ENABLED, 0) == 1;
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,6 @@
   <string name="summary_custom_action">当存在适用于当前项的自定义操作时显示。</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack 手势已更新</string>
   <string name="notification_message_talkback_gestures_changed">打开 TalkBack 即可了解详情</string>
-  <string name="talkback_updated_notification_content">打开 TalkBack 即可了解详情</string>
   <string name="new_feature_in_talkback_title">新变化</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">确定</string>
   <string name="turn_off_talkback">关闭</string>
