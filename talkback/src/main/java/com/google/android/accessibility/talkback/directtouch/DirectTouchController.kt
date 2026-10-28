@@ -68,9 +68,10 @@ import com.google.android.accessibility.utils.output.ThemeVibrations
  * touch off. Direct touch is on, and said to be, for as long as the app may have it, whether or not
  * a marked view is showing, so the marked views coming and going are not announced.
  *
- * An app turned on for the whole screen that shows native items, such as buttons, is built for the
- * screen reader, so touch stays with Backtalk while they show. That is the one look at an app's
- * views, bounded to [MAX_NODES_LOOKED_AT] of them, and the app's content changes make it again.
+ * An app turned on for the whole screen that shows native items, such as buttons, over a game's
+ * drawing surface is built for the screen reader there, so touch stays with Backtalk while they
+ * show. That is the one look at an app's views, bounded to [MAX_NODES_LOOKED_AT] of them, and the
+ * app's content changes make it again.
  *
  * Everything else comes from Backtalk's own window, screen and display monitors. A region mode app is asked for its marked views by ID, one call per window that the app
  * answers itself. Turning direct touch off takes effect at once. Turning it on waits [DEBOUNCE_MS] so that a
@@ -612,40 +613,44 @@ class DirectTouchController(
         foreignAppWindow = { otherApplicationWindows.any { rootPackage(it) != mainPackage } },
         systemUiCoversHalf = { systemUiCoversHalf(windows) },
         regionMode = regionMode,
-        nativeItemsShowing = { hasNativeItems(windows.firstOrNull { it.id == mainWindowId }) },
+        nativeItemsShowing = {
+          hasNativeItemsOverSurface(windows.firstOrNull { it.id == mainWindowId })
+        },
       )
     return DirectTouchPolicy.shouldBeActive(input)
   }
 
-  private fun isNativeItem(node: AccessibilityNodeInfo): Boolean {
-    val compat = AccessibilityNodeInfoCompat.wrap(node)
-    return DirectTouchPolicy.isNativeItem(
-      backtalkWouldFocus = AccessibilityNodeInfoUtils.shouldFocusNode(compat),
-      label = compat.text ?: compat.contentDescription ?: compat.stateDescription,
-    )
-  }
-
   /**
-   * Whether the app's main window shows items of its own that the screen reader can use: visible
-   * views that Backtalk itself would give focus and that have something to say, such as buttons, or
-   * labels and images that have a description. A game's drawing surface takes focus but says
-   * nothing, so it isn't one. An app like that is built for the screen reader, so it keeps
-   * touch, and only an app with nothing of the kind, such as a game's play field, gets direct touch.
-   * Games give their items the bounds of the whole window, so size says nothing. Only the first
-   * [MAX_NODES_LOOKED_AT] views are looked at, so a big tree costs a bounded amount.
+   * Whether the app's main window shows items of its own that the screen reader can use over a
+   * game's drawing surface. Items are visible views that Backtalk itself would give focus and that
+   * have something to say, such as buttons, or labels and images that have a description. The
+   * surface takes focus but says nothing. A game showing a menu over its play field is built for
+   * the screen reader there, so it keeps touch until the menu goes. An app with no surface, such as
+   * a launcher used for its gestures, shows labels all the time and still wants the whole screen
+   * (#288). Games give their items the bounds of the whole window, so size says nothing. Only the
+   * first [MAX_NODES_LOOKED_AT] views are looked at, so a big tree costs a bounded amount.
    */
-  private fun hasNativeItems(window: AccessibilityWindowInfo?): Boolean {
+  private fun hasNativeItemsOverSurface(window: AccessibilityWindowInfo?): Boolean {
     window ?: return false
     val root = nativeItemRoots[window.id] ?: window.root?.also { nativeItemRoots[window.id] = it }
       ?: return false
     val queue = ArrayDeque<AccessibilityNodeInfo>()
     queue.add(root)
     var looked = 0
+    var item = false
+    var surface = false
     while (queue.isNotEmpty() && looked < MAX_NODES_LOOKED_AT) {
       val node = queue.removeFirst()
       looked++
-      if (node !== root && node.isVisibleToUser && isNativeItem(node)) {
-        return true
+      if (node !== root && node.isVisibleToUser) {
+        val compat = AccessibilityNodeInfoCompat.wrap(node)
+        val focus = AccessibilityNodeInfoUtils.shouldFocusNode(compat)
+        val label = compat.text ?: compat.contentDescription ?: compat.stateDescription
+        item = item || DirectTouchPolicy.isNativeItem(focus, label)
+        surface = surface || DirectTouchPolicy.isDrawingSurface(focus, label)
+        if (item && surface) {
+          return true
+        }
       }
       for (i in 0 until node.childCount) {
         node.getChild(i)?.let(queue::add)

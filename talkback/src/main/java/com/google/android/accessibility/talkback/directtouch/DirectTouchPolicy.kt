@@ -39,8 +39,9 @@ data class DirectTouchInput(
    */
   val regionMode: Boolean = false,
   /**
-   * The app shows items of its own that the screen reader can use, such as buttons, so it is not
-   * asking for the whole screen right now. Not looked at in region mode.
+   * The app shows items of its own that the screen reader can use, such as buttons, over a game's
+   * drawing surface, so it is not asking for the whole screen right now. Not looked at in region
+   * mode.
    */
   val nativeItemsShowing: () -> Boolean = { false },
 )
@@ -62,6 +63,14 @@ object DirectTouchPolicy {
    */
   fun isNativeItem(backtalkWouldFocus: Boolean, label: CharSequence?): Boolean =
     backtalkWouldFocus && !label.isNullOrBlank()
+
+  /**
+   * Whether a view is a game's drawing surface: the screen reader would focus it, but it has nothing
+   * to say. Apps without one, such as a launcher used for its gestures, show labels all the time, so
+   * only native items over a surface keep touch with the screen reader.
+   */
+  fun isDrawingSurface(backtalkWouldFocus: Boolean, label: CharSequence?): Boolean =
+    backtalkWouldFocus && label.isNullOrBlank()
 
   /**
    * Whether touches should go straight to the app in front. In region mode, they then go straight
