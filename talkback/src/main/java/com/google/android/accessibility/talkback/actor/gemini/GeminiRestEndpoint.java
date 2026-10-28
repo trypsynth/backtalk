@@ -33,7 +33,6 @@ import com.google.android.accessibility.talkback.actor.gemini.GeminiCommand.Comm
 import com.google.android.accessibility.talkback.actor.gemini.GeminiRestRequestPerformer.GeminiRestResponseCallback;
 import com.google.android.accessibility.talkback.actor.gemini.local.OnDeviceAiSettings;
 import com.google.android.accessibility.talkback.actor.gemini.screenqa.OverviewResponse;
-import com.google.android.accessibility.utils.NetworkUtils;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import org.json.JSONArray;
@@ -218,7 +217,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
       listener.onError(ErrorReason.UNSUPPORTED);
       return false;
     }
-    if (!NetworkUtils.isNetworkConnected(context)) {
+    if (!GeminiFunctionUtils.canReachModel(context)) {
       listener.onError(ErrorReason.NETWORK_ERROR);
       return false;
     }
@@ -259,7 +258,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
       return false;
     }
 
-    if (!NetworkUtils.isNetworkConnected(context)) {
+    if (!GeminiFunctionUtils.canReachModel(context)) {
       LogUtils.d(TAG, "Internet is not connected");
       geminiResponseListener.onError(ErrorReason.NETWORK_ERROR);
       return false;
