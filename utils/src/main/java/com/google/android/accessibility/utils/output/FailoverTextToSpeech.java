@@ -1428,35 +1428,35 @@ public class FailoverTextToSpeech {
   }
 
   /** Whether a phone or voice call has the audio mode. */
-  private boolean inCall() {
-    int mode = audioManager.getMode();
+  private static boolean inCall(int mode) {
     return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION;
   }
 
   /**
-   * Notes the time if the audio mode changed since it was last seen. A change that happened while
-   * Backtalk wasn't looking counts from now.
+   * Notes the time if the audio mode changed since it was last seen, and returns the mode. A change
+   * that happened while Backtalk wasn't looking counts from now.
    */
-  private void checkAudioMode() {
+  private int checkAudioMode() {
     int mode = audioManager.getMode();
     if (mode != lastAudioMode) {
       lastAudioMode = mode;
       audioModeChangedAt = SystemClock.uptimeMillis();
     }
+    return mode;
   }
 
   /** Whether the audio mode changed less than {@link #AUDIO_MODE_SETTLE_MS} ago. */
   private boolean audioModeSettling() {
-    checkAudioMode();
     long changedAt = audioModeChangedAt;
     return changedAt != 0 && SystemClock.uptimeMillis() - changedAt < AUDIO_MODE_SETTLE_MS;
   }
 
   /** The player for speech, or null if speech should play the usual way. */
   private @Nullable LowLatencyAudio lowLatencyPlayer() {
+    // The mode is asked for once, as each call to the audio service takes a little while.
     if (!lowLatencyAudio
         || LowLatencyAudio.isMicrophoneInUse()
-        || inCall()
+        || inCall(checkAudioMode())
         || audioModeSettling()
         || android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R
         || (ttsEngine != null && enginesWithoutFileAudio.contains(ttsEngine))) {

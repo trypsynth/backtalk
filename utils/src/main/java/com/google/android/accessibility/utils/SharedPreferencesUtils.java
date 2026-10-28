@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import androidx.core.content.ContextCompat;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Utility methods for interacting with {@link SharedPreferences} objects. */
 public class SharedPreferencesUtils {
@@ -193,13 +194,29 @@ public class SharedPreferencesUtils {
    * backed by a standard credential-protected storage context.
    */
   public static SharedPreferences getSharedPreferences(Context context) {
+    // Kept, as getting them makes a new context, and speech gets them several times an utterance.
+    @Nullable Context app = context.getApplicationContext();
+    @Nullable AppPreferences cached = appPreferences;
+    if (app != null && cached != null && cached.app() == app) {
+      return cached.prefs();
+    }
+    SharedPreferences prefs;
     Context deContext = ContextCompat.createDeviceProtectedStorageContext(context);
     if (deContext != null) {
-      return PreferenceManager.getDefaultSharedPreferences(deContext);
+      prefs = PreferenceManager.getDefaultSharedPreferences(deContext);
     } else {
-      return PreferenceManager.getDefaultSharedPreferences(context);
+      prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
+    if (app != null) {
+      appPreferences = new AppPreferences(app, prefs);
+    }
+    return prefs;
   }
+
+  /** The default preferences of an app. */
+  private record AppPreferences(Context app, SharedPreferences prefs) {}
+
+  private static volatile @Nullable AppPreferences appPreferences;
 
   /**
    * Gets the appropriate SharedPreferences depending on the device capabilities by {@code name}. On
@@ -221,6 +238,7 @@ public class SharedPreferencesUtils {
    * Build.VERSION < N to Build.VERSION >= N.
    */
   public static void migrateSharedPreferences(Context context) {
+    appPreferences = null;
     if (BuildVersionUtils.isAtLeastN()) {
       Context deContext = ContextCompat.createDeviceProtectedStorageContext(context);
       deContext.moveSharedPreferencesFrom(

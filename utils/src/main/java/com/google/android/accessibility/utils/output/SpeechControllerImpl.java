@@ -2684,10 +2684,13 @@ public class SpeechControllerImpl implements SpeechController {
       return false;
     }
 
-    if (previousItem == null && !shouldSilenceSpeech(nextItem)) {
+    boolean starting = previousItem == null && !shouldSilenceSpeech(nextItem);
+    speakNextItemInternal(nextItem);
+    // After the engine is asked, since the audio focus calls take a few milliseconds. Its audio
+    // still plays later than that, and its completion always comes in a later message.
+    if (starting) {
       handleSpeechStarting();
     }
-    speakNextItemInternal(nextItem);
     return true;
   }
 

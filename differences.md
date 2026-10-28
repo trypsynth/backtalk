@@ -10,6 +10,8 @@ Each section names the settings involved as they appear in Backtalk. Unless a se
 
 When you swiped to an item, TalkBack waited for the app to confirm the new focus before it put together what to say. Backtalk speaks the item as soon as it has set focus, and does less other work around each swipe. On a Galaxy Z Fold7, the median time from lifting your finger to hearing speech went from about 68 ms to about 39 ms.
 
+Backtalk also starts the speech while the app is still setting focus, rather than after, and stops it if the app refuses the focus. It asks the speech engine to speak before it asks Android to lower other audio, which still happens before the speech plays. On an emulator, on the lock screen, in the app list, and in Settings, the median time from lifting your finger to the speech engine receiving the text went from about 15 ms to about 10 ms.
+
 This doesn't apply when focus moves to another window, when the screen changes, or during continuous reading. Keys on the keyboard, sliders, progress bars, pages in a pager, and web content still wait for the app.
 
 ### Click sound and vibration at once
