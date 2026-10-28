@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Аткарылып жатканын айтып туруу</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Канчалык жүктөлүп алынганын, унааңыз менен кайда баратканыңызды жана башка көптөгөн нерселерди угуп турасыз. Өчүрүп койсоңуз, укпай каласыз.</string>
   <string name="pref_speak_system_window_titles_summary">Абал тилкеси, билдирмелер же башка баскычтопко которулуу сыяктуу аракеттерде тутум жана киргизүү терезелерин айтуу</string>
-  <string name="title_pref_explore_by_touch">Тийип изилдөө</string>
   <string name="title_pref_category_visual">Визуалдык</string>
   <string name="title_pref_category_controls">Башкаруу элементтери</string>
   <string name="title_pref_category_braille">Брайль</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Жаңсоолорду өзгөчөлөштүрүү</string>
   <string name="button_disable_all_events">Баары өчүрүлсүн</string>
   <string name="button_enable_all_events">Баары иштетилсин</string>
-  <string name="dialog_title_disable_exploration">Тийип изилдөө мүмкүнчүлүгү өчүрүлсүнбү?</string>
-  <string name="dialog_message_disable_exploration">Тийип изилдөө мүмкүнчүлүгү чын эле өчүрүлсүнбү?\n\n өчүрүлсө, экранга тийгениңизде түзмөгүңүз кыска жол жаңсоолоруна жооп бербей, керектүү нерселерди атабай калат.</string>
   <string name="dialog_title_enable_tree_debug">Түйүндөр дарагынын мүчүлүштүктөрүн оңдоону иштетесизби?</string>
   <string name="dialog_message_enable_tree_debug">Чын эле түйүн дарагынын мүчүлүштүктөрүн оңдоо мүмкүнчүлүгүн күйгүзгүңүз келеби?\n\n күйгүзүлгөндө, экраныңыздын мазмуну түзмөгүңүздүн таржымалында ачылып, аны башка колдонмолор окуй алат.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 манжа менен үч жолу таптоо жаңсоосун кайрадан дайындайсызбы?</string>

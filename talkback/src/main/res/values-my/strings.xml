@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">အပ်ဒိတ်အခြေအနေအားလုံး အသံထွက်ပြောရန်</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ဒေါင်းလုဒ်လုပ်နေစဉ်၊ ယာဉ်လမ်းညွှန်များအတိုင်း မောင်နေစဉ်နှင့် အခြားအခြေအနေများ ပါဝင်သည်။ ပိတ်ထားချိန်တွင်ပင် အပ်ဒိတ်အနည်းငယ်ကို ကြားရပါဦးမည်။</string>
   <string name="pref_speak_system_window_titles_summary">အခြေအနေပြ ဘား၊ အကြောင်းကြားချက်များ (သို့) အခြားကီးဘုတ်သို့ ပြောင်းချိန်တွင် စနစ်နှင့် ထည့်သွင်းခြင်းဝင်းဒိုးများကို ပြောနိုင်သည်</string>
-  <string name="title_pref_explore_by_touch">တို့ထိလျက် စူးစမ်းပါ</string>
   <string name="title_pref_category_visual">ရုပ်ပုံ</string>
   <string name="title_pref_category_controls">ထိန်းချုပ်မှုများ</string>
   <string name="title_pref_category_braille">မျက်မမြင်စာရေးစနစ်</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">လက်ဟန်များ စိတ်ကြိုက်လုပ်ရန်</string>
   <string name="button_disable_all_events">အားလုံးကို ပိတ်ရန်</string>
   <string name="button_enable_all_events">အားလုံးကို ဖွင့်ရန်</string>
-  <string name="dialog_title_disable_exploration">တို့ထိလျက် စူးစမ်းမှုကို ပိတ်ရမလား?</string>
-  <string name="dialog_message_disable_exploration">တို့ထိလျက် စူးစမ်းမှုကို သင် ပိတ်လိုတာ သေချာသလား?\n\nသင်၏ ကိရိယာသည် ဖြတ်လမ်း လက်ဟန်များကို၎င်း၊ မျက်နှာပြင်ကို ထိရာတွင် ပြောဆိုမှု အရာများကို တုံ့ပြန်တော့မည် မဟုတ်ပါ။</string>
   <string name="dialog_title_enable_tree_debug">Node Tree အမှားရှာပြင်ရန် ဖွင့်မည်လား?</string>
   <string name="dialog_message_enable_tree_debug">node tree အမှားရှာဖွင့်ရန် ဖွင့်လိုသည်မှာ သေချာပါသလား?\n\nNode tree အမှားရှာခြင်းသည် တစ်ခြား အက်ပ်များဖြင့် ဖတ်နိုင်သည့် သင့်စက်ကိရိယာ၏ မှတ်တမ်းများကို ထုတ်ဖော်ပြသလိုဖြစ်မည်။</string>
   <string name="dialog_title_enable_tree_debug_gesture">လက် ၄ ချောင်းလက်ဟန်ဖြင့် သုံးချက်တို့ခြင်းကို တာဝန်ပြန်ချမလား။</string>

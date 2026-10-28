@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Tamka taarifa zote za hatua</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Inajumuisha taarifa wakati wa kupakua, kufuata maelekezo ya safari kwa gari na zaidi. Ukizima, bado utapata taarifa mara chache.</string>
   <string name="pref_speak_system_window_titles_summary">Taja mfumo na vidirisha vya vifaa vya kuingiza data, kama vile unapobadili ili utumie sehemu ya arifa, arifa au kibodi nyingine</string>
-  <string name="title_pref_explore_by_touch">Chunguza kwa kugusa</string>
   <string name="title_pref_category_visual">Video</string>
   <string name="title_pref_category_controls">Vidhibiti</string>
   <string name="title_pref_category_braille">Nukta nundu</string>
@@ -766,8 +765,6 @@ Muda wa kusubiri wa chini ya sekunde 0.3 utabadilisha kitendo cha kugusa mara mb
   <string name="button_customize_gesture_mappings">Badilisha ishara ziwe utakavyo</string>
   <string name="button_disable_all_events">Zima zote</string>
   <string name="button_enable_all_events">Washa zote</string>
-  <string name="dialog_title_disable_exploration">Ungependa kuzima kipengee cha Chunguza kwa Kugusa?</string>
-  <string name="dialog_message_disable_exploration">Je, una uhakika unataka kuzima kipengee cha Chunguza kwa Kugusa?\n\nKifaa chako hakitaitikia tena ishara za njia mkato au vipengee vya kutamka unapogusa skrini.</string>
   <string name="dialog_title_enable_tree_debug">Ungependa kuwasha Utatuzi wa Mpangilio wa nguzo?</string>
   <string name="dialog_message_enable_tree_debug">Je, una uhakika unataka kuwasha utatuzi wa mpangilio wa nguzo?\n\nUtatuzi wa mpangilio wa nguzo huonyesha maudhui ya skrini yako kwa kumbukumbu za kifaa chako, ambayo yanaweza kufikiwa na programu nyingine.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Ungependa kukabidhi upya kitendo cha kugusa mara tatu kwa vidole 4?</string>

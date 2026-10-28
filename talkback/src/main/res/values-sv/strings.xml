@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Läs upp alla förloppsuppdateringar</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Omfattar uppdateringar vid nedladdning, vägbeskrivningar med mera. Du får fortfarande uppdateringar när inställningen är av, men inte lika ofta.</string>
   <string name="pref_speak_system_window_titles_summary">Läs upp namn på system- och ingångsfönster, till exempel när du byter till statusfältet, aviseringar eller ett annat tangentbord</string>
-  <string name="title_pref_explore_by_touch">Upptäck genom beröring</string>
   <string name="title_pref_category_visual">Visuellt</string>
   <string name="title_pref_category_controls">Kontroller</string>
   <string name="title_pref_category_braille">Punktskrift</string>
@@ -766,8 +765,6 @@ Om fördröjningen är kortare än 0,3 sekunder ändras Aktivera genom att dubbe
   <string name="button_customize_gesture_mappings">Anpassa rörelser</string>
   <string name="button_disable_all_events">Inaktivera alla</string>
   <string name="button_enable_all_events">Aktivera alla</string>
-  <string name="dialog_title_disable_exploration">Vill du inaktivera Explore by touch?</string>
-  <string name="dialog_message_disable_exploration">Är du säker på att du vill inaktivera Explore by touch?\n\nEnheten kommer inte längre att reagera på rörelser för genvägar eller beskriva vad som finns på skärmen.</string>
   <string name="dialog_title_enable_tree_debug">Vill du aktivera felsökning av nodträd?</string>
   <string name="dialog_message_enable_tree_debug">Vill du aktivera felsökning av nodträd?\n\nMed felsökning av nodträd blir innehåll på din skärm tillgängligt i enhetens loggar som kan läsas av andra appar.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Vill du ändra tilldelning för rörelsen där du trippeltrycker med fyra fingrar?</string>

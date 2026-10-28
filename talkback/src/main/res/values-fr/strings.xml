@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Énoncer toute mise à jour de progression</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Cela inclut les mises à jour lorsque vous téléchargez, suivez un itinéraire et plus. Si cette option est désactivée, vous recevrez tout de même des mises à jour moins fréquentes.</string>
   <string name="pref_speak_system_window_titles_summary">Énoncer le nom des fenêtres système et de saisie, par exemple lorsque vous passez à la barre d\'état, aux notifications ou à un autre clavier</string>
-  <string name="title_pref_explore_by_touch">Explorer au toucher</string>
   <string name="title_pref_category_visual">Visuel</string>
   <string name="title_pref_category_controls">Commandes</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Avec un délai inférieur à 0,3 seconde, l\'appui double d\'activation sera re
   <string name="button_customize_gesture_mappings">Personnaliser les gestes</string>
   <string name="button_disable_all_events">Tout désactiver</string>
   <string name="button_enable_all_events">Tout activer</string>
-  <string name="dialog_title_disable_exploration">Désactiver la fonctionnalité Explorer au toucher ?</string>
-  <string name="dialog_message_disable_exploration">Voulez-vous vraiment désactiver la fonctionnalité Explorer au toucher ?\n\nVotre appareil ne répondra plus aux gestes de raccourci et n\'énoncera plus les éléments lorsque vous toucherez l\'écran.</string>
   <string name="dialog_title_enable_tree_debug">Activer le débogage de l\'arborescence des nœuds ?</string>
   <string name="dialog_message_enable_tree_debug">Voulez-vous vraiment activer le débogage de l\'arborescence de nœuds ?\n\nSi vous utilisez cette fonctionnalité, les journaux de votre appareil auront accès au contenu affiché sur votre écran, qui pourra être lu par d\'autres applications.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Réattribuer le triple appui à quatre doigts ?</string>

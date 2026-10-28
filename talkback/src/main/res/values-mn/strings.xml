@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Явцын бүх шинэчлэлтийг чангаар унших</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Татах, машинаар явах чиглэлийг дагах болон бусад үеийн шинэчлэлт багтана. Унтраалттай үед та цөөн тооны тогтмол шинэчлэлт авсан хэвээр байх болно.</string>
   <string name="pref_speak_system_window_titles_summary">Таныг статус самбар, мэдэгдэл эсвэл өөр гар луу сэлгэх үед систем болон оролтын цонхыг чангаар унших</string>
-  <string name="title_pref_explore_by_touch">Хүрэлтээр сонсох</string>
   <string name="title_pref_category_visual">Визуал</string>
   <string name="title_pref_category_controls">Хяналт</string>
   <string name="title_pref_category_braille">Брайл</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Дохиог тохируулах</string>
   <string name="button_disable_all_events">Бүгдийг цуцлах</string>
   <string name="button_enable_all_events">Бүгдийг идэвхжүүлэх</string>
-  <string name="dialog_title_disable_exploration">Хүрэлтээр сонсохыг идэвхгүй болгох уу?</string>
-  <string name="dialog_message_disable_exploration">Хүрэлтээр сонсохыг унтраах уу?\n\nТа төхөөрөмжний дэлгэцэнд хүрч товчлол дохиог хийх буюу эсвэл ярихад таны төхөөрөмж хариу өгөхгүй.</string>
   <string name="dialog_title_enable_tree_debug">Зангилаа модон дебаг-г идэвхжүүлэх үү?</string>
   <string name="dialog_message_enable_tree_debug">Та зангилаа модон дебаг-г идэвхжүүлэхдээ итгэлтэй байна уу?\n\nЗангилаа модон дебаг нь таны дэлгэцийн агуулгыг таны төхөөрөмжийн лог-т нээлттэй болгосноор өөр аппликейшнүүдэд унших боломж олгоно.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 хуруугаар гурав товших зангааг дахин оноох уу?</string>

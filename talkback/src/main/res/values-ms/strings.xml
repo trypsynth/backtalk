@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Tuturkan semua kemaskinian kemajuan</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Merangkumi kemaskinian semasa memuat turun, mengikut arah memandu dan pelbagai lagi. Apabila dimatikan, anda masih menerima kemaskinian tetapi kurang kerap.</string>
   <string name="pref_speak_system_window_titles_summary">Sebut tetingkap sistem dan input, seperti semasa anda bertukar kepada bar status, pemberitahuan atau papan kekunci lain</string>
-  <string name="title_pref_explore_by_touch">Teroka melalui sentuhan</string>
   <string name="title_pref_category_visual">Visual</string>
   <string name="title_pref_category_controls">Kawalan</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Penangguhan di bawah 0.3 saat akan menukar ketik dua kali untuk mengaktifkan kep
   <string name="button_customize_gesture_mappings">Sesuaikan gerak isyarat</string>
   <string name="button_disable_all_events">Lumpuhkan semua</string>
   <string name="button_enable_all_events">Dayakan semua</string>
-  <string name="dialog_title_disable_exploration">Lumpuhkan Teroka melalui sentuhan?</string>
-  <string name="dialog_message_disable_exploration">Adakah anda pasti anda mahu mematikan Teroka melalui sentuhan?\n\nPeranti anda tidak akan bertindak balas kepada gerak isyarat pintasan atau menyebut item apabila anda menyentuh skrin.</string>
   <string name="dialog_title_enable_tree_debug">Dayakan Penyahpijatan Pohon Nod?</string>
   <string name="dialog_message_enable_tree_debug">Adakah anda pasti anda ingin menghidupkan penyahpijatan pohon nod?\n\nPenyahpijatan pohon nod mendedahkan kandungan skrin anda kepada log peranti anda, yang mungkin boleh dibaca oleh aplikasi lain.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Tetapkan semula ketik tiga kali dengan gerak isyarat 4 jari?</string>

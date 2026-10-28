@@ -25,7 +25,6 @@ import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.utils.FormFactorUtils;
 import com.google.android.accessibility.utils.PreferenceSettingsUtils;
-import com.google.android.accessibility.utils.SharedPreferencesUtils;
 
 /** Settings for how touches focus and activate items. */
 public class TouchActivationFragment extends TalkbackBaseFragment {
@@ -66,13 +65,8 @@ public class TouchActivationFragment extends TalkbackBaseFragment {
       return;
     }
     boolean touchExploration =
-        TalkBackService.isServiceActive()
-            ? isTouchExplorationEnabled(context.getContentResolver())
-            : SharedPreferencesUtils.getBooleanPref(
-                SharedPreferencesUtils.getSharedPreferences(context),
-                getResources(),
-                R.string.pref_explore_by_touch_key,
-                R.bool.pref_explore_by_touch_default);
+        !TalkBackService.isServiceActive()
+            || isTouchExplorationEnabled(context.getContentResolver());
     singleTap.setEnabled(touchExploration);
   }
 }

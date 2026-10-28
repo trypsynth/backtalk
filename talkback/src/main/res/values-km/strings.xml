@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">អានបច្ចុប្បន្នភាពដំណើរវិវឌ្ឍន៍ទាំងអស់</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">រួមបញ្ចូលព័ត៌មានថ្មីៗពេលទាញយក ទៅតាមទិសដៅ​បើកបររថយន្ត និងច្រើនទៀត។ នៅពេលបិទ អ្នកនឹងនៅតែទទួលបានព័ត៌មានថ្មីៗដែលមិនសូវញឹកញាប់។</string>
   <string name="pref_speak_system_window_titles_summary">ប្រព័ន្ធនិយាយ និងវិនដូបញ្ចូល ដូចជានៅពេលអ្នកប្ដូរទៅរបារស្ថានភាព ការជូនដំណឹង ឬក្តារចុចផ្សេងទៀត</string>
-  <string name="title_pref_explore_by_touch">រក​មើល​ដោយ​ការ​ប៉ះ</string>
   <string name="title_pref_category_visual">រូបភាព</string>
   <string name="title_pref_category_controls">ការបញ្ជា</string>
   <string name="title_pref_category_braille">អក្សរស្ទាប</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ប្ដូរ​កាយវិការ​តាម​តម្រូវ​ការ</string>
   <string name="button_disable_all_events">បិទ​ទាំង​អស់</string>
   <string name="button_enable_all_events">បើក​ទាំង​អស់</string>
-  <string name="dialog_title_disable_exploration">បិទ​ការ​​រុករក​​ដោយ​​ប៉ះ​?</string>
-  <string name="dialog_message_disable_exploration">តើ​អ្នក​ប្រាកដ​ជា​ចង់​បិទ​ការ​រុករក​តាម​ការ​ប៉ះ?\n\nឧបករណ៍​របស់​អ្នក​នឹង​លែង​ឆ្លើយតប​កាយវិការ​ផ្លូវកាត់ ឬ​និយាយ​​ធាតុ​ណាមួយ​ពេល​អ្នក​ប៉ះ​អេក្រង់។</string>
   <string name="dialog_title_enable_tree_debug">បើក​ការ​​បំបាត់​កំហុស​ដើម​ថ្នាំង​?</string>
   <string name="dialog_message_enable_tree_debug">តើ​អ្នក​ប្រាកដ​ជា​ចង់​បើក​ការ​បំបាត់​កំហុស​ដើម​ថ្នាំង​?\n\nបំបាត់​កំហុស​ដើម​ថ្នាំង​បង្ហាញ​មាតិកា​នៃ​អេក្រង់​របស់​អ្នក​ទៅ​កាន់​កំណត់​ហេតុ​ឧបករណ៍​របស់​អ្នក​ ដែល​អ្នក​​អាច​អាន​តាម​​កម្មវិធី​ផ្សេង​ទៀត​។</string>
   <string name="dialog_title_enable_tree_debug_gesture">កំណត់ការចុចបីដងឡើងវិញដោយប្រើចលនាម្រាមដៃបួន 4 ឬ?</string>

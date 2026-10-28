@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">प्रोग्रेस से जुड़े सभी अपडेट सुनें</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">इसमें डाउनलोड करने, ड्राइविंग दिशा-निर्देशों का पालन करने वगैरह के दौरान मिलने वाले अपटेड शामिल होते हैं. इस सेटिंग के बंद होने पर भी आपको कभी-कभार अपडेट मिलेंगे.</string>
   <string name="pref_speak_system_window_titles_summary">स्टेटस बार, सूचनाओं या किसी दूसरे कीबोर्ड पर स्विच करने के दौरान, सिस्टम और इनपुट विंडो के नाम सुनें</string>
-  <string name="title_pref_explore_by_touch">कॉन्टेंट को छूकर, उसे सुनने की सुविधा</string>
   <string name="title_pref_category_visual">विज़ुअल</string>
   <string name="title_pref_category_controls">कंट्रोल</string>
   <string name="title_pref_category_braille">ब्रेल</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">हाथ के जेस्चर (स्पर्श) को अपनी पसंद के मुताबिक ढालें</string>
   <string name="button_disable_all_events">सभी को अक्षम करें</string>
   <string name="button_enable_all_events">सभी को चालू करें</string>
-  <string name="dialog_title_disable_exploration">छूकर, उससे जुड़ी जानकारी सुनने की सुविधा को बंद करें?</string>
-  <string name="dialog_message_disable_exploration">क्या आप छूकर, उससे जुड़ी जानकारी सुनने की सुविधा को बंद करना चाहते हैं ?\n\nइससे आपके स्क्रीन को छूने पर आपका डिवाइस हाथ के जेस्चर या बोले जाने वाले आइटम पर कोई प्रतिक्रया नहीं देगा.</string>
   <string name="dialog_title_enable_tree_debug">नोड ट्री डीबग करना चालू करें?</string>
   <string name="dialog_message_enable_tree_debug">क्या आप वाकई नोड ट्री डीबगिंग को चालू करना चाहते हैं?\n\nनोड ट्री डीबगिंग आपके स्क्रीन की सामग्री को आपके डिवाइस के लॉग में दिखाता है, जिसे अन्य ऐप्लिकेशन के द्वारा पढ़ा जा सकता है.</string>
   <string name="dialog_title_enable_tree_debug_gesture">क्या चार उंगलियों से तीन बार टैप करने का जेस्चर फिर से असाइन करना है?</string>

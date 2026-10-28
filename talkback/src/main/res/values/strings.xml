@@ -672,11 +672,6 @@
     -->
     <string name="pref_speak_system_window_titles_summary">Speak system and input windows, like when you switch to the status bar, notifications, or another keyboard</string>
 
-    <!--
-      Source: Preference for Explore by touch setting. This setting allows users to touch on-screen content to hear it spoken aloud.
-      Description: The user can check or not check this. [CHAR LIMIT=40]
-    -->
-    <string name="title_pref_explore_by_touch">Explore by touch</string>
     <!-- Category for TalkBack visuyal settings. [CHAR LIMIT=40] -->
     <string name="title_pref_category_visual">Visual</string>
     <!-- Category for gestures, menus or other controls. [CHAR LIMIT=40] -->
@@ -2729,10 +2724,6 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <!-- Label for the "enable all" button in TalkbackDumpA11yEventActivity. Clicking on the button will toggle all the switches to "on" in DumpA11yEvent preference setting. -->
     <string name="button_enable_all_events">Enable all</string>
 
-    <!-- Title for the dialog shown when a user attempts to disable Explore by Touch.  -->
-    <string name="dialog_title_disable_exploration">Disable Explore by touch?</string>
-    <!-- Message for the dialog shown when a user attempts to disable Explore by Touch. -->
-    <string name="dialog_message_disable_exploration">Are you sure you want to turn off Explore by touch?\n\nYour device will no longer respond to shortcut gestures or speak items when you touch the screen.</string>
     <!-- Title for the dialog shown when a user attempts to enable node tree debugging.  -->
     <string name="dialog_title_enable_tree_debug">Enable Node Tree Debugging?</string>
     <!-- Message for the dialog shown when a user attempts to enable node tree debugging. -->

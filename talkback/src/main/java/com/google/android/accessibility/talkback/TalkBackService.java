@@ -2955,9 +2955,7 @@ public class TalkBackService extends AccessibilityServiceCompat
       }
 
       // Ensure the initial touch exploration request mode is correct.
-      if (supportsTouchScreen
-          && getBooleanPref(
-              R.string.pref_explore_by_touch_key, R.bool.pref_explore_by_touch_default)) {
+      if (supportsTouchScreen) {
         info.flags |= AccessibilityServiceInfo.FLAG_REQUEST_TOUCH_EXPLORATION_MODE;
       }
 
@@ -3452,7 +3450,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             R.string.pref_rotor_step_degrees_default));
     globalVariables.setTypingMethod(accessibilityFocusInterpreter.getTypingMethod());
 
-    applyTouchExplorationPreference();
+    restoreTouchExploration();
 
     if (FeatureSupport.isMultiFingerGestureSupported()) {
       requestServiceFlag(
@@ -3936,15 +3934,10 @@ public class TalkBackService extends AccessibilityServiceCompat
     return isTouchExplorationEnabled();
   }
 
-  /** Turns explore by touch on or off as the preference says. */
-  private void applyTouchExplorationPreference() {
+  /** Turns explore by touch back on, unless the braille keyboard has it off. */
+  private void restoreTouchExploration() {
     if (supportsTouchScreen && !isBrailleKeyboardActivated()) {
-      // Touch exploration *must* be enabled on TVs for TalkBack to function.
-      final boolean touchExploration =
-          (FormFactorUtils.isAndroidTv()
-              || getBooleanPref(
-                  R.string.pref_explore_by_touch_key, R.bool.pref_explore_by_touch_default));
-      requestTouchExploration(touchExploration);
+      requestTouchExploration(true);
     }
   }
 
@@ -3955,7 +3948,7 @@ public class TalkBackService extends AccessibilityServiceCompat
         requestTouchExploration(false);
       }
     } else {
-      applyTouchExplorationPreference();
+      restoreTouchExploration();
     }
     if (directTouchController != null) {
       directTouchController.setPaused(paused);
@@ -4760,15 +4753,6 @@ public class TalkBackService extends AccessibilityServiceCompat
                 res,
                 R.string.pref_performance_stats_reflect_key,
                 R.bool.pref_performance_stats_default)));
-    dumpLogger.log(
-        String.format(
-            "  %s=%b",
-            res.getString(R.string.title_pref_explore_by_touch),
-            SharedPreferencesUtils.getBooleanPref(
-                prefs,
-                res,
-                R.string.pref_explore_by_touch_reflect_key,
-                R.bool.pref_explore_by_touch_default)));
     dumpLogger.log(
         String.format(
             "  %s=%b",

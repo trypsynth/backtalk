@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Wypowiadaj informacje o wszystkich zmianach postępu</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Obejmuje to zmiany dotyczące pobierania, postępowanie według wskazówek dojazdu i inne informacje. Nawet jeśli wyłączysz tę funkcję, będziesz otrzymywać informacje o mniej częstych zmianach.</string>
   <string name="pref_speak_system_window_titles_summary">Wypowiadaj nazwy okien systemowych i okien wprowadzania, np. przy przełączaniu na pasek stanu, powiadomienia lub inną klawiaturę</string>
-  <string name="title_pref_explore_by_touch">Czytanie dotykiem</string>
   <string name="title_pref_category_visual">Wizualne</string>
   <string name="title_pref_category_controls">Elementy sterujące</string>
   <string name="title_pref_category_braille">Brajl</string>
@@ -766,8 +765,6 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="button_customize_gesture_mappings">Dostosuj gesty</string>
   <string name="button_disable_all_events">Wyłącz wszystko</string>
   <string name="button_enable_all_events">Włącz wszystko</string>
-  <string name="dialog_title_disable_exploration">Wyłączyć Czytanie dotykiem?</string>
-  <string name="dialog_message_disable_exploration">Na pewno chcesz wyłączyć Czytanie dotykiem?\n\nUrządzenie nie będzie już reagować na gesty skrótów ani odczytywać elementów dotykanych na ekranie.</string>
   <string name="dialog_title_enable_tree_debug">Włączyć debugowanie drzewa węzłów?</string>
   <string name="dialog_message_enable_tree_debug">Na pewno chcesz włączyć debugowanie drzewa węzłów?\n\nUjawni to zawartość ekranu w dziennikach urządzenia, które mogą odczytać inne aplikacje.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Ponownie przypisać 3-krotne dotknięcie do gestu 4 palców?</string>

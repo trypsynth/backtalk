@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ሁሉንም የሂደት ዝማኔዎች ተናገር</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">በማውረድ፣ የማሽከርከሪያ አቅጣጫዎችን በመከተል ላይ እና በሌሎችም ላይ ሳሉ ያሉ ዝማኔዎችን ያካትታል። ሲጠፋ አሁንም ያነሰ ተደጋጋሚነት ያላቸው ዝማኔዎችን ያገኛሉ።</string>
   <string name="pref_speak_system_window_titles_summary">ለምሳሌ ወደ ሁኔታ አሞሌው፣ ማሳወቂያዎች ወይም ሌላ ቁልፍ ሰሌዳ ሲቀይሩ የሥርዓት እና ግብዓት መስኮቶችን ይናገር</string>
-  <string name="title_pref_explore_by_touch">በመንካት አስስ</string>
   <string name="title_pref_category_visual">ምስል</string>
   <string name="title_pref_category_controls">መቆጣጠሪያዎች</string>
   <string name="title_pref_category_braille">ብሬይል</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ምልክቶችን አብጅ</string>
   <string name="button_disable_all_events">ሁሉንም አሰናክል</string>
   <string name="button_enable_all_events">ሁሉንም አንቃ</string>
-  <string name="dialog_title_disable_exploration">በንኪኪ ማስስ ይሰናከል?</string>
-  <string name="dialog_message_disable_exploration">እርግጠኛ ነዎት በንኪኪ ማስስን ማጥፋት ይፈልጋሉ?\n\nመሣሪያዎ ከአሁን በኋላ ለአቋራጭ ምልክቶች ምላሽ አይሰጡም ወይም ማያ ገጹን ሲነኩ ንጥሎችን አይናገሩም።</string>
   <string name="dialog_title_enable_tree_debug">የአንጓ ዛፍ ማረም ይንቃ?</string>
   <string name="dialog_message_enable_tree_debug">እርግጠኛ ነዎት የአንጓ ዛፉን ማረም ማብራት ይፈልጋሉ?\n\nየአንጓ ዛፍ ማረም የማያ ገፅ ይዘትዎን ለመሣሪያዎ ምዝግብ ማስታወሻዎች ያጋልጣቸዋል፣ እና ሌሎች መተግበሪያዎች ሊያነብቡት ይችላሉ።</string>
   <string name="dialog_title_enable_tree_debug_gesture">ሦስቴ መታ ማድረግ በ4 ጣቶች ምልክት እንደገና ይመደብ?</string>

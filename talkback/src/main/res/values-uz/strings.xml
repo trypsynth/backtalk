@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Barcha jarayon haqida gapirtirish</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Bunga yuklab olish va navigatsiya paytidagi bildirishnomalar kiradi. Sozlama oʻchiq boʻlsa, kamroq bildirishnoma chiqadi.</string>
   <string name="pref_speak_system_window_titles_summary">Holat qatori, bildirishnomalar va boshqa klaviaturaga almashishda tizim va kirish oynalarining nomlarini aytish</string>
-  <string name="title_pref_explore_by_touch">Teginib o‘rganish</string>
   <string name="title_pref_category_visual">Vizual</string>
   <string name="title_pref_category_controls">Boshqaruv</string>
   <string name="title_pref_category_braille">Brayl</string>
@@ -766,8 +765,6 @@ Fokus koʻchganidan keyin TalkBack qanchalik tez gapirishini boshqaradi. Qisqaro
   <string name="button_customize_gesture_mappings">Ishoralarni sozlash</string>
   <string name="button_disable_all_events">Hammasini o‘chirish</string>
   <string name="button_enable_all_events">Hammasini yoqish</string>
-  <string name="dialog_title_disable_exploration">“Teginib o‘rganish” funksiyasi o‘chirib qo‘yilsinmi?</string>
-  <string name="dialog_message_disable_exploration">“Teginib o‘rganish” funksiyasini o‘chirib qo‘ymoqchimisiz?\n\nQurilmangiz imo-ishoralarga javob qaytarmaydi va ekranga bosilganda elementlar nomini aytmaydi.</string>
   <string name="dialog_title_enable_tree_debug">“Tugunlar daraxtini tuzatish” funksiyasi yoqilsinmi?</string>
   <string name="dialog_message_enable_tree_debug">“Tugunlar daraxtini tuzatish” funksiyasini yoqmoqchimisiz?\n\n“Tugunlar daraxtini tuzatish” funksiyasi ekrandagi kontentni qurilma jurnaliga taqdim etib, keyin uni boshqa ilovalar ham o‘qishi mumkin bo‘ladi.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 ta barmoq bilan uch marta bosish ishorasi qayta tayinlansinmi?</string>

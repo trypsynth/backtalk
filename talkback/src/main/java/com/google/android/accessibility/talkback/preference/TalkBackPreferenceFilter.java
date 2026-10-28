@@ -238,7 +238,6 @@ public class TalkBackPreferenceFilter {
         HIDDEN_ON_TV | HIDDEN_TYPING_LATENCY_SETTING | HIDDEN_ON_XR),
     // Developer settings
     GESTURE_HANDLING(R.string.pref_talkback_gesture_detection_key, HIDDEN_ON_TV),
-    EXPLORE_BY_TOUCH(R.string.pref_explore_by_touch_reflect_key, HIDDEN_ON_TV | HIDDEN_ON_XR),
     // Gesture/Verbosity Settings.
     CONFIG_PHYSICAL_KEYBOARD_ECHO(R.string.pref_keyboard_echo_physical_key, HIDDEN_ON_WATCH),
     INTERRUPT_TYPING(R.string.pref_interrupt_typing_key, HIDDEN_ON_WATCH),

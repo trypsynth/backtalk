@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Irakurri ozen garapen guztiak</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Besteak beste, deskargatzen, gidatzeko jarraibideak erabiltzen eta antzeko ekintzetan ari garenean. Ezarpena desaktibatuta egon arren, garapenen berri izaten jarraituko duzu, baina ez horren maiz.</string>
   <string name="pref_speak_system_window_titles_summary">Irakurri ozen sistemaren leihoen eta idazketa-leihoen izenak; esate baterako, egoera-barrara, jakinarazpenetara edo beste teklatu batera aldatuz gero</string>
-  <string name="title_pref_explore_by_touch">Arakatu sakatuta</string>
   <string name="title_pref_category_visual">Ikusizkoak</string>
   <string name="title_pref_category_controls">Kontrolatzeko aukerak</string>
   <string name="title_pref_category_braille">Braillea</string>
@@ -766,8 +765,6 @@ Atzerapena 0,3 segundokoa baino gutxiagokoa bada, elementuak 2 hatzekin aktibat
   <string name="button_customize_gesture_mappings">Pertsonalizatu keinuak</string>
   <string name="button_disable_all_events">Desgaitu guztiak</string>
   <string name="button_enable_all_events">Gaitu guztiak</string>
-  <string name="dialog_title_disable_exploration">\"Arakatu ukituta\" desgaitu?</string>
-  <string name="dialog_message_disable_exploration">Ziur \"Arakatu ukituta\" eginbidea desaktibatu nahi duzula?\n\nGailuak ezin izango ditu lasterbide-keinuak erabili edo pantaila ukitzen duzunean elementuak esan.</string>
   <string name="dialog_title_enable_tree_debug">Nodo-zuhaitzak arazteko aukera gaitu nahi duzu?</string>
   <string name="dialog_message_enable_tree_debug">Ziur nodo-zuhaitza arazteko aukera aktibatu nahi duzula?\n\nNodo-zuhaitza arazteko aukerarekin, gailuaren erregistroek pantailako edukia hauteman ahal izango dute, eta beste aplikazioek erregistro hori irakurri ahal izango dute.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 hatzekin 3 aldiz sakatzeko keinua berriro esleitu nahi duzu?</string>

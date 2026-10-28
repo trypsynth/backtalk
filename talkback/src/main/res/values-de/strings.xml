@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Alle Fortschrittsansagen vorlesen</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Es werden beispielsweise Fortschritte beim Herunterladen und beim Folgen von Wegbeschreibungen angesagt. Wenn diese Option deaktiviert wird, gibt es weiterhin entsprechende Ansagen, allerdings seltener.</string>
   <string name="pref_speak_system_window_titles_summary">Namen von System- und Eingabefenstern werden vorgelesen, zum Beispiel wenn du zur Statusleiste, den Benachrichtigungen oder einer anderen Tastatur wechselst</string>
-  <string name="title_pref_explore_by_touch">Bei Berühren vorlesen</string>
   <string name="title_pref_category_visual">Visuell</string>
   <string name="title_pref_category_controls">Steuerelemente</string>
   <string name="title_pref_category_braille">Brailleschrift</string>
@@ -766,8 +765,6 @@ Bei Verzögerungen unter 0,3 Sekunden wird die Aktivierung durch Doppeltippen z
   <string name="button_customize_gesture_mappings">Touchgesten anpassen</string>
   <string name="button_disable_all_events">Alle deaktivieren</string>
   <string name="button_enable_all_events">Alle aktivieren</string>
-  <string name="dialog_title_disable_exploration">„Bei Berühren vorlesen“ deaktivieren?</string>
-  <string name="dialog_message_disable_exploration">Möchtest du „Bei Berühren vorlesen“ wirklich deaktivieren?\n\nDein Gerät reagiert dann nicht mehr auf Gestenkürzel und benennt auch nicht die Elemente beim Berühren des Bildschirms.</string>
   <string name="dialog_title_enable_tree_debug">Knotenstruktur-Debugging aktivieren?</string>
   <string name="dialog_message_enable_tree_debug">Soll das Knotenstruktur-Debugging wirklich aktiviert werden?\n\nDadurch werden deine Bildschirminhalte in den Geräteprotokollen gespeichert, die möglicherweise von anderen Apps eingesehen werden.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Touchgeste „mit vier Fingern dreimal tippen“ neu zuweisen?</string>

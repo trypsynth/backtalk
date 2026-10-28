@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Ištarti visus eigos naujinius</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Apima naujinius atsisiunčiant, naudojantis važiavimo nuorodomis ir kt. Kai išjungta, vis tiek gausite mažiau naujinių.</string>
   <string name="pref_speak_system_window_titles_summary">Ištarti sistemos ir įvesties langų pavadinimus, pvz., kai perjungiama į būsenos juostą, pranešimus ar kitą klaviatūrą</string>
-  <string name="title_pref_explore_by_touch">Naršyti paliečiant</string>
   <string name="title_pref_category_visual">Vaizdo medžiaga</string>
   <string name="title_pref_category_controls">Valdikliai</string>
   <string name="title_pref_category_braille">Brailio raštas</string>
@@ -766,8 +765,6 @@ Jei delsa bus mažesnė nei 0,3 sek., dvigubas suaktyvinimo palietimas bus pakei
   <string name="button_customize_gesture_mappings">Tinkinti gestus</string>
   <string name="button_disable_all_events">Išjungti viską</string>
   <string name="button_enable_all_events">Įgalinti viską</string>
-  <string name="dialog_title_disable_exploration">Išjungti naršymą paliečiant?</string>
-  <string name="dialog_message_disable_exploration">Ar tikrai norite išjungti naršymą paliečiant?\n\nĮrenginys nebereaguos į sparčiuosius gestus ir neištars elementų, kai paliesite ekraną.</string>
   <string name="dialog_title_enable_tree_debug">Įjungti mazgų medžio derinimo režimą?</string>
   <string name="dialog_message_enable_tree_debug">Ar tikrai norite įjungti mazgų medžio derinimo režimą?\n\nJį įjungus, ekrano turinys pateikiamas įrenginio žurnaluose, kuriuos gali skaityti kitos programos.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Iš naujo priskirti palietimo tris kartus keturiais pirštais gestą?</string>

@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">تمام پیش رفت اپ ڈیٹس کو بولیں</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ڈاؤن لوڈ کرنے، گاڑی چلانے کی ڈائریکشنز کی پیروی کرنے اور بہت کچھ کرنے کے دوران اپ ڈیٹس شامل ہیں۔ آف ہونے کی صورت میں آپ کو اب بھی مزید کم اپ ڈیٹس موصول ہوں گی۔</string>
   <string name="pref_speak_system_window_titles_summary">اسپیک سسٹم اور ان پٹ ونڈوز، جیسے کہ جب آپ اسٹیٹس بار، اطلاعات یا کسی اور کی بورڈ پر سوئچ کرتے ہیں</string>
-  <string name="title_pref_explore_by_touch">ٹچ کرکے دریافت کریں</string>
   <string name="title_pref_category_visual">ویژوئل</string>
   <string name="title_pref_category_controls">کنٹرولز</string>
   <string name="title_pref_category_braille">بریل</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">اشاروں کو حسب ضرورت بنائیں</string>
   <string name="button_disable_all_events">تمام کو غیر فعال کریں</string>
   <string name="button_enable_all_events">تمام کو فعال کریں</string>
-  <string name="dialog_title_disable_exploration">ٹچ کرکے دریافت کریں کو غیر فعال کریں؟</string>
-  <string name="dialog_message_disable_exploration">‏کیا آپ واقعی ٹچ کر کے دریافت کریں کو آف کرنا چاہتے ہیں؟\n\nآپ کے ذریعے ٹچ کیے جانے پر آپ کا آلہ شارٹ کٹ اشاروں یا اسپیک آئٹمز پر مزید ردعمل کا اظہار نہیں کرے گا۔</string>
   <string name="dialog_title_enable_tree_debug">نوڈ ٹری ڈیبگ کرنے کو فعال کریں؟</string>
   <string name="dialog_message_enable_tree_debug">‏کیا آپ واقعی نوڈ ٹری ڈیبگ کرنے کو آن کرنا چاہتے ہیں؟\n\nنوڈ ٹری ڈیبگ کرنا آپ کے آلہ کے لاگز میں آپ کی اسکرین کا مواد دکھاتا ہے، جسے دیگر ایپلیکیشنز کے ذریعے پڑھا جا سکتا ہے۔</string>
   <string name="dialog_title_enable_tree_debug_gesture">تین بار تھپتھپانے کی کاروائی کو 4 انگلیوں کے اشارے کے ساتھ دوبارہ تفویض کریں؟</string>

@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">සියලු ප්‍රගති යාවත්කාලීන කථා කරන්න</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">බාගන්නා, රිය පැදවීමේ උපදෙස් අනුගමනය කරන, සහ තවත් දේ අතරේ යාවත්කාලීන ඇතුළත් වේ. ක්‍රියාවිරහිත කළ විට, ඔබට තවමත් නිතර අඩුවෙන් යාවත්කාලීන ලැබෙනු ඇත.</string>
   <string name="pref_speak_system_window_titles_summary">ඔබ තත්ත්ව තීරුව, දැනුම්දීම්, හෝ වෙනත් යතුරු පුවරුවක් වෙත මාරු වන විට වැනි, පද්ධති සහ ආදාන කවුළු කථා කරන්න</string>
-  <string name="title_pref_explore_by_touch">ස්පර්ශය මගින් ගවේෂණය කරන්න</string>
   <string name="title_pref_category_visual">දෘශ්‍ය</string>
   <string name="title_pref_category_controls">පාලන</string>
   <string name="title_pref_category_braille">බ්‍රේල්</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ඉංගිතයන් අභිමත කරන්න</string>
   <string name="button_disable_all_events">සියල්ල අබල කරන්න</string>
   <string name="button_enable_all_events">සියල්ල සබල කරන්න</string>
-  <string name="dialog_title_disable_exploration">ස්පර්ශය මගින් ගවේෂණය අබල කරන්නද?</string>
-  <string name="dialog_message_disable_exploration">ඔබට ස්පර්ශය මගින් ගවේෂණය කරන්න අක්‍රිය කිරීමට අවශ්‍ය බව විශ්වාසද?\n\nඔබගේ උපාංගය තවදුරටත් ඔබ ස්පර්ශ කළ විට කෙටිමං ඉංගිතයන්ට හෝ කථාකරන අයිතම වලට ප්‍රතිචාර නොදක්වයි.</string>
   <string name="dialog_title_enable_tree_debug">නෝඩු රුක් නිදොස් කිරීම සබල කරන්නද?</string>
   <string name="dialog_message_enable_tree_debug">ඔබට විශ්වාසද ඔබට නෝඩු රුක නිදොස් කිරීම සක්‍රිය කිරීමට අවශ්‍යද?\n\nනෝඩු රුක නිදොස් කිරීම ඔබගේ තීරයේ අන්තර්ගත වල සිට ඔබගේ උපංගයේ ලොග් දක්වා අනාවරණය කරයි, එය ඇතැම් විට වෙනත් යෙදුමකින් කියවනු ලැබේ.</string>
   <string name="dialog_title_enable_tree_debug_gesture">ඇඟිලි 4 අභිනයෙන් තුන් වරක් තට්ටු කිරීම නැවත පවරන්න ද?</string>

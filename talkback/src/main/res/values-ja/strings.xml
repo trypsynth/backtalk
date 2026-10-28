@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">状況の変動をすべて読み上げる</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ダウンロード、運転ルートの検索などを行っている間の更新を含みます。OFF にしても頻度を下げて更新は読み上げられます。</string>
   <string name="pref_speak_system_window_titles_summary">ステータスバー、通知、別のキーボードに切り替えたときなどに、システム ウィンドウと入力ウィンドウの名前を読み上げます</string>
-  <string name="title_pref_explore_by_touch">タッチガイド</string>
   <string name="title_pref_category_visual">映像</string>
   <string name="title_pref_category_controls">コントロール</string>
   <string name="title_pref_category_braille">点字</string>
@@ -765,8 +764,6 @@
   <string name="button_customize_gesture_mappings">ジェスチャーをカスタマイズ</string>
   <string name="button_disable_all_events">すべて無効にする</string>
   <string name="button_enable_all_events">すべて有効にする</string>
-  <string name="dialog_title_disable_exploration">タッチガイドを無効にしますか？</string>
-  <string name="dialog_message_disable_exploration">タッチガイドをOFFにしてもよろしいですか？\n\n画面に触れたときのショートカット操作やアイテムの音声説明が停止します。</string>
   <string name="dialog_title_enable_tree_debug">ノードツリーのデバッグを有効にしますか？</string>
   <string name="dialog_message_enable_tree_debug">ノードツリーのデバッグをONにしてもよろしいですか？\n\nノードツリーのデバッグを有効にすると、画面の内容がデバイスのログに記録され、他のアプリケーションで読み取られることがあります。</string>
   <string name="dialog_title_enable_tree_debug_gesture">「4 本の指でトリプルタップ」のジェスチャーを再度割り当てますか？</string>

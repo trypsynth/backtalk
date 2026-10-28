@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Прогресс туралы жаңартуларды дыбыстау</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Жүктеп алу кезіндегі хабарландыруларды, автокөлікпен жүру бағыттарын және т.б. қамтиды. Параметр өшірулі кезде, хабарландыру сирегірек келеді.</string>
   <string name="pref_speak_system_window_titles_summary">Күй жолағына, хабарландыруларға немесе басқа пернетақтаға ауысу кезінде жүйе және енгізу терезелерін дауыстап айту</string>
-  <string name="title_pref_explore_by_touch">Түртілген элементтерді дыбыстау</string>
   <string name="title_pref_category_visual">Визуалдық параметрлер</string>
   <string name="title_pref_category_controls">Басқару элементтері</string>
   <string name="title_pref_category_braille">Брайль</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Қимылдарды теңшеу</string>
   <string name="button_disable_all_events">Барлығын өшіру</string>
   <string name="button_enable_all_events">Барлығын қосу</string>
-  <string name="dialog_title_disable_exploration">Түртілген элементтерді дыбыстау функциясын өшіру керек пе?</string>
-  <string name="dialog_message_disable_exploration">Түртілген элементтерді дыбыстау функциясы өшіріле берсін бе?\n\nҚұрылғы енді қимылдарға жауап бермейді немесе экранды түрткенде элементтерді дыбыстамайды.</string>
   <string name="dialog_title_enable_tree_debug">Түйін тармағының күйін келтіруді қосу керек пе?</string>
   <string name="dialog_message_enable_tree_debug">Түйін тармағының күйін келтіруді қосу керек пе?\n\nТүйін тармағының күйін келтіру экран контентін құрылғы журналдарына ашады, оларды басқа қолданбалар оқуы мүмкін.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 саусақпен үш рет түрту қимылын қайта тағайындау керек пе?</string>
