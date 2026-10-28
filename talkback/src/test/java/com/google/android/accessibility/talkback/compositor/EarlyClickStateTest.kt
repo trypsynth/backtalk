@@ -22,6 +22,7 @@ import com.google.android.accessibility.talkback.compositor.EarlyClickState.Node
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +44,7 @@ class EarlyClickStateTest {
   @Test
   fun aSwitchHasAState() {
     val node = node().apply { isCheckable = true }
-    assertEquals(listOf(switchOff), earlyClickState.before(node)?.states)
+    assertEquals(listOf(switchOff), earlyClickState.before(node)?.items?.map { it.state })
   }
 
   @Test
@@ -70,11 +71,34 @@ class EarlyClickStateTest {
 
   @Test
   fun aChildThatTurnedOnIsTheChange() {
-    assertEquals(1, earlyClickState.firstChange(listOf(row, switchOff), listOf(row, switchOn)))
+    val item = EarlyClickState.Item(node(), row)
+    val child = EarlyClickState.Item(node(), switchOff)
+    // Empty nodes are all equal, so they are told apart by identity.
+    val changed = earlyClickState.firstChange(listOf(item, child)) {
+      if (it === child.node) switchOn else row
+    }
+    assertSame(child, changed)
   }
 
   @Test
   fun nothingChanged() {
-    assertNull(earlyClickState.firstChange(listOf(row, switchOff), listOf(row, switchOff)))
+    val item = EarlyClickState.Item(node(), switchOff)
+    assertNull(earlyClickState.firstChange(listOf(item)) { switchOff })
+  }
+
+  @Test
+  fun stopsAtTheFirstChange() {
+    val first = EarlyClickState.Item(node(), switchOff)
+    val second = EarlyClickState.Item(node(), switchOff)
+    val read = mutableListOf<AccessibilityNodeInfoCompat>()
+    val changed = earlyClickState.firstChange(listOf(first, second)) { read += it; switchOn }
+    assertSame(first, changed)
+    assertEquals(listOf(first.node), read)
+  }
+
+  @Test
+  fun anItemThatIsGoneSaysNothing() {
+    val item = EarlyClickState.Item(node(), switchOff)
+    assertNull(earlyClickState.firstChange(listOf(item)) { null })
   }
 }

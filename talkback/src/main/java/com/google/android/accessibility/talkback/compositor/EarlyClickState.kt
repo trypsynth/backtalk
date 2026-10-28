@@ -39,51 +39,66 @@ class EarlyClickState(private val speaker: Speaker) {
     )
   }
 
+  /** An item read before the click, with what a click says of it. */
+  class Item internal constructor(val node: AccessibilityNodeInfoCompat, val state: NodeState)
+
   /**
    * The clicked item and those of its children that have a state, with that state, read before the
    * click.
    */
   class Before
   internal constructor(
-    internal val nodes: List<AccessibilityNodeInfoCompat>,
-    internal val states: List<NodeState>,
+    internal val target: AccessibilityNodeInfoCompat,
+    internal val items: List<Item>,
   )
 
   /** The state of a clicked item, or null if a click says no state for it. */
   fun before(target: AccessibilityNodeInfoCompat): Before? {
-    val nodes = ArrayList<AccessibilityNodeInfoCompat>(target.childCount + 1)
     @Suppress("DEPRECATION") // obtain(): copy, so that refreshing it leaves the caller's node alone.
-    nodes += AccessibilityNodeInfoCompat.obtain(target)
-    val states = arrayListOf(NodeState.of(target))
+    val copy = AccessibilityNodeInfoCompat.obtain(target)
+    val items = ArrayList<Item>(target.childCount + 1)
+    items += Item(copy, NodeState.of(target))
     for (i in 0 until target.childCount) {
       val child = target.getChild(i) ?: continue
       val state = NodeState.of(child)
       // Only children with a state, so that a click on an item with many children reads few.
       if (state.hasState) {
-        nodes += child
-        states += state
+        items += Item(child, state)
       }
     }
-    return if (states.any { it.hasState }) Before(nodes, states) else null
+    return if (items.any { it.state.hasState }) Before(copy, items) else null
   }
 
   /**
-   * Called when the app has carried out the click read in [before]. Reads the same items again from
-   * the app, since the saved copies are only updated by the app's later events, and says the new
-   * state if it changed, of the item itself or else of the child that changed.
+   * Called when the app has carried out the click read in [before]. Reads the items again from the
+   * app, since the saved copies are only updated by the app's later events, and says the new state
+   * if it changed, of the item itself or else of the child that changed.
    */
   fun after(before: Before, eventId: EventId?) {
-    if (!before.nodes.all { it.refresh() }) {
-      return
-    }
+    val changed = firstChange(before.items) { if (it.refresh()) NodeState.of(it) else null }
     // A child is said itself, since the item's own copy of it is not read again.
-    val changed = firstChange(before.states, before.nodes.map(NodeState::of)) ?: return
-    speaker.speak(before.nodes[0], before.nodes[changed], eventId)
+    if (changed != null) {
+      speaker.speak(before.target, changed.node, eventId)
+    }
   }
 
-  /** The place of the first item whose state changed from [before] to [after], or null. */
-  internal fun firstChange(before: List<NodeState>, after: List<NodeState>): Int? =
-    after.indices.firstOrNull { after[it] != before[it] }
+  /**
+   * The first of [items] whose state [now] differs from its saved one, reading each in turn and
+   * stopping there, since each read waits for the app. Null if none changed, or if [now] cannot
+   * read one, as when it is gone.
+   */
+  internal fun firstChange(
+    items: List<Item>,
+    now: (AccessibilityNodeInfoCompat) -> NodeState?,
+  ): Item? {
+    for (item in items) {
+      val state = now(item.node) ?: return null
+      if (state != item.state) {
+        return item
+      }
+    }
+    return null
+  }
 
   /** What a click says of one item: whether it is checked, its state, and whether it is open. */
   data class NodeState(

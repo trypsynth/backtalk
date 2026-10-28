@@ -30,8 +30,11 @@ object OffScreenChildren {
     val childBounds = Rect()
     for (i in 0 until node.childCount) {
       val child = node.getChild(i) ?: continue
+      if (child.isVisibleToUser) {
+        continue
+      }
       child.getBoundsInScreen(childBounds)
-      if (isOffScreen(child.isVisibleToUser, childBounds, bounds)) {
+      if (isOffScreen(visible = false, childBounds, bounds)) {
         return true
       }
     }
