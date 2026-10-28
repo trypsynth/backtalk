@@ -233,6 +233,9 @@
             android:key="@string/keycombo_shortcut_other_copy_last_spoken_phrase"
             android:title="@string/keycombo_menu_other_copy_last_spoken_phrase"/>
         <com.google.android.accessibility.talkback.preference.base.KeyboardShortcutDialogPreference
+            android:key="@string/keycombo_shortcut_other_append_last_spoken_phrase"
+            android:title="@string/keycombo_menu_other_append_last_spoken_phrase"/>
+        <com.google.android.accessibility.talkback.preference.base.KeyboardShortcutDialogPreference
             android:key="@string/keycombo_shortcut_other_cycle_typing_echo"
             android:title="@string/keycombo_menu_other_cycle_typing_echo"/>
         <com.google.android.accessibility.talkback.preference.base.KeyboardShortcutDialogPreference

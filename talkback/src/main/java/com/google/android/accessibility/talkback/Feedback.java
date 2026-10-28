@@ -1235,6 +1235,8 @@ public abstract class Feedback {
       SAVE_LAST,
       COPY_SAVED,
       COPY_LAST,
+      APPEND_SAVED,
+      APPEND_LAST,
       REPEAT_SAVED,
       REPEAT_LAST,
       SPELL_SAVED,
@@ -1493,6 +1495,7 @@ public abstract class Feedback {
       CUT,
       PASTE,
       DELETE,
+      CLEAR,
       CURSOR_TO_BEGINNING, // Works with stopSelecting.
       CURSOR_TO_END, // Works with stopSelecting.
       INSERT, // Requires text.

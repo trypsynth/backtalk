@@ -342,6 +342,10 @@ public enum TalkBackPhysicalKeyboardShortcut {
       /* KEYBOARD_SHORTCUT_PAUSE_OR_RESUME_BACKTALK */ 1001,
       R.string.keycombo_shortcut_global_pause_backtalk,
       R.string.keycombo_menu_global_pause_backtalk),
+  APPEND_LAST_SPOKEN_PHRASE(
+      /* KEYBOARD_SHORTCUT_APPEND_LAST_SPOKEN_PHRASE */ 1005,
+      R.string.keycombo_shortcut_other_append_last_spoken_phrase,
+      R.string.keycombo_menu_other_append_last_spoken_phrase),
   NAVIGATE_NEXT_ROW(
       /* KeyboardShortcut.KEYBOARD_SHORTCUT_NAVIGATE_TO_NEXT_ROW */ 78,
       R.string.keycombo_shortcut_navigate_next_row,

@@ -279,6 +279,12 @@ public class TalkbackMenuProcessor {
     }
 
     if (!showMenuItem(
+        R.string.pref_show_context_menu_append_last_spoken_phrase_setting_key,
+        R.bool.pref_show_context_menu_append_last_spoken_phrase_default)) {
+      menu.removeItem(R.id.append_last_utterance_to_clipboard);
+    }
+
+    if (!showMenuItem(
         R.string.pref_show_context_menu_spell_last_spoken_phrase_setting_key,
         R.bool.pref_show_context_menu_spell_last_spoken_phrase_default)) {
       menu.removeItem(R.id.spell_last_utterance);

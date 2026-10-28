@@ -16,6 +16,7 @@
 
 package com.google.android.accessibility.talkback.menurules;
 
+import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CLEAR;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.COPY;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CURSOR_TO_BEGINNING;
 import static com.google.android.accessibility.talkback.Feedback.EditText.Action.CURSOR_TO_END;
@@ -182,6 +183,22 @@ public class EditingAndSelectingMenu implements NodeMenu {
       items.add(paste);
     }
 
+    // Backtalk: clears the whole field at once, which takes a long time with delete otherwise.
+    if (Role.getRole(node) == Role.ROLE_EDIT_TEXT
+        && AccessibilityNodeInfoUtils.supportsAnyAction(
+            node, AccessibilityNodeInfoCompat.ACTION_SET_TEXT)
+        && !TextUtils.isEmpty(node.getText())
+        && !TextUtils.equals(node.getText(), node.getHintText())) {
+      ContextMenuItem clear =
+          ContextMenu.createMenuItem(
+              context,
+              Menu.NONE,
+              R.id.edittext_breakout_clear,
+              Menu.NONE,
+              context.getString(R.string.title_edittext_clear));
+      items.add(clear);
+    }
+
     if (!isAndroidWear
         && AccessibilityNodeInfoUtils.supportsAnyAction(
             node, AccessibilityNodeInfoCompat.ACTION_SET_SELECTION)
@@ -257,6 +274,8 @@ public class EditingAndSelectingMenu implements NodeMenu {
           result = pipeline.returnFeedback(eventId, Feedback.edit(node, CURSOR_TO_END));
         } else if (itemId == R.id.edittext_breakout_cut) {
           result = pipeline.returnFeedback(eventId, Feedback.edit(node, CUT));
+        } else if (itemId == R.id.edittext_breakout_clear) {
+          result = pipeline.returnFeedback(eventId, Feedback.edit(node, CLEAR));
         } else if (itemId == R.id.edittext_breakout_copy) {
           result = pipeline.returnFeedback(eventId, Feedback.edit(node, COPY));
         } else if (itemId == R.id.edittext_breakout_paste) {

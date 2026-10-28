@@ -384,6 +384,14 @@ These items are off by default in the Backtalk menu: **Actions**, **Screen searc
 
 To change the items, go to **Backtalk menu**, under **Controls** in Backtalk settings. In TalkBack, this screen is under **Customize menus**.
 
+### Add last spoken phrase to clipboard
+
+**Add last spoken phrase to clipboard** adds what Backtalk last said to the text it copied, on a new line, so that you can copy several phrases into one block. Copy the first phrase with **Copy last spoken phrase**, then add each of the others. It's an item you can turn on in the Backtalk menu, a gesture action, and a keyboard shortcut. From Android 10, Android doesn't let Backtalk read the clipboard, so the phrase is added to what Backtalk last copied, not to anything you copied in another app.
+
+### Clear text
+
+When a text field with text in it has focus, the edit options in the Backtalk menu have **Clear text**, which deletes all of its text at once.
+
 ### Circle menu
 
 The Backtalk menu can show as a circle in the middle of the screen, as it did in TalkBack 8.1 and earlier. Each item is a slice of the screen around the middle. Slide to an item and lift your finger to select it, or lift in the middle of the circle to close the menu. Items that open more items show them in a new circle. When the menu opens, you hear a rising note and feel a tick for each item.

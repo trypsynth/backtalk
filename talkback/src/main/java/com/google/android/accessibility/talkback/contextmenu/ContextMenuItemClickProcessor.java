@@ -21,6 +21,7 @@ import static com.google.android.accessibility.talkback.Feedback.ContinuousRead.
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.BRIGHTEN;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.DIM;
 import static com.google.android.accessibility.talkback.Feedback.Keyboard.Action.SHOW_KEYBOARD_SHORTCUTS_DIALOG;
+import static com.google.android.accessibility.talkback.Feedback.Speech.Action.APPEND_SAVED;
 import static com.google.android.accessibility.talkback.Feedback.Speech.Action.COPY_SAVED;
 import static com.google.android.accessibility.talkback.Feedback.Speech.Action.REPEAT_SAVED;
 import static com.google.android.accessibility.talkback.Feedback.Speech.Action.SPELL_SAVED;
@@ -130,6 +131,9 @@ public class ContextMenuItemClickProcessor {
     } else if (itemId == R.id.copy_last_utterance_to_clipboard) {
       pipeline.returnFeedback(
           eventId, Feedback.part().setSpeech(Feedback.Speech.create(COPY_SAVED)));
+    } else if (itemId == R.id.append_last_utterance_to_clipboard) {
+      pipeline.returnFeedback(
+          eventId, Feedback.part().setSpeech(Feedback.Speech.create(APPEND_SAVED)));
     } else if (itemId == R.id.verbosity) {
       Intent intent = createSettingsIntent();
       intent.putExtra(FRAGMENT_NAME, VerbosityPrefFragment.class.getName());
