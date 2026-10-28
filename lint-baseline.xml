@@ -11027,6 +11027,17 @@
     </issue>
 
     <issue
+        id="ThreadConstraint"
+        message="Statement must run from `@WorkerThread`, incompatible with earlier code that must run from `@{Main,Ui}Thread`"
+        errorLine1="    if (geminiRequest != null) {"
+        errorLine2="    ^">
+        <location
+            file="src/main/java/com/google/android/accessibility/talkback/Actors.java"
+            line="926"
+            column="5"/>
+    </issue>
+
+    <issue
         id="WrongConstant"
         message="Must be one of: TraversalStrategy.SEARCH_FOCUS_FORWARD, TraversalStrategy.SEARCH_FOCUS_BACKWARD, TraversalStrategy.SEARCH_FOCUS_LEFT, TraversalStrategy.SEARCH_FOCUS_RIGHT, TraversalStrategy.SEARCH_FOCUS_UP, TraversalStrategy.SEARCH_FOCUS_DOWN, but could be TraversalStrategy.SEARCH_FOCUS_UNKNOWN"
         errorLine1="                direction.targetNode(), direction.granularity(), direction.direction(), eventId);"
