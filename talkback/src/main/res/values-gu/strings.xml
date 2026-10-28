@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">પ્રગતિ સંબંધિત તમામ અપડેટ બોલો</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ડ્રાઇવિંગના દિશાનિર્દેશો ડાઉનલોડ કરતી વખતે, તેનું પાલન કરતી વખતે અને વધુ કાર્યો કરતી વખતે અપડેટ શામેલ કરે છે. જ્યારે બંધ હોય, ત્યારે પણ તમને ઓછી વખત મોકલવામાં આવતી અપડેટ પ્રાપ્ત થશે.</string>
   <string name="pref_speak_system_window_titles_summary">સિસ્ટમ અને ઇનપુટ વિન્ડોના નામ બોલો, જેમ કે જ્યારે તમે સ્ટેટસ બાર, નોટિફિકેશન અથવા અન્ય કીબોર્ડ પર સ્વિચ કરો</string>
-  <string name="title_pref_explore_by_touch">સ્પર્શ કરીને શોધખોળ કરો</string>
   <string name="title_pref_category_visual">વિઝ્યુઅલ</string>
   <string name="title_pref_category_controls">નિયંત્રણો</string>
   <string name="title_pref_category_braille">બ્રેઇલ</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">હાવભાવ કસ્ટમાઇઝ કરો</string>
   <string name="button_disable_all_events">બધીને અક્ષમ કરો</string>
   <string name="button_enable_all_events">બધીને સક્ષમ કરો</string>
-  <string name="dialog_title_disable_exploration">સ્પર્શ કરીને શોધખોળ કરવું અક્ષમ કરીએ?</string>
-  <string name="dialog_message_disable_exploration">શું તમે ખરેખર ટચ કરીને અન્વેષણ કરોને બંધ કરવા માંગો છો?\n\nતમારું ઉપકરણ જ્યારે તમે સ્ક્રીનને ટચ કરશો ત્યારે શોર્ટકટ હાવભાવ અથવા બોલેલ આઇટમ્સને પ્રતિસાદ આપશે નહીં.</string>
   <string name="dialog_title_enable_tree_debug">નોડ ટ્રી ડિબગિંગ સક્ષમ કરીએ?</string>
   <string name="dialog_message_enable_tree_debug">શું તમે ખરેખર નોડ ટ્રી ડિબગિંગ ચાલુ કરવા માંગો છો?\n\nનોડ ટ્રી ડિબગિંગ તમારી સ્ક્રીન પરની સામગ્રીને તમારા ઉપકરણનાં લૉગ્સ પર પ્રદર્શિત કરે છે, જે અન્ય ઍપ્લિકેશનો દ્વારા વાંચી શકાય છે.</string>
   <string name="dialog_title_enable_tree_debug_gesture">શું 4 આંગળી વડે ત્રણ વાર ટૅપ કરો સંકેત ફરીથી અસાઇન કરીએ?</string>

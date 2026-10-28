@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">প্রোগ্রেস সংক্রান্ত সব আপডেট বলুন</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ডাউনলোড করা, গাড়ি চালানোর দিকনির্দেশ ফলো করা ও আরও অনেক আপডেট অন্তর্ভুক্ত রয়েছে। বন্ধ করা হলেও, আপনি আপডেট পাবেন, তবে ঘনঘন নয়।</string>
   <string name="pref_speak_system_window_titles_summary">যেমন, আপনি যখন স্ট্যাটাস বার, বিজ্ঞপ্তি বা অন্য কোনও কীবোর্ডে পাল্টান, তখন সিস্টেম ও ইনপুট উইন্ডোর নাম বলা হয়</string>
-  <string name="title_pref_explore_by_touch">স্পর্শ করে অন্বেষণ করা</string>
   <string name="title_pref_category_visual">ভিজ্যুয়াল</string>
   <string name="title_pref_category_controls">কন্ট্রোল</string>
   <string name="title_pref_category_braille">ব্রেইল</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">অঙ্গভঙ্গিগুলি কাস্টমাইজ করুন</string>
   <string name="button_disable_all_events">সবগুলি অক্ষম করুন</string>
   <string name="button_enable_all_events">সবগুলি সক্ষম করুন</string>
-  <string name="dialog_title_disable_exploration">স্পর্শ করে অন্বেষণ করা অক্ষম করবেন?</string>
-  <string name="dialog_message_disable_exploration">আপনি স্পর্শ করে এক্সপ্লোর করা বন্ধ করার বিষয়ে নিশ্চিত?\n\nআপনি যখন আপনার স্ক্রিনে স্পর্শ করবেন তখন আপনার ডিভাইস শর্টকাট ইঙ্গিত এবং কথ্য আইটেমগুলির জন্য আর প্রতিক্রিয়া দেবে না৷</string>
   <string name="dialog_title_enable_tree_debug">নোড ট্রি ডিবাগিং সক্ষম করবেন?</string>
   <string name="dialog_message_enable_tree_debug">আপনি কি নোড ট্রি ডিবাগিং চালু করার বিষয়ে নিশ্চিত?\n\nনোড ট্রি ডিবাগিং আপনার স্ক্রীনের সামগ্রীটিকে আপনার ডিভাইসের লগগুলিতে প্রকাশ করবে, যা অন্য কোনো অ্যাপ্লিকেশান পড়ে নিতে পারে৷</string>
   <string name="dialog_title_enable_tree_debug_gesture">৪টি আঙুল দিয়ে করা ট্রিপল ট্যাপ জেসচার আবার অ্যাসাইন করবেন?</string>

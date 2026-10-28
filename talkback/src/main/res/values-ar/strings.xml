@@ -178,7 +178,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">قول آخر الأخبار بشأن تقدّم كل العمليات</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">تشمل الإشعارات بشأن عمليات التنزيل واتّباع اتجاهات القيادة وغيرها. عند إيقاف هذا الإعداد، ستستمر في تلقّى أخبار أقل.</string>
   <string name="pref_speak_system_window_titles_summary">يمكن قول عناوين نوافذ النظام والإدخال، مثلاً عند التبديل إلى شريط الحالة أو الإشعارات أو لوحة مفاتيح أخرى.</string>
-  <string name="title_pref_explore_by_touch">الاستكشاف باللمس</string>
   <string name="title_pref_category_visual">إعدادات المرئيات</string>
   <string name="title_pref_category_controls">عناصر التحكّم</string>
   <string name="title_pref_category_braille">لغة برايل</string>
@@ -934,8 +933,6 @@
   <string name="button_customize_gesture_mappings">تخصيص الإيماءات</string>
   <string name="button_disable_all_events">إيقاف الكل</string>
   <string name="button_enable_all_events">تفعيل الكل</string>
-  <string name="dialog_title_disable_exploration">هل تريد إيقاف ميزة الاستكشاف باللمس؟</string>
-  <string name="dialog_message_disable_exploration">‏هل تريد فعلًا إيقاف ميزة الاستكشاف باللمس؟\n\nلن يستجيب الجهاز لإيماءات الاختصارات أو لن ينطق أسماء العناصر عند لمس الشاشة بعد الآن.</string>
   <string name="dialog_title_enable_tree_debug">هل تريد تفعيل تصحيح أخطاء شجرة العقد؟</string>
   <string name="dialog_message_enable_tree_debug">‏هل تريد فعلًا تفعيل تصحيح الأخطاء شجرة العقد؟\n\nيؤدي تصحيح أخطاء شجرة العقد إلى كشف محتوى شاشتك لسجلات الجهاز، التي يمكن أن تقرأها التطبيقات الأخرى.</string>
   <string name="dialog_title_enable_tree_debug_gesture">هل تريد إعادة ضبط إيماءة النقر ثلاث مرّات باستخدام 4 أصابع؟</string>

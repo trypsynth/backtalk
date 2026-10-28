@@ -41,6 +41,7 @@ import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.eventprocessor.EventState;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorAccessibilityHints;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.gesture.GestureHints;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
@@ -367,6 +368,12 @@ public class ScreenFeedbackManager
       logCompose(logDepth, "composeFeedback", "interpretation=%s", interpretation);
 
       Feedback feedback = new Feedback();
+
+      // Only verified lock-screen System UI feedback is quiet; mixed/unknown windows still speak.
+      ScreenOnSpeechSuppression wakeSuppression = ScreenOnSpeechSuppression.from(service);
+      if (wakeSuppression != null && wakeSuppression.shouldSuppressWindow(interpretation)) {
+        return feedback;
+      }
 
       if (isWakeUpForWear(interpretation)) {
         // Only announce unread notification feedback on wake up experience for wear and have early

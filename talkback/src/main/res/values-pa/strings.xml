@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ਪ੍ਰਗਤੀ ਦੇ ਸਾਰੇ ਅੱਪਡੇਟਾਂ ਬਾਰੇ ਬੋਲੋ</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ਇਸ ਵਿੱਚ ਡਾਊਨਲੋਡ ਕਰਨ, ਡਰਾਈਵਿੰਗ ਦਿਸ਼ਾਵਾਂ ਦੀ ਪਾਲਣਾ ਕਰਨ ਅਤੇ ਹੋਰ ਚੀਜ਼ਾਂ ਕਰਨ ਵੇਲੇ ਦੇ ਅੱਪਡੇਟ ਸ਼ਾਮਲ ਹੁੰਦੇ ਹਨ। ਬੰਦ ਹੋਣ \'ਤੇ ਵੀ ਤੁਹਾਨੂੰ ਕਦੇ-ਕਦਾਈਂ ਅੱਪਡੇਟ ਪ੍ਰਾਪਤ ਹੋਣਗੇ।</string>
   <string name="pref_speak_system_window_titles_summary">ਸਿਸਟਮ ਅਤੇ ਇਨਪੁੱਟ ਵਿੰਡੋਆਂ ਦੇ ਨਾਮ ਬੋਲੋ, ਜਿਵੇਂ ਕਿ ਜਦੋਂ ਤੁਸੀਂ ਸਥਿਤੀ ਪੱਟੀ, ਸੂਚਨਾਵਾਂ ਜਾਂ ਦੂਜੇ ਕੀ-ਬੋਰਡ \'ਤੇ ਸਵਿੱਚ ਕਰਦੇ ਹੋ</string>
-  <string name="title_pref_explore_by_touch">ਸਪੱਰਸ਼ ਰਾਹੀਂ ਪੜਚੋਲ ਕਰੋ</string>
   <string name="title_pref_category_visual">ਦ੍ਰਿਸ਼</string>
   <string name="title_pref_category_controls">ਕੰਟਰੋਲ</string>
   <string name="title_pref_category_braille">ਬਰੇਲ ਲਿਪੀ</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ਸੰਕੇਤਾਂ ਨੂੰ ਵਿਉਂਤਬੱਧ ਕਰੋ</string>
   <string name="button_disable_all_events">ਸਭ ਅਯੋਗ ਬਣਾਓ</string>
   <string name="button_enable_all_events">ਸਭ ਚਾਲੂ ਕਰੋ</string>
-  <string name="dialog_title_disable_exploration">ਕੀ ਐਕਸਪਲੋਰ ਬਾਇ ਟਚ ਨੂੰ ਅਸਮਰੱਥ ਬਣਾਉਣਾ ਹੈ?</string>
-  <string name="dialog_message_disable_exploration">ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ ਤੇ \'ਸਪੱਰਸ਼ ਰਾਹੀਂ ਪੜਚੋਲ ਕਰੋ\' ਨੂੰ ਬੰਦ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?\n\nਤੁਹਾਡਾ ਡੀਵਾਈਸ ਹੁਣ ਸ਼ਾਰਟਕੱਟ ਸੰਕੇਤਾਂ ਦਾ ਜਵਾਬ ਨਹੀਂ ਦੇਵੇਗਾ ਜਾਂ ਜਦੋਂ ਤੁਸੀਂ ਸਕ੍ਰੀਨ ਛੋਹਵੋਗੇ ਤਾਂ ਆਈਟਮਾਂ ਨਹੀਂ ਬੋਲੇਗਾ।</string>
   <string name="dialog_title_enable_tree_debug">ਕੀ ਨੋਡ ਟ੍ਰੀ ਡੀਬਗਿੰਗ ਨੂੰ ਚਾਲੂ ਕਰਨਾ ਹੈ?</string>
   <string name="dialog_message_enable_tree_debug">ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ ਤੇ ਨੋਡ ਟ੍ਰੀ ਡੀਬੱਗਿੰਗ ਚਾਲੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?\n\nਨੋਡ ਟ੍ਰੀ ਡੀਬੱਗਿੰਗ ਤੁਹਾਡੀ ਸਕ੍ਰੀਨ ਦੀ ਸਮੱਗਰੀ ਤੁਹਾਡੇ ਡੀਵਾਈਸ ਦੇ ਲੌਗਸ ਨੂੰ ਪ੍ਰਗਟ ਕਰਦੀ ਹੈ, ਜੋ ਹੋਰਾਂ ਐਪਲੀਕੇਸ਼ਨਾਂ ਵੱਲੋਂ ਪੜ੍ਹੀ ਜਾ ਸਕਦੀ ਹੈ।</string>
   <string name="dialog_title_enable_tree_debug_gesture">ਕੀ 4 ਉਂਗਲਾਂ ਨਾਲ ਤਿੰਨ ਵਾਰ ਟੈਪ ਕਰਨ ਦੇ ਇਸ਼ਾਰੇ ਨੂੰ ਮੁੜ-ਜ਼ਿੰਮੇ ਲਗਾਉਣਾ ਹੈ?</string>

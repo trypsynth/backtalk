@@ -609,6 +609,16 @@ public class GeminiFunctionUtils {
 
   private GeminiFunctionUtils() {}
 
+  /**
+   * Whether Describe image and Describe screen can get an answer: the network is up, or on-device
+   * AI answers on the phone without one (#299).
+   */
+  public static boolean canReachModel(Context context) {
+    return OnDeviceAiSettings.INSTANCE.isOnDevice(
+            SharedPreferencesUtils.getSharedPreferences(context))
+        || NetworkUtils.isNetworkConnected(context);
+  }
+
   public static void setImageCaptioner(ImageCaptioner imageCaptioner) {
     GeminiFunctionUtils.imageCaptioner = new WeakReference<>(imageCaptioner);
   }
@@ -638,7 +648,7 @@ public class GeminiFunctionUtils {
           && matchDecisionWithConfiguration(
               decision.aiCoreReady, actorState.getGeminiState().isAiFeatureAvailable())
           && matchDecisionWithConfiguration(
-              decision.networkAvailable, NetworkUtils.isNetworkConnected(context))
+              decision.networkAvailable, canReachModel(context))
           && matchDecisionWithConfiguration(
               decision.serverSideGeminiOptedIn,
               SharedPreferencesUtils.getBooleanPref(

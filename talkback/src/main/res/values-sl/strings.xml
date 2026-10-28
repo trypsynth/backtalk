@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Izgovarjanje vseh obvestil o napredku</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Vključuje obvestila med prenašanjem, sledenjem navodilom za vožnjo in drugim. Ko je to izklopljeno, boste še vedno prejemali obvestila, vendar manj pogosto.</string>
   <string name="pref_speak_system_window_titles_summary">Izgovarjanje sistemskih in vnosnih oken, na primer ob preklopu na vrstico stanja, obvestila ali drugo tipkovnico</string>
-  <string name="title_pref_explore_by_touch">Raziskovanje z dotikom</string>
   <string name="title_pref_category_visual">Vizualno</string>
   <string name="title_pref_category_controls">Kontrolniki</string>
   <string name="title_pref_category_braille">Braillova pisava</string>
@@ -766,8 +765,6 @@ Nadzoruje, kako hitro funkcija TalkBack govori po premiku fokusa. S krajšo zaka
   <string name="button_customize_gesture_mappings">Prilagajanje potez</string>
   <string name="button_disable_all_events">Onemogoči vse</string>
   <string name="button_enable_all_events">Omogoči vse</string>
-  <string name="dialog_title_disable_exploration">Želite onemogočiti Raziskovanje z dotikom?</string>
-  <string name="dialog_message_disable_exploration">Ali ste prepričani, da želite izklopiti funkcijo Raziskovanje z dotikom?\n\nNaprava se ne bo več odzivala na poteze za bližnjice ali izgovarjala, ko se boste dotaknili zaslona.</string>
   <string name="dialog_title_enable_tree_debug">Želite omogočiti odpravljanje napak drevesa vozlišč?</string>
   <string name="dialog_message_enable_tree_debug">Ali ste prepričani, da želite vklopiti odpravljanje napak drevesa vozlišč?\n\nOdpravljanje napak drevesa vozlišč razkrije vsebino zaslona dnevnikom naprave, ki jih morda berejo druge aplikacije.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Želite predodeliti potezo trojnega dotika s štirimi prsti?</string>

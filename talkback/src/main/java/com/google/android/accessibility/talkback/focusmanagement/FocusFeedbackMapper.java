@@ -120,17 +120,17 @@ public class FocusFeedbackMapper {
             Feedback.sound(R.raw.view_entered).vibration(R.array.view_hovered_pattern).build());
       }
       case TOUCH_START, TOUCH_ENTERED_UNFOCUSED_NODE -> {
-        // Speech of an item that touch focuses still interrupts what was being said.
+        // Without this, speech stops when touch focuses an item instead, below.
         return touchStopsSpeech
             ? Feedback.create(eventId, Feedback.part().setInterruptGentle(true).build())
             : null;
       }
       case TOUCH_FOCUSED_NODE -> {
-        return toFeedback(
+        return toTouchFocusFeedback(
             eventId, Feedback.focus(FOCUS_FOR_TOUCH).setTarget(touchTarget).setForceRefocus(true));
       }
       case TOUCH_UNFOCUSED_NODE -> {
-        return toFeedback(eventId, Feedback.focus(FOCUS_FOR_TOUCH).setTarget(touchTarget));
+        return toTouchFocusFeedback(eventId, Feedback.focus(FOCUS_FOR_TOUCH).setTarget(touchTarget));
       }
       case LIFT -> {
         return toFeedback(eventId, Feedback.focus(CLICK_NODE).setTarget(touchTarget));
@@ -152,6 +152,17 @@ public class FocusFeedbackMapper {
 
   private static Feedback toFeedback(@Nullable EventId eventId, Focus.Builder focus) {
     return Feedback.create(eventId, Feedback.part().setFocus(focus.build()).build());
+  }
+
+  /**
+   * Focuses an item by touch. When touching doesn't stop speech, focusing the item does, as touching
+   * would have: notifications, toasts and other speech that new speech can't interrupt would
+   * otherwise keep the item from being spoken until they finish.
+   */
+  private static Feedback toTouchFocusFeedback(@Nullable EventId eventId, Focus.Builder focus) {
+    return Feedback.create(
+        eventId,
+        Feedback.part().setInterruptGentle(!touchStopsSpeech).setFocus(focus.build()).build());
   }
 
   /** Feedback-mapping function. */

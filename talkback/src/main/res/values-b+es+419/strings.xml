@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Actualizaciones de progreso en voz alta</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Incluye actualizaciones durante la descarga, las rutas en auto y más. Cuando se desactive, seguirás recibiendo actualizaciones, pero con menos frecuencia.</string>
   <string name="pref_speak_system_window_titles_summary">Lee las ventanas del sistema y de entrada, como cuando cambias a la barra de estado, a las notificaciones o a otro teclado</string>
-  <string name="title_pref_explore_by_touch">Exploración táctil</string>
   <string name="title_pref_category_visual">Visual</string>
   <string name="title_pref_category_controls">Controles</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Los retrasos inferiores a 0.3 segundos cambiarán la acción de presionar dos ve
   <string name="button_customize_gesture_mappings">Personalizar gestos</string>
   <string name="button_disable_all_events">Desactivar todo</string>
   <string name="button_enable_all_events">Activar todo</string>
-  <string name="dialog_title_disable_exploration">¿Quieres inhabilitar la Exploración táctil?</string>
-  <string name="dialog_message_disable_exploration">¿Confirmas que quieres desactivar la Exploración táctil?\n\nEl dispositivo dejará de responder a los gestos de acceso directo o a los elementos hablados cuando toques la pantalla.</string>
   <string name="dialog_title_enable_tree_debug">¿Habilitar la depuración de árbol de nodos?</string>
   <string name="dialog_message_enable_tree_debug">¿Confirmas que quieres activar la depuración de árbol de nodos?\n\nEsta opción muestra el contenido de la pantalla en los registros del dispositivo, y es posible que otras aplicaciones puedan leerlo.</string>
   <string name="dialog_title_enable_tree_debug_gesture">¿Quieres reasignar el gesto de presionar tres veces con 4 dedos?</string>

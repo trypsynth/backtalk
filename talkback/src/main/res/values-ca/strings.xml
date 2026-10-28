@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Enuncia les actualitzacions de progrés</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Inclou actualitzacions durant la baixada, mentre segueixes les indicacions amb cotxe i més. Quan aquesta opció estigui desactivada, rebràs actualitzacions menys sovint.</string>
   <string name="pref_speak_system_window_titles_summary">Enuncia les finestres del sistema i d\'entrada, com ara quan canvies a la barra d\'estat, a les notificacions o a un altre teclat</string>
-  <string name="title_pref_explore_by_touch">Exploració tàctil</string>
   <string name="title_pref_category_visual">Visual</string>
   <string name="title_pref_category_controls">Controls</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Si els retards són inferiors a 0,3 segons, el doble toc per activar es canviar�
   <string name="button_customize_gesture_mappings">Personalitza els gestos</string>
   <string name="button_disable_all_events">Desactiva-ho tot</string>
   <string name="button_enable_all_events">Activa-ho tot</string>
-  <string name="dialog_title_disable_exploration">Vols desactivar l\'exploració tàctil?</string>
-  <string name="dialog_message_disable_exploration">Confirmes que vols desactivar l\'exploració tàctil?\n\nEl dispositiu deixarà de respondre a les dreceres gestuals i no enunciarà els elements en tocar la pantalla.</string>
   <string name="dialog_title_enable_tree_debug">Activar la depuració de l\'arbre de nodes?</string>
   <string name="dialog_message_enable_tree_debug">Confirmes que vols activar la depuració de l\'arbre de nodes?\n\nAquesta acció exposa el contingut de la pantalla als registres del dispositiu, i altres aplicacions el poden llegir.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Vols reassignar el triple toc al gest amb 4 dits?</string>

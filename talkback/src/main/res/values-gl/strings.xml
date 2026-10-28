@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Ler todos os cambios de progreso</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Inclúe notificacións ao descargar contido, seguir indicacións para chegar en coche e moito máis. Ao desactivar a opción de configuración, seguirás recibindo notificacións con menos frecuencia.</string>
   <string name="pref_speak_system_window_titles_summary">Le os nomes das ventás do sistema e de introdución de texto (por exemplo, cando cambias á barra de estado, ás notificacións ou a outro teclado)</string>
-  <string name="title_pref_explore_by_touch">Exploración táctil</string>
   <string name="title_pref_category_visual">Visual</string>
   <string name="title_pref_category_controls">Controis</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Se se definen retardos inferiores a 0,3 segundos, substituirase o xesto de tocar
   <string name="button_customize_gesture_mappings">Personalizar xestos</string>
   <string name="button_disable_all_events">Desactivar todo</string>
   <string name="button_enable_all_events">Activar todo</string>
-  <string name="dialog_title_disable_exploration">Queres desactivar a exploración táctil?</string>
-  <string name="dialog_message_disable_exploration">Seguro que queres desactivar a exploración táctil?\n\nO teu dispositivo deixará de responder aos xestos dos atallos ou de ler en voz alta os elementos cando toques a pantalla.</string>
   <string name="dialog_title_enable_tree_debug">Queres activar a depuración da árbore de nós?</string>
   <string name="dialog_message_enable_tree_debug">Seguro que queres activar a depuración da árbore de nós?\n\nEsta acción expón o contido da túa pantalla nos rexistros do dispositivo e poden velo outras aplicacións.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Queres volver asignar o xesto de toque triplo con catro dedos?</string>

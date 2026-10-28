@@ -111,6 +111,16 @@
         <ignore regexp="ai_service_error_with_code" />
         <ignore regexp="ai_service_error_with_details" />
         <ignore regexp="summary_pref_gemini_api_key_other_service" />
+        <ignore regexp="title_pref_restore_focus_on_back" />
+        <ignore regexp="summary_pref_restore_focus_on_back" />
+        <ignore regexp="title_pref_scroll_to_restore_previous_focus" />
+        <ignore regexp="summary_pref_scroll_to_restore_previous_focus" />
+        <ignore regexp="category_collapsed" />
+        <ignore regexp="category_expanded" />
+        <ignore regexp="title_selector_vertical_navigation" />
+        <ignore regexp="summary_selector_vertical_navigation" />
+        <ignore regexp="title_pref_gemini_model" />
+        <ignore regexp="gemini_model_dialog_message" />
         <ignore regexp="title_pref_touch_stops_speech" />
         <ignore regexp="title_pref_selector_links_controls_web_only" />
         <ignore regexp="shortcut_scroll_to_top" />
@@ -143,6 +153,10 @@
         <ignore regexp="shortcut_system_notifications" />
         <ignore regexp="image_qna_button_text_ai" />
         <ignore regexp="image_qna_typing_button_text_ai" />
+        <ignore regexp="title_pref_suppress_extra_screen_on_speech" />
+        <ignore regexp="summary_pref_suppress_extra_screen_on_speech" />
+        <ignore regexp="title_pref_direct_click" />
+        <ignore regexp="summary_pref_direct_click" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,

@@ -86,6 +86,7 @@ import com.google.android.accessibility.talkback.Pipeline;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.UserInterface.UserInputEventListener;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
+import com.google.android.accessibility.talkback.audio.AudioDeviceRouter;
 import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.compositor.CompositorUtils;
 import com.google.android.accessibility.talkback.contextmenu.ContextMenu;
@@ -386,7 +387,15 @@ public class SelectorController implements UserInputEventListener {
     SWITCH_VOICE_PROFILE(
         R.string.pref_selector_voice_profile_key,
         R.string.selector_voice_profile,
-        R.bool.pref_selector_voice_profile_default);
+        R.bool.pref_selector_voice_profile_default),
+    AUDIO_OUTPUT_DEVICE(
+        R.string.pref_selector_audio_output_device_key,
+        R.string.selector_audio_output_device,
+        R.bool.pref_selector_audio_output_device_default),
+    VERTICAL_NAVIGATION(
+        R.string.pref_selector_vertical_navigation_key,
+        R.string.selector_vertical_navigation,
+        R.bool.pref_selector_vertical_navigation_default);
 
     /** The preference key of the filter in the selector settings page. */
     final int prefKeyResId;
@@ -573,6 +582,7 @@ public class SelectorController implements UserInputEventListener {
 
   private final Context context;
   private final AccessibilityFocusMonitor accessibilityFocusMonitor;
+  private final VerticalNavigator verticalNavigator;
   private final Pipeline.FeedbackReturner pipeline;
   private final ActorState actorState;
   private final NodeMenuRuleCreator nodeMenuCreator;
@@ -627,6 +637,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.GRANULARITY_CONTAINERS,
           Setting.GRANULARITY_SEARCH,
           Setting.GRANULARITY_DEFAULT,
+          Setting.VERTICAL_NAVIGATION,
           // TODO Supports special content.
           Setting.SPEECH_RATE,
           Setting.VERBOSITY,
@@ -639,6 +650,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.AUDIO_FOCUS,
           Setting.SCROLLING_SEQUENTIAL,
           Setting.CHANGE_ACCESSIBILITY_VOLUME,
+          Setting.AUDIO_OUTPUT_DEVICE,
           Setting.CHANGE_BRIGHTNESS,
           Setting.CHANGE_TOUCH_FOCUS_LATENCY,
           Setting.CHANGE_TYPING_FOCUS_LATENCY,
@@ -717,6 +729,7 @@ public class SelectorController implements UserInputEventListener {
     this.pipeline = pipeline;
     this.actorState = actorState;
     this.accessibilityFocusMonitor = accessibilityFocusMonitor;
+    verticalNavigator = new VerticalNavigator(pipeline, accessibilityFocusMonitor);
     this.nodeMenuCreator = nodeMenuCreator;
     this.analytics = analytics;
     this.gestureMapping = gestureMapping;
@@ -984,6 +997,14 @@ public class SelectorController implements UserInputEventListener {
       }
       case SWITCH_VOICE_PROFILE -> {
         actionDescription = context.getString(R.string.title_selector_voice_profile);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case AUDIO_OUTPUT_DEVICE -> {
+        actionDescription = context.getString(R.string.title_pref_audio_output_device);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case VERTICAL_NAVIGATION -> {
+        actionDescription = context.getString(R.string.title_selector_vertical_navigation);
         hint = getAdjustSelectedSettingGestures();
       }
       case ACTIONS -> {
@@ -1259,6 +1280,10 @@ public class SelectorController implements UserInputEventListener {
   @Override
   public void touchInteractionState(boolean active) {
     touchActive = active;
+    if (active) {
+      // A touch replaces a move that is waiting for a list to scroll.
+      verticalNavigator.cancel();
+    }
     if (!touchActive) {
       if (lastFocusedNode != null) {
         switchCurrentSetting(lastFocusedNode);
@@ -1819,6 +1844,14 @@ public class SelectorController implements UserInputEventListener {
         changeVoiceProfile(eventId, isNext, getAdjustSelectedSettingGestures());
         return;
       }
+      case AUDIO_OUTPUT_DEVICE -> {
+        changeAudioOutputDevice(eventId, isNext);
+        return;
+      }
+      case VERTICAL_NAVIGATION -> {
+        verticalNavigator.move(eventId, isNext);
+        return;
+      }
       case GRANULARITY -> {
         // Granularity is phased out. Assigns to the character setting.
         updateSettingPref(context, GRANULARITY_CHARACTERS);
@@ -2067,6 +2100,31 @@ public class SelectorController implements UserInputEventListener {
 
     String displayText = FailoverTextToSpeech.getEngineDisplayName(context, nextEngine);
     announceSetting(eventId, displayText, getSelectSettingGestures());
+    showQuickMenuActionOverlay(eventId, displayText);
+  }
+
+  /** Changes the audio output device to the previous or next option. */
+  private void changeAudioOutputDevice(EventId eventId, boolean isNext) {
+    List<AudioDeviceRouter.OutputOption> options = AudioDeviceRouter.getOutputOptions(context);
+    String currentValue =
+        SharedPreferencesUtils.getStringPref(
+            prefs,
+            context.getResources(),
+            R.string.pref_audio_output_device_key,
+            R.string.pref_audio_output_device_default);
+    int currentIndex = AudioDeviceRouter.indexOfOption(options, currentValue);
+    int nextIndex =
+        (currentIndex < 0)
+            ? (isNext ? 0 : options.size() - 1)
+            : Math.floorMod(currentIndex + (isNext ? 1 : -1), options.size());
+    String nextValue = options.get(nextIndex).getPrefValue();
+    prefs
+        .edit()
+        .putString(context.getString(R.string.pref_audio_output_device_key), nextValue)
+        .apply();
+
+    String displayText = options.get(nextIndex).getDisplayName();
+    announceSetting(eventId, displayText, getAdjustSelectedSettingGestures());
     showQuickMenuActionOverlay(eventId, displayText);
   }
 

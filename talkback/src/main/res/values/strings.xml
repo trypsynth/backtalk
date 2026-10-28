@@ -54,12 +54,18 @@
       Description: Distinguishes the system settings from TalkBack's own speech settings. [CHAR LIMIT=NONE]
     -->
     <string name="title_pref_system_tts_settings">System text-to-speech settings</string>
+    <!-- Title of the reading control that moves to the item below or above, leaving out the other items of the same row. [CHAR LIMIT=40] -->
+    <string name="title_selector_vertical_navigation">Vertical navigation</string>
+    <!-- Summary of the Vertical navigation reading control in the reading controls settings. [CHAR LIMIT=NONE] -->
+    <string name="summary_selector_vertical_navigation">Move to the item below or above, past the other items of the row</string>
     <!-- Title for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
     <string name="title_selector_switch_tts_engine">Speech engine</string>
     <!-- Summary for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
     <string name="summary_selector_switch_tts_engine">Switch between installed speech engines</string>
     <!-- Title for the reading control that switches between voice profiles. [CHAR LIMIT=NONE] -->
     <string name="title_selector_voice_profile">Voice profile</string>
+    <!-- Summary for the reading control that switches between voice profiles. [CHAR LIMIT=70] -->
+    <string name="summary_selector_voice_profile">Switch between your saved voice profiles</string>
     <!--
       Title for the screen of voice profiles: sets of speech settings, each with its own speech
       engine, language, voice, volume, rate and pitch, that the user can switch between. [CHAR LIMIT=NONE]
@@ -206,6 +212,10 @@
     Description: This is presented to the user. [CHAR_LIMIT=70]
     -->
   <string name="actions">Actions</string>
+  <!-- Summary of a settings category heading whose settings are hidden until it is activated. [CHAR LIMIT=30] -->
+  <string name="category_collapsed">Collapsed</string>
+  <!-- Summary of a settings category heading whose settings are shown. [CHAR LIMIT=30] -->
+  <string name="category_expanded">Expanded</string>
     <!--
       Source: Title for the menu item that opens the dialog with system actions available on device
       Description: This is presented to the user. [CHAR LIMIT=NONE]
@@ -333,6 +343,10 @@
     <string name="title_pref_say_device_unlocked">Say \"Device unlocked\"</string>
     <!-- Switch to say the time when the screen turns on. [CHAR LIMIT=NONE] -->
     <string name="title_pref_announce_time">Time</string>
+    <!-- Switch below the screen-on time and status choices; suppresses extra automatic lock-screen speech. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_suppress_extra_screen_on_speech">Say only the items above</string>
+    <!-- Summary for limiting automatic lock-screen wake speech to the time and status choices above this switch. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_suppress_extra_screen_on_speech">When the lock screen turns on, announce only the selected items.</string>
     <!-- Switch to say the ringer mode. [CHAR LIMIT=NONE] -->
     <string name="title_pref_announce_ringer_mode">Ringer mode</string>
     <!-- [CHAR LIMIT=NONE] -->
@@ -401,8 +415,6 @@
     <string name="title_pref_speech_control">Let other apps speak</string>
     <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speech_control">Apps that you allow can say text in your Backtalk voice. Nothing is said while the device is locked.</string>
-    <!-- Title of the setting that plays a sound before each thing another app says through Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="title_pref_speech_control_sound">Play a sound before other apps speak</string>
     <!-- Heading of the list of apps that asked to speak through Backtalk. [CHAR LIMIT=NONE] -->
     <string name="speech_control_apps_category">Apps</string>
     <!-- Shown in that list before any app has asked to speak. [CHAR LIMIT=NONE] -->
@@ -674,11 +686,6 @@
     -->
     <string name="pref_speak_system_window_titles_summary">Speak system and input windows, like when you switch to the status bar, notifications, or another keyboard</string>
 
-    <!--
-      Source: Preference for Explore by touch setting. This setting allows users to touch on-screen content to hear it spoken aloud.
-      Description: The user can check or not check this. [CHAR LIMIT=40]
-    -->
-    <string name="title_pref_explore_by_touch">Explore by touch</string>
     <!-- Category for TalkBack visuyal settings. [CHAR LIMIT=40] -->
     <string name="title_pref_category_visual">Visual</string>
     <!-- Category for gestures, menus or other controls. [CHAR LIMIT=40] -->
@@ -701,6 +708,10 @@
     <string name="title_pref_single_tap">Single-tap to activate</string>
     <!-- Summary sub-text for single-tap activation. When enabled, the user can place accessibility focus on an item and activate it using a single tap, rather than the default double-tap. [CHAR LIMIT=NONE]-->
     <string name="summary_pref_single_tap">Tap once on a focused item to activate. Faster navigation than double-tapping.</string>
+    <!-- Preference for direct click. When enabled, activating the focused item (double-tap, the activation key or a braille display) touches the item on the screen, as a finger would, instead of asking the app to activate it. Some app buttons only react to a real touch. [CHAR LIMIT=NONE]-->
+    <string name="title_pref_direct_click">Direct click</string>
+    <!-- Summary sub-text for direct click. When enabled, activating the focused item touches the item on the screen, as a finger would, instead of asking the app to activate it. Text fields and sliders are still activated the usual way, because a touch would put the cursor or set the value where it lands. [CHAR LIMIT=NONE]-->
+    <string name="summary_pref_direct_click">Double-tap touches the focused item on the screen, like a finger, instead of asking the app to activate it. Helps with buttons that ignore double-tap. Text fields and sliders are still activated the usual way.</string>
     <!-- Label for the button to launch an activity for managing TalkBack's verbosity. [CHAR LIMIT=40] -->
     <string name="pref_verbosity_title">Verbosity</string>
     <!--
@@ -1367,6 +1378,8 @@
       Description: Title of the audio output device setting. [CHAR LIMIT=35]
     -->
     <string name="title_pref_audio_output_device">Audio output device</string>
+    <!-- Summary for the reading control that changes the audio output device. [CHAR LIMIT=70] -->
+    <string name="summary_selector_audio_output_device">Change where Backtalk speaks, like the phone speaker or headphones</string>
     <!--
       Source: Dialog title when choosing the audio output device.
       Description: Dialog title for selecting audio output target. [CHAR LIMIT=45]
@@ -2533,6 +2546,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_pref_touch_stops_speech">Stop speech when touching the screen</string>
     <!-- Title of the switch that removes Links and Controls from the reading controls when the focused item is not in web content. [CHAR LIMIT=NONE] -->
     <string name="title_pref_selector_links_controls_web_only">Links and Controls only in web content</string>
+    <!-- Summary for the setting that limits Links and Controls to web content. [CHAR LIMIT=70] -->
+    <string name="summary_selector_links_controls_web_only">Limit the Links and Controls settings to web content</string>
     <!-- Title of the switch that moves accessibility focus into a window when it opens or comes back, such as when an app opens or you go back. [CHAR LIMIT=NONE] -->
     <string name="title_pref_focus_new_windows">Move focus to new windows</string>
     <!-- Title of the switch that makes the volume keys adjust the focused slider instead of the volume. [CHAR LIMIT=NONE] -->
@@ -2731,10 +2746,6 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <!-- Label for the "enable all" button in TalkbackDumpA11yEventActivity. Clicking on the button will toggle all the switches to "on" in DumpA11yEvent preference setting. -->
     <string name="button_enable_all_events">Enable all</string>
 
-    <!-- Title for the dialog shown when a user attempts to disable Explore by Touch.  -->
-    <string name="dialog_title_disable_exploration">Disable Explore by touch?</string>
-    <!-- Message for the dialog shown when a user attempts to disable Explore by Touch. -->
-    <string name="dialog_message_disable_exploration">Are you sure you want to turn off Explore by touch?\n\nYour device will no longer respond to shortcut gestures or speak items when you touch the screen.</string>
     <!-- Title for the dialog shown when a user attempts to enable node tree debugging.  -->
     <string name="dialog_title_enable_tree_debug">Enable Node Tree Debugging?</string>
     <!-- Message for the dialog shown when a user attempts to enable node tree debugging. -->
@@ -4397,4 +4408,12 @@ Do not use any markdown in your response."</string>
   <!-- Tip notification content for lock screen notifications. [CHAR_LIMIT=NONE] -->
   <string name="notifictions_in_lock_screen_notification_content">To hear notifications when your screen is off, turn on \"Speak notifications when screen is off\" in Backtalk verbosity settings</string>
 
+  <!-- Title of an Advanced Settings switch. Allows scrolling to the remembered item when returning to a screen. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_scroll_to_restore_previous_focus">Scroll to restore previous focus</string>
+  <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_scroll_to_restore_previous_focus">Scroll to the last focused item when returning to a screen.</string>
+  <!-- Title of the phone Advanced Settings switch. Opt in to remembering an accessibility element when using Back. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_restore_focus_on_back">Restore focus when going back</string>
+  <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_restore_focus_on_back">Return to the last focused item when going back to a screen.</string>
 </resources>

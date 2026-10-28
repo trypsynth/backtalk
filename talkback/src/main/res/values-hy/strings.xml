@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Հնչեցնել ընթացքի բոլոր ծանուցումները</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Ներառում է ներբեռնման, նավիգացիայի և այլ գործողությունների ժամանակ ցուցադրվող ծանուցումները։ Երբ կարգավորումն անջատված է, դուք ավելի քիչ ծանուցումներ կստանաք։</string>
   <string name="pref_speak_system_window_titles_summary">Հնչեցնել պատուհանները (համակարգային և տեղեկությունների մուտքագրման), օրինակ՝ կարգավիճակի գոտուն, ծանուցումներին կամ այլ ստեղնաշարի անցնելիս։</string>
-  <string name="title_pref_explore_by_touch">Հպումով ուսումնասիրում</string>
   <string name="title_pref_category_visual">Տեսողական</string>
   <string name="title_pref_category_controls">Կառավարման տարրեր</string>
   <string name="title_pref_category_braille">Բրայլյան գրեր</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Հարմարեցնել ժեստերը</string>
   <string name="button_disable_all_events">Անջատել բոլորը</string>
   <string name="button_enable_all_events">Միացնել բոլորը</string>
-  <string name="dialog_title_disable_exploration">Անջատե՞լ գործառույթը</string>
-  <string name="dialog_message_disable_exploration">Իսկապե՞ս ուզում եք անջատել «Հպումով ուսումնասիրում» գործիքը:\n\nՁեր սարքն այլևս չի արձագանքի կարճուղի ժեստերին կամ ձայնային տարրերին՝ էկրանին հպվելու ժամանակ:</string>
   <string name="dialog_title_enable_tree_debug">Միացնե՞լ Հանգույցի ծառի կարգաբերումը:</string>
   <string name="dialog_message_enable_tree_debug">Իսկապե՞ս ուզում եք միացնել հանգույցի ծառի կարգաբերումը:\n\nՀանգույցի ծառի կարգաբերումը ձեր էկրանի բովանդակությունը կարտապատկերի սարքի գրանցամատյաններում, որոնք կարող են ընթերցվել այլ ծրագրերի կողմից:</string>
   <string name="dialog_title_enable_tree_debug_gesture">Վերանշանակե՞լ 4 մատով եռակի հպման ժեստը</string>

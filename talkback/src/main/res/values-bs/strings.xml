@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Izgovaranje svih novosti o napretku</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Uključuje novosti tokom preuzimanja, praćenja uputa za vožnju i drugo. Kada je ova postavka isključena, i dalje ćete dobijati novosti, ali rjeđe.</string>
   <string name="pref_speak_system_window_titles_summary">Izgovaranje prozora sistema i unosa, naprimjer kad se prebacite na statusnu traku, obavještenja ili drugu tastaturu</string>
-  <string name="title_pref_explore_by_touch">Istraži dodirom</string>
   <string name="title_pref_category_visual">Vizuelni sadržaj</string>
   <string name="title_pref_category_controls">Kontrole</string>
   <string name="title_pref_category_braille">Braillevo pismo</string>
@@ -766,8 +765,6 @@ Kašnjenja ispod 0,3 s će promijeniti aktiviranje dvostrukim dodirom u aktivir
   <string name="button_customize_gesture_mappings">Prilagodi pokrete</string>
   <string name="button_disable_all_events">Onemogući sve</string>
   <string name="button_enable_all_events">Omogući sve</string>
-  <string name="dialog_title_disable_exploration">Želite li onemogućiti Istraživanje dodirom?</string>
-  <string name="dialog_message_disable_exploration">Jeste li sigurni da želite isključiti Istraživanje dodirom?\n\nVaš uređaj više neće reagirati na pokrete prečica ili izgovarati stavke kada dodirnete ekran.</string>
   <string name="dialog_title_enable_tree_debug">Želite li uključiti ispravljanje grešaka na čvoru stabla?</string>
   <string name="dialog_message_enable_tree_debug">Jeste li sigurni da želite uključiti ispravljanje grešaka na čvoru stabla?\n\nIspravljanje grešaka na čvoru stabla izlaže sadržaj ekrana zapisima vašeg uređaja, što druge aplikacije mogu pročitati.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Ponovo dodijeliti pokret trostrukog dodira s 4 prsta?</string>

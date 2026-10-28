@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Bigkasin ang lahat ng update sa pag-usad</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Kasama ang mga update habang nagda-download, pagsunod sa mga direksyon sa pagmamaneho, at higit pa. Kapag naka-off, makakatanggap ka pa rin ng hindi na ganoon kadalas na mga update.</string>
   <string name="pref_speak_system_window_titles_summary">Sabihin ang mga window ng system at input, tulad ng kapag lumipat ka sa status bar, mga notification, o ibang keyboard</string>
-  <string name="title_pref_explore_by_touch">Explore by touch</string>
   <string name="title_pref_category_visual">Visual</string>
   <string name="title_pref_category_controls">Mga Kontrol</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Gagawing pag-tap gamit ang dalawang daliri para i-activate ng mga pagkaantalang 
   <string name="button_customize_gesture_mappings">I-customize ang mga galaw</string>
   <string name="button_disable_all_events">I-disable lahat</string>
   <string name="button_enable_all_events">I-enable lahat</string>
-  <string name="dialog_title_disable_exploration">Idi-disable ang Explore by touch?</string>
-  <string name="dialog_message_disable_exploration">Sigurado ka bang gusto mong i-off ang Explore by touch?\n\nHindi na tutugon sa mga shortcut na galaw o magsasalita ng mga item ang iyong device kapag pinindot mo ang screen.</string>
   <string name="dialog_title_enable_tree_debug">Ie-enable ang Pagde-debug ng Node Tree?</string>
   <string name="dialog_message_enable_tree_debug">Sigurado ka bang gusto mong i-on ang pagde-debug ng node tree?\n\nInilalantad ng pagde-debug ng node tree ang content ng iyong screen sa mga log ng iyong device, na maaaring mabasa ng iba pang mga application.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Italaga ulit ang triple-tap na may galaw na 4 na daliri?</string>

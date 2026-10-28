@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ಎಲ್ಲಾ ಪ್ರಗತಿಯ ಅಪ್‌ಡೇಟ್‌ಗಳ ಬಗ್ಗೆ ಮಾತನಾಡಿ</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ಡೌನ್‌ಲೋಡ್ ಮಾಡುವ, ಡ್ರೈವಿಂಗ್ ನಿರ್ದೇಶನಗಳನ್ನು ಅನುಸರಿಸುವ ಮತ್ತು ಇನ್ನೂ ಹೆಚ್ಚಿನದನ್ನು ಮಾಡುವ ಸಂದರ್ಭಗಳಲ್ಲಿನ ಅಪ್‌ಡೇಟ್‌ಗಳನ್ನು ಇದು ಒಳಗೊಂಡಿರುತ್ತದೆ. ಆಫ್ ಮಾಡಿದಾಗಲೂ, ನೀವು ಆಗಾಗ ಅಪ್‌ಡೇಟ್‌ಗಳನ್ನು ಪಡೆಯುತ್ತೀರಿ.</string>
   <string name="pref_speak_system_window_titles_summary">ನೀವು ಸ್ಟೇಟಸ್ ಬಾರ್, ಅಧಿಸೂಚನೆಗಳು ಅಥವಾ ಇನ್ನೊಂದು ಕೀಬೋರ್ಡ್‌ಗೆ ಬದಲಾಯಿಸಿದಾಗ ಸಿಸ್ಟಂ ಮತ್ತು ಇನ್‌ಪುಟ್ ವಿಂಡೋಗಳನ್ನು ಹೇಳಿ</string>
-  <string name="title_pref_explore_by_touch">ಸ್ಪರ್ಶದ ಮೂಲಕ ಎಕ್ಸ್‌ಪ್ಲೋರ್ ಮಾಡಿ</string>
   <string name="title_pref_category_visual">ವಿಷುವಲ್</string>
   <string name="title_pref_category_controls">ನಿಯಂತ್ರಣಗಳು</string>
   <string name="title_pref_category_braille">ಬ್ರೇಲ್</string>
@@ -767,8 +766,6 @@
   <string name="button_customize_gesture_mappings">ಜೆಸ್ಚರ್‌ಗಳನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡಿ</string>
   <string name="button_disable_all_events">ಎಲ್ಲವನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ</string>
   <string name="button_enable_all_events">ಎಲ್ಲವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
-  <string name="dialog_title_disable_exploration">ಸ್ಪರ್ಶಿಸುವ ಮೂಲಕ ಎಕ್ಸ್‌ಪ್ಲೋರ್ ಅನ್ನು ನಿಷ್ಕ್ರಿಯಗೊಳಿಸುವುದೇ?</string>
-  <string name="dialog_message_disable_exploration">ಸ್ಪರ್ಶಿಸುವ ಮೂಲಕ ಎಕ್ಸ್‌ಪ್ಲೋರ್ ಮಾಡುವಿಕೆಯನ್ನು ಅಮಾನತು ಮಾಡಲು ನೀವು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?\n\nನಿಮ್ಮ ಸಾಧನವು ಇನ್ನು ಮುಂದೆ ಶಾರ್ಟ್‌ಕಟ್ ಸೂಚನೆಗಳಿಗೆ ಅಥವಾ ನೀವು ಪರದೆಯನ್ನು ಸ್ಪರ್ಶಿಸಿದಾಗ ಮಾತಿನ ಐಟಂಗಳಿಗೆ ಪ್ರತಿಕ್ರಿಯಿಸುವುದಿಲ್ಲ.</string>
   <string name="dialog_title_enable_tree_debug">ನೋಡ್ ಟ್ರೀ ಡೀಬಗ್ ಸಕ್ರಿಗೊಳಿಸುವುದೇ?</string>
   <string name="dialog_message_enable_tree_debug">ನೀವು ನೋಡ್ ಟ್ರೀ ಡೀಬಗ್ ಮಾಡುವುದನ್ನು ಆನ್ ಮಾಡಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?\n\nನೋಡ್ ಟ್ರೀ ಡೀಬಗ್ ಮಾಡುವಿಕೆ ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು ಓದಬಹುದಾದ ನಿಮ್ಮ ಪರದೆಯ ವಿಷಯಗಳಿಂದ ನಿಮ್ಮ ಸಾಧನದ ಲಾಗ್‌ಗಳನ್ನು ತೆರೆದಿಡುತ್ತದೆ.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 ಬೆರಳುಗಳ ಜೆಸ್ಚರ್ ಮೂಲಕ ಟ್ರಿಪಲ್-ಟ್ಯಾಪ್ ಅನ್ನು ಮರುನಿಯೋಜಿಸಬೇಕೇ?</string>

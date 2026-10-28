@@ -743,6 +743,9 @@ class AudioDeviceRouter @JvmOverloads constructor(
     }
   }
 
+  /** One selectable audio output: what the user sees and what is stored in the preference. */
+  class OutputOption(val displayName: String, val prefValue: String)
+
   companion object {
     private const val TAG = "AudioDeviceRouter"
     // Gaps between re-assertion passes, covering slow Bluetooth profile switches.
@@ -812,63 +815,82 @@ class AudioDeviceRouter @JvmOverloads constructor(
     }
 
     /**
+     * The connected external outputs, in the order Android reports them.
+     */
+    @JvmStatic
+    fun getExternalDevices(context: Context): List<AudioDeviceInfo> {
+      val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
+      return audioManager?.getDevices(AudioManager.GET_DEVICES_OUTPUTS)
+        ?.filter { isExternalDevice(it) }
+        ?: emptyList()
+    }
+
+    /**
+     * The selectable audio outputs in cycling order: system default, phone speaker, then each
+     * connected external device by name.
+     */
+    @JvmStatic
+    fun getOutputOptions(context: Context): List<OutputOption> {
+      val options =
+        mutableListOf(
+          OutputOption(context.getString(R.string.value_audio_output_device_default), "default"),
+          OutputOption(context.getString(R.string.value_audio_output_device_speaker), "speaker"),
+        )
+      val seenNames = mutableSetOf<String>()
+      for (dev in getExternalDevices(context)) {
+        val displayName = getDeviceDisplayName(dev, context)
+        if (seenNames.add(displayName)) {
+          options.add(OutputOption(displayName, "device:${dev.type}:$displayName"))
+        }
+      }
+      return options
+    }
+
+    /**
+     * Returns the index in [options] of the output that the preference [value] chooses, or -1. A
+     * device matches by name when its type has changed, and "any external device" matches the first
+     * external device, which is where it routes.
+     */
+    @JvmStatic
+    fun indexOfOption(options: List<OutputOption>, value: String?): Int =
+      when (val target = AudioTarget.parse(value)) {
+        is AudioTarget.SystemDefault -> options.indexOfFirst { it.prefValue == "default" }
+        is AudioTarget.PhoneSpeaker -> options.indexOfFirst { it.prefValue == "speaker" }
+        is AudioTarget.SpecificDevice ->
+          options.indexOfFirst { it.prefValue == value || it.prefValue.endsWith(":${target.name}") }
+        is AudioTarget.AnyExternal -> options.indexOfFirst { it.prefValue.startsWith("device:") }
+      }
+
+    /**
      * Dynamically populates entries and entry values for the audio output device [ListPreference].
      */
     @JvmStatic
     fun updatePreference(preference: ListPreference, context: Context) {
-      val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager
-      val connectedDevices =
-        audioManager?.getDevices(AudioManager.GET_DEVICES_OUTPUTS) ?: emptyArray()
+      val options = getOutputOptions(context)
+      preference.entries = options.map { it.displayName }.toTypedArray()
+      preference.entryValues = options.map { it.prefValue }.toTypedArray()
 
-      val externalDevices = connectedDevices.filter { isExternalDevice(it) }
-
-      val entries = mutableListOf<CharSequence>()
-      val entryValues = mutableListOf<CharSequence>()
-
-      entries.add(context.getString(R.string.value_audio_output_device_default))
-      entryValues.add("default")
-
-      entries.add(context.getString(R.string.value_audio_output_device_speaker))
-      entryValues.add("speaker")
-
-      val seenNames = mutableSetOf<String>()
-      for (dev in externalDevices) {
-        val displayName = getDeviceDisplayName(dev, context)
-        if (seenNames.add(displayName)) {
-          entries.add(displayName)
-          entryValues.add("device:${dev.type}:$displayName")
-        }
-      }
-
-      preference.entries = entries.toTypedArray()
-      preference.entryValues = entryValues.toTypedArray()
-
-      val currentValue = preference.value
-      val currentTarget = AudioTarget.parse(currentValue)
-      val summaryText = when (currentTarget) {
-        is AudioTarget.SystemDefault ->
-          context.getString(R.string.value_audio_output_device_default)
-        is AudioTarget.PhoneSpeaker ->
-          context.getString(R.string.value_audio_output_device_speaker)
-        is AudioTarget.SpecificDevice -> {
-          val matchIndex = entryValues.indexOfFirst {
-            it.toString() == currentValue || it.toString().endsWith(":${currentTarget.name}")
-          }
-          if (matchIndex >= 0) {
-            entries[matchIndex].toString()
-          } else {
-            "${currentTarget.name} (${context.getString(R.string.value_audio_output_device_disconnected)})"
-          }
-        }
-        is AudioTarget.AnyExternal -> {
-          if (externalDevices.isNotEmpty()) {
-            getDeviceDisplayName(externalDevices.first(), context)
-          } else {
+      val currentTarget = AudioTarget.parse(preference.value)
+      preference.summary =
+        when (currentTarget) {
+          is AudioTarget.SystemDefault ->
             context.getString(R.string.value_audio_output_device_default)
+          is AudioTarget.PhoneSpeaker ->
+            context.getString(R.string.value_audio_output_device_speaker)
+          is AudioTarget.SpecificDevice -> {
+            val match = options.getOrNull(indexOfOption(options, preference.value))
+            if (match != null) {
+              match.displayName
+            } else {
+              "${currentTarget.name} (${context.getString(R.string.value_audio_output_device_disconnected)})"
+            }
+          }
+          is AudioTarget.AnyExternal -> {
+            val external = getExternalDevices(context)
+            if (external.isNotEmpty()) getDeviceDisplayName(external.first(), context)
+            else context.getString(R.string.value_audio_output_device_default)
           }
         }
-      }
-      preference.summary = summaryText
     }
   }
 }

@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">พูดข้อมูลอัปเดตความคืบหน้าทั้งหมด</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">รวมถึงข้อมูลอัปเดตขณะดาวน์โหลด ติดตามเส้นทางการขับขี่ และอื่นๆ เมื่อปิดการตั้งค่านี้ คุณจะได้รับข้อมูลอัปเดตน้อยลง</string>
   <string name="pref_speak_system_window_titles_summary">พูดชื่อหน้าต่างของระบบและอินพุต เช่น เมื่อคุณเปลี่ยนเป็นแถบสถานะ การแจ้งเตือน หรือแป้นพิมพ์อื่น</string>
-  <string name="title_pref_explore_by_touch">แตะเพื่อสำรวจ</string>
   <string name="title_pref_category_visual">ภาพ</string>
   <string name="title_pref_category_controls">การควบคุม</string>
   <string name="title_pref_category_braille">อักษรเบรลล์</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">กำหนดค่าท่าทางสัมผัส</string>
   <string name="button_disable_all_events">ปิดใช้ทั้งหมด</string>
   <string name="button_enable_all_events">เปิดใช้ทั้งหมด</string>
-  <string name="dialog_title_disable_exploration">ปิดการแตะเพื่อสำรวจใช่ไหม</string>
-  <string name="dialog_message_disable_exploration">คุณแน่ใจไหมว่าต้องการปิดการแตะเพื่อสำรวจ\n\nอุปกรณ์ของคุณจะไม่ตอบสนองต่อทางลัดท่าทางสัมผัสหรือรายการคำพูดอีกต่อไปเมื่อคุณแตะหน้าจอ</string>
   <string name="dialog_title_enable_tree_debug">เปิดใช้การแก้ไขข้อบกพร่องของโหนดทรีใช่ไหม</string>
   <string name="dialog_message_enable_tree_debug">คุณแน่ใจไหมว่าต้องการเปิดการแก้ไขข้อบกพร่องของโหนดทรี\n\nการแก้ไขข้อบกพร่องของโหนดทรีจะเปิดเผยเนื้อหาของหน้าจอในไฟล์บันทึกของอุปกรณ์ ซึ่งแอปพลิเคชันอื่นอาจสามารถอ่านได้</string>
   <string name="dialog_title_enable_tree_debug_gesture">กำหนดท่าทางสัมผัสการใช้ 4 นิ้วแตะ 3 ครั้งอีกครั้งไหม</string>

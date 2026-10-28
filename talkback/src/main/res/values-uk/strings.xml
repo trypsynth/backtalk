@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Озвучувати всі зміни перебігу виконання</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Це стосується перебігу завантаження контенту, руху за маршрутом тощо. Якщо це налаштування вимкнено, ви все одно отримуватимете сповіщення про зміни, але рідше.</string>
   <string name="pref_speak_system_window_titles_summary">Озвучувати назви системних вікон і вікон введення (наприклад, під час переходу до рядка стану, сповіщень чи іншої клавіатури)</string>
-  <string name="title_pref_explore_by_touch">Дослідження дотиком</string>
   <string name="title_pref_category_visual">Відображення</string>
   <string name="title_pref_category_controls">Елементи керування</string>
   <string name="title_pref_category_braille">Шрифт Брайля</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Налаштувати жести</string>
   <string name="button_disable_all_events">Вимкнути всі</string>
   <string name="button_enable_all_events">Увімкнути всі</string>
-  <string name="dialog_title_disable_exploration">Вимкнути функцію дослідження дотиком?</string>
-  <string name="dialog_message_disable_exploration">Вимкнути функцію дослідження дотиком?\n\nВаш пристрій більше не реагуватиме на жести чи диктування, коли ви торкатиметесь екрана.</string>
   <string name="dialog_title_enable_tree_debug">Увімкнути налагодження дерева вузлів?</string>
   <string name="dialog_message_enable_tree_debug">Увімкнути налагодження дерева вузлів?\n\nНалагодження дерева вузлів відкриває вміст вашого екрана для журналів пристрою, які можуть бути зчитані іншими додатками.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Перепризначити жест \"Потрійний дотик чотирма пальцями\"?</string>

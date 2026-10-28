@@ -38,6 +38,10 @@
     <string name="title_pref_say_screen_off">Říkat „Obrazovka vypnuta“</string>
     <string name="title_pref_say_device_unlocked">Říkat „Zařízení odemknuto“</string>
     <string name="title_pref_announce_time">Čas</string>
+    <!-- Switch below the screen-on time and status choices. -->
+    <string name="title_pref_suppress_extra_screen_on_speech">Říkat pouze výše vybrané položky</string>
+    <!-- Limits automatic lock-screen wake speech to the selected items. -->
+    <string name="summary_pref_suppress_extra_screen_on_speech">Při zapnutí zamčené obrazovky oznamovat pouze vybrané položky.</string>
     <string name="title_pref_announce_ringer_mode">Režim vyzvánění</string>
     <string name="summary_pref_announce_ringer_mode">Oznamovat, když je vyzvánění nastaveno na vibrace nebo tichý režim</string>
 
@@ -121,4 +125,12 @@
     <string name="template_setting_limit">%1$s, %2$s</string>
     <string name="title_pref_speak_nav_bar_buttons">Oznamovat tlačítka navigační lišty</string>
     <string name="summary_pref_speak_nav_bar_buttons">Když je aktivace zvednutím zapnutá na navigační liště, oznámit tlačítko, které klepnutí stiskne, například Zpět nebo Plocha.</string>
+    <!-- Advanced settings switch: scroll to the remembered accessibility item after Back. -->
+    <string name="title_pref_scroll_to_restore_previous_focus">Posunout k obnovení předchozího zaměření</string>
+    <!-- Advanced settings summary: scrolling is optional; visible items restore without it. -->
+    <string name="summary_pref_scroll_to_restore_previous_focus">Při návratu na obrazovku posunout na poslední zaměřenou položku.</string>
+    <!-- Phone Advanced settings switch: opt in to restoring an accessibility item after Back. -->
+    <string name="title_pref_restore_focus_on_back">Obnovit zaměření při návratu zpět</string>
+    <!-- Phone Advanced settings summary: return to the remembered item on the previous screen. -->
+    <string name="summary_pref_restore_focus_on_back">Při návratu zpět na obrazovku přejít na poslední zaměřenou položku.</string>
 </resources>

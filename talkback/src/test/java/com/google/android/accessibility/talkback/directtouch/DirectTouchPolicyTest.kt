@@ -137,6 +137,19 @@ class DirectTouchPolicyTest {
   }
 
   @Test
+  fun aFocusableViewWithNothingToSayIsADrawingSurface() {
+    assertTrue(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = null))
+    assertTrue(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = ""))
+  }
+
+  @Test
+  fun labelsAndUnfocusableViewsAreNotDrawingSurfaces() {
+    // A launcher's clock says the time, and its layout isn't focused, so it has no surface (#288).
+    assertFalse(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = "10:42"))
+    assertFalse(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = false, label = null))
+  }
+
+  @Test
   fun everythingElseStillTurnsRegionModeOff() {
     val region = base().copy(regionMode = true)
     assertTrue(DirectTouchPolicy.shouldBeActive(region))

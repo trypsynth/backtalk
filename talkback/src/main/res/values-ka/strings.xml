@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">პროგრესის განახლების ხმამაღალი განცხ.</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">შეიცავს განახლებებს ჩამოტვირთვისას, საავტომობილო მარშრუტებისთვის თვალის დევნებისას და ა.შ. როცა გამორთულია, ისევ მიიღებთ განახლებებს უფრო იშვიათად.</string>
   <string name="pref_speak_system_window_titles_summary">სისტემისა და შეყვანის ფანჯრების წარმოთქმა, მაგალითად, როდესაც გადაერთვებით სტატუსის ზოლზე, შეტყობინებებზე ან სხვა კლავიატურაზე</string>
-  <string name="title_pref_explore_by_touch">შეხებით დათვალიერება</string>
   <string name="title_pref_category_visual">ვიზუალი</string>
   <string name="title_pref_category_controls">მართვის საშუალებები</string>
   <string name="title_pref_category_braille">ბრაილი</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ჟესტების მორგება</string>
   <string name="button_disable_all_events">ყველას გამორთვა</string>
   <string name="button_enable_all_events">ყველას ჩართვა</string>
-  <string name="dialog_title_disable_exploration">გამოირთოს შეხებით დათვალიერება?</string>
-  <string name="dialog_message_disable_exploration">დარწმუნებული ბრძანდებით, რომ გსურთ შეხებით დათვალიერების გამორთვა?\n\nთქვენი მოწყობილობა აღარ მოახდენს რეაგირებას ჟესტებზე და არ წარმოთქვამს ერთეულების დასახელებას, როცა ეკრანს შეეხებით.</string>
   <string name="dialog_title_enable_tree_debug">გსურთ კვანძების იერარქიის გამართვის ჩართვა?</string>
   <string name="dialog_message_enable_tree_debug">დარწმუნდებული ხართ, რომ გსურთ კვანძების იერარქიის გამართვის რეჟიმის ჩართვა?\n\nკვანძების იერარქიის გამართვა თქვენი ეკრანის ქონთენთს ასახავს თქვენი მოწყობილობის ჟურნალში, რაც შესაძლოა სხვა აპლიკაციების მიერ იქნეს წაკითხული.</string>
   <string name="dialog_title_enable_tree_debug_gesture">გსურთ 4 თითის ჟესტის გამოყენებით სამმაგი შეხების ხელახლა მინიჭება?</string>

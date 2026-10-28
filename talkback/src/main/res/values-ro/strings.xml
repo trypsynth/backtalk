@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Rostește actualizările despre progres</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Aici sunt incluse actualizările la descărcare, urmărirea indicațiilor rutiere și multe altele. Când opțiunea este dezactivată, vei primi actualizări mai puțin frecvente.</string>
   <string name="pref_speak_system_window_titles_summary">Rostește numele ferestrelor de sistem și de introducere, de exemplu, când comuți la bara de stare, la notificări sau la altă tastatură</string>
-  <string name="title_pref_explore_by_touch">Explorează prin atingere</string>
   <string name="title_pref_category_visual">Vizuale</string>
   <string name="title_pref_category_controls">Comenzi</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Decalajele sub 0,3 secunde vor schimba atingerea dublă pentru activare în atin
   <string name="button_customize_gesture_mappings">Personalizează gesturile</string>
   <string name="button_disable_all_events">Dezactivează-le pe toate</string>
   <string name="button_enable_all_events">Activează-le pe toate</string>
-  <string name="dialog_title_disable_exploration">Dezactivezi funcția Explorează prin atingere?</string>
-  <string name="dialog_message_disable_exploration">Sigur dorești să dezactivezi funcția Explorează prin atingere?\n\nDispozitivul nu va mai răspunde la gesturi de comandă rapidă, și nici nu va mai rosti denumirea articolelor când atingi ecranul.</string>
   <string name="dialog_title_enable_tree_debug">Activezi depanarea arborelui?</string>
   <string name="dialog_message_enable_tree_debug">Sigur dorești să activezi depanarea arborelui? \n\nDepanarea arborelui expune conținutul ecranului în jurnalele dispozitivului, care pot fi citite de alte aplicații.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Atribui din nou gestul de atingere triplă cu patru degete?</string>

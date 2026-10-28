@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Bütün gediş bildirişləri səsləndirilsin</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Endirmə, hərəkət istiqamətlərini izləmə və s. üzrə bildirişlər daxildir. Deaktiv etdikdə daha az bildiriş alacaqsınız.</string>
   <string name="pref_speak_system_window_titles_summary">Status panelinə, bildirişlərə və ya başqa klaviaturaya keçmə kimi hallarda sistem və daxiletmə pəncərələrinin adını deyin</string>
-  <string name="title_pref_explore_by_touch">Toxunuşla kəşf</string>
   <string name="title_pref_category_visual">Vizual</string>
   <string name="title_pref_category_controls">Nizamlayıcılar</string>
   <string name="title_pref_category_braille">Brayl</string>
@@ -766,8 +765,6 @@ Fokus dəyişdikdən sonra TalkBack-in danışma sürətini tənzimləyir. Qısa
   <string name="button_customize_gesture_mappings">Jestləri fərdiləşdirin</string>
   <string name="button_disable_all_events">Hamısını deaktiv edin</string>
   <string name="button_enable_all_events">Hamısını aktiv edin</string>
-  <string name="dialog_title_disable_exploration">Toxunuşla Kəşf funksiyası deaktiv edilsin?</string>
-  <string name="dialog_message_disable_exploration">Toxunuşla Kəşffunksiyasını söndürmək istəyirsiniz?\n\nCihazınızdan bir daha rəy gəlməyəcək.</string>
   <string name="dialog_title_enable_tree_debug">Ağac düyünü debağı aktiv edilsin?</string>
   <string name="dialog_message_enable_tree_debug">Debaq funksiyasını aktiv etmək istədiyinizə əminsiniz?\n\nDebaq funksiyası ekranınızın kontentini cihazınızın jurnalına yönəldir və digər tətbiqlər də onu oxuyur.</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 barmaq jesti ilə üç dəfə toxunma yenidən təyin edilsin?</string>

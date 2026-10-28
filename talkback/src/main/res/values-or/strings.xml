@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ସମସ୍ତ ପ୍ରୋଗ୍ରେସ ଅପଡେଟ କୁହନ୍ତୁ</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ଏହା ଡାଉନଲୋଡ, ଡ୍ରାଇଭିଂ ଦିଗନିର୍ଦ୍ଦେଶଗୁଡ଼ିକୁ ଫଲୋ କରିବା ଏବଂ ଆହୁରି ଅନେକ କିଛି କରିବା ସମୟରେ ଅପଡେଟଗୁଡ଼ିକ ଅନ୍ତର୍ଭୁକ୍ତ କରେ। ବନ୍ଦ କଲେ, ଆପଣ ଏବେ ବି କମ ଥର ଅପଡେଟ ପାଇବେ।</string>
   <string name="pref_speak_system_window_titles_summary">ଉଦାହରଣ ସ୍ୱରୂପ, ଆପଣ ଷ୍ଟାଟସ ବାର, ବିଜ୍ଞପ୍ତି କିମ୍ବା ଅନ୍ୟ ଏକ କୀବୋର୍ଡକୁ ସ୍ୱିଚ କରିବା ସମୟରେ ସିଷ୍ଟମ ଏବଂ ଇନପୁଟ ୱିଣ୍ଡୋଗୁଡ଼ିକର ନାମ କୁହନ୍ତୁ</string>
-  <string name="title_pref_explore_by_touch">ସ୍ପର୍ଶ ଦ୍ୱାରା ଅନ୍ୱେଷଣ କରନ୍ତୁ</string>
   <string name="title_pref_category_visual">ଭିଜୁଆଲ</string>
   <string name="title_pref_category_controls">ନିୟନ୍ତ୍ରଣ</string>
   <string name="title_pref_category_braille">ବ୍ରେଲି</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ଜେଶ୍ଚର୍‍ କଷ୍ଟମାଇଜ୍ କରନ୍ତୁ</string>
   <string name="button_disable_all_events">ସବୁଗୁଡ଼ିକୁ ଅକ୍ଷମ କରନ୍ତୁ</string>
   <string name="button_enable_all_events">ସବୁଗୁଡ଼ିକୁ ସକ୍ଷମ କରନ୍ତୁ</string>
-  <string name="dialog_title_disable_exploration">ସ୍ପର୍ଶ କରିବା ଦ୍ୱାରା ଅଧିକ ଜାଣିବାକୁ ଅକ୍ଷମ କରିବେ କି?</string>
-  <string name="dialog_message_disable_exploration">ଆପଣ ସ୍ପର୍ଶ କରିବା ଦ୍ୱାରା ଅଧିକ ଜାଣିବାକୁ ଅଫ୍‌ କରିବା ପାଇଁ ନିଶ୍ଚିତ କି?\n\n ଯେତେବେଳେ ଆପଣ ସ୍କ୍ରୀନ୍‌କୁ ସ୍ପର୍ଶ କରିବେ, ଆପଣଙ୍କ ଡିଭାଇସ୍‌ରେ ଆଉ ଶର୍ଟକଟ୍‌ ଜେଶ୍ଚର୍‍ କିମ୍ୱା କଥାକୁହା ଆଇଟମ୍‌ଗୁଡ଼ିକ କାମ କରିବ ନାହିଁ।</string>
   <string name="dialog_title_enable_tree_debug">ନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗ ସକ୍ଷମ କରିବେ?</string>
   <string name="dialog_message_enable_tree_debug">ନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗକୁ ଅନ୍‌ କରିବା ପାଇଁ ଆପଣ ନିଶ୍ଚିତ କି?\n\nନୋଡ୍‌ ଟ୍ରୀ ଡିବଗିଙ୍ଗ ଆପଣଙ୍କ ସ୍କ୍ରୀନ୍‌ର ବିଷୟକୁ ନିଜ ଡିଭାଇସ୍‌ର ଲଗ୍‌ରେ ଦେଖାଇଥାଏ, ଯାହାକୁ ଅନ୍ୟ ଆପ୍ଲିକେଶନ୍ ସାହାଯ୍ୟରେ ପଢ଼ାଯାଇପାରିବ।</string>
   <string name="dialog_title_enable_tree_debug_gesture">4 ଆଙ୍ଗୁଠି ଜେଶ୍ଚର ସହ ତିନି ଥର-ଟାପକୁ ପୁଣି ଆସାଇନ କରିବେ?</string>

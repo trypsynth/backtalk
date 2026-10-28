@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Vyslovovať všetky aktuality o postupe</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Zahŕňa aktuality počas sťahovania, šoférovania podľa trás jazdy a ďalších aktivít. Keď túto možnosť vypnete, stále budete dostávať menej časté aktuality.</string>
   <string name="pref_speak_system_window_titles_summary">Čítať okná systému a okná na zadávanie, napríklad keď prejdete na stavový riadok, upozornenia alebo inú klávesnicu</string>
-  <string name="title_pref_explore_by_touch">Preskúmanie dotykom</string>
   <string name="title_pref_category_visual">Vizuálny obsah</string>
   <string name="title_pref_category_controls">Ovládacie prvky</string>
   <string name="title_pref_category_braille">Braillovo písmo</string>
@@ -766,8 +765,6 @@ Ak budú oneskorenia kratšie ako 0,3 sekundy, dvojité klepnutie spúšťajúc
   <string name="button_customize_gesture_mappings">Prispôsobiť gestá</string>
   <string name="button_disable_all_events">Zakázať všetko</string>
   <string name="button_enable_all_events">Povoliť všetko</string>
-  <string name="dialog_title_disable_exploration">Chcete vypnúť Preskúmanie dotykom?</string>
-  <string name="dialog_message_disable_exploration">Naozaj chcete Preskúmanie dotykom vypnúť?\n\nZariadenie už nebude reagovať na gestá ani nebude poskytovať hlasovú odozvu, keď sa dotknete obrazovky.</string>
   <string name="dialog_title_enable_tree_debug">Zapnúť ladenie stromu uzlov?</string>
   <string name="dialog_message_enable_tree_debug">Naozaj chcete zapnúť ladenie stromu uzlov?\n\nLadenie stromu uzlov vystaví obsah vašej obrazovky denníkom zariadenia, ktoré môžu čítať iné aplikácie.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Chcete znova priradiť gesto trojitého klepnutia štyrmi prstami?</string>

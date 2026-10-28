@@ -12,7 +12,6 @@ Nothing your app sends is said until the user allows it:
 
 Even for an allowed app:
 
-*   If the user turns on **Play a sound before other apps speak**, Backtalk plays a short sound before each thing your app says, so they can tell it apart from Backtalk's own speech.
 *   Nothing is said while the device is locked, or while Backtalk is off or paused.
 *   Each app can speak a few times at once, then about once a second. Requests beyond that are dropped.
 *   Text is said as plain text, without styling.

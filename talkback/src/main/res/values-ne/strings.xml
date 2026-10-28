@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">सबै प्रोग्रेस अपडेटहरू पढेर सुनाउनुहोस्</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">यसअन्तर्गत सामग्री डाउनलोड गर्ने र ड्राइभिङ निर्देशनहरू पालना गर्ने जस्ता कार्यहरू गरिरहेका बेला दिइने अद्यावधिक जानकारी समावेश हुन्छ। तपाईं यो सुविधा अफ गरिएका बेला पनि कहिलेकाहीँ पठाइने अद्यावधिक जानकारी प्राप्त गर्नु हुने छ।</string>
   <string name="pref_speak_system_window_titles_summary">तपाईंले स्ट्याटस बार, सूचना वा अर्को किबोर्ड बदल्दा सिस्टम तथा इन्पुट विन्डोको शीर्षक बोलेर सुनाउनुहोस्</string>
-  <string name="title_pref_explore_by_touch">छोएर अन्वेषण</string>
   <string name="title_pref_category_visual">भिजुअल</string>
   <string name="title_pref_category_controls">कन्ट्रोलहरू</string>
   <string name="title_pref_category_braille">ब्रेल</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">इशाराहरूलाई मिलाउनुहोस्</string>
   <string name="button_disable_all_events">सबैलाई असक्षम पार्नुहोस्</string>
   <string name="button_enable_all_events">सबैलाई सक्षम पार्नुहोस्</string>
-  <string name="dialog_title_disable_exploration">स्पर्श द्वारा खोजी असक्षम पार्ने?</string>
-  <string name="dialog_message_disable_exploration">स्पर्श द्वारा अन्वेषण हुने बन्द गर्न चाहनु हुन्छ?\n\nतपाईँले स्क्रिनलाई छुँदा तपाईँको उपकरणले सर्टकट इशाराहरू वा बोल्ने आइटमहरू लाई प्रतिक्रिया गर्दैन।</string>
   <string name="dialog_title_enable_tree_debug">नोड रूख डिबग सक्षम गर्ने?</string>
   <string name="dialog_message_enable_tree_debug">तपाईं नोड रूख डिबग खोल्न चाहनुहुन्छ भनी निश्चित हुनुहुन्छ?\n\nनोड रूख डिबग अन्य एप द्वारा पढ्न सक्छ जो आफ्नो उपकरणको लगको आफ्नो पर्दाको सामग्री खुला गर्छ।</string>
   <string name="dialog_title_enable_tree_debug_gesture">४ वटा औँलाले तिन पटक ट्याप गर्ने जेस्चर पुनः असाइन गर्ने हो?</string>

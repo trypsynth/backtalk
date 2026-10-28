@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Izrunāt visus progresa atjauninājumus</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Ietver paziņojumus par lejupielādi, braukšanas norāžu ievērošanu un citu informāciju. Ja šī funkcija būs izslēgta, paziņojumus saņemsiet retāk.</string>
   <string name="pref_speak_system_window_titles_summary">Tiek izrunāti sistēmas un ievades logu nosaukumi, piemēram, kad pārslēdzaties uz statusa joslu, paziņojumiem vai citu tastatūru.</string>
-  <string name="title_pref_explore_by_touch">Pārlūkot pieskaroties</string>
   <string name="title_pref_category_visual">Vizuālie iestatījumi</string>
   <string name="title_pref_category_controls">Vadīklas</string>
   <string name="title_pref_category_braille">Braila raksts</string>
@@ -765,8 +764,6 @@ Kontrolē, cik drīz pēc fokusa pārvietošanas tiek atskaņots TalkBack paziņ
   <string name="button_customize_gesture_mappings">Pielāgot žestus</string>
   <string name="button_disable_all_events">Atspējot visu</string>
   <string name="button_enable_all_events">Iespējot visu</string>
-  <string name="dialog_title_disable_exploration">Vai atspējot funkciju “Pārlūkot pieskaroties”?</string>
-  <string name="dialog_message_disable_exploration">Vai tiešām vēlaties izslēgt funkciju “Pārlūkot pieskaroties”?\n\nJūsu ierīce vairs nereaģēs uz saīšņu žestiem vai runas vienumiem, kad pieskarsieties ekrānam.</string>
   <string name="dialog_title_enable_tree_debug">Vai iespējot mezglu koka atkļūdošanu?</string>
   <string name="dialog_message_enable_tree_debug">Vai tiešām vēlaties ieslēgt mezglu koku atkļūdošanu?\n\nMezglu koku atkļūdošanas laikā jūsu ekrāna saturs ir redzams ierīces žurnālfailos, ko var nolasīt citas lietotnes.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Vai trīskāršā skāriena vietā piešķirt četru pirkstu žestu?</string>

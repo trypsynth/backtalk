@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">আটাইবোৰ প্ৰগতিৰ আপডে\'ট কওক</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ডাউনল’ড কৰি থকা, গাড়ী চলাই থাকোঁতে পোৱা দিক্-নিৰ্দেশনা অনুসৰণ কৰি থকা আৰু অধিক কাম কৰাৰ সময়ত দিয়া আপডে’ট অন্তর্ভুক্ত। অফ কৰিলে, আপুনি তথাপি কম সঘনে আপডে’ট পাব।</string>
   <string name="pref_speak_system_window_titles_summary">ছিষ্টেম আৰু ইনপুট ৱিণ্ড’সমূহ কওক, যেনে- আপুনি স্থিতি দণ্ড, জাননী অথবা অন্য কীব’ৰ্ড ব্যৱহাৰ কৰিবলৈ লয়</string>
-  <string name="title_pref_explore_by_touch">স্পৰ্শৰ দ্বাৰা অন্বেষণ কৰক</string>
   <string name="title_pref_category_visual">ভিজুৱেল</string>
   <string name="title_pref_category_controls">নিয়ন্ত্ৰণসমূহ</string>
   <string name="title_pref_category_braille">ব্ৰেইল</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">আঙুলিৰ স্পৰ্শৰে দিয়া নিৰ্দেশসমূহ কাষ্টমাইজ কৰক</string>
   <string name="button_disable_all_events">আটাইবোৰ অক্ষম কৰক</string>
   <string name="button_enable_all_events">আটাইবোৰ সক্ষম কৰক</string>
-  <string name="dialog_title_disable_exploration">স্পৰ্শৰ দ্বাৰা অন্বেষণ কার্য অক্ষম কৰিবনে?</string>
-  <string name="dialog_message_disable_exploration">স্পৰ্শৰ দ্বাৰা অন্বেষণ কৰা সুবিধা অফ কৰিবনে?\n\n আপুনি স্ক্ৰীন স্পর্শ কৰিলে আপোনাৰ ডিভাইচে ভৱিষ্যতে শ্বর্টকার্ট নিৰ্দেশসমূহৰ প্ৰতি আৰু সঁহাৰি নজনাব বা বস্তুবোৰ নকব।</string>
   <string name="dialog_title_enable_tree_debug">ন\'ড ট্ৰীৰ ডিবাগিং সক্ষম কৰিবনে?</string>
   <string name="dialog_message_enable_tree_debug">আপুনি ন\'ড ট্ৰীৰ ডিবাগিং অন কৰিবলৈ নিশ্চিতনে?\n\nন\'ড ট্ৰীৰ ডিবাগিংএ আপোনাৰ স্ক্ৰীনৰ সমল ডিভাইচৰ ল\'গবোৰত প্ৰদর্শন কৰে, যিবোৰ অন্য এপ্লিকেশ্বনসমূহে পঢ়িব পাৰে।</string>
   <string name="dialog_title_enable_tree_debug_gesture">৪ টা আঙুলিৰ নিৰ্দেশেৰে তিনিবাৰ টিপাটো পুনৰ আৱণ্টন কৰিব নেকি?</string>

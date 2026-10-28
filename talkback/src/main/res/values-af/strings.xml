@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Sê alle vorderingopdaterings</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Sluit opdaterings in terwyl daar afgelaai word, rigtingaanwysings gevolg word, en meer. Wanneer dit afgeskakel is, sal jy steeds minder gereelde opdaterings kry.</string>
   <string name="pref_speak_system_window_titles_summary">Sê stelsel- en invoervenstername, soos wanneer jy na die statusbalk, kennisgewings of ’n ander sleutelbord toe oorskakel</string>
-  <string name="title_pref_explore_by_touch">Verken-met-aanraking</string>
   <string name="title_pref_category_visual">Visueel</string>
   <string name="title_pref_category_controls">Kontroles</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Vertragings onder 0,3 sekondes sal Dubbeltik om te Aktiveer verander na Tweeving
   <string name="button_customize_gesture_mappings">Pasmaak gebare</string>
   <string name="button_disable_all_events">Deaktiveer alles</string>
   <string name="button_enable_all_events">Aktiveer alles</string>
-  <string name="dialog_title_disable_exploration">Deaktiveer Verken-met-aanraking?</string>
-  <string name="dialog_message_disable_exploration">Is jy seker jy wil Verken-met-aanraking afskakel?\n\nJou toestel sal nie meer op kortpadgebare of spraakitems reageer wanneer jy aan die skerm raak nie.</string>
   <string name="dialog_title_enable_tree_debug">Aktiveer nodusboomontfouting?</string>
   <string name="dialog_message_enable_tree_debug">Is jy seker jy wil nodusboomontfouting aanskakel?\n\nNodusboomontfouting ontbloot die inhoud van jou skerm aan jou toestel se loglêers, wat dalk deur ander programme gelees kan word.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Wys weer die Tripeltik met 4 Vingers-gebaar toe?</string>

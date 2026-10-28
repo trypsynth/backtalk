@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Loe kõik edenemise värskendused ette</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Hõlmab värskendusi allalaadimise, sõidujuhiste järgimise jm ajal. Kui see on välja lülitatud, esitatakse siiski värskendusi, kuid harvem.</string>
   <string name="pref_speak_system_window_titles_summary">Süsteemi- ja sisestusaknad loetakse ette, kui lülitute näiteks olekuribale, märguannetele või muule klaviatuurile</string>
-  <string name="title_pref_explore_by_touch">Puudutusega uurimine</string>
   <string name="title_pref_category_visual">Visuaal</string>
   <string name="title_pref_category_controls">Juhtelemendid</string>
   <string name="title_pref_category_braille">Braille</string>
@@ -766,8 +765,6 @@ Alla 0,3-sekundiliste viivituste korral muutub aktiveerimiseks määratud topelt
   <string name="button_customize_gesture_mappings">Kohanda liigutusi</string>
   <string name="button_disable_all_events">Keela kõik</string>
   <string name="button_enable_all_events">Luba kõik</string>
-  <string name="dialog_title_disable_exploration">Kas keelata funktsioon Puudutusega uurimine?</string>
-  <string name="dialog_message_disable_exploration">Kas soovite kindlasti funktsiooni Puudutusega uurimine välja lülitada?\n\nTeie seade ei reageeri enam otsetee liigutustele ega esita üksuste nimesid, kui puudutate ekraani.</string>
   <string name="dialog_title_enable_tree_debug">Kas lubada sõlmepuu silumine?</string>
   <string name="dialog_message_enable_tree_debug">Kas soovite kindlasti sõlmepuu silumise sisse lülitada?\n\nSõlmepuu silumisel avaldatakse ekraanil olev sisu seadme logidele, mida võivad lugeda teised rakendused.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Kas määrata nelja sõrmega kolmikpuudutuse liigutus uuesti?</string>

@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Изговарај све новости о напретку</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Обухвата промене током учитавања, праћења упутстава за вожњу и друго. Када је ово подешавање искључено, и даље ћете добијати обавештења, али ређе.</string>
   <string name="pref_speak_system_window_titles_summary">Изговара прозоре система и прозоре за унос, на пример, када пређете на статусну траку, обавештења или другу тастатуру</string>
-  <string name="title_pref_explore_by_touch">Истраживање додиром</string>
   <string name="title_pref_category_visual">Визуелно</string>
   <string name="title_pref_category_controls">Контроле</string>
   <string name="title_pref_category_braille">Брајева азбука</string>
@@ -766,8 +765,6 @@
   <string name="button_customize_gesture_mappings">Прилагоди покрете</string>
   <string name="button_disable_all_events">Онемогући све</string>
   <string name="button_enable_all_events">Омогући све</string>
-  <string name="dialog_title_disable_exploration">Желите ли да онемогућите Истраживање додиром?</string>
-  <string name="dialog_message_disable_exploration">Желите ли стварно да искључите Истраживање додиром?\n\nУређај више неће реаговати на покрете за пречице нити изговарати ставке када додирнете екран.</string>
   <string name="dialog_title_enable_tree_debug">Желите ли да омогућите отклањање грешака у стаблу са чворовима?</string>
   <string name="dialog_message_enable_tree_debug">Желите ли стварно да укључите отклањање грешака у стаблу са чворовима?\n\nОтклањање грешака у стаблу са чворовима открива садржај екрана евиденцијама на уређају, које могу да читају друге апликације.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Желите поново да доделите покрет троструког додира са 4 прста?</string>

@@ -79,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Shqipto përditësimet e progresit</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Përfshin përditësimet ndërkohë që shkarkon, ndjek drejtimet e udhëtimit me makinë etj. Kur është i çaktivizuar, do të marrësh përsëri përditësime më pak të shpeshta.</string>
   <string name="pref_speak_system_window_titles_summary">Lexo me zë dritaret e sistemit dhe të hyrjeve, si p.sh. kur kalon te shiriti i statusit, njoftimet ose te një tastierë tjetër</string>
-  <string name="title_pref_explore_by_touch">Eksploro me prekje</string>
   <string name="title_pref_category_visual">Vizuale</string>
   <string name="title_pref_category_controls">Kontrollet</string>
   <string name="title_pref_category_braille">Breil</string>
@@ -766,8 +765,6 @@ Vonesat nën 0,3 sekonda do ta kalojnë trokitjen dy herë për të aktivizuar t
   <string name="button_customize_gesture_mappings">Personalizo gjestet</string>
   <string name="button_disable_all_events">Çaktivizo të gjitha</string>
   <string name="button_enable_all_events">Aktivizo të gjitha</string>
-  <string name="dialog_title_disable_exploration">Të çaktivizohet funksioni \"Eksploro me prekje\"?</string>
-  <string name="dialog_message_disable_exploration">Je i sigurt që dëshiron ta çaktivizosh funksionin \"Eksploro me prekje\"?\n\nPajisja jote nuk do t\'u përgjigjet më gjesteve të shkurtoreve ose të lexojë artikuj, kur ta prekësh ekranin.</string>
   <string name="dialog_title_enable_tree_debug">Të aktivizohet Korrigjimi i pemës së nyjave?</string>
   <string name="dialog_message_enable_tree_debug">Je i sigurt që dëshiron ta aktivizosh korrigjimin e pemës së nyjave?\n\nKorrigjimi i pemës së nyjave e ekspozon përmbajtjen e ekranit tënd te regjistrat e pajisjes, të cilat mund të lexohen nga aplikacione të tjera.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Të ricaktohet gjesti i tri trokitjeve me 4 gishta?</string>
