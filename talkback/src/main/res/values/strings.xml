@@ -208,7 +208,9 @@
     Description: This is presented to the user. [CHAR_LIMIT=70]
     -->
   <string name="actions">Actions</string>
+  <!-- Summary of a settings category heading whose settings are hidden until it is activated. [CHAR LIMIT=30] -->
   <string name="category_collapsed">Collapsed</string>
+  <!-- Summary of a settings category heading whose settings are shown. [CHAR LIMIT=30] -->
   <string name="category_expanded">Expanded</string>
     <!--
       Source: Title for the menu item that opens the dialog with system actions available on device
