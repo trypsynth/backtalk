@@ -107,6 +107,12 @@
             android:summary="@string/summary_granularity_default"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_vertical_navigation_default"
+            android:key="@string/pref_selector_vertical_navigation_key"
+            android:title="@string/title_selector_vertical_navigation"
+            android:summary="@string/summary_selector_vertical_navigation"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_speech_rate_default"
             android:key="@string/pref_selector_speech_rate_key"
             android:title="@string/title_pref_selector_speech_rate"

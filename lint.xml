@@ -113,6 +113,8 @@
         <ignore regexp="summary_pref_gemini_api_key_other_service" />
         <ignore regexp="category_collapsed" />
         <ignore regexp="category_expanded" />
+        <ignore regexp="title_selector_vertical_navigation" />
+        <ignore regexp="summary_selector_vertical_navigation" />
         <ignore regexp="title_pref_gemini_model" />
         <ignore regexp="gemini_model_dialog_message" />
         <ignore regexp="title_pref_touch_stops_speech" />
