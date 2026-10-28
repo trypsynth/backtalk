@@ -404,7 +404,6 @@ public class SpeechControllerImpl implements SpeechController {
     failoverTts.addListener(failoverTtsListener);
 
     this.feedbackController = feedbackController;
-
     injectFullScreenReadCallbacks = false;
     this.removeUnnecessarySpans = removeUnnecessarySpans;
     this.catchIndexOutOfBounds = catchIndexOutOfBounds;
@@ -1403,7 +1402,6 @@ public class SpeechControllerImpl implements SpeechController {
         if (utteranceCompleteAction.utteranceIndex == peekNextUtteranceId()) {
           if (expectedUtteranceId[0] != -1) {
             utteranceCompleteAction.utteranceIndex = expectedUtteranceId[0];
-            utteranceCompleteAction.claimed = true;
           } else {
             iterator.remove();
           }
@@ -1555,22 +1553,6 @@ public class SpeechControllerImpl implements SpeechController {
     if (queuedItemCompletedAction != null) {
       queuedItemCompletedAction.run(STATUS_INTERRUPTED);
     }
-
-    // A queued hint has no utterance ID yet, so its reserved completion action was not claimed.
-    if (item.getUtteranceId() == null) {
-      final int nextUtteranceIndex = peekNextUtteranceId();
-      final Iterator<UtteranceCompleteAction> iterator = mUtteranceCompleteActions.iterator();
-      while (iterator.hasNext()) {
-        final UtteranceCompleteAction action = iterator.next();
-        if (action.utteranceIndex == nextUtteranceIndex
-            && action.utteranceGroup == UTTERANCE_GROUP_CONTENT_HINTS
-            && !action.claimed) {
-          iterator.remove();
-          runUtteranceCompleteRunnable(action.runnable, STATUS_INTERRUPTED);
-          break;
-        }
-      }
-    }
   }
 
   /**
@@ -1680,18 +1662,8 @@ public class SpeechControllerImpl implements SpeechController {
   public void addUtteranceCompleteAction(
       int index, @UtteranceGroup int utteranceGroup, UtteranceCompleteRunnable runnable) {
     final UtteranceCompleteAction action =
-        new UtteranceCompleteAction(index, utteranceGroup, runnable, /* claimed= */ false);
+        new UtteranceCompleteAction(index, utteranceGroup, runnable);
     mUtteranceCompleteActions.add(action);
-  }
-
-  /**
-   * Adds an action tied to an utterance that already exists, so it always runs when the
-   * utterance finishes.
-   */
-  private void addClaimedUtteranceCompleteAction(
-      int index, @UtteranceGroup int utteranceGroup, UtteranceCompleteRunnable runnable) {
-    mUtteranceCompleteActions.add(
-        new UtteranceCompleteAction(index, utteranceGroup, runnable, /* claimed= */ true));
   }
 
   /**
@@ -2031,19 +2003,12 @@ public class SpeechControllerImpl implements SpeechController {
     final UtteranceCompleteRunnable completedAction = item.getCompletedAction();
     final int utteranceGroup = item.getUtteranceGroup();
     if (completedAction != null) {
-      addClaimedUtteranceCompleteAction(utteranceIndex, utteranceGroup, completedAction);
+      addUtteranceCompleteAction(utteranceIndex, utteranceGroup, completedAction);
     }
 
     if (injectFullScreenReadCallbacks
         && item.hasFlag(FeedbackItem.FLAG_ADVANCE_CONTINUOUS_READING)) {
-      addClaimedUtteranceCompleteAction(utteranceIndex, utteranceGroup, fullScreenReadNextCallback);
-    }
-
-    // External reservations (peeked indexes) attach to this utterance only if it is real.
-    for (UtteranceCompleteAction action : mUtteranceCompleteActions) {
-      if (action.utteranceIndex == utteranceIndex) {
-        action.claimed = true;
-      }
+      addUtteranceCompleteAction(utteranceIndex, utteranceGroup, fullScreenReadNextCallback);
     }
 
     if ((item != null) && !item.hasFlag(FeedbackItem.FLAG_NO_HISTORY)) {
@@ -2072,7 +2037,7 @@ public class SpeechControllerImpl implements SpeechController {
     final String utteranceId = item.getUtteranceId();
     final int utteranceIndex =
         Integer.parseInt(utteranceId.substring(UTTERANCE_ID_PREFIX.length()));
-    addClaimedUtteranceCompleteAction(utteranceIndex, utteranceGroup, fullScreenReadNextCallback);
+    addUtteranceCompleteAction(utteranceIndex, utteranceGroup, fullScreenReadNextCallback);
   }
 
   private boolean processNextFragmentInternal() {
@@ -2460,10 +2425,6 @@ public class SpeechControllerImpl implements SpeechController {
 
     UtteranceCompleteAction action;
     while ((action = mUtteranceCompleteActions.poll()) != null) {
-      // Interrupts drop reserved indexes without their utterance instead of ending them here.
-      if (!action.claimed) {
-        continue;
-      }
       UtteranceCompleteRunnable runnable = action.runnable;
       if (runnable != null) {
         runUtteranceCompleteRunnable(runnable, STATUS_INTERRUPTED);
@@ -2646,10 +2607,6 @@ public class SpeechControllerImpl implements SpeechController {
     while (((action = mUtteranceCompleteActions.peek()) != null)
         && (action.utteranceIndex <= utteranceIndex)) {
       mUtteranceCompleteActions.remove(action);
-      // A reserved index that never had an utterance must not fire on a later completion.
-      if (!action.claimed) {
-        continue;
-      }
       UtteranceCompleteRunnable runnable = action.runnable;
       if (runnable != null) {
         runUtteranceCompleteRunnable(runnable, status);
@@ -2840,12 +2797,10 @@ public class SpeechControllerImpl implements SpeechController {
     public UtteranceCompleteAction(
         int utteranceIndex,
         @UtteranceGroup int utteranceGroup,
-        UtteranceCompleteRunnable runnable,
-        boolean claimed) {
+        UtteranceCompleteRunnable runnable) {
       this.utteranceIndex = utteranceIndex;
       this.runnable = runnable;
       this.utteranceGroup = utteranceGroup;
-      this.claimed = claimed;
     }
 
     /** The minimum utterance index that must complete before this action should be performed. */
@@ -2853,13 +2808,6 @@ public class SpeechControllerImpl implements SpeechController {
 
     /** The action to execute. */
     public UtteranceCompleteRunnable runnable;
-
-    /**
-     * Whether an utterance with this index has actually been handed to the engine. Actions
-     * reserved before an utterance was enqueued are dropped instead of firing on unrelated
-     * completions when the reservation's index is never claimed.
-     */
-    public boolean claimed;
 
     /** The group of the utterance. */
     @UtteranceGroup public int utteranceGroup = UTTERANCE_GROUP_DEFAULT;

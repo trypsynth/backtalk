@@ -1211,52 +1211,41 @@ public class FailoverTextToSpeech {
           } else if (state == SpeechCachePlayer.STATE_READY) {
             utteranceProgressCallback.onAudioCacheAvailable(utteranceId);
           } else if (state == SpeechCachePlayer.STATE_COMPLETED) {
-            // Consume the speeches with queue_MODE_ADD.
-            List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
-            suspendQueue.clear();
-            for (SpeakRequest speakRequest : suspendQueueCopy) {
-              LogUtils.d(TAG, "consume suspend queue speakRequest= %s: ", speakRequest);
-              mHandler.post(
-                  () -> {
-                     if (isReady()) {
-                       attemptSetLanguage(speakRequest.locale);
-                       ttsSpeak(
-                           speakRequest.text,
-                           speakRequest.queueMode,
-                           speakRequest.bundle,
-                           // Use the queued request's own id: the completing id names
-                           // the cached utterance, not the queued one.
-                           speakRequest.utteranceId());
-                     }
-                  });
-            }
+            speakSuspendQueue();
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ true);
           } else if (state == SpeechCachePlayer.STATE_STOPPED) {
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
           } else if (state == SpeechCachePlayer.STATE_ERROR) {
-            // A failed cached speech will not send a completion callback either, so the
-            // queued speech behind it has to resume and its own completion must be sent.
-            List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
-            suspendQueue.clear();
-            for (SpeakRequest speakRequest : suspendQueueCopy) {
-              mHandler.post(
-                  () -> {
-                     if (isReady()) {
-                       attemptSetLanguage(speakRequest.locale);
-                       ttsSpeak(
-                           speakRequest.text,
-                           speakRequest.queueMode,
-                           speakRequest.bundle,
-                           speakRequest.utteranceId());
-                     }
-                  });
-            }
+            // A cached speech that fails sends no completion either, so the speech queued behind
+            // it has to be spoken now.
+            speakSuspendQueue();
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
           }
         }
       };
 
   private final List<SpeakRequest> suspendQueue = Collections.synchronizedList(new ArrayList<>());
+
+  /** Speaks the speech queued with QUEUE_MODE_ADD while a cached speech played. */
+  private void speakSuspendQueue() {
+    List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
+    suspendQueue.clear();
+    for (SpeakRequest speakRequest : suspendQueueCopy) {
+      LogUtils.d(TAG, "consume suspend queue speakRequest= %s: ", speakRequest);
+      mHandler.post(
+          () -> {
+            if (isReady()) {
+              attemptSetLanguage(speakRequest.locale);
+              // The queued request's own id: the completing id names the cached speech.
+              ttsSpeak(
+                  speakRequest.text,
+                  speakRequest.queueMode,
+                  speakRequest.bundle,
+                  speakRequest.utteranceId());
+            }
+          });
+    }
+  }
 
   /**
    * Speaks the text with cache if possible, otherwiase fallback to {@link
