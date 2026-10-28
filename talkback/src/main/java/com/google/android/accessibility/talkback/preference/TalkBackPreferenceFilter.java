@@ -163,6 +163,8 @@ public class TalkBackPreferenceFilter {
     KEYBOARD_SHORTCUTS(
         R.string.pref_category_manage_keyboard_shortcut_key, HIDDEN_ON_TV | HIDDEN_ON_WATCH),
     PLAY_PAUSE_MEDIA(R.string.keycombo_shortcut_global_play_pause_media, HIDDEN_NO_MEDIA_CONTROL),
+    MEDIA_CONTROLS_READING_CONTROL(
+        R.string.pref_selector_media_controls_key, HIDDEN_NO_MEDIA_CONTROL),
     // The delay settings work on watches as on phones, so watches show them too.
     TYPING_CONFIRMATION(R.string.pref_typing_confirmation_key, HIDDEN_ON_TV),
     TYPING_LONG_PRESS_DURATION(R.string.pref_typing_long_press_duration_key, HIDDEN_ON_TV),

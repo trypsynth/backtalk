@@ -24,6 +24,7 @@ import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Ac
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType.STREAM_TYPE_ACCESSIBILITY;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.BRIGHTEN;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.DIM;
+import static com.google.android.accessibility.talkback.Feedback.Focus.Action.CLICK_CURRENT;
 import static com.google.android.accessibility.talkback.Feedback.Focus.Action.CLICK_NODE;
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.NEXT_PAGE;
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.PREVIOUS_PAGE;
@@ -51,6 +52,7 @@ import static com.google.android.accessibility.talkback.selector.SelectorControl
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_SEARCH;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_TYPO;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_WINDOWS;
+import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.MEDIA_CONTROLS;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.TABLET_HELD_UP_FACES_AWAY;
 import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED;
 import static com.google.android.accessibility.utils.monitor.InputModeTracker.INPUT_MODE_TOUCH;
@@ -146,6 +148,9 @@ public class SelectorController implements UserInputEventListener {
 
   /** The current action id selected for the actions setting. */
   private ContextMenuItemId currentActionId;
+
+  /** The currently selected media action in the media controls setting. */
+  private MediaAction currentMediaActionId = MediaAction.MEDIA_PLAY_PAUSE;
 
   private boolean hasRequestServiceHandlesDoubleTap = false;
   // To reduce the frequency of currentSetting update, we don't update the setting while the touch
@@ -392,6 +397,10 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_audio_output_device_key,
         R.string.selector_audio_output_device,
         R.bool.pref_selector_audio_output_device_default),
+    MEDIA_CONTROLS(
+        R.string.pref_selector_media_controls_key,
+        R.string.selector_media_controls,
+        R.bool.pref_selector_media_controls_default),
     VERTICAL_NAVIGATION(
         R.string.pref_selector_vertical_navigation_key,
         R.string.selector_vertical_navigation,
@@ -651,6 +660,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.SCROLLING_SEQUENTIAL,
           Setting.CHANGE_ACCESSIBILITY_VOLUME,
           Setting.AUDIO_OUTPUT_DEVICE,
+          Setting.MEDIA_CONTROLS,
           Setting.CHANGE_BRIGHTNESS,
           Setting.CHANGE_TOUCH_FOCUS_LATENCY,
           Setting.CHANGE_TYPING_FOCUS_LATENCY,
@@ -744,6 +754,9 @@ public class SelectorController implements UserInputEventListener {
       hiddenSettingsBuilder.add(TABLET_HELD_UP_FACES_AWAY);
     } else if (!FeatureSupport.doesServiceHandleDoubleTap()) {
       hiddenSettingsBuilder.add(ACTIONS);
+    }
+    if (!FeatureSupport.supportMediaControls()) {
+      hiddenSettingsBuilder.add(MEDIA_CONTROLS);
     }
     // Hide SEARCH in selector.
     if (!FeatureFlagReader.enableScreenSearchNavigation(context)
@@ -1001,6 +1014,11 @@ public class SelectorController implements UserInputEventListener {
       }
       case AUDIO_OUTPUT_DEVICE -> {
         actionDescription = context.getString(R.string.title_pref_audio_output_device);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case MEDIA_CONTROLS -> {
+        requestServiceHandlesDoubleTap(eventId, true);
+        actionDescription = context.getString(R.string.title_pref_media_controls);
         hint = getAdjustSelectedSettingGestures();
       }
       case VERTICAL_NAVIGATION -> {
@@ -1584,6 +1602,9 @@ public class SelectorController implements UserInputEventListener {
         }
         return typoGranularity.get().isNodeSupportSetting(context, node);
       }
+      case MEDIA_CONTROLS -> {
+        return FeatureSupport.supportMediaControls();
+      }
       default -> {
         return true;
       }
@@ -1760,7 +1781,7 @@ public class SelectorController implements UserInputEventListener {
       restoreSetting();
       currentSetting = getCurrentSetting(context, prefs);
     }
-    if (!ACTIONS.equals(currentSetting)) {
+    if (!ACTIONS.equals(currentSetting) && !MEDIA_CONTROLS.equals(currentSetting)) {
       // Log for ACTION is counted when double-tapping.
       analytics.onSelectorActionEvent(currentSetting);
     }
@@ -1920,6 +1941,10 @@ public class SelectorController implements UserInputEventListener {
         navigateTypo(eventId, isNext);
         return;
       }
+      case MEDIA_CONTROLS -> {
+        changeMediaAction(eventId, isNext);
+        return;
+      }
     }
   }
 
@@ -1975,6 +2000,21 @@ public class SelectorController implements UserInputEventListener {
                       .setHint(context.getString(R.string.hint_select_action))
                       .build()));
     }
+  }
+
+  /** Activates the currently selected media action in the media controls setting. */
+  public void activateCurrentMediaAction(EventId eventId) {
+    // The persisted setting can still be MEDIA_CONTROLS after the preference was turned off, so
+    // the double-tap falls back to the regular click.
+    if (!prefs.getBoolean(
+        context.getString(MEDIA_CONTROLS.prefKeyResId),
+        context.getResources().getBoolean(MEDIA_CONTROLS.defaultValueResId))) {
+      pipeline.returnFeedback(eventId, Feedback.focus(CLICK_CURRENT));
+      return;
+    }
+    analytics.onSelectorActionEvent(MEDIA_CONTROLS);
+    MediaControls.dispatch(context, currentMediaActionId);
+    showQuickMenuActionOverlay(eventId, context.getString(currentMediaActionId.getTitleResId()));
   }
 
   /**
@@ -2703,6 +2743,19 @@ public class SelectorController implements UserInputEventListener {
               : context.getString(R.string.use_action_hint));
       showQuickMenuActionOverlay(eventId, displayText);
     }
+  }
+
+  /** Selects the previous or next media action in the media controls setting. */
+  private void changeMediaAction(EventId eventId, boolean isNext) {
+    MediaAction[] actions = MediaAction.values();
+    int index = Math.max(0, Arrays.asList(actions).indexOf(currentMediaActionId));
+    index = (index + (isNext ? 1 : actions.length - 1)) % actions.length;
+    currentMediaActionId = actions[index];
+    // All media actions are triggered by double-tap.
+    requestServiceHandlesDoubleTap(eventId, true);
+    String displayText = context.getString(currentMediaActionId.getTitleResId());
+    announceSetting(eventId, displayText, context.getString(R.string.use_action_hint));
+    showQuickMenuActionOverlay(eventId, displayText);
   }
 
   /**

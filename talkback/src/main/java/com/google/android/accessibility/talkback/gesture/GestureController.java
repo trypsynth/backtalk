@@ -109,6 +109,8 @@ import com.google.android.accessibility.talkback.monitor.VolumeMonitor;
 import com.google.android.accessibility.talkback.monitor.VolumeMonitor.VolumeChangedListener;
 import com.google.android.accessibility.talkback.scripting.ItemInspector;
 import com.google.android.accessibility.talkback.scripting.Scripts;
+import com.google.android.accessibility.talkback.selector.MediaAction;
+import com.google.android.accessibility.talkback.selector.MediaControls;
 import com.google.android.accessibility.talkback.selector.SelectorController;
 import com.google.android.accessibility.talkback.selector.SelectorController.AnnounceType;
 import com.google.android.accessibility.talkback.selector.SelectorController.Setting;
@@ -370,6 +372,16 @@ public class GestureController {
       changeAccessibilityVolume(eventId, /* decrease= */ false);
     } else if (action.equals(service.getString(R.string.shortcut_value_decrease_volume))) {
       changeAccessibilityVolume(eventId, /* decrease= */ true);
+    } else if (action.equals(service.getString(R.string.shortcut_value_media_stop))) {
+      result = MediaControls.dispatch(service, MediaAction.MEDIA_STOP);
+    } else if (action.equals(service.getString(R.string.shortcut_value_media_previous))) {
+      result = MediaControls.dispatch(service, MediaAction.MEDIA_PREVIOUS);
+    } else if (action.equals(service.getString(R.string.shortcut_value_media_next))) {
+      result = MediaControls.dispatch(service, MediaAction.MEDIA_NEXT);
+    } else if (action.equals(service.getString(R.string.shortcut_value_media_rewind))) {
+      result = MediaControls.dispatch(service, MediaAction.MEDIA_REWIND);
+    } else if (action.equals(service.getString(R.string.shortcut_value_media_fast_forward))) {
+      result = MediaControls.dispatch(service, MediaAction.MEDIA_FAST_FORWARD);
     } else if (action.equals(service.getString(R.string.shortcut_value_back))) {
       result =
           pipeline.returnFeedback(
@@ -492,6 +504,8 @@ public class GestureController {
       // the same behavior as the native "Double-Tap" gesture.
       if (SelectorController.getCurrentSetting(service).equals(Setting.ACTIONS)) {
         selectorController.activateCurrentAction(eventId);
+      } else if (SelectorController.getCurrentSetting(service).equals(Setting.MEDIA_CONTROLS)) {
+        selectorController.activateCurrentMediaAction(eventId);
       } else {
         result = pipeline.returnFeedback(eventId, Feedback.focus(CLICK_CURRENT));
       }

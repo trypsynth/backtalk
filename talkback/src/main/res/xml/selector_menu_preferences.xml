@@ -313,6 +313,12 @@
             android:summary="@string/summary_selector_audio_output_device"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_media_controls_default"
+            android:key="@string/pref_selector_media_controls_key"
+            android:title="@string/title_pref_media_controls"
+            android:summary="@string/summary_media_controls"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_brightness_default"
             android:key="@string/pref_selector_change_brightness_key"
             android:title="@string/title_pref_brightness"

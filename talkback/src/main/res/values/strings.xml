@@ -1957,6 +1957,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="shortcut_voice_input">Start or end voice input</string>
     <!-- Label for the shortcut that plays/pauses or start/stop voice input [CHAR_LIMIT=90]-->
     <string name="shortcut_media_control_or_voice_input">Play or pause media, start or end voice input</string>
+    <string name="shortcut_media_stop">Stop media</string>
+    <string name="shortcut_media_previous">Previous track</string>
+    <string name="shortcut_media_next">Next track</string>
+    <string name="shortcut_media_rewind">Rewind</string>
+    <string name="shortcut_media_fast_forward">Fast forward</string>
     <!-- Label for the shortcut that turns up the volume. [CHAR_LIMIT=60]-->
     <string name="shortcut_increase_volume">Increase volume</string>
     <!-- Label for the shortcut that turns down the volume. [CHAR_LIMIT=60]-->
@@ -2178,6 +2183,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="not_selectable">Not selectable</string>
     <!-- Summary for the navigation options menu or quick menu containing actions. [CHAR_LIMIT=190] -->
     <string name="summary_actions">Perform actions</string>
+    <!-- Summary for the navigation options menu or quick menu containing media controls. [CHAR_LIMIT=190] -->
+    <string name="summary_media_controls">Control media playback</string>
     <!-- Summary for the navigation options menu or quick menu containing spell check. [CHAR_LIMIT=100] -->
     <string name="summary_spell_check">Jump between spelling and grammar suggestions</string>
     <!-- Summary for the navigation options menu or quick menu containing characters. [CHAR_LIMIT=190] -->
@@ -3015,6 +3022,23 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     Description: The user can check or not check this. [CHAR LIMIT=81]
    -->
   <string name="title_pref_selector_actions">Actions</string>
+  <!--
+    Source: Title for the preference that allows user to control media playback.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+   -->
+  <string name="title_pref_media_controls">Media controls</string>
+  <!-- Action in the Media controls reading control that skips to the previous item. [CHAR_LIMIT=30] -->
+  <string name="media_action_previous">Previous track</string>
+  <!-- Action in the Media controls reading control that rewinds the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_rewind">Rewind</string>
+  <!-- Action in the Media controls reading control that plays or pauses the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_play_pause">Play/pause</string>
+  <!-- Action in the Media controls reading control that stops the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_stop">Stop</string>
+  <!-- Action in the Media controls reading control that fast-forwards the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_fast_forward">Fast forward</string>
+  <!-- Action in the Media controls reading control that skips to the next item. [CHAR_LIMIT=30] -->
+  <string name="media_action_next">Next track</string>
   <!--
   Source: Title for Cache keyboard keys for announcement setting.
   Description: The user can switch it. [CHAR+LIMIT="NONE"]
