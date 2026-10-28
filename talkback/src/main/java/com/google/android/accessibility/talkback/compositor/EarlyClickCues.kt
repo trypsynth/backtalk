@@ -27,14 +27,16 @@ import android.os.SystemClock
  * click whose event never reaches the compositor is forgotten after a while.
  *
  * Also remembers the clicks whose new state was said, with their cues, before their event arrived,
- * so that the event gives no cues of its own.
+ * so that the event gives no cues or speech of its own.
  */
 class EarlyClickCues(private val clock: () -> Long = SystemClock::uptimeMillis) {
   private val given = RecentItems<Long>(MAX_CLICKS, MAX_AGE_MS, clock)
 
-  private class SaidEarly(val node: Any, val time: Long)
+  private class SaidEarly(val target: Any, val changed: Any, val time: Long)
 
   private val saidEarly = RecentItems<SaidEarly>(MAX_CLICKS, MAX_AGE_MS, clock)
+
+  private val said = RecentItems<Long>(MAX_CLICKS, MAX_AGE_MS, clock)
 
   /** Called when the cues for the click sent at [eventTime] have been given. */
   fun given(eventTime: Long) = given.add(eventTime)
@@ -43,17 +45,32 @@ class EarlyClickCues(private val clock: () -> Long = SystemClock::uptimeMillis) 
   fun take(eventTime: Long): Boolean = given.remove(eventTime)
 
   /**
-   * Called when the cues and new state of a click on [node] were given as soon as the app carried
-   * it out. The app sent that click's event while carrying it out, so before now.
+   * Called when the cues and new state of a click on [target] were given as soon as the app carried
+   * it out. [changed] is the target or the child whose state changed, which some apps send the
+   * click's event from. The app sent that click's event while carrying it out, so before now.
    */
-  fun saidEarly(node: Any) = saidEarly.add(SaidEarly(node, clock()))
+  fun saidEarly(target: Any, changed: Any) = saidEarly.add(SaidEarly(target, changed, clock()))
+
+  /** Whether a click may have been said early, so that its event's source is worth asking for. */
+  fun hasSaidEarly(): Boolean = !saidEarly.isEmpty()
 
   /**
    * Whether the click on [node] sent at [eventTime] had its cues given by [saidEarly]. Forgets that
    * click. A later click on the same item, sent after its state was said, is not matched.
    */
   fun takeSaidEarly(node: Any, eventTime: Long): Boolean =
-    saidEarly.removeFirst { it.node == node && eventTime <= it.time + CLOCK_SLACK_MS } != null
+    saidEarly.removeFirst {
+      (it.target == node || it.changed == node) && eventTime <= it.time + CLOCK_SLACK_MS
+    } != null
+
+  /** Called when the click sent at [eventTime] was matched by [takeSaidEarly]. */
+  fun said(eventTime: Long) = said.add(eventTime)
+
+  /**
+   * Whether the click sent at [eventTime] had its cues and speech given by [saidEarly]. Forgets
+   * that click.
+   */
+  fun takeSaid(eventTime: Long): Boolean = said.remove(eventTime)
 
   private companion object {
     // Event times and the clock are both whole milliseconds of uptime.

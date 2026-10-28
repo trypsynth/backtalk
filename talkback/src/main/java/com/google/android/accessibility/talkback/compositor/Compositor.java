@@ -470,25 +470,30 @@ public class Compositor {
    * about 150 ms later, once the clicked item has updated, and then only says its new state.
    */
   public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
-    @Nullable AccessibilityNodeInfoCompat source = AccessibilityEventUtils.sourceCompat(event);
-    // Cues given with the state by sayClickStateEarly() are not given again.
-    if (source == null || !earlyClickCues.takeSaidEarly(source, event.getEventTime())) {
-      // Without the source, the click rule gives its cues and no speech.
-      handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
+    long eventTime = event.getEventTime();
+    // Only ask the event for its source, a round trip to the app, when a click could match it.
+    @Nullable AccessibilityNodeInfoCompat source =
+        earlyClickCues.hasSaidEarly() ? AccessibilityEventUtils.sourceCompat(event) : null;
+    if (source != null && earlyClickCues.takeSaidEarly(source, eventTime)) {
+      // Cues and state given by sayClickStateEarly() are not given again.
+      earlyClickCues.said(eventTime);
+      return;
     }
-    earlyClickCues.given(event.getEventTime());
+    // Without the source, the click rule gives its cues and no speech.
+    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
+    earlyClickCues.given(eventTime);
   }
 
   /**
    * Gives the cues and new state of {@code target}, which Backtalk clicked, as soon as the app has
    * carried out the click. {@code changed} is the target or the child whose state changed. The
-   * click event's cues are then skipped, and its speech is the same, so it is not said again.
+   * click event's cues and speech, which would say the same, are then skipped.
    */
   public void sayClickStateEarly(
       AccessibilityNodeInfoCompat target,
       AccessibilityNodeInfoCompat changed,
       @Nullable EventId eventId) {
-    earlyClickCues.saidEarly(target);
+    earlyClickCues.saidEarly(target, changed);
     HandleEventOptions options = new HandleEventOptions().source(changed);
     EventFeedback feedback = getEventFeedback(EVENT_TYPE_VIEW_CLICKED, options);
     // The click rule leaves a state that the app describes to the app's state event, which comes
@@ -567,10 +572,16 @@ public class Compositor {
       return;
     }
 
-    boolean cuesGiven =
-        event == EVENT_TYPE_VIEW_CLICKED
-            && options.eventObject != null
-            && earlyClickCues.take(options.eventObject.getEventTime());
+    @Nullable AccessibilityEvent clickEvent =
+        (event == EVENT_TYPE_VIEW_CLICKED) ? options.eventObject : null;
+    if (clickEvent != null && earlyClickCues.takeSaid(clickEvent.getEventTime())) {
+      // Said by sayClickStateEarly(), whose speech may have ended, so the queue cannot drop it.
+      if (runnable != null) {
+        runnable.run(SpeechController.STATUS_NOT_SPOKEN);
+      }
+      return;
+    }
+    boolean cuesGiven = clickEvent != null && earlyClickCues.take(clickEvent.getEventTime());
 
     // Compose earcons.
     SpeakOptions speakOptions = null;

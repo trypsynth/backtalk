@@ -62,30 +62,54 @@ class EarlyClickCuesTest {
   @Test
   fun aClickSaidEarlyIsSkippedOnce() {
     now = 105L
-    cues.saidEarly("switch")
-    assertTrue(cues.takeSaidEarly("switch", eventTime = 100L))
-    assertFalse(cues.takeSaidEarly("switch", eventTime = 100L))
+    cues.saidEarly("row", "switch")
+    assertTrue(cues.takeSaidEarly("row", eventTime = 100L))
+    assertFalse(cues.takeSaidEarly("row", eventTime = 100L))
   }
 
   @Test
   fun aLaterClickOnTheSameItemIsNotTakenForOneSaidEarly() {
     now = 105L
-    cues.saidEarly("switch")
-    assertFalse(cues.takeSaidEarly("switch", eventTime = 400L))
+    cues.saidEarly("row", "switch")
+    assertFalse(cues.takeSaidEarly("row", eventTime = 400L))
   }
 
   @Test
   fun aClickOnAnotherItemIsNotTakenForOneSaidEarly() {
     now = 105L
-    cues.saidEarly("switch")
+    cues.saidEarly("row", "switch")
     assertFalse(cues.takeSaidEarly("button", eventTime = 100L))
   }
 
   @Test
   fun aSlowEventIsStillTakenForTheClickSaidEarly() {
     now = 105L
-    cues.saidEarly("switch")
+    cues.saidEarly("row", "switch")
     now = 3_000L
+    assertTrue(cues.takeSaidEarly("row", eventTime = 100L))
+  }
+
+  @Test
+  fun aClickSentFromTheChangedChildIsTakenForOneSaidEarly() {
+    now = 105L
+    cues.saidEarly("row", "switch")
     assertTrue(cues.takeSaidEarly("switch", eventTime = 100L))
+  }
+
+  @Test
+  fun aClickSaidEarlyIsSilencedOnce() {
+    assertFalse(cues.takeSaid(100L))
+    cues.said(100L)
+    assertTrue(cues.takeSaid(100L))
+    assertFalse(cues.takeSaid(100L))
+  }
+
+  @Test
+  fun hasSaidEarlyOnlyWhileAClickIsRemembered() {
+    assertFalse(cues.hasSaidEarly())
+    cues.saidEarly("row", "switch")
+    assertTrue(cues.hasSaidEarly())
+    cues.takeSaidEarly("row", eventTime = 0L)
+    assertFalse(cues.hasSaidEarly())
   }
 }
