@@ -570,7 +570,7 @@ Backtalk only uses a display from an app once you allow it, after a warning that
 
 ### Gemini API key
 
-Google's source release doesn't include working Gemini support, so without an API key, **Describe image** only reads text in images and **Describe screen** doesn't work. Backtalk adds **Automatic descriptions** > **Gemini API key**, where you can add your own key, and its own Describe screen with follow-up questions. For more information, see [Image descriptions with Gemini](README.md#image-descriptions-with-gemini).
+Google's source release doesn't include working Gemini support, so without an API key, **Describe image** only reads text in images and **Describe screen** doesn't work. Backtalk adds **Automatic descriptions** > **Gemini API key**, where you can add your own key, **Gemini model**, where you can switch to another model when Google retires or overloads one, and its own Describe screen with follow-up questions. For more information, see [Image descriptions with Gemini](README.md#image-descriptions-with-gemini).
 
 ### On-device AI
 
