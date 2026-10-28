@@ -348,10 +348,6 @@ While another accessibility service that explores by touch is on, such as anothe
 
 When an app removed the item that had focus, such as an ad that collapses, TalkBack jumped back to the top of the page. Backtalk carries on from where you were.
 
-### Lists that don't scroll for screen readers
-
-Some lists, such as the library in the Kindle app, say they can't scroll and ignore a screen reader's scroll requests, though they scroll when you drag them. In TalkBack, swiping stopped at the last item on screen, so the rest of the list couldn't be reached. When you swipe past the last item on screen in a list like this, Backtalk drags the list with two fingers and moves on to the next item. When the list is at its end, swiping leaves it as usual.
-
 ### Double tap with the actions reading control on Android 11
 
 On Android 11, when you picked an action with the **Actions** reading control, a double tap only played a sound. In Backtalk, a double tap performs the action, and a double-tap and hold performs a long press.

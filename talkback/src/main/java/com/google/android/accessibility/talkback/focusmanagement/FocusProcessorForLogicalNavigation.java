@@ -160,7 +160,6 @@ public class FocusProcessorForLogicalNavigation {
   @VisibleForTesting public final Filter<AccessibilityWindowInfo> filterWindowForWindowNavigation;
 
   private final AccessibilityService service;
-  private final DragScroller dragScroller;
   private final FocusFinder focusFinder;
   private ActorState actorState;
   private final ScreenStateMonitor.State screenState;
@@ -213,7 +212,6 @@ public class FocusProcessorForLogicalNavigation {
       @NonNull TextComposer compositor,
       GlobalVariables globalVariables) {
     this.service = service;
-    dragScroller = new DragScroller(service);
     this.focusFinder = focusFinder;
     this.accessibilityFocusMonitor = accessibilityFocusMonitor;
     this.screenState = screenState;
@@ -2605,8 +2603,7 @@ public class FocusProcessorForLogicalNavigation {
             /* includeSelf= */ true,
             WindowUtils.isScreenLayoutRTL(service));
     if (scrollableNodeInfo == null) {
-      return !ignoreDescendantsOfPivot
-          && dragUnscrollableList(pivot, navigationAction, windowOrderedStrategy, eventId);
+      return false;
     }
     AccessibilityNodeInfoCompat scrollableNode = scrollableNodeInfo.getNode();
 
@@ -2627,62 +2624,6 @@ public class FocusProcessorForLogicalNavigation {
     }
 
     return autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId);
-  }
-
-  /**
-   * Drags a list that refuses scroll actions when the pivot is its last item on screen, so that
-   * swiping carries on through the list. See {@link DragScroller}.
-   */
-  private boolean dragUnscrollableList(
-      @NonNull AccessibilityNodeInfoCompat pivot,
-      NavigationAction navigationAction,
-      @Nullable OrderedTraversalStrategy windowOrderedStrategy,
-      EventId eventId) {
-    if (navigationAction.targetType != NavigationTarget.TARGET_DEFAULT
-        || FormFactorUtils.isAndroidTv()) {
-      return false;
-    }
-    int direction = navigationAction.searchDirection;
-    AccessibilityNodeInfoCompat list = dragScroller.findListToDrag(pivot, direction);
-    if (list == null) {
-      return false;
-    }
-    AccessibilityNodeInfoCompat root = AccessibilityNodeInfoUtils.getRoot(pivot);
-    TraversalStrategy traversal =
-        (windowOrderedStrategy != null && TraversalStrategyUtils.isLogicalDirection(direction))
-            ? windowOrderedStrategy
-            : (root == null ? null : createTraversal(root, direction));
-    if (traversal == null) {
-      return false;
-    }
-    AutoScrollCallback callback = new AutoScrollCallback(this, navigationAction, pivot);
-    DragScroller.Listener listener =
-        new DragScroller.Listener() {
-          @Override
-          public void onScrolled(
-              AccessibilityNodeInfoCompat scrolled, Rect pivotBefore, @Nullable Rect pivotAfter) {
-            if (scrollCallback != callback) {
-              return;
-            }
-            int deltaX = pivotAfter == null ? DELTA_UNDEFINED : pivotBefore.left - pivotAfter.left;
-            int deltaY = pivotAfter == null ? DELTA_UNDEFINED : pivotBefore.top - pivotAfter.top;
-            scrolled.refresh();
-            onAutoScrolled(scrolled, eventId, deltaX, deltaY);
-          }
-
-          @Override
-          public void onNotScrolled(AccessibilityNodeInfoCompat atEnd) {
-            if (scrollCallback != callback) {
-              return;
-            }
-            onAutoScrollFailed(atEnd);
-          }
-        };
-    if (!dragScroller.dragAtEdge(list, pivot, direction, traversal, listener)) {
-      return false;
-    }
-    scrollCallback = callback;
-    return true;
   }
 
   /**
