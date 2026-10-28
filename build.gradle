@@ -12,8 +12,15 @@ apply from: 'version.gradle'
 
 final BUILD_TIMESTAMP = new Date().format('yyyy_MM_dd_HHmm')
 
+// With -PbundledOcr, the phone APK carries ML Kit's text recognition model, about 30 MB, so that
+// Describe image reads text on phones without Google Play services. CI publishes it as
+// backtalk-nogms.apk. Otherwise text recognition uses the model in Play services.
+def bundledOcr = project.hasProperty('bundledOcr')
+
 dependencies {
     implementation project(':talkback')
+    phoneImplementation bundledOcr ? libs.mlkit.text.recognition.bundled : libs.mlkit.text.recognition
+    wearImplementation libs.mlkit.text.recognition
 }
 
 android {
@@ -33,6 +40,9 @@ android {
         // a watch, so they are not debuggable. Debug logging in the libraries stays on.
         debug {
             debuggable = false
+            // Shrinks and optimizes the libraries, so there is less code to load and compile.
+            minifyEnabled = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     packaging {
@@ -49,8 +59,9 @@ android {
         checkReleaseBuilds = false
         // Lint the library modules too, where most of the code is, in one report.
         checkDependencies = true
-        // The issues that were already there when lint was added to CI. Only new ones fail the
-        // build. To accept new ones on purpose, run ./gradlew updateLintBaselinePhoneDebug.
+        // The issues that were already there when lint was added to CI, for the phone and the
+        // watch. Only new ones fail the build. After accepting new ones on purpose with
+        // ./gradlew updateLintBaseline, check that :lintPhoneDebug and :lintWearDebug both pass.
         baseline = file("lint-baseline.xml")
         abortOnError = true
     }

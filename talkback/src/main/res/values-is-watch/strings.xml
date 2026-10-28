@@ -4,7 +4,6 @@
   <string name="summary_custom_action">Birtist þegar sérsniðnar aðgerðir eru í boði fyrir núverandi atriði.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack-bendingar uppfærðar</string>
   <string name="notification_message_talkback_gestures_changed">Opnaðu TalkBack til að fá frekari upplýsingar</string>
-  <string name="talkback_updated_notification_content">Opna TalkBack til að fá upplýsingar</string>
   <string name="new_feature_in_talkback_title">Nýjungar</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">Í lagi</string>
   <string name="turn_off_talkback">Slökkva</string>

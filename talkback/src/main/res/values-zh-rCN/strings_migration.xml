@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the notification and dialog that offer to install Backtalk under its new app ID. [CHAR LIMIT=NONE] -->
+    <string name="update_move_title">Backtalk 正在迁移到新应用</string>
+    <!-- Text of the notification that offers to install Backtalk under its new app ID. [CHAR LIMIT=NONE] -->
+    <string name="update_move_notification_text">安装新的 Backtalk，你的设置会随之迁移。点按以安装。</string>
+    <!-- Message of the dialog that offers to install Backtalk under its new app ID. [CHAR LIMIT=NONE] -->
+    <string name="update_move_dialog_message">Backtalk 正在迁移到新的应用 ID，以便能安装在更多手机上。安装新的 Backtalk，你的设置会随之迁移。然后打开它，旧版会自动关闭。</string>
+    <!-- Announced before the install prompt for Backtalk under its new app ID. [CHAR LIMIT=NONE] -->
+    <string name="update_move_installing">Backtalk 正在迁移到新的应用 ID。安装新的 Backtalk，你的设置会随之迁移。</string>
+    <!-- Announced when the accessibility settings open after the new Backtalk is installed. [CHAR LIMIT=NONE] -->
+    <string name="update_move_turn_on">打开新的 Backtalk，然后旧版会自动关闭。</string>
+    <!-- Shown when the downloaded update is not a Backtalk build that can be installed. [CHAR LIMIT=NONE] -->
+    <string name="update_wrong_package">下载的内容不是 Backtalk 更新，因此未安装</string>
+    <!-- Title of the notification that the new Backtalk shows once it took over from the old one. [CHAR LIMIT=NONE] -->
+    <string name="migration_moved_title">Backtalk 已迁移到新应用</string>
+    <!-- Text of the notification that offers to uninstall the old Backtalk. [CHAR LIMIT=NONE] -->
+    <string name="migration_moved_text">点按以移除旧版。</string>
+</resources>

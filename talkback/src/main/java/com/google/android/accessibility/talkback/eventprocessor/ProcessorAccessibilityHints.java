@@ -22,6 +22,7 @@ import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_CLICKED;
 import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_FOCUSED;
 import static android.view.accessibility.AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED;
 import static com.google.android.accessibility.talkback.Feedback.HINT;
+import static com.google.android.accessibility.talkback.compositor.HintEventInterpretation.HINT_TYPE_ACCESSIBILITY_FOCUS;
 import static com.google.android.accessibility.talkback.compositor.HintEventInterpretation.HINT_TYPE_NONE;
 import static com.google.android.accessibility.talkback.compositor.HintEventInterpretation.HINT_TYPE_TEXT_SUGGESTION;
 import static com.google.android.accessibility.talkback.compositor.HintEventInterpretation.HINT_TYPE_TYPO;
@@ -42,8 +43,13 @@ import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.compositor.Compositor.TextComposer;
 import com.google.android.accessibility.talkback.compositor.EventInterpretation;
 import com.google.android.accessibility.talkback.compositor.HintEventInterpretation;
+import com.google.android.accessibility.talkback.soundthemes.ActionsSoundSettings;
+import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.LogDepth;
+import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.output.SpeechController;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -266,10 +272,20 @@ public class ProcessorAccessibilityHints {
         hintFlags |= FLAG_FORCE_FEEDBACK_EVEN_IF_MICROPHONE_ACTIVE;
       }
 
+      SpeechController.SpeakOptions hintOptions =
+          SpeechController.SpeakOptions.create().setFlags(hintFlags);
+      // The actions available sound plays as the hint "Actions available, ..." starts.
+      AccessibilityNodeInfoCompat hintSource = hintInfo.getPendingHintSource();
+      if (hintSource != null
+          && hintType == HINT_TYPE_ACCESSIBILITY_FOCUS
+          && ActionsSoundSettings.isWithHint(SharedPreferencesUtils.getSharedPreferences(context))
+          && !AccessibilityNodeInfoUtils.getCustomActions(hintSource).isEmpty()) {
+        hintOptions.setEarcons(new LinkedHashSet<>(Collections.singleton(R.id.actions_available)));
+      }
       feedback.setSpeech(
           Speech.builder()
               .setAction(Speech.Action.SPEAK)
-              .setHintSpeakOptions(SpeechController.SpeakOptions.create().setFlags(hintFlags))
+              .setHintSpeakOptions(hintOptions)
               .setHint(hintTTSOutput)
               .setHintInterruptLevel((isFocusHint ? 2 : 1))
               .build());

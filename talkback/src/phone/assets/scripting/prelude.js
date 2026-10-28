@@ -556,6 +556,7 @@
 
   const backtalk = Object.freeze({
     apiVersion: call('apiVersion'),
+    build: call('build'),
     get manifest() {
       return call('manifest');
     },

@@ -189,7 +189,8 @@ class ScriptRuntime(
       manager.onHooksChanged()
     }
     on("manifest") { JSONObject(script.manifest.json) }
-    on("apiVersion") { ScriptManifest.API_VERSION }
+    on("apiVersion") { ScriptManifest.LEGACY_API_VERSION }
+    on("build") { ScriptManifest.BUILD }
     on("locale") { ScriptTranslations.languageOf(manager.service).toLanguageTag() }
     on("i18n") {
       val translations = store.translations(id)
@@ -254,7 +255,13 @@ class ScriptRuntime(
         "A script can add at most $MAX_ADDED_RULES rules"
       }
       val json = args.optJSONObject("rule") ?: JSONObject()
-      val rule = asApiError { ManifestParser(strict = true).rule(json) }
+      val parser = ManifestParser(strict = true)
+      val rule = asApiError { parser.rule(json) }
+      val unsupported = parser.unsupported.joinToString()
+      if (unsupported.isNotEmpty()) {
+        ScriptLog.add(id, ScriptLog.Level.WARN, "This Backtalk doesn't know $unsupported in a rule")
+      }
+      if (rule == null) apiError("The rule has nothing this Backtalk can do: $unsupported")
       nextRule++.also {
         addedRules[it] = rule
         manager.onRulesChanged()

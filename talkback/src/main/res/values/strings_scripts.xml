@@ -154,14 +154,14 @@
     <!-- One log entry: its time, level, and message. [CHAR LIMIT=NONE] -->
     <string name="script_log_entry"><xliff:g id="time">%1$s</xliff:g>, <xliff:g id="level">%2$s</xliff:g></string>
 
-    <!-- Warning for a script that needs a newer Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="script_api_too_old">Needs script API <xliff:g id="needed">%1$d</xliff:g> or later. This Backtalk has <xliff:g id="current">%2$d</xliff:g>, so parts may not work.</string>
-    <!-- Warning for a script that was not tested with this Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="script_api_untested">Tested up to script API <xliff:g id="tested">%1$d</xliff:g>. This Backtalk has <xliff:g id="current">%2$d</xliff:g>, so it may not work as expected.</string>
+    <!-- Warning for a script that needs a newer build of Backtalk. [CHAR LIMIT=NONE] -->
+    <string name="script_needs_build">Needs Backtalk build <xliff:g id="needed" example="400">%1$d</xliff:g> or newer. This is build <xliff:g id="current" example="393">%2$d</xliff:g>, so parts may not work.</string>
+    <!-- Warning for a script with parts that this Backtalk doesn't know, followed by the names of their fields. [CHAR LIMIT=NONE] -->
+    <string name="script_unsupported">Parts of it need a newer Backtalk, so they are left out: <xliff:g id="fields" example="liftToActivate, longPressAfter">%1$s</xliff:g></string>
     <!-- In the list of scripts, for a script that may not work with this Backtalk. [CHAR LIMIT=NONE] -->
     <string name="script_state_incompatible">May not work with this Backtalk</string>
-    <!-- The script API versions a script was tested with. [CHAR LIMIT=NONE] -->
-    <string name="script_api_range">Script API <xliff:g id="min">%1$d</xliff:g> to <xliff:g id="tested">%2$d</xliff:g></string>
+    <!-- On a script's page, the oldest build of Backtalk it works with. [CHAR LIMIT=NONE] -->
+    <string name="script_min_build">Needs build <xliff:g id="build" example="400">%1$d</xliff:g> or newer</string>
     <!-- Heading of the warning on a script's page that it may not work. [CHAR LIMIT=40] -->
     <string name="script_compatibility_title">Compatibility</string>
     <!-- Button that installs a script that may not work with this Backtalk. [CHAR LIMIT=20] -->

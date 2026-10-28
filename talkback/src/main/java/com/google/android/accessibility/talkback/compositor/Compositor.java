@@ -31,6 +31,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.compositor.roledescription.RoleDescriptionExtractor;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorPhoneticLetters;
 import com.google.android.accessibility.talkback.imagecaption.ImageContents;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.scripting.Scripts;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
@@ -501,6 +502,14 @@ public class Compositor {
       @Nullable EventId eventId,
       HandleEventOptions options,
       LoadSpeechResultNotifier synthesizeResultNotifier) {
+    // Selection and text interpreters can bypass EventFilter. Apply the wake policy at the common
+    // output boundary, after event interpretation/state updates, for every raw-event speech path.
+    ScreenOnSpeechSuppression wakeSuppression = ScreenOnSpeechSuppression.from(mContext);
+    if (options.eventObject != null
+        && wakeSuppression != null
+        && wakeSuppression.shouldSuppressEvent(options.eventObject)) {
+      return;
+    }
     // Extract options.
     @Nullable EventInterpretation eventInterpretation = options.eventInterpretation;
     if (eventInterpretation != null) {
@@ -512,6 +521,12 @@ public class Compositor {
         (options.preparedFeedback != null)
             ? options.preparedFeedback
             : getEventFeedback(event, options);
+    if (isSilencedByScript(event, options.sourceNode, eventFeedback)) {
+      if (runnable != null) {
+        runnable.run(SpeechController.STATUS_NOT_SPOKEN);
+      }
+      return;
+    }
 
     // Compose earcons.
     SpeakOptions speakOptions = null;
@@ -525,6 +540,9 @@ public class Compositor {
       earcons.add(earcon);
       if (eventFeedback.secondEarcon() != -1) {
         earcons.add(eventFeedback.secondEarcon());
+      }
+      if (eventFeedback.actionsEarcon() != -1) {
+        earcons.add(eventFeedback.actionsEarcon());
       }
       speakOptions.setEarcons(earcons);
 
@@ -625,6 +643,23 @@ public class Compositor {
         runnable.run(SpeechController.STATUS_NOT_SPOKEN);
       }
     }
+  }
+
+  /**
+   * Whether a script rule silences the source of an event that an item sends by itself changing:
+   * a content change, a selection or an announcement. Only feedback that would be given is checked,
+   * as finding out can ask the app about each item around the source.
+   */
+  private static boolean isSilencedByScript(
+      int event, @Nullable AccessibilityNodeInfoCompat source, EventFeedback feedback) {
+    if (event != EVENT_TYPE_WINDOW_CONTENT_CHANGED
+        && event != EVENT_TYPE_VIEW_SELECTED
+        && event != EVENT_TYPE_ANNOUNCEMENT) {
+      return false;
+    }
+    boolean speaks =
+        feedback.ttsOutput().isPresent() && !TextUtils.isEmpty(feedback.ttsOutput().get());
+    return (speaks || feedback.earcon() != -1) && Scripts.isSilenced(source);
   }
 
   private void addSpeech(

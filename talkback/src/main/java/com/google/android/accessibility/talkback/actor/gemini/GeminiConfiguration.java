@@ -17,6 +17,7 @@ package com.google.android.accessibility.talkback.actor.gemini;
 
 import android.content.Context;
 import com.google.android.accessibility.talkback.BuildConfig;
+import com.google.android.accessibility.utils.SharedPreferencesUtils;
 
 /** This class implements the configuration flags for Gemini requests. */
 public final class GeminiConfiguration {
@@ -27,8 +28,10 @@ public final class GeminiConfiguration {
     return false;
   }
 
+  /** The model the user entered in settings, or else the one built into the app. */
   static String getGeminiModel(Context context) {
-    return BuildConfig.GEMINI_MODEL;
+    return GeminiModel.effectiveModel(
+        SharedPreferencesUtils.getSharedPreferences(context), BuildConfig.GEMINI_MODEL);
   }
 
   /**

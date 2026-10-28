@@ -36,6 +36,7 @@ import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.input.WindowEventInterpreter;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** The event-interpreter for window-events affecting focus. */
 public class FocusProcessorForScreenStateChange {
@@ -62,6 +63,21 @@ public class FocusProcessorForScreenStateChange {
 
   @VisibleForTesting long handledOverrideFocusRestoreUptimeMs = 0;
 
+  /**
+   * Set from the "Move focus to new windows" setting. When off, a window change places no focus,
+   * including when a Backtalk menu or dialog opens or closes. Focus left in a window that is no
+   * longer active is cleared, so that the next swipe starts in the new window.
+   */
+  private static volatile boolean focusNewWindows = true;
+
+  public static void setFocusNewWindows(boolean focus) {
+    focusNewWindows = focus;
+  }
+
+  public static boolean focusesNewWindows() {
+    return focusNewWindows;
+  }
+
   public FocusProcessorForScreenStateChange(AccessibilityFocusMonitor accessibilityFocusMonitor) {
     this.accessibilityFocusMonitor = accessibilityFocusMonitor;
     screenStateDelayer = new Handler(Looper.getMainLooper());
@@ -85,6 +101,8 @@ public class FocusProcessorForScreenStateChange {
    * @return return {@code true} if event is interpreted as a valid focus-event
    */
   public boolean onScreenStateChanged(ScreenState screenState, EventId eventId) {
+    // A restore still waiting for the app after the screen turned on is for an older screen.
+    WakeFocusWarmUp.cancel();
     long windowEventInterpreterDelayTimeMs =
         SystemClock.uptimeMillis() - screenState.getScreenTransitionStartTime();
     LogUtils.d(
@@ -152,10 +170,28 @@ public class FocusProcessorForScreenStateChange {
       boolean forceRestoreFocus =
           (actorState.getOverrideFocusRestoreUptimeMs() > handledOverrideFocusRestoreUptimeMs);
 
-      pipeline.input(
-          eventId,
-          /* event= */ null,
-          Interpretation.WindowChange.create(forceRestoreFocus, screenState));
+      Runnable setInitialFocus =
+          () ->
+              pipeline.input(
+                  eventId,
+                  /* event= */ null,
+                  Interpretation.WindowChange.create(forceRestoreFocus, screenState));
+      if (screenState.isInterpretFirstTimeWhenWakeUp() && (lastRecordOnActiveWindow != null)) {
+        // The app is drawing again after the screen turned on, and restoring focus would wait for
+        // it on the main thread. See WakeFocusWarmUp.
+        long requestedUptimeMs = SystemClock.uptimeMillis();
+        WakeFocusWarmUp.restoreAfterAppAnswers(
+            lastRecordOnActiveWindow.getFocusedNode(),
+            () -> {
+              // Leave focus that the user moved while the app was answering.
+              @Nullable FocusActionRecord last = history.getLastFocusActionRecord();
+              if ((last == null) || (last.getActionTime() < requestedUptimeMs)) {
+                setInitialFocus.run();
+              }
+            });
+      } else {
+        setInitialFocus.run();
+      }
 
       return FocusResult.SUCCESS;
 

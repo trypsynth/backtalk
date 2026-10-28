@@ -76,7 +76,11 @@ object ThemeLinks {
         }
       }
     }
-    val name = segments.lastOrNull()?.substringBeforeLast('.')?.ifEmpty { null } ?: host
+    // A GitLab file link ends in /raw, after the file's path.
+    val file =
+      if (segments.size >= 2 && segments.last() == "raw") segments[segments.size - 2]
+      else segments.lastOrNull()
+    val name = file?.substringBeforeLast('.')?.ifEmpty { null } ?: host
     return Download(uri.toASCIIString(), name)
   }
 

@@ -41,6 +41,7 @@ import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.eventprocessor.EventState;
 import com.google.android.accessibility.talkback.eventprocessor.ProcessorAccessibilityHints;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
+import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.gesture.GestureHints;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
@@ -113,6 +114,22 @@ public class ScreenFeedbackManager
   /** Event time of the last key press that stopped speech, in uptime milliseconds. */
   private long speechStoppedByKeyTime = 0;
 
+  /**
+   * Set from the "Speak first item without waiting for window name" setting. When on, the
+   * window name interrupts speech that started before the window changed, and the first item
+   * focused in the new window interrupts the window name. Other window speech, such as volume
+   * and keyboard announcements, is not affected.
+   */
+  private static volatile boolean firstItemInterruptsWindowName;
+
+  public static void setFirstItemInterruptsWindowName(boolean interrupts) {
+    firstItemInterruptsWindowName = interrupts;
+  }
+
+  public static boolean firstItemInterruptsWindowName() {
+    return firstItemInterruptsWindowName;
+  }
+
   public ScreenFeedbackManager(
       AccessibilityService service,
       @NonNull WindowEventInterpreter windowEventInterpreter,
@@ -176,7 +193,8 @@ public class ScreenFeedbackManager
       boolean forceFeedbackEvenIfAudioPlaybackActive,
       boolean forceFeedbackEvenIfMicrophoneActive,
       boolean forceFeedbackEvenIfSsbActive,
-      boolean sourceIsVolumeControl) {
+      boolean sourceIsVolumeControl,
+      int queueMode) {
     if ((hint != null)) {
       pipeline.returnFeedback(
           eventId, ProcessorAccessibilityHints.screenEventToHint(hint, service, compositor));
@@ -198,7 +216,7 @@ public class ScreenFeedbackManager
 
     SpeechController.SpeakOptions speakOptions =
         SpeechController.SpeakOptions.create()
-            .setQueueMode(SpeechController.QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH)
+            .setQueueMode(queueMode)
             .setFlags(flags);
 
     pipeline.returnFeedback(
@@ -230,6 +248,16 @@ public class ScreenFeedbackManager
           com.google.android.accessibility.talkback.Feedback.interrupt(HINT, /* level= */ 2));
     }
 
+    // Only a sound theme gives these sounds, so they play nothing otherwise.
+    if (interpretation.getShouldAnnounceInputMethodChange()) {
+      pipeline.returnFeedback(
+          eventId,
+          com.google.android.accessibility.talkback.Feedback.sound(
+              interpretation.getInputMethod().getId() == WINDOW_ID_NONE
+                  ? R.id.keyboard_hide
+                  : R.id.keyboard_show));
+    }
+
     // This will throw exception if has no any speaker.
     checkSpeaker();
 
@@ -237,7 +265,14 @@ public class ScreenFeedbackManager
     @Nullable Announcement announcement = interpretation.getAnnouncement();
     boolean sourceIsVolumeControl =
         (announcement != null) && announcement.isFromVolumeControlPanel();
+    boolean firstPart = true;
     for (FeedbackPart feedbackPart : feedback.getParts()) {
+      int queueMode =
+          !(firstItemInterruptsWindowName && feedbackPart.isWindowName())
+              ? SpeechController.QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH
+              : firstPart
+                  ? SpeechController.QUEUE_MODE_INTERRUPT
+                  : SpeechController.QUEUE_MODE_QUEUE;
       speak(
           feedbackPart.getSpeech(),
           feedbackPart.getHint(),
@@ -245,7 +280,9 @@ public class ScreenFeedbackManager
           feedbackPart.getForceFeedbackEvenIfAudioPlaybackActive(),
           feedbackPart.getForceFeedbackEvenIfMicrophoneActive(),
           feedbackPart.getForceFeedbackEvenIfSsbActive(),
-          sourceIsVolumeControl);
+          sourceIsVolumeControl,
+          queueMode);
+      firstPart = false;
     }
   }
 
@@ -331,6 +368,12 @@ public class ScreenFeedbackManager
       logCompose(logDepth, "composeFeedback", "interpretation=%s", interpretation);
 
       Feedback feedback = new Feedback();
+
+      // Only verified lock-screen System UI feedback is quiet; mixed/unknown windows still speak.
+      ScreenOnSpeechSuppression wakeSuppression = ScreenOnSpeechSuppression.from(service);
+      if (wakeSuppression != null && wakeSuppression.shouldSuppressWindow(interpretation)) {
+        return feedback;
+      }
 
       if (isWakeUpForWear(interpretation)) {
         // Only announce unread notification feedback on wake up experience for wear and have early
@@ -473,6 +516,7 @@ public class ScreenFeedbackManager
       if (!TextUtils.isEmpty(utterance)) {
         feedback.addPart(
             new FeedbackPart(utterance)
+                .windowName(true)
                 .hint(hint)
                 .forceFeedbackEvenIfAudioPlaybackActive(true)
                 .forceFeedbackEvenIfMicrophoneActive(true));
@@ -684,9 +728,21 @@ public class ScreenFeedbackManager
     private boolean forceFeedbackEvenIfAudioPlaybackActive = false;
     private boolean forceFeedbackEvenIfMicrophoneActive = false;
     private boolean forceFeedbackEvenIfSsbActive = false;
+    private boolean windowName = false;
 
     public FeedbackPart(CharSequence speech) {
       this.speech = speech;
+    }
+
+    /** Marks the part that names the window, as opposed to an announcement. */
+    @CanIgnoreReturnValue
+    public FeedbackPart windowName(boolean windowName) {
+      this.windowName = windowName;
+      return this;
+    }
+
+    public boolean isWindowName() {
+      return windowName;
     }
 
     @CanIgnoreReturnValue

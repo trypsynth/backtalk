@@ -33,7 +33,6 @@ import com.google.android.accessibility.talkback.actor.gemini.GeminiCommand.Comm
 import com.google.android.accessibility.talkback.actor.gemini.GeminiRestRequestPerformer.GeminiRestResponseCallback;
 import com.google.android.accessibility.talkback.actor.gemini.local.OnDeviceAiSettings;
 import com.google.android.accessibility.talkback.actor.gemini.screenqa.OverviewResponse;
-import com.google.android.accessibility.utils.NetworkUtils;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import org.json.JSONArray;
@@ -50,8 +49,6 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
 
   private final Context context;
   private final SharedPreferences prefs;
-  private final String model;
-  private final String url;
   private final String builtInApiKey;
   private final GeminiRestRequestPerformer requestPerformer;
   private final String safetyThresholdHarassment;
@@ -68,8 +65,6 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
   public GeminiRestEndpoint(
       Context context, String builtInApiKey, GeminiRestRequestPerformer requestPerformer) {
     this.context = context;
-    model = GeminiConfiguration.getGeminiModel(context);
-    url = GEMINI_URL + model + GEMINI_URL_NO_PARAM;
     this.builtInApiKey = builtInApiKey;
     this.requestPerformer = requestPerformer;
     safetyThresholdHarassment = GeminiConfiguration.getSafetyThresholdHarassment(context);
@@ -91,7 +86,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
                   : PromptStyle.ON_DEVICE;
             },
             (postData, callback) -> {
-              requestPerformer.performRequest(url, apiKey(), postData, callback);
+              requestPerformer.performRequest(url(), apiKey(), postData, callback);
               return kotlin.Unit.INSTANCE;
             },
             failure -> failure.userMessage(context));
@@ -104,6 +99,11 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
    */
   private String apiKey() {
     return GeminiApiKey.effectiveKey(prefs, builtInApiKey);
+  }
+
+  /** Looked up for each request, so that a model entered in settings is used at once. */
+  private String url() {
+    return GEMINI_URL + GeminiConfiguration.getGeminiModel(context) + GEMINI_URL_NO_PARAM;
   }
 
   private boolean isSupported() {
@@ -127,7 +127,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
 
   @Override
   public boolean createRequestGeminiCommand(GeminiCommand command) {
-    LogUtils.v(TAG, "createRequestGeminiCommand - %s", model);
+    LogUtils.v(TAG, "createRequestGeminiCommand - %s", GeminiConfiguration.getGeminiModel(context));
     String text;
     byte[] imageByteArray;
     GeminiResponseListener geminiResponseListener;
@@ -168,7 +168,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
           DataFieldUtils.createPostDataJson(prefixPrompt + text, encodedImage, safetySettings);
 
       requestPerformer.performRequest(
-          url,
+          url(),
           apiKey(),
           postData,
           new GeminiRestResponseCallback() {
@@ -218,7 +218,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
       listener.onError(ErrorReason.UNSUPPORTED);
       return false;
     }
-    if (!NetworkUtils.isNetworkConnected(context)) {
+    if (!GeminiFunctionUtils.canReachModel(context)) {
       listener.onError(ErrorReason.NETWORK_ERROR);
       return false;
     }
@@ -259,7 +259,7 @@ public class GeminiRestEndpoint implements GeminiEndpoint {
       return false;
     }
 
-    if (!NetworkUtils.isNetworkConnected(context)) {
+    if (!GeminiFunctionUtils.canReachModel(context)) {
       LogUtils.d(TAG, "Internet is not connected");
       geminiResponseListener.onError(ErrorReason.NETWORK_ERROR);
       return false;

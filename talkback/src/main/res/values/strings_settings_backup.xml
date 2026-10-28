@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the settings screen and its entry in the main list, for saving and restoring all settings. [CHAR LIMIT=40] -->
+    <string name="settings_backup_title">Backup and restore</string>
+    <!-- Backup and restore: saves all settings to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export">Export settings</string>
+    <!-- Summary of the export action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_export_summary">Save all your settings to a file.</string>
+    <!-- Backup and restore: loads all settings from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import">Import settings</string>
+    <!-- Summary of the import action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_summary">Replace your settings with those in a file you exported. Settings tied to this phone, such as paired braille displays and your Gemini API key, are kept as they are.</string>
+    <!-- Toast after the settings were saved to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export_done">Settings exported</string>
+    <!-- Toast when the settings could not be saved to a file. [CHAR LIMIT=60] -->
+    <string name="settings_backup_export_failed">Could not export the settings</string>
+    <!-- Toast after the settings were restored from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import_done">Settings imported</string>
+    <!-- Dialog message after the settings were restored, when some of them only take effect once Backtalk is turned off and on again. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_restart">Some of the settings you imported need Backtalk to be turned off and on again to take effect.</string>
+    <!-- Toast when a file could not be read as a settings backup. [CHAR LIMIT=60] -->
+    <string name="settings_backup_import_failed">Could not read that file</string>
+</resources>

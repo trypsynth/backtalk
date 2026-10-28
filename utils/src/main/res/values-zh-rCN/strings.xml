@@ -92,4 +92,8 @@
   <string name="color_cyan">青色</string>
   <string name="color_blue">蓝色</string>
   <string name="color_purple">紫色</string>
+
+
+    <!-- Label for menu button for the speech bubble overlay.[CHAR_LIMIT=NONE] -->
+    <string name="menu_button_description" translatable="false">菜单</string>
 </resources>

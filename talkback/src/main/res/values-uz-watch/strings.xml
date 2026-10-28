@@ -4,7 +4,6 @@
   <string name="summary_custom_action">Mavjud boʻlsa, joriy obyekt uchun maxsus amallarni chiqarish.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack ishoralari yangilandi</string>
   <string name="notification_message_talkback_gestures_changed">Batafsil axborot uchun Talkback xizmatini oching</string>
-  <string name="talkback_updated_notification_content">Batafsil maʼlumot uchun TalkBack funksiyasini oching</string>
   <string name="new_feature_in_talkback_title">Nima yangiliklar</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">OK</string>
   <string name="turn_off_talkback">Faolsizlantirish</string>

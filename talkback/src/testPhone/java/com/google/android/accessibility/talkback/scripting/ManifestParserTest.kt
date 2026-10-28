@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [34])
 class ManifestParserTest {
   private fun manifest(extra: String = ""): String =
-    """{"id":"my-script","name":"My script","author":"Me","minApiVersion":1,"testedApiVersion":1$extra}"""
+    """{"id":"my-script","name":"My script","author":"Me"$extra}"""
 
   private fun parse(extra: String = "", strict: Boolean = true): ScriptManifest =
     ScriptManifest.parse(manifest(extra), strict)
@@ -40,7 +40,11 @@ class ManifestParserTest {
   private fun rejects(extra: String): String =
     assertThrows(ManifestException::class.java) { parse(extra) }.message.orEmpty()
 
-  private fun rule(json: String): ScriptRule = ManifestParser(strict = true).rule(JSONObject(json))
+  private fun rule(json: String): ScriptRule = ManifestParser(strict = true).rule(JSONObject(json))!!
+
+  /** Returns the rule, or null if it was left out, and the fields that were. */
+  private fun leftOut(json: String): Pair<ScriptRule?, Set<String>> =
+    ManifestParser(strict = true).let { it.rule(JSONObject(json)) to it.unsupported }
 
   private fun rejectsRule(json: String): String =
     assertThrows(ManifestException::class.java) { rule(json) }.message.orEmpty()
@@ -52,7 +56,8 @@ class ManifestParserTest {
     assertEquals("my-script", parsed.id)
     assertEquals("My script", parsed.name)
     assertEquals("1", parsed.version)
-    assertEquals(1, parsed.testedApiVersion)
+    assertNull(parsed.minBuild)
+    assertTrue(parsed.unsupported.isEmpty())
     assertTrue(parsed.isGlobal)
     assertTrue(parsed.permissions.isEmpty())
   }
@@ -67,31 +72,41 @@ class ManifestParserTest {
   }
 
   @Test
-  fun anImportedManifestNeedsAnAuthorAndTheApiVersions() {
-    for (needed in listOf("author", "minApiVersion", "testedApiVersion")) {
-      val without = JSONObject(manifest()).apply { remove(needed) }.toString()
+  fun anImportedManifestNeedsAnAuthor() {
+    val without = JSONObject(manifest()).apply { remove("author") }.toString()
 
-      val error = assertThrows(ManifestException::class.java) { ScriptManifest.parse(without) }
+    val error = assertThrows(ManifestException::class.java) { ScriptManifest.parse(without) }
 
-      assertTrue(needed in error.message.orEmpty())
-    }
+    assertTrue("author" in error.message.orEmpty())
   }
 
   @Test
-  fun aStoredManifestIsReadEvenWithoutAnAuthorOrAnApiVersion() {
+  fun aStoredManifestIsReadEvenWithoutAnAuthor() {
     val stored = ScriptManifest.parse("""{"id":"my-script","name":"My script"}""", strict = false)
 
     assertEquals("?", stored.author)
-    assertEquals(1, stored.minApiVersion)
   }
 
   @Test
-  fun testedApiVersionCannotBeLowerThanMinApiVersion() {
-    val bad = """{"id":"s","name":"n","author":"a","minApiVersion":2,"testedApiVersion":1}"""
+  fun minBuildIsABuildNumber() {
+    assertEquals(345, parse(""","minBuild":345""").minBuild)
+    assertTrue("minBuild" in rejects(""","minBuild":"345""""))
+    assertTrue("minBuild" in rejects(""","minBuild":0"""))
+    assertTrue("minBuild" in rejects(""","minBuild":3.5"""))
+  }
 
-    val error = assertThrows(ManifestException::class.java) { ScriptManifest.parse(bad) }
+  @Test
+  fun aScriptForANewerBuildMayNotWork() {
+    assertTrue(parse(""","minBuild":${ScriptManifest.BUILD}""").isCompatible)
+    assertFalse(parse(""","minBuild":${ScriptManifest.BUILD + 1}""").isCompatible)
+  }
 
-    assertTrue("testedApiVersion cannot be lower" in error.message.orEmpty())
+  @Test
+  fun theOldScriptApiVersionsAreIgnored() {
+    val parsed = parse(""","minApiVersion":9,"testedApiVersion":1""")
+
+    assertNull(parsed.minBuild)
+    assertTrue(parsed.isCompatible)
   }
 
   @Test
@@ -144,7 +159,6 @@ class ManifestParserTest {
     assertTrue(
       "inside is an object" in rejectsRule("""{"match":{"inside":"row"},"hide":true}""")
     )
-    assertTrue("colour" in rejectsRule("""{"match":{"inside":{"colour":"red"}},"hide":true}"""))
     assertTrue(
       "another inside" in
         rejectsRule("""{"match":{"inside":{"id":"a","inside":{"id":"b"}}},"hide":true}""")
@@ -165,8 +179,56 @@ class ManifestParserTest {
   }
 
   @Test
-  fun unknownRuleFieldsAreRejected() {
-    assertTrue("colour" in rejectsRule("""{"id":"a","label":"A","colour":"red"}"""))
+  fun silenceIsTrueFalseOrAll() {
+    assertEquals(Hide.SELF, rule("""{"id":"a","silence":true}""").silence)
+    assertEquals(Hide.ALL, rule("""{"id":"a","silence":"all"}""").silence)
+    assertEquals(Hide.NONE, rule("""{"id":"a","silence":false,"label":"A"}""").silence)
+    assertTrue("needs label" in rejectsRule("""{"id":"a","silence":false}"""))
+    assertTrue("silence is" in rejectsRule("""{"id":"a","silence":"some"}"""))
+  }
+
+  @Test
+  fun liftToActivateTakesALongPressTime() {
+    val parsed = rule("""{"id":"a","liftToActivate":true,"longPressAfter":800}""")
+    assertTrue(parsed.liftToActivate)
+    assertEquals(800, parsed.longPressAfter)
+    assertEquals(null, rule("""{"id":"a","liftToActivate":true}""").longPressAfter)
+    assertTrue("needs label" in rejectsRule("""{"id":"a","liftToActivate":false}"""))
+    assertTrue("longPressAfter is" in rejectsRule("""{"id":"a","longPressAfter":50}"""))
+    assertTrue("longPressAfter is" in rejectsRule("""{"id":"a","longPressAfter":20000}"""))
+    assertTrue("longPressAfter is" in rejectsRule("""{"id":"a","longPressAfter":"1s"}"""))
+  }
+
+  @Test
+  fun anUnknownRuleFieldIsLeftOut() {
+    val (rule, unsupported) = leftOut("""{"id":"a","label":"A","colour":"red"}""")
+
+    assertEquals("A", rule?.label)
+    assertEquals(setOf("colour"), unsupported)
+  }
+
+  @Test
+  fun aRuleWithOnlyUnknownChangesIsLeftOut() {
+    val (rule, unsupported) = leftOut("""{"id":"a","vibrate":true}""")
+
+    assertNull(rule)
+    assertEquals(setOf("vibrate"), unsupported)
+  }
+
+  @Test
+  fun aMatchWithAnUnknownFieldLeavesOutItsRule() {
+    // Ignoring colour would hide every item in a row, not only the red ones.
+    for (json in
+      listOf(
+        """{"match":{"id":"a","colour":"red"},"hide":true}""",
+        """{"match":{"inside":{"colour":"red"}},"hide":true}""",
+        """{"id":"a","readBefore":{"colour":"red"}}""",
+      )) {
+      val (rule, unsupported) = leftOut(json)
+
+      assertNull(json, rule)
+      assertEquals(json, setOf("colour"), unsupported)
+    }
   }
 
   @Test
@@ -220,6 +282,33 @@ class ManifestParserTest {
       "needs one of" in
         rejectsRule("""{"id":"a","actions":[{"title":"T","click":"b","focus":"c"}]}""")
     )
+  }
+
+  @Test
+  fun anActionThisBuildCantDoIsLeftOut() {
+    val (rule, unsupported) =
+      leftOut(
+        """{"id":"a","actions":[{"title":"Zoom","zoom":"b"},{"title":"Go","click":"b"},""" +
+          """{"title":"Find","click":{"colour":"red"}}]}"""
+      )
+
+    assertEquals(listOf("Go"), rule?.actions?.map { it.title })
+    assertEquals(setOf("zoom", "colour"), unsupported)
+  }
+
+  @Test
+  fun aManifestListsWhatItLeftOut() {
+    val parsed =
+      parse(
+        ""","permissions":["input"],"rules":[{"id":"a","vibrate":true},""" +
+          """{"id":"b","label":"B","doubleTapAfter":500}],""" +
+          """"navigation":[{"title":"Red","match":{"colour":"red"}},{"title":"Rows","id":"row"}]"""
+      )
+
+    assertEquals(listOf("b"), parsed.rules.map { it.id })
+    assertEquals(listOf("Rows"), parsed.navigation.map { it.title })
+    assertEquals(listOf("vibrate", "doubleTapAfter", "colour"), parsed.unsupported)
+    assertFalse(parsed.isCompatible)
   }
 
   @Test

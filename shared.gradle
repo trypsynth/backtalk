@@ -48,8 +48,10 @@ android {
 dependencies {
 
     // Google common
-    phoneImplementation libs.mlkit.text.recognition
-    wearCompileOnly libs.mlkit.text.recognition
+    // Text recognition is compiled against here and packaged by the app, which chooses the model in
+    // Google Play services or the one built into the APK. The two have the same API.
+    compileOnly libs.mlkit.text.recognition
+    testImplementation libs.mlkit.text.recognition
     implementation libs.material
 
     // Support library

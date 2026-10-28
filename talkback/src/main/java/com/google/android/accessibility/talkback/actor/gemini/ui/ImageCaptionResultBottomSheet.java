@@ -65,6 +65,7 @@ import com.google.android.accessibility.talkback.Pipeline.FeedbackReturner;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.DimScreenActor;
+import com.google.android.accessibility.talkback.actor.gemini.AiService;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiActor.GeminiChatMetricProcessor;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiConfiguration;
 import com.google.android.accessibility.talkback.actor.gemini.ui.ImageQnaChatAdapter.ImageQnaMessage;
@@ -379,6 +380,9 @@ public class ImageCaptionResultBottomSheet {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+      if (AiService.isSetUp(SharedPreferencesUtils.getSharedPreferences(context))) {
+        setOtherAiLabels(viewHolder.itemView);
+      }
       if (viewHolder instanceof ImageCaptionResultViewHolder imageCaptionResultViewHolder) {
         // Page of the image captioning result.
         imageCaptionResultViewHolder.setIsScreenDescription(isScreenDescription);
@@ -582,6 +586,46 @@ public class ImageCaptionResultBottomSheet {
         if (isDimScreenEnabled) {
           imageQnATypingChatViewHolder.setDimScreenEnabled();
         }
+      }
+    }
+
+    /** Use provider-neutral Q&A labels when an alternative AI service handles requests. */
+    private void setOtherAiLabels(@NonNull View view) {
+      MaterialButton askButton = view.findViewById(R.id.ask_gemini);
+      if (askButton != null) {
+        askButton.setText(R.string.image_qna_button_text_ai);
+      }
+
+      MaterialButton typingButton = view.findViewById(R.id.ask_gemini_typing);
+      if (typingButton != null) {
+        // Depending on the page, this is either a text button or an icon-only button.
+        if (TextUtils.isEmpty(typingButton.getText())) {
+          typingButton.setContentDescription(
+              context.getString(R.string.image_qna_typing_button_text_ai));
+        } else {
+          typingButton.setText(R.string.image_qna_typing_button_text_ai);
+        }
+      }
+
+      MaterialButton voiceInputButton = view.findViewById(R.id.ask_gemini_voice_input);
+      if (voiceInputButton != null) {
+        voiceInputButton.setContentDescription(
+            context.getString(R.string.image_qna_button_text_ai));
+      }
+
+      MaterialButton typeQuestionButton = view.findViewById(R.id.btn_type_question);
+      if (typeQuestionButton != null) {
+        typeQuestionButton.setText(R.string.image_qna_typing_button_text_ai);
+      }
+
+      EditText questionField = view.findViewById(R.id.question_edit_filed);
+      if (questionField != null) {
+        questionField.setHint(R.string.image_qna_typing_button_text_ai);
+      }
+
+      ImageView listeningIcon = view.findViewById(R.id.stop_listening);
+      if (listeningIcon != null) {
+        listeningIcon.setContentDescription(context.getString(R.string.image_qna_button_text_ai));
       }
     }
 

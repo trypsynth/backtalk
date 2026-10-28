@@ -323,6 +323,19 @@ public class FailoverTextToSpeech {
   /** How long an engine that says it is speaking, perhaps for another app, may say nothing. */
   private static final long ENGINE_BUSY_HANG_MS = 20_000;
 
+  /**
+   * How long speech plays the usual way after the audio mode changes, such as when a call starts or
+   * ends. Engines can say nothing about the first speech after the mode changes for longer than
+   * {@link #ENGINE_HANG_MS}.
+   */
+  private static final long AUDIO_MODE_SETTLE_MS = 10_000;
+
+  /** The audio mode last seen. */
+  private volatile int lastAudioMode;
+
+  /** When the audio mode was last seen to change, or 0 if it hasn't changed. */
+  private volatile long audioModeChangedAt;
+
   /** When speech went to an engine with nothing else to do, or 0 once the engine responded. */
   private volatile long engineQuietSince;
 
@@ -416,8 +429,7 @@ public class FailoverTextToSpeech {
    * A buffer of N most recent utterance ids, used to ensure that a recent utterance's completion
    * handler does not unlock a WakeLock used by the currently speaking utterance.
    */
-  private final Deque<String> recentUtteranceIds =
-      new ConcurrentLinkedDeque<>(); // may contain nulls
+  private final Deque<String> recentUtteranceIds = new ConcurrentLinkedDeque<>();
 
   private final @Nullable SpeechCacheManager speechCacheManager;
 
@@ -474,6 +486,7 @@ public class FailoverTextToSpeech {
     // connect to system services
     initWakeLock(context);
     audioManager = (AudioManager) this.context.getSystemService(Context.AUDIO_SERVICE);
+    lastAudioMode = audioManager.getMode();
     telephonyManager = (TelephonyManager) this.context.getSystemService(Context.TELEPHONY_SERVICE);
   }
 
@@ -724,6 +737,9 @@ public class FailoverTextToSpeech {
   }
 
   private void addRecentUtteranceId(String utteranceId) {
+    if (utteranceId == null) {
+      return;
+    }
     recentUtteranceIds.add(utteranceId);
     while (recentUtteranceIds.size() > 10) {
       recentUtteranceIds.poll();
@@ -744,6 +760,8 @@ public class FailoverTextToSpeech {
       ensureQueueFlush();
       tts.speak("", SPEECH_FLUSH_ALL, null);
       unfinishedUtterances.clear();
+      // No utterance callbacks reach us after a flush-all, so stale chunks must not persist.
+      speechChunks.clear();
     } catch (Exception e) {
       // Don't care, we're not speaking.
     }
@@ -1193,31 +1211,41 @@ public class FailoverTextToSpeech {
           } else if (state == SpeechCachePlayer.STATE_READY) {
             utteranceProgressCallback.onAudioCacheAvailable(utteranceId);
           } else if (state == SpeechCachePlayer.STATE_COMPLETED) {
-            // Consume the speeches with queue_MODE_ADD.
-            List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
-            suspendQueue.clear();
-            for (SpeakRequest speakRequest : suspendQueueCopy) {
-              LogUtils.d(TAG, "consume suspend queue speakRequest= %s: ", speakRequest);
-              mHandler.post(
-                  () -> {
-                    if (isReady()) {
-                      attemptSetLanguage(speakRequest.locale);
-                      ttsSpeak(
-                          speakRequest.text,
-                          speakRequest.queueMode,
-                          speakRequest.bundle,
-                          utteranceId);
-                    }
-                  });
-            }
+            speakSuspendQueue();
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ true);
           } else if (state == SpeechCachePlayer.STATE_STOPPED) {
+            mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
+          } else if (state == SpeechCachePlayer.STATE_ERROR) {
+            // A cached speech that fails sends no completion either, so the speech queued behind
+            // it has to be spoken now.
+            speakSuspendQueue();
             mHandler.onUtteranceCompleted(utteranceId, /* success= */ false);
           }
         }
       };
 
   private final List<SpeakRequest> suspendQueue = Collections.synchronizedList(new ArrayList<>());
+
+  /** Speaks the speech queued with QUEUE_MODE_ADD while a cached speech played. */
+  private void speakSuspendQueue() {
+    List<SpeakRequest> suspendQueueCopy = new ArrayList<>(suspendQueue);
+    suspendQueue.clear();
+    for (SpeakRequest speakRequest : suspendQueueCopy) {
+      LogUtils.d(TAG, "consume suspend queue speakRequest= %s: ", speakRequest);
+      mHandler.post(
+          () -> {
+            if (isReady()) {
+              attemptSetLanguage(speakRequest.locale);
+              // The queued request's own id: the completing id names the cached speech.
+              ttsSpeak(
+                  speakRequest.text,
+                  speakRequest.queueMode,
+                  speakRequest.bundle,
+                  speakRequest.utteranceId());
+            }
+          });
+    }
+  }
 
   /**
    * Speaks the text with cache if possible, otherwiase fallback to {@link
@@ -1366,11 +1394,11 @@ public class FailoverTextToSpeech {
    */
   private int ttsSpeak(
       CharSequence text, int queueMode, Bundle bundle, @Nullable String utteranceId) {
-    watchForEngineHang(queueMode, utteranceId);
     @Nullable LowLatencyAudio player = lowLatencyPlayer();
     if (player == null || utteranceId == null || TextUtils.isEmpty(text)) {
       return tts.speak(text, queueMode, bundle, utteranceId);
     }
+    watchForEngineHang(queueMode, utteranceId);
     if (queueMode != QUEUE_ADD) {
       // The engine flushes its own queue for this queue mode. Every player, since the player for
       // speech changes with the speech volume setting.
@@ -1399,10 +1427,37 @@ public class FailoverTextToSpeech {
     return result;
   }
 
+  /** Whether a phone or voice call has the audio mode. */
+  private boolean inCall() {
+    int mode = audioManager.getMode();
+    return mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION;
+  }
+
+  /**
+   * Notes the time if the audio mode changed since it was last seen. A change that happened while
+   * Backtalk wasn't looking counts from now.
+   */
+  private void checkAudioMode() {
+    int mode = audioManager.getMode();
+    if (mode != lastAudioMode) {
+      lastAudioMode = mode;
+      audioModeChangedAt = SystemClock.uptimeMillis();
+    }
+  }
+
+  /** Whether the audio mode changed less than {@link #AUDIO_MODE_SETTLE_MS} ago. */
+  private boolean audioModeSettling() {
+    checkAudioMode();
+    long changedAt = audioModeChangedAt;
+    return changedAt != 0 && SystemClock.uptimeMillis() - changedAt < AUDIO_MODE_SETTLE_MS;
+  }
+
   /** The player for speech, or null if speech should play the usual way. */
   private @Nullable LowLatencyAudio lowLatencyPlayer() {
     if (!lowLatencyAudio
         || LowLatencyAudio.isMicrophoneInUse()
+        || inCall()
+        || audioModeSettling()
         || android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R
         || (ttsEngine != null && enginesWithoutFileAudio.contains(ttsEngine))) {
       return null;
@@ -1749,6 +1804,12 @@ public class FailoverTextToSpeech {
       mHandler.postDelayed(checkEngineHang, ENGINE_HANG_MS);
       return;
     }
+    checkAudioMode();
+    if (quiet < ENGINE_BUSY_HANG_MS && audioModeChangedAt >= since) {
+      // The audio mode changed while the engine had the speech, such as when a call started.
+      mHandler.postDelayed(checkEngineHang, ENGINE_HANG_MS);
+      return;
+    }
     @Nullable String hungUtteranceId = engineQuietUtteranceId;
     LogUtils.e(TAG, "TTS engine %s said nothing for %d ms, so it is hung", ttsEngine, quiet);
     engineQuietSince = 0;
@@ -1768,6 +1829,8 @@ public class FailoverTextToSpeech {
     if (hungUtteranceId != null && !lowLatency) {
       utteranceProgressCallback.onError(hungUtteranceId);
     }
+    // A hung engine never sends the final chunk's callback, so stale chunks must not persist.
+    speechChunks.clear();
   }
 
   /** Speaks the usual way with the current engine from now on. */
@@ -2130,6 +2193,8 @@ public class FailoverTextToSpeech {
     lowLatencyStreams.clear();
     lowLatencyRequests.clear();
     respokenUtterances.clear();
+    // An engine that is gone never completes its chunks, so stale chunks must not persist.
+    speechChunks.clear();
     LowLatencyAudio.stopAllStreams();
     mHandler.removeCallbacks(checkEngineHang);
     engineQuietSince = 0;
@@ -2739,7 +2804,7 @@ public class FailoverTextToSpeech {
     @Override
     public void onStart(String utteranceId) {
       progressEstimator.onStarted(utteranceId, SystemClock.uptimeMillis());
-      if (utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
+      if (utteranceId == null || utteranceId.startsWith(CACHE_UTTERANCE_ID_PREFIX)) {
         return;
       }
       SpeechChunk chunk = toOriginal(utteranceId);

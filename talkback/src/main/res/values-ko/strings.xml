@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">검색이 취소되었습니다.</string>
   <string name="notification_type_status_started">시작됨</string>
   <string name="notification_type_status_stopped">중지됨</string>
-  <string name="notification_type_status_connected">연결됨</string>
-  <string name="notification_battery_level_unknown">알 수 없음</string>
   <string name="notification_battery_saver_mode">절전 모드 사용 중</string>
   <string name="template_no_text_selected">선택된 텍스트가 없습니다.</string>
   <string name="template_charging">충전 %1$s 배터리 수준 %2$s퍼센트</string>
   <string name="template_charging_lite">충전 %1$s</string>
-  <string name="template_battery_state">전원 %1$s %2$s퍼센트 %3$s</string>
   <string name="template_language_options_menu_item">%1$s(%2$s)</string>
   <string name="value_ringer_vibrate">벨소리가 진동입니다.</string>
   <string name="value_ringer_silent">벨소리가 무음입니다.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">음성 시간 알림</string>
   <string name="pref_speak_time_summary">화면을 켤 때</string>
   <string name="summary_speak_container_element_positions">기존 목록, 그리드, 기타 컨테이너를 입력할 때 정보를 포함합니다.</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">읽기 제어 설정에 포커스 지연 추가됨</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">언제든지 읽기 제어 설정을 사용하고 포커스 지연 시간을 변경하려면 세 손가락으로 스와이프하세요.</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">들어올려 입력하기로 전환하시겠습니까?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">입력 포커스 지연이 0.3초 미만으로 설정되면 두 번 탭하여 입력하기가 매우 어려워집니다. 들어올려 입력하기로 자동 전환하려면 \'전환\'을 선택하세요.\n\n들어올려 입력하기를 사용하려면 손가락을 길게 눌러 원하는 키를 선택한 후 들어올려 입력하세요.\n\nTalkBack 설정에서 이 기능을 맞춤설정할 수 있습니다.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">읽기 제어 설정에 입력 포커스 지연이 추가됨</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">입력 중에 두 번 탭하는 데 문제가 있는 경우 세 손가락으로 스와이프하여 읽기 제어 설정을 사용하고 입력 포커스 지연 시간을 더 길게 변경하세요.</string>
   <string name="gestures_announce_typing_focus_wont_change">입력 포커스 지연은 \'들어올려 입력하기\' 기능이 없으면 작동하지 않습니다.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">확인</string>
   <string name="reset_letency_reduction_settings_dialog_title">지연 설정을 재설정하시겠습니까?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">이렇게 하면 모든 지연 시간 설정이 기본값으로 재설정됩니다.</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">재설정</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">모든 진행 상황 업데이트 말하기</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">다운로드, 운전 경로 따르기 등의 작업을 하는 동안의 업데이트가 포함됩니다. 이 기능을 끄면 업데이트 빈도가 줄어듭니다.</string>
   <string name="pref_speak_system_window_titles_summary">상태 표시줄, 알림, 다른 키보드로 전환할 때 시스템 및 입력 창 이름을 소리 내어 읽습니다.</string>
-  <string name="title_pref_explore_by_touch">터치하여 탐색</string>
   <string name="title_pref_category_visual">시각 요소</string>
   <string name="title_pref_category_controls">컨트롤</string>
   <string name="title_pref_category_braille">점자</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">읽기 제어 기능을 사용하려면 위로 스와이프한 후 아래로 스와이프합니다.</string>
   <string name="title_pref_manage_keyboard_shortcuts">단축키</string>
   <string name="title_pref_export_custom_labels">맞춤 라벨 내보내기</string>
-  <string name="title_pref_play_store">Play 스토어에서 TalkBack 열기</string>
-  <string name="summary_pref_play_store">현재 TalkBack 버전: %1$s</string>
   <string name="title_pref_help_and_feedback">도움말 및 의견</string>
   <string name="title_pref_gup">Google 장애인 전담 지원팀에 문의하기</string>
   <string name="subtitle_pref_gup">TalkBack을 사용하여 도움을 받거나 문제를 신고하세요.</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">TalkBack은 입력 시 지연 시간을 줄이기 위해 안내를 미리 로드합니다.</string>
   <string name="summary_cache_keyboard_keys_disabled">Google TTS(텍스트 음성 변환)를 사용해 이 기능을 이용합니다.</string>
   <string name="value_direction_down">아래쪽</string>
-  <string name="value_direction_down_and_right">아래쪽 오른쪽 순</string>
   <string name="title_pref_shortcut_up">위로 스와이프</string>
   <string name="title_pref_shortcut_up_xr">보조 손의 손바닥이 나를 향한 상태에서 손가락을 모은 후 위로 스와이프</string>
   <string name="title_pref_shortcut_down">아래로 스와이프</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">동작 맞춤설정</string>
   <string name="button_disable_all_events">모두 사용 안함</string>
   <string name="button_enable_all_events">모두 사용</string>
-  <string name="dialog_title_disable_exploration">\'터치하여 탐색\'을 사용 중지하시겠습니까?</string>
-  <string name="dialog_message_disable_exploration">\'터치하여 탐색\'을 사용 중지하시겠습니까?\n\n사용 중지하면 화면을 터치할 때 바로가기 동작에 기기가 응답하지 않으며 항목에 대한 설명을 들을 수 없습니다.</string>
   <string name="dialog_title_enable_tree_debug">노드 트리 디버깅을 사용 설정하시겠습니까?</string>
   <string name="dialog_message_enable_tree_debug">노드 트리 디버깅을 사용 설정하시겠습니까?\n\n노드 트리 디버깅을 사용하면 화면의 콘텐츠가 기기 로그에 표시되어 다른 앱에서 읽을 수 있습니다.</string>
   <string name="dialog_title_enable_tree_debug_gesture">네 손가락으로 세 번 탭하는 동작을 다시 할당할까요?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">실제 키보드 사용 시 %1$s 에코</string>
   <string name="reading_control_toggle_prefix_xr">읽기 제어 설정 모드를 전환하려면 보조 손의 손바닥이 나를 향한 상태에서 길게 누릅니다.</string>
   <string name="gesture_1_or_2">%1$s 또는 %2$s</string>
-  <string name="select_setting_hint">%1$s하여 다른 설정을 선택합니다</string>
-  <string name="adjust_setting_hint">%1$s하여 설정을 조정합니다</string>
   <string name="adjust_granularity_hint">%1$s하여 %2$s 단위로 읽습니다</string>
   <string name="adjust_typo_hint">제안을 보려면 %1$s하세요.</string>
   <string name="use_action_hint">작업을 수행하려면 두 번 탭하세요.</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">아래에서 사용해 보세요.</string>
   <string name="wear_training_typing_practice_button_content_description">키보드로 입력</string>
   <string name="wear_training_end_tutorial_title">TalkBack을 사용할 준비됨</string>
-  <string name="talkback_updated_notification_title">TalkBack 업데이트됨</string>
-  <string name="talkback_updated_notification_content">탭하여 자세한 내용을 확인하세요.</string>
   <string name="wear_new_feature_page_title">업데이트된 TalkBack을 소개합니다</string>
   <string name="wear_new_feature_page_content">일부 버그가 수정되었으며 포커스가 이동하는 방식이 변경되었습니다</string>
   <string name="wear_new_feature_page_button_content_description">완료</string>

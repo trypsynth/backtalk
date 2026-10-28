@@ -58,16 +58,6 @@ class SpeechControlFragment : TalkbackBaseFragment() {
         prefs.edit().putBoolean(SpeechControl.PREF_ENABLED, checked).apply()
       }
     )
-    screen.addPreference(
-      checkBox(
-        context,
-        title = getString(R.string.title_pref_speech_control_sound),
-        summary = null,
-        checked = SpeechControl.playsSound(context),
-      ) { checked ->
-        prefs.edit().putBoolean(SpeechControl.PREF_SOUND, checked).apply()
-      }
-    )
     val category =
       PreferenceCategory(context).apply {
         setTitle(R.string.speech_control_apps_category)

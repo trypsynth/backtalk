@@ -4,7 +4,6 @@
   <string name="summary_custom_action">यह तब दिखता है, जब मौजूदा आइटम के लिए, आपकी पसंद के मुताबिक कार्रवाइयां मौजूद होती हैं.</string>
   <string name="notification_title_talkback_gestures_changed">TalkBack जेस्चर अपडेट किए गए</string>
   <string name="notification_message_talkback_gestures_changed">ज़्यादा जानकारी के लिए, फ़ोन पर TalkBack मेन्यू खोलें</string>
-  <string name="talkback_updated_notification_content">ज़्यादा जानकारी के लिए TalkBack खोलें</string>
   <string name="new_feature_in_talkback_title">नया क्या है</string>
   <string name="reset_button_in_reset_gesture_settings_confirm_dialog">ठीक है</string>
   <string name="turn_off_talkback">बंद करें</string>

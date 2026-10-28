@@ -28,6 +28,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.accessibility.talkback.BuildConfig
 import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.utils.SharedPreferencesUtils
+import com.google.android.accessibility.utils.widget.KeyboardSafeEditText
 
 /** The "Gemini API key" preference in Automatic descriptions settings. */
 object GeminiApiKeyPreference {
@@ -43,10 +44,16 @@ object GeminiApiKeyPreference {
     }
   }
 
+  /** Shows whether the key is used, after the other AI service is set up or cleared. */
+  fun refresh(fragment: PreferenceFragmentCompat) {
+    fragment.findPreference<Preference>(GeminiApiKey.PREF_KEY)?.let(::updateSummary)
+  }
+
   private fun updateSummary(preference: Preference) {
     val prefs = SharedPreferencesUtils.getSharedPreferences(preference.context)
     preference.setSummary(
       when {
+        AiService.isSetUp(prefs) -> R.string.summary_pref_gemini_api_key_other_service
         GeminiApiKey.userKey(prefs).isNotEmpty() -> R.string.summary_pref_gemini_api_key_set
         BuildConfig.GEMINI_API_KEY.isNotBlank() -> R.string.summary_pref_gemini_api_key_built_in
         else -> R.string.summary_pref_gemini_api_key_not_set
@@ -60,7 +67,7 @@ object GeminiApiKeyPreference {
     // A visible password field, so that the key is not learned by the keyboard or offered as a
     // suggestion, but can still be read back after pasting it.
     val field =
-      EditText(context).apply {
+      KeyboardSafeEditText(context).apply {
         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
         isSingleLine = true
         setHint(R.string.gemini_api_key_hint)

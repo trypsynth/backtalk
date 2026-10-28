@@ -19,6 +19,7 @@ package com.google.android.accessibility.braille.common;
 import static com.google.android.accessibility.braille.common.translate.BrailleLanguages.Code.KOREAN_2006;
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS;
 import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_CHARACTERS_AND_WORDS;
+import static com.google.android.accessibility.utils.input.TextEventFilter.PREF_ECHO_NONE;
 import static java.lang.Math.min;
 
 import android.content.Context;
@@ -90,6 +91,7 @@ public class BrailleUserPreferences {
   private static final boolean POPUP_MESSAGE_HISTORY_DEFAULT = false;
   private static final boolean CAPTION_DEFAULT = false;
   private static final String BLINKING_INTERVAL_MS_DEFAULT = "750";
+  private static final boolean CURSOR_ON_NON_EDITABLE_DEFAULT = true;
   private static final String TIMED_MESSAGE_DURATION_FRACTION_DEFAULT = "1";
 
   private static final int MAX_SWITCH_BRAILLE_GRADE_COUNT = 5;
@@ -390,6 +392,30 @@ public class BrailleUserPreferences {
   public static boolean readKeyboardEchoCharacters(Context context) {
     int echo = readKeyboardEcho(context);
     return echo == PREF_ECHO_CHARACTERS || echo == PREF_ECHO_CHARACTERS_AND_WORDS;
+  }
+
+  /**
+   * Returns the keyboard echo the braille keyboard reports to Backtalk, a {@code
+   * TextEventFilter.KeyboardEchoType}.
+   *
+   * <p>In contracted braille the keyboard holds the whole word and commits it in one go, and
+   * announces each character itself as it is typed, so with the "characters" echo it reports
+   * "none" here. Backtalk would otherwise speak the committed word as well, making "characters"
+   * sound the same as "characters and words". Uncontracted typing commits a character at a time
+   * and still relies on Backtalk's echo, so it is left unchanged.
+   */
+  @KeyboardEchoType
+  public static int readKeyboardEchoForBacktalk(Context context) {
+    int echo = readKeyboardEcho(context);
+    if (echo != PREF_ECHO_CHARACTERS) {
+      return echo;
+    }
+    // Report "none" only when the active buffer really is contracted; a code without
+    // contracted support stays uncontracted even when the toggle says otherwise.
+    boolean contracted =
+        readContractedMode(context)
+            && readCurrentActiveInputCodeAndCorrect(context).isSupportsContracted(context);
+    return contracted ? PREF_ECHO_NONE : echo;
   }
 
   /** Reads layout mode. */
@@ -755,6 +781,8 @@ public class BrailleUserPreferences {
       brailleKeyboardSharedPreferencesEditor.putInt(
           SHARED_PREFS_VERSION, AAS16_2_SHARED_PREFS_VERSION);
       currentVersion = AAS16_2_SHARED_PREFS_VERSION;
+
+      brailleKeyboardSharedPreferencesEditor.apply();
     }
   }
 
@@ -956,6 +984,14 @@ public class BrailleUserPreferences {
       return Integer.parseInt(interval);
     }
     return Integer.parseInt(BLINKING_INTERVAL_MS_DEFAULT);
+  }
+
+  /** Reads whether the cursor is shown on items that aren't editable. */
+  public static boolean readCursorOnNonEditable(Context context) {
+    return getSharedPreferences(context, BRAILLE_SHARED_PREFS_FILENAME)
+        .getBoolean(
+            context.getString(R.string.pref_bd_cursor_on_non_editable_key),
+            CURSOR_ON_NON_EDITABLE_DEFAULT);
   }
 
   /** Adds count when switching braille grade. */

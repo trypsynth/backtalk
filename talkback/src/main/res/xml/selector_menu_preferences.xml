@@ -58,6 +58,11 @@
             android:key="@string/pref_selector_granularity_links_key"
             android:title="@string/granularity_web_link"
             android:summary="@string/summary_links"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+            android:defaultValue="@bool/pref_selector_links_controls_web_only_default"
+            android:key="@string/pref_selector_links_controls_web_only_key"
+            android:title="@string/title_pref_selector_links_controls_web_only"
+            android:summary="@string/summary_selector_links_controls_web_only"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_granularity_windows_default"
@@ -102,6 +107,12 @@
             android:summary="@string/summary_granularity_default"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_vertical_navigation_default"
+            android:key="@string/pref_selector_vertical_navigation_key"
+            android:title="@string/title_selector_vertical_navigation"
+            android:summary="@string/summary_selector_vertical_navigation"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_speech_rate_default"
             android:key="@string/pref_selector_speech_rate_key"
             android:title="@string/title_pref_selector_speech_rate"
@@ -138,9 +149,16 @@
             android:summary="@string/summary_language"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_switch_tts_engine_default"
+            android:key="@string/pref_selector_switch_tts_engine_key"
+            android:title="@string/title_selector_switch_tts_engine"
+            android:summary="@string/summary_selector_switch_tts_engine"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_voice_profile_default"
             android:key="@string/pref_selector_voice_profile_key"
-            android:title="@string/title_selector_voice_profile"/>
+            android:title="@string/title_selector_voice_profile"
+            android:summary="@string/summary_selector_voice_profile"/>
     </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
     <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
         android:key="@string/pref_show_selector_menu_web_navigation_category_key"
@@ -287,6 +305,12 @@
             android:key="@string/pref_selector_change_a11y_volume_key"
             android:title="@string/title_pref_a11y_volume"
             android:summary="@string/summary_support_change_a11y_volume"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_audio_output_device_default"
+            android:key="@string/pref_selector_audio_output_device_key"
+            android:title="@string/title_pref_audio_output_device"
+            android:summary="@string/summary_selector_audio_output_device"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_brightness_default"

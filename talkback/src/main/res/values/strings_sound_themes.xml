@@ -2,8 +2,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Title of the screen of sound themes: sets of sounds, vibrations and settings that replace Backtalk's own. [CHAR LIMIT=50] -->
     <string name="title_pref_sound_themes">Sound themes</string>
-    <!-- Summary of the entry that opens the sound themes screen. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_sound_themes">Install and choose sets of sounds and vibrations, replace single sounds with your own, and turn on control sounds and vibrations and 3D audio.</string>
     <!-- Sound themes: heading above the installed themes. [CHAR LIMIT=50] -->
     <string name="sound_themes_installed_category">Installed themes</string>
     <!-- Sound themes: name of the theme of Backtalk's own sounds and vibrations. [CHAR LIMIT=50] -->
@@ -31,8 +29,6 @@
     <!-- Sound themes: said of a theme that turns control sounds and vibrations off. [CHAR LIMIT=NONE] -->
     <string name="sound_theme_control_sounds_off">Turns control sounds and vibrations off.</string>
 
-    <!-- Sound themes: choice that puts a theme in use. [CHAR LIMIT=50] -->
-    <string name="sound_theme_use">Use this theme</string>
     <!-- Sound themes: choice that tells who made a theme and what it has. [CHAR LIMIT=50] -->
     <string name="sound_theme_about">About this theme</string>
     <!-- Sound themes: choice that saves a theme as a theme file. [CHAR LIMIT=50] -->
@@ -53,10 +49,6 @@
     <!-- Sound themes: message when there is no app to choose or save files with. [CHAR LIMIT=NONE] -->
     <string name="sound_theme_no_picker">There is no app on this device to choose files with.</string>
 
-    <!-- Sound themes: heading above the settings that each theme has its own of, such as "Settings of Unspoken". [CHAR LIMIT=NONE] -->
-    <string name="sound_theme_settings_category">Settings of <xliff:g id="theme" example="Unspoken">%1$s</xliff:g></string>
-    <!-- Sound themes: entry that opens the sounds of the theme in use. [CHAR LIMIT=50] -->
-    <string name="title_pref_theme_sounds">Sounds</string>
     <!-- Sound themes: summary of the entry that opens the sounds of the theme in use. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_theme_sounds">Replace any sound of this theme with a sound file of your own.</string>
 
@@ -70,6 +62,18 @@
     <string name="title_pref_sound_theme_install_link">From a link</string>
     <!-- Sound themes: summary of the entry that installs a theme from a link. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_sound_theme_install_link">A link to a theme file, or to a GitHub repository with a theme in it. You can also share a link with Backtalk from your browser.</string>
+    <!-- Sound themes: entry that opens the list of repositories to install themes from. [CHAR LIMIT=50] -->
+    <string name="title_pref_sound_theme_install_source">From a source</string>
+    <!-- Sound themes: summary of the entry that opens the list of repositories to install themes from. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_sound_theme_install_source">Theme files in a repository on GitHub, GitLab, Codeberg, Gitea or Bitbucket.</string>
+    <!-- Title of the screen of the repositories to install sound themes from. [CHAR LIMIT=40] -->
+    <string name="sound_theme_sources">Sound theme sources</string>
+    <!-- Shown when a sound theme source has no theme files. [CHAR LIMIT=NONE] -->
+    <string name="sound_theme_source_empty">No sound themes in this source</string>
+    <!-- Shown when the sound themes of a source could not be loaded. [CHAR LIMIT=NONE] -->
+    <string name="sound_theme_source_failed">Could not load sound themes. <xliff:g id="reason" example="HTTP 404">%1$s</xliff:g></string>
+    <!-- Message of the dialog that asks to remove a sound theme source. [CHAR LIMIT=NONE] -->
+    <string name="sound_theme_source_remove_message">Sound themes installed from it stay installed.</string>
     <!-- Sound themes: explanation in the dialog for installing a theme from a link. [CHAR LIMIT=NONE] -->
     <string name="sound_theme_link_message">Enter or paste a link to a theme file, or to a GitHub repository with a theme in it.</string>
     <!-- Sound themes: hint in the field for the link to a theme. [CHAR LIMIT=50] -->
@@ -136,6 +140,12 @@
     <string name="theme_sound_choose">Choose a sound file</string>
     <!-- Theme sounds: choice that plays the sound. [CHAR LIMIT=50] -->
     <string name="theme_sound_preview">Preview</string>
+    <!-- Theme sounds: choice that sets an event to play no sound. [CHAR LIMIT=50] -->
+    <string name="theme_sound_none">No sound</string>
+    <!-- Theme sounds: summary of an event set to play no sound. [CHAR LIMIT=60] -->
+    <string name="theme_sound_summary_no_sound">No sound</string>
+    <!-- Theme sounds: accessibility action that sets an event to play no sound. [CHAR LIMIT=50] -->
+    <string name="theme_sound_action_set_none">Set to no sound</string>
     <!-- Theme sounds: choice that goes back to Backtalk's own sound. [CHAR LIMIT=50] -->
     <string name="theme_sound_use_default">Use Backtalk\'s sound</string>
     <!-- Theme sounds: choice that removes the file of a control sound, which Backtalk has no sound for. [CHAR LIMIT=50] -->
@@ -146,4 +156,35 @@
     <string name="theme_sound_not_audio">Backtalk can\'t play that file. Choose a WAV, OGG, MP3 or FLAC sound.</string>
     <!-- Theme sounds: message when the chosen file cannot be read. [CHAR LIMIT=NONE] -->
     <string name="theme_sound_failed">Backtalk couldn\'t read that file.</string>
+    <!-- Setting: when the actions available sound plays. [CHAR LIMIT=60] -->
+    <string name="title_pref_actions_sound_timing">Actions available sound</string>
+    <!-- Setting choice: the sound plays as the item gets focus. [CHAR LIMIT=60] -->
+    <string name="value_actions_sound_timing_focus">When the item gets focus</string>
+    <!-- Setting choice: the sound plays as the "Actions available" hint starts. [CHAR LIMIT=60] -->
+    <string name="value_actions_sound_timing_hint">When the actions hint starts</string>
+    <!-- Sound and vibration: choice of the sound theme in use. [CHAR LIMIT=50] -->
+    <string name="title_pref_sound_scheme">Sound scheme</string>
+    <!-- Sound and vibration: entry that opens the management of sound themes. [CHAR LIMIT=50] -->
+    <string name="title_pref_manage_sound_themes">Manage sound themes</string>
+    <!-- Sound and vibration: summary of the entry that opens the management of sound themes. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_manage_sound_themes">Create, install, export and remove sound themes, and change their settings and sounds.</string>
+    <!-- Manage sound themes: entry that creates a theme. [CHAR LIMIT=50] -->
+    <string name="title_pref_new_sound_theme">New theme</string>
+    <!-- Manage sound themes: summary of the entry that creates a theme. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_new_sound_theme">Make a theme of your own and choose its sounds, hearing each as you set it.</string>
+    <!-- New theme dialog: title and field hints. [CHAR LIMIT=50] -->
+    <string name="new_theme_title">New sound theme</string>
+    <string name="new_theme_name_hint">Name</string>
+    <string name="new_theme_description_hint">Description</string>
+    <string name="new_theme_author_hint">Author</string>
+    <!-- New theme dialog: check box for whether the theme has control sounds. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_control_sounds">Supports control sounds</string>
+    <!-- New theme dialog: button that creates the theme. [CHAR LIMIT=30] -->
+    <string name="new_theme_create">Create</string>
+    <!-- New theme dialog: error when a theme of this name is installed. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_exists">A theme with this name already exists.</string>
+    <!-- New theme dialog: error when the name is empty. [CHAR LIMIT=NONE] -->
+    <string name="new_theme_needs_name">Enter a name.</string>
+    <!-- Theme settings: entry that opens the sounds of the theme. [CHAR LIMIT=50] -->
+    <string name="sound_theme_customisation">Sound customisation</string>
 </resources>

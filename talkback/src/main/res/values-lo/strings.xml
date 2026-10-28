@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">ຍົກ​ເລີກ​ການ​ຊອກ​ຫາ​ແລ້ວ.</string>
   <string name="notification_type_status_started">ເລີ່ມ​ຕົ້ນແລ້ວ</string>
   <string name="notification_type_status_stopped">ຢຸດແລ້ວ</string>
-  <string name="notification_type_status_connected">ເຊື່ອມຕໍ່ແລ້ວ</string>
-  <string name="notification_battery_level_unknown">ບໍ່ຮູ້ຈັກ</string>
   <string name="notification_battery_saver_mode">ຕົວປະຢັດແບັດເຕີຣີເປີດຢູ່</string>
   <string name="template_no_text_selected">ບໍ່ໄດ້ເລືອກຂໍ້ຄວາມ</string>
   <string name="template_charging">ກຳ​ລັງ​ສາກ %1$s ລະ​ດັບ​ແບັດ​ເຕີ​ຣີ %2$s ເປີ​ເຊັນ.</string>
   <string name="template_charging_lite">ການສາກໄຟ%1$s</string>
-  <string name="template_battery_state">ພະລັງງານ %1$s %2$s ເປີເຊັນ %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">ສັ່ນເຕືອນ​ພ້ອມສຽງເອີ້ນເຂົ້າ.</string>
   <string name="value_ringer_silent">ປິດສຽງເອີ້ນເຂົ້າ.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">ບອກເວລາ</string>
   <string name="pref_speak_time_summary">ເມື່ອທ່ານເປີດໜ້າຈໍ</string>
   <string name="summary_speak_container_element_positions">ຮວມເອົາຂໍ້ມູນໃນຂະນະທີ່ເຂົ້າ ແລະ ອອກຈາກລາຍການ, ຕາໜ່າງ ແລະ ກ່ອງບັນຈຸອື່ນໆ</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">ເພີ່ມຄວາມຫຼ້າຊ້າໂຟກັສໃສ່ໃນຕົວຄວບຄຸມການອ່ານແລ້ວ</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">ໃຊ້ 3 ນິ້ວປັດເພື່ອໃຊ້ຕົວຄວບຄຸມການອ່ານ ແລະ ປ່ຽນຄວາມຫຼ້າຊ້າໂຟກັສໄດ້ທຸກເວລາ</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">ປ່ຽນໄປໃຊ້ຍົກເພື່ອພິມບໍ?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">ເມື່ອຕັ້ງຄ່າຄວາມຫຼ້າຊ້າໂຟກັສການພິມໄວ້ຕ່ຳກວ່າ 0.3 ວິນາທີ, ຈະເຮັດໃຫ້ແຕະສອງເທື່ອເພື່ອພິມຍາກຫຼາຍ. ເລືອກ \"ສະຫຼັບ\" ເພື່ອປ່ຽນເປັນຍົກເພື່ອພິມໂດຍອັດຕະໂນມັດ.\n\nເພື່ອໃຊ້ການຍົກເພື່ອພິມ, ໃຫ້ກົດນິ້ວມືຂອງທ່ານຄ້າງໄວ້ເພື່ອເລືອກປຸ່ມໃດໜຶ່ງ, ຈາກນັ້ນຍົກຂຶ້ນເພື່ອພິມ.\n\nທ່ານສາມາດປັບແຕ່ງສິ່ງນີ້ໄດ້ໃນການຕັ້ງຄ່າ TalkBack.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">ເພີ່ມຄວາມຫຼ້າຊ້າໂຟກັສການພິມໃສ່ໃນຕົວຄວບຄຸມການອ່ານແລ້ວ</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">ຫາກທ່ານພົບບັນຫາກ່ຽວກັບການແຕະສອງເທື່ອໃນລະຫວ່າງທີ່ພິມ, ໃຫ້ໃຊ້ 3 ນິ້ວປັດເພື່ອໃຊ້ຕົວຄວບຄຸມການອ່ານ ແລະ ປ່ຽນໄປໃຊ້ຄວາມຫຼ້າຊ້າໂຟກັສການພິມທີ່ດົນຂຶ້ນ</string>
   <string name="gestures_announce_typing_focus_wont_change">ຄວາມຫຼ້າຊ້າໂຟກັສການພິມຈະບໍ່ເຮັດວຽກໂດຍບໍ່ມີຍົກເພື່ອພິມ.</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">ເຂົ້າໃຈແລ້ວ</string>
   <string name="reset_letency_reduction_settings_dialog_title">ຣີເຊັດການຕັ້ງຄ່າຄວາມຫຼ້າຊ້າບໍ?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">ການດຳເນີນການນີ້ຈະຣີເຊັດການຕັ້ງຄ່າຄວາມຫຼ້າຊ້າທັງໝົດເປັນຄ່າເລີ່ມຕົ້ນ</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">ຣີເຊັດ</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">ເວົ້າຂໍ້ມູນອັບເດດຄວາມຄືບໜ້າທັງໝົດ</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">ຮວມມີການອັບເດດໃນຂະນະທີ່ດາວໂຫຼດ, ການຕິດຕາມເສັ້ນທາງການຂັບລົດ ແລະ ອື່ນໆອີກ. ເມື່ອປິດແລ້ວ, ທ່ານຈະຍັງໄດ້ຮັບການອັບເດດເລື້ອຍໆໜ້ອຍລົງ.</string>
   <string name="pref_speak_system_window_titles_summary">ອ່ານໜ້າຈໍລະບົບ ແລະ ອິນພຸດອອກສຽງ, ເຊັ່ນ: ເມື່ອທ່ານສະຫຼັບໄປຫາແຖບສະຖານະ, ການແຈ້ງເຕືອນ ຫຼື ແປ້ນພິມອື່ນ</string>
-  <string name="title_pref_explore_by_touch">​ສຳຫຼວດ​ໂດຍ​ການ​ສຳ​ຜັດ</string>
   <string name="title_pref_category_visual">ພາບ</string>
   <string name="title_pref_category_controls">ການຄວບຄຸມ</string>
   <string name="title_pref_category_braille">ອັກສອນນູນ</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">ເພື່ອໃຊ້ການຄວບຄຸມການອ່ານ, ໃຫ້ປັດຂຶ້ນແລ້ວປັດລົງ.</string>
   <string name="title_pref_manage_keyboard_shortcuts">ປຸ່ມລັດແປ້ນພິມ</string>
   <string name="title_pref_export_custom_labels">ສົ່ງ​ປ້າຍ​ກຳ​ກັບ​ກຳ​ນົດ​ເອງ​ອອກ</string>
-  <string name="title_pref_play_store">ເປີດ TalkBack ໃນ Play Store</string>
-  <string name="summary_pref_play_store">ເວີ​ຊັນ TalkBack ປັດ​ຈຸ​ບັນ: %1$s</string>
   <string name="title_pref_help_and_feedback">ຊ່ວຍເຫຼືອ ແລະ ຕິຊົມ</string>
   <string name="title_pref_gup">ຕິດຕໍ່ທີມສະໜັບສະໜູນຄົນພິການຂອງ Google</string>
   <string name="subtitle_pref_gup">ຮັບຄວາມຊ່ວຍເຫຼືອໃນການໃຊ້ TalkBack ຫຼື ລາຍງານບັນຫາ</string>
@@ -639,7 +628,6 @@
   <string name="summary_cache_keyboard_keys">TalkBack ປະກາດການໂຫຼດລ່ວງໜ້າເພື່ອຫຼຸດຜ່ອນຄວາມລ່າຊ້າເມື່ອທ່ານພິມ</string>
   <string name="summary_cache_keyboard_keys_disabled">ໃຊ້ Google ຂໍ້​ຄວາມ​ເປັນ​ຄຳ​ເວົ້າເພື່ອໃຊ້ຄຸນສົມບັດນີ້</string>
   <string name="value_direction_down">ລົງ</string>
-  <string name="value_direction_down_and_right">ລົງ​ແລ້ວ​ຂວາ</string>
   <string name="title_pref_shortcut_up">ປັດ​ຂຶ້ນ</string>
   <string name="title_pref_shortcut_up_xr">ຫັນຝາມືຂ້າງທີ່ທ່ານບໍ່ລຶ້ງເຂົ້າຫາໂຕ, ຈາກນັ້ນບີບນິ້ວ ແລ້ວປັດຂຶ້ນ</string>
   <string name="title_pref_shortcut_down">ປັດ​ລົງ</string>
@@ -777,8 +765,6 @@
   <string name="button_customize_gesture_mappings">ປັບແຕ່ງທ່າ​ທາງ​ນິ້ວ​ມື</string>
   <string name="button_disable_all_events">ປິດການນຳໃຊ້ທັງໝົດ</string>
   <string name="button_enable_all_events">ເປີດການນຳໃຊ້ທັງໝົດ</string>
-  <string name="dialog_title_disable_exploration">ປິດການ​ນຳໃຊ້ \'ການສຳຫຼວດ​ໂດຍການ​ສຳ​ຜັດ\' ຫຼືບໍ່?</string>
-  <string name="dialog_message_disable_exploration">ທ່ານ​ແນ່ໃຈ​ບໍ່ວ່າ​ຕ້ອງການ​ປິດ ການສຳຫຼວດ​ດ້ວຍການສຳ​ຜັດ?\n\nອຸປະກອນ​ຂອງທ່ານ​ຈະ​ບໍ່​ຕອບສະໜອງ​ກັບ​ທ່າ​ທາງ​ນິ້ວ​ມື​ລັດ ແລະ​ຈະ​ບໍ່​ເວົ້າ​ອອກ​ມາ​ເມື່ອ​ທ່ານ​ສຳຜັດ​ໜ້າຈໍ.</string>
   <string name="dialog_title_enable_tree_debug">ເປີດ​ນຳ​ໃຊ້​ການ​ດີ​ບັກ​ໂນດ​ແຜງ​ຜັງ​ຕົ້ນ​ໄມ້​ຫຼືບໍ່?</string>
   <string name="dialog_message_enable_tree_debug">ທ່ານ​ແນ່​ໃຈ​ບໍ່​ວ່າ​ຕ້ອງ​ການ​ເປີດ​ນຳ​ໃຊ້​ການ​ດີ​ບັກ​ໂນດ​ແຜນ​ຜັງ​ຕົ້ນ​ໄມ້?\n\n​ການ​ດີ​ບັກ​ໂນດ​ແຜນ​ຜັງ​ຕົ້ນ​ໄມ້​ຈະ​ເປັນ​ການເປີດ​ເຜີຍ​ເນື້ອ​ຫາ​ຂອງ​ໜ້າ​ຈໍ​ຂອງ​ທ່ານ​ໄປ​ໃສ່​ບັນ​ທຶກ​ຂອງ​ອຸ​ປະ​ກອນ, ເຊິ່ງ​ອາດ​ສາ​ມາດ​ຖືກ​ອ່ານ​ໄດ້​ໂດຍ​ແອບ​ພລິ​ເຄ​ຊັນ​ອື່ນໆ.</string>
   <string name="dialog_title_enable_tree_debug_gesture">ກຳນົດທ່າທາງການໃຊ້ 4 ນິ້ວແຕະ 3 ເທື່ອຄືນໃໝ່ບໍ?</string>
@@ -911,8 +897,6 @@
   <string name="typing_echo_change">%1$s ສະທ້ອນແປ້ນພິມແທ້</string>
   <string name="reading_control_toggle_prefix_xr">ຫັນຝາມືຂ້າງທີ່ທ່ານບໍ່ລຶ້ງເຂົ້າຫາໂຕ, ກົດຄ້າງໄວ້ເພື່ອສະຫຼັບໂໝດຕົວຄວບຄຸມການອ່ານ.</string>
   <string name="gesture_1_or_2">%1$s ຫຼື %2$s</string>
-  <string name="select_setting_hint">%1$s ເພື່ອເລືອກການຕັ້ງຄ່າອື່ນ</string>
-  <string name="adjust_setting_hint">%1$s ເພື່ອປັບແຕ່ງການຕັ້ງຄ່າ</string>
   <string name="adjust_granularity_hint">%1$s ເພື່ອອ່ານ %2$s</string>
   <string name="adjust_typo_hint">%1$s ສຳລັບການແນະນຳ.</string>
   <string name="use_action_hint">ແຕະ​ສອງ​ເທື່ອເພື່ອເລີ່ມຄຳສັ່ງ</string>
@@ -1234,8 +1218,6 @@
   <string name="wear_training_typing_text5">ລອງໃຊ້ຂ້າງລຸ່ມ.</string>
   <string name="wear_training_typing_practice_button_content_description">ການພິມດ້ວຍແປ້ນພິມ</string>
   <string name="wear_training_end_tutorial_title">ທ່ານພ້ອມທີ່ຈະເລີ່ມໃຊ້ TalkBack ແລ້ວ</string>
-  <string name="talkback_updated_notification_title">ອັບເດດ TalkBack ແລ້ວ</string>
-  <string name="talkback_updated_notification_content">ແຕະເພື່ອເບິ່ງຂໍ້ມູນເພີ່ມເຕີມ</string>
   <string name="wear_new_feature_page_title">ຍິນດີຕ້ອນຮັບສູ່ TalkBack ທີ່ອັບເດດໃໝ່ແລ້ວ</string>
   <string name="wear_new_feature_page_content">ທ່ານຈະສັງເກດເຫັນບາງການແກ້ໄຂຂໍ້ຜິດພາດ ແລະ ການປ່ຽນແປງວິທີຍ້າຍໂຟກັສ</string>
   <string name="wear_new_feature_page_button_content_description">ແລ້ວໆ</string>

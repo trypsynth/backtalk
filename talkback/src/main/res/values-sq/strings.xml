@@ -19,13 +19,10 @@
   <string name="search_mode_cancel">Kërkimi u anulua.</string>
   <string name="notification_type_status_started">Filloi</string>
   <string name="notification_type_status_stopped">Ndaloi</string>
-  <string name="notification_type_status_connected">lidhur</string>
-  <string name="notification_battery_level_unknown">i panjohur</string>
   <string name="notification_battery_saver_mode">\"Kursyesi i baterisë\" aktiv</string>
   <string name="template_no_text_selected">Nuk u zgjodh asnjë tekst</string>
   <string name="template_charging">Po ngarkon %1$s Niveli i baterisë %2$s për qind.</string>
   <string name="template_charging_lite">Po ngarkon %1$s</string>
-  <string name="template_battery_state">Energjia %1$s %2$s përqind %3$s</string>
   <string name="template_language_options_menu_item">%1$s (%2$s)</string>
   <string name="value_ringer_vibrate">Zile me dridhje.</string>
   <string name="value_ringer_silent">Zilja është heshtur.</string>
@@ -60,14 +57,9 @@
   <string name="pref_speak_time_title">Lexo me zë orën</string>
   <string name="pref_speak_time_summary">Kur aktivizon ekranin</string>
   <string name="summary_speak_container_element_positions">Përfshin informacionet gjatë hyrjes dhe daljes në lista, rrjeta dhe kontejnerë të tjerë</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_title">Vonesa e fokusit u shtua te kontrolli i leximit</string>
-  <string name="confirm_focus_delay_reading_control_added_dialog_message">Rrëshqit shpejt me 3 gishta për të përdorur kontrollin e leximit dhe ndrysho vonesën e fokusit në çdo kohë</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Dëshiron të kalosh te ngritja për të shkruar?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Kur vonesa e fokusit për të shkruar caktohet nën 0,3 sekonda, do të jetë shumë e vështirë të kryhet trokitja dy herë për të shkruar. Zgjidh \"Ndrysho\" për të kaluar automatikisht te ngritja për të shkruar.\n\nPër të përdorur ngritjen për të shkruar, mbaj gishtin për të zgjedhur një çelës dhe më pas ngrije për të shkruar.\n\nMund ta personalizosh këtë te cilësimet e TalkBack.</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_title">Vonesa e fokusit për të shkruar u shtua te kontrolli i leximit</string>
-  <string name="confirm_typing_focus_delay_reading_control_added_dialog_message">Nëse ke probleme me trokitjen dy herë kur shkruan, rrëshqit shpejt me 3 gishta për të përdorur kontrollin e leximit dhe kalo te një vonesë më e gjatë e fokusit për të shkruar</string>
   <string name="gestures_announce_typing_focus_wont_change">Vonesa e fokusit për të shkruar nuk po funksionon pa \"Ngritjen për të shkruar\".</string>
-  <string name="confirm_latency_reduction_reading_control_added_dialog_positive_button">E kuptova</string>
   <string name="reset_letency_reduction_settings_dialog_title">Të rivendosen cilësimet e vonesës?</string>
   <string name="message_reset_letency_reduction_settings_confirm_dialog">Kjo do t\'i rivendosë te parazgjedhja të gjitha cilësimet e vonesës</string>
   <string name="reset_button_in_reset_letency_reduction_settings_confirm_dialog">Rivendos</string>
@@ -87,7 +79,6 @@
   <string name="pref_allow_frequent_content_change_announcement_title">Shqipto përditësimet e progresit</string>
   <string name="summary_pref_allow_frequent_content_change_announcement">Përfshin përditësimet ndërkohë që shkarkon, ndjek drejtimet e udhëtimit me makinë etj. Kur është i çaktivizuar, do të marrësh përsëri përditësime më pak të shpeshta.</string>
   <string name="pref_speak_system_window_titles_summary">Lexo me zë dritaret e sistemit dhe të hyrjeve, si p.sh. kur kalon te shiriti i statusit, njoftimet ose te një tastierë tjetër</string>
-  <string name="title_pref_explore_by_touch">Eksploro me prekje</string>
   <string name="title_pref_category_visual">Vizuale</string>
   <string name="title_pref_category_controls">Kontrollet</string>
   <string name="title_pref_category_braille">Breil</string>
@@ -116,8 +107,6 @@
   <string name="pref_category_selector_menu_summary_single_finger">Për të përdorur kontrollet e leximit, rrëshqit shpejt lart pastaj poshtë.</string>
   <string name="title_pref_manage_keyboard_shortcuts">Shkurtoret e tastierës</string>
   <string name="title_pref_export_custom_labels">Eksporto etiketat e importuara</string>
-  <string name="title_pref_play_store">Hape TalkBack te \"Dyqani i Play\"</string>
-  <string name="summary_pref_play_store">Versioni aktual i TalkBack: %1$s</string>
   <string name="title_pref_help_and_feedback">Ndihma dhe komentet</string>
   <string name="title_pref_gup">Kontakto me ekipin e mbështetjes të Google për personat me aftësi të kufizuara</string>
   <string name="subtitle_pref_gup">Merr ndihmë duke përdorur TalkBack ose raporto probleme</string>
@@ -639,7 +628,6 @@ Vonesat nën 0,3 sekonda do ta kalojnë trokitjen dy herë për të aktivizuar t
   <string name="summary_cache_keyboard_keys">TalkBack ngarkon paraprakisht njoftimet për të zvogëluar vonesën kur ti shkruan</string>
   <string name="summary_cache_keyboard_keys_disabled">Përdor \"Tekstin në ligjërim\" të Google për të përdorur këtë veçori</string>
   <string name="value_direction_down">poshtë</string>
-  <string name="value_direction_down_and_right">poshtë dhe më pas djathtas</string>
   <string name="title_pref_shortcut_up">Rrëshqitja lart</string>
   <string name="title_pref_shortcut_up_xr">Pëllëmba e dytë drejt vetes, kap me dy gishta dhe rrëshqit shpejt lart</string>
   <string name="title_pref_shortcut_down">Rrëshqitja poshtë</string>
@@ -777,8 +765,6 @@ Vonesat nën 0,3 sekonda do ta kalojnë trokitjen dy herë për të aktivizuar t
   <string name="button_customize_gesture_mappings">Personalizo gjestet</string>
   <string name="button_disable_all_events">Çaktivizo të gjitha</string>
   <string name="button_enable_all_events">Aktivizo të gjitha</string>
-  <string name="dialog_title_disable_exploration">Të çaktivizohet funksioni \"Eksploro me prekje\"?</string>
-  <string name="dialog_message_disable_exploration">Je i sigurt që dëshiron ta çaktivizosh funksionin \"Eksploro me prekje\"?\n\nPajisja jote nuk do t\'u përgjigjet më gjesteve të shkurtoreve ose të lexojë artikuj, kur ta prekësh ekranin.</string>
   <string name="dialog_title_enable_tree_debug">Të aktivizohet Korrigjimi i pemës së nyjave?</string>
   <string name="dialog_message_enable_tree_debug">Je i sigurt që dëshiron ta aktivizosh korrigjimin e pemës së nyjave?\n\nKorrigjimi i pemës së nyjave e ekspozon përmbajtjen e ekranit tënd te regjistrat e pajisjes, të cilat mund të lexohen nga aplikacione të tjera.</string>
   <string name="dialog_title_enable_tree_debug_gesture">Të ricaktohet gjesti i tri trokitjeve me 4 gishta?</string>
@@ -911,8 +897,6 @@ Vonesat nën 0,3 sekonda do ta kalojnë trokitjen dy herë për të aktivizuar t
   <string name="typing_echo_change">Tastierë fizike me jehonë për %1$s</string>
   <string name="reading_control_toggle_prefix_xr">Pëllëmba dytësore drejt vetes, kryej një shtypje të gjatë për të aktivizuar/çaktivizuar modalitetin e kontrollit të leximit.</string>
   <string name="gesture_1_or_2">%1$s ose %2$s</string>
-  <string name="select_setting_hint">%1$s për të zgjedhur një cilësim tjetër</string>
-  <string name="adjust_setting_hint">%1$s për të rregulluar cilësimin</string>
   <string name="adjust_granularity_hint">%1$s për t\'u lexuar sipas %2$s</string>
   <string name="adjust_typo_hint">%1$s për sugjerime.</string>
   <string name="use_action_hint">Trokit dy herë për të kryer veprimin</string>
@@ -1234,8 +1218,6 @@ Vonesat nën 0,3 sekonda do ta kalojnë trokitjen dy herë për të aktivizuar t
   <string name="wear_training_typing_text5">Provoje më poshtë.</string>
   <string name="wear_training_typing_practice_button_content_description">Të shkruarit me tastierë</string>
   <string name="wear_training_end_tutorial_title">Je gati të fillosh përdorimin e TalkBack</string>
-  <string name="talkback_updated_notification_title">TalkBack është përditësuar</string>
-  <string name="talkback_updated_notification_content">Trokit për të zbuluar më shumë</string>
   <string name="wear_new_feature_page_title">Mirë se vjen në versionin e përditësuar të TalkBack</string>
   <string name="wear_new_feature_page_content">Do të vëresh disa rregullime defektesh në kod dhe ndryshime në mënyrën se si lëviz fokusi</string>
   <string name="wear_new_feature_page_button_content_description">Përfundo</string>

@@ -51,8 +51,10 @@ import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.ImageCaptioner;
 import com.google.android.accessibility.talkback.actor.gemini.AiCoreEndpoint;
 import com.google.android.accessibility.talkback.actor.gemini.AiCoreEndpoint.AiFeatureDownloadCallback;
+import com.google.android.accessibility.talkback.actor.gemini.AiServicePreference;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiApiKeyPreference;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiConfiguration;
+import com.google.android.accessibility.talkback.actor.gemini.GeminiModelPreference;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics.ImageCaptionLogKeys;
 import com.google.android.accessibility.talkback.dynamicfeature.DownloaderFactory;
@@ -155,6 +157,8 @@ public class AutomaticDescriptionsFragment extends TalkbackBaseFragment {
     setupDetailedImageDescriptionPreference(
         FeatureSwitchDialogResources.DETAILED_IMAGE_DESCRIPTION);
     GeminiApiKeyPreference.setUp(this);
+    GeminiModelPreference.setUp(this);
+    AiServicePreference.setUp(this);
   }
 
   @Override

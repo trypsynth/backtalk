@@ -72,6 +72,14 @@ public class PassThroughModeActor {
     public boolean isPassThroughModeActive() {
       return PassThroughModeActor.this.touchExplorePassThroughActive;
     }
+
+    /**
+     * Returns whether Android passes a touch at the point straight to the app: anywhere while
+     * pass-through mode or the braille lock is on, and in the region direct touch wants.
+     */
+    public boolean passesThrough(int x, int y) {
+      return touchExplorePassThroughActive || directTouchRegion.contains(x, y);
+    }
   }
 
   public final PassThroughModeActor.State state = new PassThroughModeActor.State();

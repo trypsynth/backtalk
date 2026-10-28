@@ -67,6 +67,11 @@ object UpdateChecker {
   @VisibleForTesting const val PHONE_APK_NAME = "backtalk.apk"
   /** The watch build, so that a watch never installs the phone app. */
   @VisibleForTesting const val WATCH_APK_NAME = "backtalk-wear.apk"
+  /**
+   * The phone build with ML Kit's text recognition model, for phones without Google Play services,
+   * so that it never updates to a build whose text recognition needs them.
+   */
+  @VisibleForTesting const val NO_PLAY_SERVICES_APK_NAME = "backtalk-nogms.apk"
   private const val SHORT_HASH_LENGTH = 7
   private const val MAX_CHANGES = 50
   private const val TIMEOUT_MS = 30_000
@@ -145,7 +150,11 @@ object UpdateChecker {
   }
 
   private fun apkName(): String =
-    if (FormFactorUtils.isAndroidWear()) WATCH_APK_NAME else PHONE_APK_NAME
+    when {
+      FormFactorUtils.isAndroidWear() -> WATCH_APK_NAME
+      BuildConfig.BUNDLED_OCR -> NO_PLAY_SERVICES_APK_NAME
+      else -> PHONE_APK_NAME
+    }
 
   @VisibleForTesting
   fun parseRelease(

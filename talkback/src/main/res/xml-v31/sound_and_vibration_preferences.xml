@@ -31,21 +31,35 @@
       android:defaultValue="@bool/pref_proximity_default"
       android:key="@string/pref_proximity_key"
       android:title="@string/title_pref_cover_proximity_sensor" />
-  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+  <com.google.android.accessibility.talkback.preference.base.CommandSwitchPreference
       android:defaultValue="false"
       android:key="@string/pref_speakerphone_away_from_ear_key"
       android:title="@string/title_pref_speakerphone_away_from_ear"
       android:summary="@string/summary_pref_speakerphone_away_from_ear" />
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteListPreference
+      android:dialogTitle="@string/title_pref_sound_scheme"
+      android:key="pref_sound_theme"
+      android:persistent="false"
+      android:summary="%s"
+      android:title="@string/title_pref_sound_scheme" />
   <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
       android:fragment="com.google.android.accessibility.talkback.soundthemes.SoundThemesFragment"
       android:key="pref_sound_themes"
-      android:title="@string/title_pref_sound_themes"
-      android:summary="@string/summary_pref_sound_themes" />
+      android:title="@string/title_pref_manage_sound_themes"
+      android:summary="@string/summary_pref_manage_sound_themes" />
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="false"
       android:key="pref_control_sounds_speak_roles"
       android:title="@string/title_pref_control_sounds_speak_roles"
       android:summary="@string/summary_pref_control_sounds_speak_roles" />
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteListPreference
+      android:defaultValue="hint"
+      android:dialogTitle="@string/title_pref_actions_sound_timing"
+      android:entries="@array/pref_actions_sound_timing_entries"
+      android:entryValues="@array/pref_actions_sound_timing_values"
+      android:key="pref_actions_sound_timing"
+      android:summary="%s"
+      android:title="@string/title_pref_actions_sound_timing" />
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_vibration_default"
       android:key="@string/pref_vibration_key"

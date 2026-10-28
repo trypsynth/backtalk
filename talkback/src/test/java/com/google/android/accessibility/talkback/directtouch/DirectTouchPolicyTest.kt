@@ -16,6 +16,7 @@
 
 package com.google.android.accessibility.talkback.directtouch
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -26,10 +27,10 @@ class DirectTouchPolicyTest {
       masterEnabled = true,
       appEnabled = true,
       screenInteractive = true,
-      foreignAppWindow = false,
-      systemUiCoversHalf = false,
       dialogShowing = false,
       textFieldFocused = false,
+      foreignAppWindow = { false },
+      systemUiCoversHalf = { false },
     )
 
   @Test
@@ -39,13 +40,42 @@ class DirectTouchPolicyTest {
 
   @Test
   fun eachHandBackConditionTurnsItOff() {
-    assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(foreignAppWindow = true)))
-    assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(systemUiCoversHalf = true)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(foreignAppWindow = { true })))
+    assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(systemUiCoversHalf = { true })))
     assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(dialogShowing = true)))
     assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(textFieldFocused = true)))
     assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(screenInteractive = false)))
     assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(masterEnabled = false)))
     assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(appEnabled = false)))
+  }
+
+  @Test
+  fun windowRootsAreAskedForOnlyWhenTheyCanChangeTheAnswer() {
+    for (inputs in 0 until 128) {
+      fun set(bit: Int) = inputs and (1 shl bit) != 0
+      var rootChecks = 0
+      val input =
+        DirectTouchInput(
+          masterEnabled = set(0),
+          appEnabled = set(1),
+          screenInteractive = set(2),
+          dialogShowing = set(3),
+          textFieldFocused = set(4),
+          foreignAppWindow = {
+            rootChecks++
+            set(5)
+          },
+          systemUiCoversHalf = {
+            rootChecks++
+            set(6)
+          },
+        )
+      val rest = set(0) && set(1) && set(2) && !set(3) && !set(4)
+      val expected = rest && !set(5) && !set(6)
+      assertEquals("inputs $inputs", expected, DirectTouchPolicy.shouldBeActive(input))
+      val expectedRootChecks = if (!rest) 0 else if (set(5)) 1 else 2
+      assertEquals("root checks for inputs $inputs", expectedRootChecks, rootChecks)
+    }
   }
 
   @Test
@@ -62,5 +92,72 @@ class DirectTouchPolicyTest {
   @Test
   fun activeShortSystemWindowIsNotTheShade() {
     assertFalse(DirectTouchPolicy.coversHalfScreen(active = true, windowHeight = 120, displayHeight = 1080))
+  }
+
+  @Test
+  fun aDialogFromTheSameAppDoesNotTurnRegionModeOff() {
+    assertTrue(DirectTouchPolicy.shouldBeActive(base().copy(regionMode = true, dialogShowing = true)))
+  }
+
+  @Test
+  fun nativeItemsOnScreenTurnWholeScreenOff() {
+    assertFalse(DirectTouchPolicy.shouldBeActive(base().copy(nativeItemsShowing = { true })))
+  }
+
+  @Test
+  fun nativeItemsDoNotTurnRegionModeOff() {
+    assertTrue(
+      DirectTouchPolicy.shouldBeActive(base().copy(regionMode = true, nativeItemsShowing = { true }))
+    )
+  }
+
+  @Test
+  fun nativeItemsAreOnlyLookedForWhenNothingElseDecides() {
+    var looks = 0
+    val input = base().copy(textFieldFocused = true, nativeItemsShowing = { looks++; false })
+    assertFalse(DirectTouchPolicy.shouldBeActive(input))
+    assertEquals(0, looks)
+  }
+
+  @Test
+  fun aGamesFocusableDrawingSurfaceIsNotANativeItem() {
+    // Constant Motion's whole screen is one SurfaceView that takes input focus and says nothing.
+    assertFalse(DirectTouchPolicy.isNativeItem(backtalkWouldFocus = true, label = null))
+    assertFalse(DirectTouchPolicy.isNativeItem(backtalkWouldFocus = true, label = ""))
+  }
+
+  @Test
+  fun aFocusableViewThatHasSomethingToSayIsANativeItem() {
+    assertTrue(DirectTouchPolicy.isNativeItem(backtalkWouldFocus = true, label = "Banana"))
+  }
+
+  @Test
+  fun aLabelWithoutFocusIsNotANativeItem() {
+    assertFalse(DirectTouchPolicy.isNativeItem(backtalkWouldFocus = false, label = "Banana"))
+  }
+
+  @Test
+  fun aFocusableViewWithNothingToSayIsADrawingSurface() {
+    assertTrue(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = null))
+    assertTrue(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = ""))
+  }
+
+  @Test
+  fun labelsAndUnfocusableViewsAreNotDrawingSurfaces() {
+    // A launcher's clock says the time, and its layout isn't focused, so it has no surface (#288).
+    assertFalse(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = true, label = "10:42"))
+    assertFalse(DirectTouchPolicy.isDrawingSurface(backtalkWouldFocus = false, label = null))
+  }
+
+  @Test
+  fun everythingElseStillTurnsRegionModeOff() {
+    val region = base().copy(regionMode = true)
+    assertTrue(DirectTouchPolicy.shouldBeActive(region))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(foreignAppWindow = { true })))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(systemUiCoversHalf = { true })))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(textFieldFocused = true)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(screenInteractive = false)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(masterEnabled = false)))
+    assertFalse(DirectTouchPolicy.shouldBeActive(region.copy(appEnabled = false)))
   }
 }

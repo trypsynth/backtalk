@@ -439,6 +439,8 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     NEXT(R.string.shortcut_value_next, R.string.shortcut_next),
     FIRST_IN_SCREEN(R.string.shortcut_value_first_in_screen, R.string.shortcut_first_in_screen),
     LAST_IN_SCREEN(R.string.shortcut_value_last_in_screen, R.string.shortcut_last_in_screen),
+    SCROLL_TO_TOP(R.string.shortcut_value_scroll_to_top, R.string.shortcut_scroll_to_top),
+    SCROLL_TO_BOTTOM(R.string.shortcut_value_scroll_to_bottom, R.string.shortcut_scroll_to_bottom),
     PREV_CONTAINER(R.string.shortcut_value_prev_container, R.string.shortcut_prev_container),
     NEXT_CONTAINER(R.string.shortcut_value_next_container, R.string.shortcut_next_container),
     PREVIOUS_WINDOW(R.string.shortcut_value_previous_window, R.string.shortcut_previous_window),
@@ -455,6 +457,8 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     BACK(R.string.shortcut_value_back, R.string.shortcut_back),
     OVERVIEW(R.string.shortcut_value_overview, R.string.shortcut_overview),
     NOTIFICATIONS(R.string.shortcut_value_notifications, R.string.shortcut_notifications),
+    SYSTEM_NOTIFICATIONS(
+        R.string.shortcut_value_system_notifications, R.string.shortcut_system_notifications),
     QUICK_SETTINGS(R.string.shortcut_value_quick_settings, R.string.shortcut_quick_settings),
     ALL_APPS(R.string.shortcut_value_all_apps, R.string.shortcut_all_apps),
     A11Y_BUTTON(R.string.shortcut_value_a11y_button, R.string.shortcut_a11y_button),
@@ -507,6 +511,8 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     MOVE_CURSOR_TO_END(
         R.string.shortcut_value_move_cursor_to_end, R.string.title_edittext_breakout_move_to_end),
     SELECT_ALL(R.string.shortcut_value_select_all, android.R.string.selectAll),
+    CLEAR_SELECTION(
+        R.string.shortcut_value_clear_selection, R.string.title_clear_selection),
     COPY(R.string.shortcut_value_copy, android.R.string.copy),
     CUT(R.string.shortcut_value_cut, android.R.string.cut),
     PASTE(R.string.shortcut_value_paste, android.R.string.paste),

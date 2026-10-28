@@ -152,4 +152,5 @@
   <string name="bk_gesture_next_suggestion">Odsłuchaj następną sugestię</string>
   <string name="bk_gesture_confirm_spelling_suggestion">Potwierdź sugestię</string>
   <string name="bk_gesture_undo_spelling_suggestion">Cofnij sugestię</string>
+  <string name="code_user_facing_name_mongolian">Mongolski</string>
 </resources>

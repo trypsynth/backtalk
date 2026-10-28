@@ -79,6 +79,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.function.Function;
@@ -139,9 +140,6 @@ public class SpeechControllerImpl implements SpeechController {
    * greater than this value (milli-second).
    */
   private static final long SAVED_FEEDBACK_FOR_PAUSE_TIME = 800;
-
-  /** Reusable map used for passing parameters to the TextToSpeech. */
-  private final HashMap<String, String> mSpeechParametersMap = new HashMap<>();
 
   /**
    * Priority queue of actions to perform before utterances start, ordered by ascending utterance
@@ -1570,7 +1568,7 @@ public class SpeechControllerImpl implements SpeechController {
       accumulatedUtterance = peekNextUtteranceId();
     } else {
       String utteranceId = currentFeedbackItem.getUtteranceId();
-      if (utteranceId.startsWith(UTTERANCE_ID_PREFIX)) {
+      if (utteranceId != null && utteranceId.startsWith(UTTERANCE_ID_PREFIX)) {
         accumulatedUtterance =
             Integer.parseInt(utteranceId.substring(UTTERANCE_ID_PREFIX.length()));
       } else {
@@ -2071,9 +2069,7 @@ public class SpeechControllerImpl implements SpeechController {
       playHapticsFromFragment(fragment, eventId);
     }
 
-    // Reuse the global instance of speech parameters.
-    final HashMap<String, String> params = mSpeechParametersMap;
-    params.clear();
+    final HashMap<String, String> params = new HashMap<>();
 
     // Add all custom speech parameters.
     final Bundle speechParams = fragment.getSpeechParams();
@@ -2230,9 +2226,9 @@ public class SpeechControllerImpl implements SpeechController {
   /**
    * @return The utterance ID, or -1 if the ID is invalid.
    */
-  private static int parseUtteranceId(String utteranceId) {
+  private static int parseUtteranceId(@Nullable String utteranceId) {
     // Check for bad utterance ID. This should never happen.
-    if (!utteranceId.startsWith(UTTERANCE_ID_PREFIX)) {
+    if (utteranceId == null || !utteranceId.startsWith(UTTERANCE_ID_PREFIX)) {
       LogUtils.e(TAG, "Bad utterance ID: %s", utteranceId);
       return -1;
     }
@@ -2515,14 +2511,15 @@ public class SpeechControllerImpl implements SpeechController {
 
     final int utteranceIndex = SpeechControllerImpl.parseUtteranceId(utteranceId);
     final boolean interrupted =
-        (currentFeedbackItem != null) && !currentFeedbackItem.getUtteranceId().equals(utteranceId);
+        (currentFeedbackItem != null)
+            && !Objects.equals(currentFeedbackItem.getUtteranceId(), utteranceId);
 
     final int status;
     if (interrupted) {
       status = STATUS_INTERRUPTED;
     } else if (requestPause
         && savedFeedbackItem != null
-        && utteranceId.equals(savedFeedbackItem.getUtteranceId())) {
+        && Objects.equals(utteranceId, savedFeedbackItem.getUtteranceId())) {
       status = STATUS_PAUSE;
     } else if (success) {
       status = STATUS_SPOKEN;
