@@ -110,6 +110,10 @@ class AudioDeviceRouter @JvmOverloads constructor(
   // Android pick the communication route again, which during a call could move the call to a
   // watch whose phone calls setting is off.
   private var communicationDeviceSetByUs = false
+  // The chosen Bluetooth device already plays Backtalk's audio the way it plays media, so the
+  // communication route is left alone. That route would switch the headset into call mode, with
+  // narrowband sound and noise filtering, for every app's audio (#316).
+  @Volatile private var usesMediaRoute = false
   private var otherPlaybackCount = 0
   private val playbackCallback =
     object : AudioManager.AudioPlaybackCallback() {
@@ -247,6 +251,7 @@ class AudioDeviceRouter @JvmOverloads constructor(
 
     Log.i(TAG, "Applying audio routing for target: $currentTarget")
     LogUtils.d(TAG, "Applying audio routing for target: %s", currentTarget)
+    usesMediaRoute = false
     when (val target = currentTarget) {
       is AudioTarget.SystemDefault -> {
         stopKeepAlive()
@@ -265,8 +270,7 @@ class AudioDeviceRouter @JvmOverloads constructor(
       is AudioTarget.AnyExternal -> {
         val external = findExternalDevice(am)
         if (external != null) {
-          startKeepAlive(external)
-          setDeviceRouting(am, external, forceSpeakerOn = false)
+          routeToExternal(am, external)
         } else {
           stopKeepAlive()
           clearDeviceRouting(am)
@@ -275,14 +279,51 @@ class AudioDeviceRouter @JvmOverloads constructor(
       is AudioTarget.SpecificDevice -> {
         val specific = findSpecificDevice(am, target) ?: findExternalDevice(am)
         if (specific != null) {
-          startKeepAlive(specific)
-          setDeviceRouting(am, specific, forceSpeakerOn = false)
+          routeToExternal(am, specific)
         } else {
           stopKeepAlive()
           clearDeviceRouting(am)
         }
       }
     }
+  }
+
+  /**
+   * Routes to an external [device]: through the communication route, unless it is a Bluetooth
+   * device that already plays media, which plays Backtalk's audio too.
+   */
+  private fun routeToExternal(am: AudioManager, device: AudioDeviceInfo) {
+    if (playsAsMedia(am, device)) {
+      Log.i(TAG, "${device.productName} plays media, so routing is left to Android")
+      stopKeepAlive()
+      clearDeviceRouting(am)
+      usesMediaRoute = true
+      isRoutingActive = true
+      return
+    }
+    startKeepAlive(device)
+    setDeviceRouting(am, device, forceSpeakerOn = false)
+  }
+
+  /** Whether [device] is Bluetooth and Android plays media on it. */
+  private fun playsAsMedia(am: AudioManager, device: AudioDeviceInfo): Boolean {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return false
+    val media =
+      try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          // Where media plays now. The communication route doesn't change it.
+          am.getAudioDevicesForAttributes(
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
+          )
+        } else {
+          // Android 12 can't say, so any connected Bluetooth media output counts.
+          am.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
+        }
+      } catch (e: Exception) {
+        Log.w(TAG, "Couldn't find where media plays", e)
+        return false
+      }
+    return playsAsMedia(endpointOf(device), media.map(::endpointOf))
   }
 
   /**
@@ -304,6 +345,17 @@ class AudioDeviceRouter @JvmOverloads constructor(
     if (currentTarget == AudioTarget.SystemDefault) return
     if (stepsAside) return
     val am = audioManager ?: return
+
+    if (usesMediaRoute) {
+      val targetDevice = getTargetAudioDevice()
+      if (targetDevice != null && playsAsMedia(am, targetDevice)) {
+        isRoutingActive = true
+      } else {
+        // Media moved to another output, or the device went: choose again.
+        applyRouting()
+      }
+      return
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       val targetDevice = getTargetAudioDevice()
@@ -503,6 +555,8 @@ class AudioDeviceRouter @JvmOverloads constructor(
   private fun handleCommunicationDeviceChanged(device: AudioDeviceInfo?) {
     if (currentTarget == AudioTarget.SystemDefault) return
     if (stepsAside) return
+    // Calls and voice input own the communication route while Backtalk plays as media.
+    if (usesMediaRoute) return
     val am = audioManager ?: return
     val targetDevice = getTargetAudioDevice()
     if (targetDevice != null && (device == null || device.id != targetDevice.id)) {
@@ -767,6 +821,44 @@ class AudioDeviceRouter @JvmOverloads constructor(
         it.clientAudioSource == MediaRecorder.AudioSource.VOICE_COMMUNICATION ||
           it.clientAudioSource == MediaRecorder.AudioSource.VOICE_RECOGNITION
       }
+
+    /** An output as routing compares them: its type, and its address or else its name. */
+    @VisibleForTesting
+    data class Endpoint(val type: Int, val address: String, val name: String)
+
+    private fun endpointOf(device: AudioDeviceInfo) =
+      Endpoint(
+        device.type,
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) device.address.orEmpty() else "",
+        device.productName?.toString().orEmpty(),
+      )
+
+    private val BLUETOOTH_TYPES =
+      setOf(
+        AudioDeviceInfo.TYPE_BLUETOOTH_A2DP,
+        AudioDeviceInfo.TYPE_BLUETOOTH_SCO,
+        AudioDeviceInfo.TYPE_BLE_HEADSET,
+        AudioDeviceInfo.TYPE_BLE_SPEAKER,
+      )
+
+    /**
+     * Whether [target] is a Bluetooth device that plays media, as one of the [media] outputs: the
+     * same device, by address, over a profile other than the call one. A headset's call profile
+     * (SCO) and its media one (A2DP) are separate outputs with the same address.
+     */
+    @VisibleForTesting
+    @JvmStatic
+    fun playsAsMedia(target: Endpoint, media: List<Endpoint>): Boolean =
+      target.type in BLUETOOTH_TYPES &&
+        media.any {
+          it.type in BLUETOOTH_TYPES &&
+            it.type != AudioDeviceInfo.TYPE_BLUETOOTH_SCO &&
+            if (target.address.isNotEmpty() && it.address.isNotEmpty()) {
+              it.address.equals(target.address, ignoreCase = true)
+            } else {
+              it.name.isNotEmpty() && it.name.equals(target.name, ignoreCase = true)
+            }
+        }
 
     /** Checks whether an [AudioDeviceInfo] represents an external device. */
     fun isExternalDevice(device: AudioDeviceInfo): Boolean {

@@ -227,6 +227,8 @@ TalkBack marked its notices that it was updated, or that gestures changed, as on
 
 Backtalk keeps your choice when devices connect or disconnect, or when other apps start playing. If the device that you chose isn't connected, Backtalk uses another external device, and the setting shows "(disconnected)" next to the device name. During phone calls, Android decides where audio plays.
 
+When you choose Bluetooth headphones that already play your media, Backtalk plays there the way media does. It only takes the call route, which puts headphones into call mode with lower-quality sound for every app, when Android wouldn't play Backtalk's audio on the device otherwise, such as when media plays on another Bluetooth device.
+
 To switch quickly, add **Audio output device** in **Reading controls**. Swiping up or down with it goes through **System default**, **Phone speaker** and each connected device, and changes the same setting.
 
 ### Accessibility volume on Bluetooth headphones
