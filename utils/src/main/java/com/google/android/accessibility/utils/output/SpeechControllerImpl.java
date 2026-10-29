@@ -2687,8 +2687,11 @@ public class SpeechControllerImpl implements SpeechController {
     boolean starting = previousItem == null && !shouldSilenceSpeech(nextItem);
     speakNextItemInternal(nextItem);
     // After the engine is asked, since the audio focus calls take a few milliseconds. Its audio
-    // still plays later than that, and its completion always comes in a later message.
-    if (starting) {
+    // still plays later than that, and its completion always comes in a later message. Should
+    // anything have ended it meanwhile, with nothing after, speech is not starting after all, and
+    // taking focus now would hold it with nothing left to release it. Speech that replaced it is
+    // still starting, unless it already started itself.
+    if (starting && currentFeedbackItem != null && !mIsSpeaking) {
       handleSpeechStarting();
     }
     return true;

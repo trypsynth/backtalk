@@ -111,31 +111,46 @@ class EarlyFocusSpeech(clock: () -> Long = SystemClock::uptimeMillis) {
 
 /** The rules of [EarlyFocusSpeech], for any kind of [item], so that they can be tested. */
 class EarlyFocusRecords<T>(maxItems: Int, maxAgeMs: Long, clock: () -> Long) {
-  private class Entry<T>(val item: T, val spoken: Boolean, val actionTime: Long)
+  /** [lastActionTimeBefore] is [lastActionTime] before this entry, for a focus that is refused. */
+  private class Entry<T>(
+    val item: T,
+    val spoken: Boolean,
+    val actionTime: Long,
+    val lastActionTimeBefore: Long,
+  )
 
   private val entries = RecentItems<Entry<T>>(maxItems, maxAgeMs, clock)
 
   /** When the latest focus action handled early started, or 0 if none has. */
   private var lastActionTime = 0L
 
-  fun addSpoken(item: T, actionTime: Long) = add(Entry(item, spoken = true, actionTime))
+  fun addSpoken(item: T, actionTime: Long) = add(item, spoken = true, actionTime)
 
-  fun addStateUpdated(item: T, actionTime: Long) = add(Entry(item, spoken = false, actionTime))
+  fun addStateUpdated(item: T, actionTime: Long) = add(item, spoken = false, actionTime)
 
   /**
    * Each item has at most one entry, for its latest focus. The event of an earlier focus of it is
    * then stale, as that focus moved away before the latest one.
    */
-  private fun add(entry: Entry<T>) {
-    forget(entry.item)
-    entries.add(entry)
-    lastActionTime = maxOf(lastActionTime, entry.actionTime)
+  private fun add(item: T, spoken: Boolean, actionTime: Long) {
+    forget(item)
+    entries.add(Entry(item, spoken, actionTime, lastActionTime))
+    lastActionTime = maxOf(lastActionTime, actionTime)
   }
 
   fun forget(item: T) = entries.removeAll { it.item == item }
 
-  /** Forgets [item], and returns whether it was remembered as spoken. */
-  fun forgetSpoken(item: T): Boolean = entries.removeFirst { it.item == item }?.spoken == true
+  /**
+   * Forgets [item], whose focus was refused, and returns whether it was remembered as spoken. The
+   * refused focus took the focus from no node, so events sent before it are no longer stale.
+   */
+  fun forgetSpoken(item: T): Boolean {
+    val entry = entries.removeFirst { it.item == item } ?: return false
+    if (entry.actionTime == lastActionTime) {
+      lastActionTime = entry.lastActionTimeBefore
+    }
+    return entry.spoken
+  }
 
   fun clear() = entries.clear()
 

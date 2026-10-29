@@ -254,9 +254,10 @@ public class EventFilter {
   }
 
   /**
-   * Told when Backtalk has set accessibility focus on {@code node}, before the app's focus event
-   * for it arrives. Speaks the focus at once if it can, see {@link #speakFocusEarly}; otherwise
-   * makes sure the app's event for it is spoken.
+   * Told when Backtalk is about to ask the app to focus {@code node}, so before the app's focus
+   * event for it arrives; {@link #onAccessibilityFocusFailed} follows if the app refuses. Speaks
+   * the focus at once if it can, see {@link #speakFocusEarly}; otherwise makes sure the app's event
+   * for it is spoken.
    *
    * @param actionTime when the focus action started, in {@link SystemClock#uptimeMillis()} time
    * @param continuousReading whether continuous reading moved the focus. Its focus is not spoken

@@ -1445,19 +1445,23 @@ public class FailoverTextToSpeech {
     return mode;
   }
 
-  /** Whether the audio mode changed less than {@link #AUDIO_MODE_SETTLE_MS} ago. */
-  private boolean audioModeSettling() {
+  /**
+   * Whether a call has the audio mode, or the mode changed less than {@link #AUDIO_MODE_SETTLE_MS}
+   * ago. The mode is asked for once, as each call to the audio service takes a little while.
+   */
+  private boolean inCallOrAudioModeSettling() {
+    if (inCall(checkAudioMode())) {
+      return true;
+    }
     long changedAt = audioModeChangedAt;
     return changedAt != 0 && SystemClock.uptimeMillis() - changedAt < AUDIO_MODE_SETTLE_MS;
   }
 
   /** The player for speech, or null if speech should play the usual way. */
   private @Nullable LowLatencyAudio lowLatencyPlayer() {
-    // The mode is asked for once, as each call to the audio service takes a little while.
     if (!lowLatencyAudio
         || LowLatencyAudio.isMicrophoneInUse()
-        || inCall(checkAudioMode())
-        || audioModeSettling()
+        || inCallOrAudioModeSettling()
         || android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R
         || (ttsEngine != null && enginesWithoutFileAudio.contains(ttsEngine))) {
       return null;

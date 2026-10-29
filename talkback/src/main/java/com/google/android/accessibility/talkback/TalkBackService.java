@@ -2699,8 +2699,12 @@ public class TalkBackService extends AccessibilityServiceCompat
           @Override
           public void onAccessibilityFocusFailed(AccessibilityNodeInfoCompat node) {
             // It was spoken before the app refused it, so the speech names an item not focused.
+            // Speech that may not be interrupted, such as an announcement playing before it, stays.
             if (eventFilter.onAccessibilityFocusFailed(node)) {
-              speechController.interrupt(/* stopTtsSpeechCompletely= */ false);
+              speechController.interrupt(
+                  /* stopTtsSpeechCompletely= */ false,
+                  /* notifyObserver= */ true,
+                  /* interruptItemsThatCanIgnoreInterrupts= */ false);
             }
           }
         });

@@ -63,6 +63,16 @@ class EarlyFocusRecordsTest {
   }
 
   @Test
+  fun aRefusedFocusDoesNotMakeEarlierEventsStale() {
+    records.addSpoken("a", actionTime = 1_000L)
+    records.addSpoken("b", actionTime = 1_100L)
+    records.forgetSpoken("b")
+    // The focus stayed where it was, so an event sent after the focus before it is not stale.
+    assertEquals(NONE, records.match("c", eventTime = 1_050L, consume = true))
+    assertEquals(STALE, records.match("c", eventTime = 900L, consume = true))
+  }
+
+  @Test
   fun clearingForgetsEveryNode() {
     records.addSpoken("a", actionTime = 1_000L)
     records.addSpoken("b", actionTime = 1_010L)
