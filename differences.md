@@ -703,3 +703,7 @@ On Samsung watches, turn on **Controls** > **Touch and activation** > **Reserve 
 ### Backtalk menu on watches
 
 The Backtalk menu scrolls on watches, so you can reach every item. **Describe screen** is off in the watch menu by default, and **Pause Backtalk** isn't available on watches.
+
+### Updates over Wi-Fi on watches
+
+A watch near its phone usually goes online through the phone over Bluetooth, which is slow for an update. When you install an update on a watch, Backtalk turns on the watch's Wi-Fi and downloads the update over a saved network in range, then lets the watch go back to its phone. If Wi-Fi doesn't connect within 20 seconds, the update downloads through the phone as before. If the download over Wi-Fi fails, for example because the connection drops, Backtalk says so, and you can install the update again.

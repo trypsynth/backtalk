@@ -26,6 +26,8 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -42,6 +44,7 @@ import com.google.android.accessibility.talkback.BuildConfig
 import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.talkback.migration.AppIdMove
 import com.google.android.accessibility.talkback.utils.NotificationUtils
+import com.google.android.accessibility.utils.FormFactorUtils
 import com.google.android.accessibility.utils.PreferenceSettingsUtils
 import com.google.android.accessibility.utils.SharedPreferencesUtils
 import com.google.android.accessibility.utils.material.A11yAlertDialogWrapper
@@ -82,6 +85,12 @@ object Updater {
   private val executor = Executors.newSingleThreadExecutor()
   private var serviceContext: Context? = null
 
+  /** Brings up Wi-Fi on a watch for the download. Created with the first download on a watch. */
+  private var downloadNetwork: DownloadNetwork? = null
+
+  /** Whether an update is being downloaded or installed. Only the main thread uses it. */
+  private var installing = false
+
   private val startupCheck = Runnable { serviceContext?.let { checkAutomatically(it, true) } }
 
   private val periodicCheck =
@@ -109,6 +118,8 @@ object Updater {
     mainHandler.removeCallbacks(startupCheck)
     mainHandler.removeCallbacks(periodicCheck)
     serviceContext = null
+    // A watch that still waits for Wi-Fi downloads over its phone, as it would without Wi-Fi.
+    downloadNetwork?.stopWaiting()
   }
 
   /** Sets up the "Check for updates" preference in the main settings screen. */
@@ -261,6 +272,9 @@ object Updater {
   /**
    * Downloads the APK and opens the system install prompt. A build of this app updates it, and
    * Backtalk under its new app ID installs as a new app. Anything else is refused.
+   *
+   * A watch downloads over Wi-Fi when a saved network is in range, rather than through its phone
+   * over Bluetooth.
    */
   @JvmStatic
   fun install(context: Context, downloadUrl: String) {
@@ -284,29 +298,68 @@ object Updater {
       return
     }
     toast(appContext, R.string.update_downloading)
+    // Another tap while the update downloads only repeats that it is downloading.
+    if (installing) {
+      return
+    }
+    installing = true
+    val wifi = if (FormFactorUtils.isAndroidWear()) downloadNetwork(appContext) else null
+    if (wifi == null) {
+      downloadAndInstall(appContext, downloadUrl, network = null)
+    } else {
+      wifi.acquire { network -> downloadAndInstall(appContext, downloadUrl, network) }
+    }
+  }
+
+  private fun downloadNetwork(context: Context): DownloadNetwork? =
+    downloadNetwork
+      ?: context.getSystemService(ConnectivityManager::class.java)?.let {
+        DownloadNetwork(it, mainHandler).also { created -> downloadNetwork = created }
+      }
+
+  /** Downloads the APK over [network], or the default network if null, and installs it. */
+  private fun downloadAndInstall(context: Context, downloadUrl: String, network: Network?) {
     executor.execute {
+      var downloaded = false
       try {
-        val apk = download(appContext, downloadUrl)
+        val apk =
+          try {
+            download(context, downloadUrl, network)
+          } finally {
+            // Installing needs no network, so the watch can go back to its phone now.
+            if (network != null) {
+              mainHandler.post { downloadNetwork?.release() }
+            }
+          }
+        downloaded = true
         try {
-          installApk(appContext, apk)
+          installApk(context, apk)
         } finally {
           apk.delete()
         }
       } catch (e: WrongPackageException) {
         LogUtils.e(TAG, "Refused the update: %s", e.message)
-        mainHandler.post { toast(appContext, R.string.update_wrong_package, Toast.LENGTH_LONG) }
+        mainHandler.post { toast(context, R.string.update_wrong_package, Toast.LENGTH_LONG) }
       } catch (e: Exception) {
         LogUtils.e(TAG, "Cannot install the update: %s", e)
-        mainHandler.post { toast(appContext, R.string.update_install_failed) }
+        val message =
+          if (network != null && !downloaded) {
+            R.string.update_wifi_download_failed
+          } else {
+            R.string.update_install_failed
+          }
+        mainHandler.post { toast(context, message) }
+      } finally {
+        mainHandler.post { installing = false }
       }
     }
   }
 
-  private fun download(context: Context, url: String): File {
+  private fun download(context: Context, url: String, network: Network?): File {
     val directory = File(context.cacheDir, "update")
     directory.mkdirs()
     val file = File(directory, APK_FILE_NAME)
-    val connection = UpdateChecker.openConnection(context, url)
+    val connection = UpdateChecker.openConnection(context, url, network)
     try {
       val code = connection.responseCode
       if (code != HttpURLConnection.HTTP_OK) {
