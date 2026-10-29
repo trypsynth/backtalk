@@ -22,6 +22,8 @@ When you double-tap, the app reports the click, and TalkBack then waited 150 ms 
 
 When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first. On an emulator, typing in Android's Settings search, the median time from lifting your finger to the speech engine receiving the letter went from about 62 ms to about 52 ms.
 
+As a key is typed, the keyboard also reports that your finger left the key. TalkBack asked the keyboard about each of these reports and then ignored the answer. Backtalk doesn't ask. In a later run on the same emulator, the median time to the speech engine went from about 65 ms to about 50 ms, and the key's vibration started about 20 ms sooner.
+
 ### New state said as soon as you double-tap
 
 When you double-tap a switch, most apps change it before they finish the click. Backtalk reads the switch again right then and says its new state, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 128 ms to about 60 ms. The switches in Android's **Wi-Fi** settings and in the Clock app's alarms are said early in the same way. Apps that change the state later still have it said when they report it, as before.
