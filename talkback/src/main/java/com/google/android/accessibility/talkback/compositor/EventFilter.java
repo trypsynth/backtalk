@@ -264,7 +264,7 @@ public class EventFilter {
    *     early: continuous reading moves on when the speech for a node ends, and gains little from
    *     speaking sooner, so it keeps waiting for the app's event.
    */
-  public void onAccessibilityFocusSet(
+  public void onAccessibilityFocusStarting(
       AccessibilityNodeInfoCompat node,
       FocusActionInfo info,
       @Nullable EventId eventId,
@@ -277,7 +277,7 @@ public class EventFilter {
   }
 
   /**
-   * Forgets {@code node}, whose focus the app refused after {@link #onAccessibilityFocusSet}.
+   * Forgets {@code node}, whose focus the app refused after {@link #onAccessibilityFocusStarting}.
    *
    * @return whether it was spoken, so that the speech names an item that is not focused
    */

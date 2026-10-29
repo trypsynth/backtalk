@@ -2679,7 +2679,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 screenOnSpeechSuppression.shouldSuppressFocus(node, info)
                     ? new FocusActionInfo.Builder(info).setForceMuteFeedback(true).build()
                     : info;
-            eventFilter.onAccessibilityFocusSet(
+            eventFilter.onAccessibilityFocusStarting(
                 node,
                 speechInfo,
                 eventId,
