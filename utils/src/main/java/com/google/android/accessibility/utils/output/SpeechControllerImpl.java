@@ -1127,7 +1127,7 @@ public class SpeechControllerImpl implements SpeechController {
       speak(
           mContext.getString(R.string.function_on),
           QUEUE_MODE_BIT_UNINTERRUPTIBLE_BY_NEW_SPEECH,
-          /* flags= */ 0,
+          FeedbackItem.FLAG_FORCE_FEEDBACK_ALL,
           /* speechParams= */ null,
           EVENT_ID_UNTRACKED);
     } else {
@@ -1135,7 +1135,7 @@ public class SpeechControllerImpl implements SpeechController {
       speak(
           mContext.getString(R.string.function_off),
           QUEUE_MODE_BIT_UNINTERRUPTIBLE_BY_NEW_SPEECH,
-          /* flags= */ 0,
+          FeedbackItem.FLAG_FORCE_FEEDBACK_ALL,
           /* speechParams= */ null,
           EVENT_ID_UNTRACKED);
       isMuteSpeech = true;
@@ -2160,7 +2160,8 @@ public class SpeechControllerImpl implements SpeechController {
     // for capital letter, or a phonetic word said in place of one
     if (text != null
         && ((text.length() == 1 && Character.isUpperCase(text.charAt(0)))
-            || CapitalLetterSpan.covers(text))) {
+            || CapitalLetterSpan.covers(text)
+            || CapitalLetterSpan.leads(text))) {
       switch (capLetterFeedback) {
         case CAPITAL_LETTERS_TYPE_SPEAK_CAP -> {
           // To resolve the limitation of [length == 1]. "Say capital" is handled by compositor

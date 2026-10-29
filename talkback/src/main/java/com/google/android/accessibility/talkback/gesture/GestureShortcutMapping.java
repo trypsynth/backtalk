@@ -529,6 +529,12 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     MEDIA_CONTROL_OR_VOICE_INPUT(
         R.string.shortcut_value_media_control_or_voice_input,
         R.string.shortcut_media_control_or_voice_input),
+    MEDIA_STOP(R.string.shortcut_value_media_stop, R.string.shortcut_media_stop),
+    MEDIA_PREVIOUS(R.string.shortcut_value_media_previous, R.string.shortcut_media_previous),
+    MEDIA_NEXT(R.string.shortcut_value_media_next, R.string.shortcut_media_next),
+    MEDIA_REWIND(R.string.shortcut_value_media_rewind, R.string.shortcut_media_rewind),
+    MEDIA_FAST_FORWARD(
+        R.string.shortcut_value_media_fast_forward, R.string.shortcut_media_fast_forward),
     INCREASE_VOLUME(R.string.shortcut_value_increase_volume, R.string.shortcut_increase_volume),
     DECREASE_VOLUME(R.string.shortcut_value_decrease_volume, R.string.shortcut_decrease_volume),
     VOICE_COMMANDS(R.string.shortcut_value_voice_commands, R.string.shortcut_voice_commands),

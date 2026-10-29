@@ -20,10 +20,13 @@ import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.os.Build;
 import androidx.annotation.ColorInt;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.actor.DimScreenActor;
 import com.google.android.accessibility.utils.FeatureSupport;
+import com.google.android.accessibility.utils.SharedPreferencesUtils;
 
 /** Utils function for updating focus indicator stroke width and color. */
 public class FocusIndicatorUtils {
@@ -49,6 +52,34 @@ public class FocusIndicatorUtils {
   }
 
   /**
+   * Hides the focus indicator, so that a screenshot doesn't show it. Returns false when the focus
+   * indicator can't be changed. {@link #restoreAfterScreenshot} shows it again.
+   */
+  public static boolean hideForScreenshot(AccessibilityService service) {
+    // A version check that lint recognizes, unlike FeatureSupport.supportCustomizingFocusIndicator.
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      return false;
+    }
+    service.setAccessibilityFocusAppearance(0, Color.TRANSPARENT);
+    return true;
+  }
+
+  /** Shows the focus indicator that {@link #hideForScreenshot} hid, as it was. */
+  public static void restoreAfterScreenshot(AccessibilityService service) {
+    SharedPreferences prefs = SharedPreferencesUtils.getSharedPreferences(service);
+    Resources res = service.getResources();
+    if (DimScreenActor.isDimScreenEnabled(service, prefs)) {
+      // As DimScreenActor sets it while the screen is hidden.
+      setAccessibilityFocusAppearance(
+          service,
+          res.getDimensionPixelSize(R.dimen.accessibility_focus_highlight_stroke_width),
+          Color.BLACK);
+    } else {
+      applyFocusAppearancePreference(service, prefs, res);
+    }
+  }
+
+  /**
    * Updates the focus indicator stroke width and color.
    *
    * @param service The parent service.
@@ -57,7 +88,7 @@ public class FocusIndicatorUtils {
    */
   public static void setAccessibilityFocusAppearance(
       AccessibilityService service, int borderWidth, int borderColor) {
-    if (FeatureSupport.supportCustomizingFocusIndicator()) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       service.setAccessibilityFocusAppearance(borderWidth, borderColor);
     }
   }

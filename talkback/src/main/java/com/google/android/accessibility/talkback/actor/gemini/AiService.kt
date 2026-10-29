@@ -43,14 +43,14 @@ object AiService {
 
   fun model(prefs: SharedPreferences): String = prefs.getString(PREF_MODEL, null)?.trim() ?: ""
 
-  fun apiKey(prefs: SharedPreferences): String = prefs.getString(PREF_API_KEY, null)?.trim() ?: ""
+  fun apiKey(prefs: SharedPreferences): String = GeminiApiKey.clean(prefs.getString(PREF_API_KEY, null))
 
   /** Saves the settings, removing each one that is blank. */
   fun save(prefs: SharedPreferences, address: String, model: String, apiKey: String) {
     val editor = prefs.edit()
     val values = listOf(PREF_ADDRESS to address, PREF_MODEL to model, PREF_API_KEY to apiKey)
     for ((key, value) in values) {
-      val trimmed = value.trim()
+      val trimmed = if (key == PREF_API_KEY) GeminiApiKey.clean(value) else value.trim()
       if (trimmed.isEmpty()) editor.remove(key) else editor.putString(key, trimmed)
     }
     editor.apply()

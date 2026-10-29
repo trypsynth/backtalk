@@ -82,6 +82,9 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
   // Set when the track starts, until its first write completes. Running short before that is only
   // the track starting, not a buffer too small.
   @Volatile private var starting = false
+  // Writes left before running short counts again after the buffer grew: the underruns of the same
+  // starvation can be counted after it grew, and would grow it again.
+  private var settleWrites = 0
   // The watchdog's checks, scheduled only while the audio thread runs.
   private var watchdog: ScheduledFuture<*>? = null
   private var thread: Thread? = null
@@ -793,8 +796,9 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
    */
   private fun keepUp(output: AudioTrack) {
     val count = output.underrunCount
-    if (starting) {
+    if (starting || settleWrites > 0) {
       starting = false
+      if (settleWrites > 0) settleWrites--
       underruns = count
       return
     }
@@ -804,6 +808,7 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
     if (size >= output.bufferCapacityInFrames) return
     val grown = if (fastPath) size + burstFrames else size * 2
     output.setBufferSizeInFrames(minOf(grown, output.bufferCapacityInFrames))
+    settleWrites = 2 * output.bufferSizeInFrames / burstFrames
     if (fastPath) fastFrames = output.bufferSizeInFrames
     LogUtils.d(TAG, "Track ran short, now %d frames", output.bufferSizeInFrames)
   }

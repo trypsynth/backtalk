@@ -235,6 +235,10 @@ When you choose Bluetooth headphones that already play your media, Backtalk play
 
 To switch quickly, add **Audio output device** in **Reading controls**. Swiping up or down with it goes through **System default**, **Phone speaker** and each connected device, and changes the same setting.
 
+### Media controls
+
+To control music, podcasts and other audio playing in the background without leaving the app you're in, add **Media controls** in **Reading controls**. Swipe up or down to choose **Previous track**, **Rewind**, **Play/pause**, **Fast forward**, **Next track** or **Stop**, and double-tap to do it. **Media volume**, also in **Reading controls**, changes the media volume with a swipe up or down, as **Accessibility volume** does for Backtalk's own. Both are off by default. **Previous track**, **Next track**, **Rewind**, **Fast forward** and **Stop media** are also gesture actions, next to **Play or pause media**.
+
 ### Accessibility volume on Bluetooth headphones
 
 On some phones, such as Samsung's, TalkBack's accessibility volume gestures, its **Accessibility volume** reading control, and volume keys pressed while touching the screen change the media volume instead of the accessibility volume while Bluetooth headphones are connected. Backtalk changes the accessibility volume the way the system volume panel's slider does, so these work the same with or without headphones.

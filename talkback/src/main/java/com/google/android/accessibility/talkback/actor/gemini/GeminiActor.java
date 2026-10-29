@@ -48,6 +48,8 @@ import android.util.Log;
 import androidx.annotation.StringRes;
 import com.google.android.accessibility.talkback.actor.gemini.local.OnDeviceAiSettings;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
+import com.google.android.accessibility.utils.output.FeedbackItem;
+import com.google.android.accessibility.utils.output.SpeechController.SpeakOptions;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Feedback.GeminiRequest;
 import com.google.android.accessibility.talkback.Feedback.ScreenOverviewResult;
@@ -817,8 +819,15 @@ public class GeminiActor {
     progressTonePlayer.stop();
   }
 
+  /**
+   * Says a result or error of something the user asked for. It is forced, so that it isn't
+   * silenced while other audio plays, as Backtalk's own speech can be.
+   */
   private void speak(CharSequence text) {
-    pipeline.returnFeedback(EVENT_ID_UNTRACKED, Feedback.speech(text));
+    pipeline.returnFeedback(
+        EVENT_ID_UNTRACKED,
+        Feedback.speech(
+            text, SpeakOptions.create().setFlags(FeedbackItem.FLAG_FORCE_FEEDBACK_ALL)));
   }
 
   private void handleScreenOverviewErrorResponse(int requestId, ErrorReason errorReason) {
