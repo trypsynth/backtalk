@@ -20,7 +20,7 @@ When you double-tap, the app reports the click, and TalkBack then waited 150 ms 
 
 ### Typed letters said sooner
 
-When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first. On an emulator, typing in Android's Settings search, the median time from lifting your finger to the speech engine receiving the letter went from about 57 ms to about 38 ms.
+When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first. On an emulator, typing in Android's Settings search, the median time from lifting your finger to the speech engine receiving the letter went from about 62 ms to about 52 ms.
 
 ### New state said as soon as you double-tap
 
