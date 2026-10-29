@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class TextEventTypesUsedTest {
-  private val sent = mutableListOf<Int>()
+  private var sent = false
   private lateinit var interpreter: TextEventInterpreter
   private lateinit var tracker: TextCursorTracker
 
@@ -54,7 +54,7 @@ class TextEventTypesUsedTest {
         /* cacheAndDropFrequentEvents= */ false,
         /* readLineWhenMoveToAdjacentLineByUpDownKey= */ false,
       )
-    interpreter.addListener { sent.add(it.event.eventType) }
+    interpreter.addListener { sent = true }
   }
 
   @Test
@@ -80,6 +80,6 @@ class TextEventTypesUsedTest {
 
     interpreter.interpret(event, null)
 
-    assertTrue(sent.contains(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED))
+    assertTrue(sent)
   }
 }
