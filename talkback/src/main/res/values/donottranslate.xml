@@ -503,6 +503,7 @@
   <string name="keycombo_shortcut_other_custom_actions">keycombo_shortcut_other_custom_actions</string>
   <string name="keycombo_shortcut_other_language_options">keycombo_shortcut_other_language_options</string>
   <string name="keycombo_shortcut_other_copy_last_spoken_phrase">keycombo_shortcut_other_copy_last_spoken_phrase</string>
+  <string name="keycombo_shortcut_other_append_last_spoken_phrase">keycombo_shortcut_other_append_last_spoken_phrase</string>
   <string name="keycombo_shortcut_other_toggle_selection">keycombo_shortcut_other_toggle_selection</string>
   <string name="keycombo_shortcut_other_open_tts_settings">keycombo_shortcut_other_open_tts_settings</string>
   <string name="keycombo_shortcut_other_open_talkback_settings">keycombo_shortcut_other_open_talkback_settings</string>
@@ -1162,6 +1163,7 @@
         <item>@android:string/cut</item>
         <item>@android:string/paste</item>
         <item>@string/title_copy_last_spoken_phrase</item>
+        <item>@string/title_append_last_spoken_phrase</item>
     </string-array>
 
     <!-- Shortcut preference value of text editing -->
@@ -1175,6 +1177,7 @@
         <item>@string/shortcut_value_cut</item>
         <item>@string/shortcut_value_paste</item>
         <item>@string/shortcut_value_copy_last_spoken_phrase</item>
+        <item>@string/shortcut_value_append_last_spoken_phrase</item>
     </string-array>
 
   <!-- The shortcut of unsupported gestures -->
@@ -1251,6 +1254,7 @@
   <string name="shortcut_value_cut" translatable="false">CUT</string>
   <string name="shortcut_value_paste" translatable="false">PASTE</string>
   <string name="shortcut_value_copy_last_spoken_phrase" translatable="false">COPY_LAST_SPOKEN_UTTERANCE</string>
+  <string name="shortcut_value_append_last_spoken_phrase" translatable="false">APPEND_LAST_SPOKEN_UTTERANCE</string>
   <string name="shortcut_value_pause_or_resume_feedback">PAUSE_FEEDBACK</string>
   <string name="shortcut_value_all_apps" translatable="false">ALL_APPS</string>
   <string name="shortcut_value_braille_keyboard" translatable="false">BRAILLE_KEYBOARD</string>
@@ -1633,6 +1637,7 @@
     <bool name="pref_show_context_menu_read_from_top_default">false</bool>
     <bool name="pref_show_context_menu_read_from_current_default">true</bool>
     <bool name="pref_show_context_menu_copy_last_spoken_phrase_default">false</bool>
+    <bool name="pref_show_context_menu_append_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_spell_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_repeat_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_find_on_screen_default">false</bool>
@@ -1803,6 +1808,7 @@
     <item name="edittext_breakout_cut" type="id" />
     <item name="edittext_breakout_copy" type="id" />
     <item name="edittext_breakout_paste" type="id" />
+    <item name="edittext_breakout_clear" type="id" />
     <item name="edittext_breakout_select_all" type="id" />
     <item name="edittext_breakout_start_selection_mode" type="id" />
     <item name="edittext_breakout_end_selection_mode" type="id" />
@@ -1832,6 +1838,7 @@
     <string name="pref_show_context_menu_read_from_top_setting_key" translatable="false">pref_read_from_top_menu_setting_key</string>
     <string name="pref_show_context_menu_read_from_current_setting_key" translatable="false">pref_read_from_current_menu_setting_key</string>
     <string name="pref_show_context_menu_copy_last_spoken_phrase_setting_key" translatable="false">pref_copy_last_spoken_phrase_menu_setting_key</string>
+    <string name="pref_show_context_menu_append_last_spoken_phrase_setting_key" translatable="false">pref_append_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_spell_last_spoken_phrase_setting_key" translatable="false">pref_spell_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_repeat_last_spoken_phrase_setting_key" translatable="false">pref_repeat_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_find_on_screen_setting_key" translatable="false">pref_find_on_screen_menu_setting_key</string>

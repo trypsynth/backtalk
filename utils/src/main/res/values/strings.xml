@@ -29,6 +29,8 @@
           Source: An utterance template for announcing copy of text (during edit).
           Description: This is spoken to the user. [CHAR LIMIT=NONE]
         -->
+    <!-- Spoken after the last thing Backtalk said is added to the text on the clipboard, on a new line. The text added is filled in. [CHAR LIMIT=NONE] -->
+    <string name="template_text_appended">added to clipboard, <xliff:g id="text">%1$s</xliff:g></string>
     <string name="template_text_copied">copied, <xliff:g id="text">%1$s</xliff:g></string>
     <!--
       Source: An utterance template for announcing a single upper-case (capital) letter.

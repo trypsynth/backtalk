@@ -26,6 +26,7 @@ import static com.google.android.accessibility.talkback.Feedback.Focus.Action.RE
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.NEXT_GRANULARITY;
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.PREVIOUS_GRANULARITY;
 import static com.google.android.accessibility.talkback.Feedback.Keyboard.Action.SHOW_KEYBOARD_SHORTCUTS_DIALOG;
+import static com.google.android.accessibility.talkback.Feedback.Speech.Action.APPEND_LAST;
 import static com.google.android.accessibility.talkback.Feedback.Speech.Action.COPY_LAST;
 import static com.google.android.accessibility.talkback.Feedback.Speech.Action.TOGGLE_VOICE_FEEDBACK;
 import static com.google.android.accessibility.talkback.Feedback.UniversalSearch.Action.SHOW_CONTROL_LIST;
@@ -632,6 +633,10 @@ public class KeyComboMapper {
           result =
               pipeline.returnFeedback(
                   eventId, Feedback.part().setSpeech(Feedback.Speech.create(COPY_LAST)));
+      case APPEND_LAST_SPOKEN_PHRASE ->
+          result =
+              pipeline.returnFeedback(
+                  eventId, Feedback.part().setSpeech(Feedback.Speech.create(APPEND_LAST)));
       case PAUSE_OR_RESUME_BACKTALK -> {
         // While paused, the pause controller sees the shortcut first and resumes.
         TalkBackService service = TalkBackService.getInstance();

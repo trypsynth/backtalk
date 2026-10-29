@@ -157,6 +157,12 @@
         <ignore regexp="summary_pref_suppress_extra_screen_on_speech" />
         <ignore regexp="title_pref_direct_click" />
         <ignore regexp="summary_pref_direct_click" />
+        <ignore regexp="template_text_appended" />
+        <ignore regexp="keycombo_menu_other_append_last_spoken_phrase" />
+        <ignore regexp="title_append_last_spoken_phrase" />
+        <ignore regexp="summary_append_last_spoken_phrase" />
+        <ignore regexp="title_edittext_clear" />
+        <ignore regexp="cannot_clear_feedback" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,

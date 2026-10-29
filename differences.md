@@ -197,6 +197,10 @@ With **After the letter, no delay** and **Instead of the letter**, Backtalk says
 
 The **High** preset uses **After the letter, delayed** and the **Low** preset uses **Off**. Your choice from the switch carries over.
 
+### Speech when you touch the screen
+
+With **Controls** > **Touch and activation** > **Stop speech when touching the screen** on, which is the default, touching the screen stops speech, even notifications and messages that new speech doesn't cut off. Activating an item, with a double tap, the activation key or a braille display, stops it too, so that what the item says when activated, such as a switch's new state, is said at once rather than after the rest of the item. Turn the switch off to keep speech going until touch moves focus to another item.
+
 ## Notifications
 
 ### Samsung watch notification content
@@ -226,6 +230,8 @@ TalkBack marked its notices that it was updated, or that gestures changed, as on
 **Sound and vibration** > **Audio output device** chooses where Backtalk's speech and sounds play. **System default** follows Android. **Phone speaker** plays on the phone's speaker even when Bluetooth is connected, and you can also choose a connected Bluetooth, wired, USB, or hearing aid device by name.
 
 Backtalk keeps your choice when devices connect or disconnect, or when other apps start playing. If the device that you chose isn't connected, Backtalk uses another external device, and the setting shows "(disconnected)" next to the device name. During phone calls, Android decides where audio plays.
+
+When you choose Bluetooth headphones that already play your media, Backtalk plays there the way media does. It only takes the call route, which puts headphones into call mode with lower-quality sound for every app, when Android wouldn't play Backtalk's audio on the device otherwise, such as when media plays on another Bluetooth device.
 
 To switch quickly, add **Audio output device** in **Reading controls**. Swiping up or down with it goes through **System default**, **Phone speaker** and each connected device, and changes the same setting.
 
@@ -383,6 +389,14 @@ When you turn on **Controls** > **Touch and activation** > **Volume keys adjust 
 These items are off by default in the Backtalk menu: **Actions**, **Screen search**, **Add or edit labels**, **Describe text formatting**, **Copy last spoken phrase**, **Spoken language**, **Voice commands**, **Keyboard shortcuts**, and **Braille display settings**. You can still use actions with the **Actions** reading control. **Text-to-speech** stays on, so that you can reach speech settings if your speech engine crashes, and Backtalk adds a **Pause Backtalk** item.
 
 To change the items, go to **Backtalk menu**, under **Controls** in Backtalk settings. In TalkBack, this screen is under **Customize menus**.
+
+### Add last spoken phrase to clipboard
+
+**Add last spoken phrase to clipboard** adds what Backtalk last said to the text it copied, on a new line, so that you can copy several phrases into one block. Copy the first phrase with **Copy last spoken phrase**, then add each of the others. It's an item you can turn on in the Backtalk menu, a gesture action, and a keyboard shortcut. From Android 10, Android doesn't let Backtalk read the clipboard, so the phrase is added to what Backtalk last copied, not to anything you copied in another app.
+
+### Clear text
+
+When a text field with text in it has focus, the edit options in the Backtalk menu have **Clear text**, which deletes all of its text at once.
 
 ### Circle menu
 
@@ -591,6 +605,10 @@ Google's source release doesn't include working Gemini support, so without an AP
 ### On-device AI
 
 Backtalk can describe images and screens with a model that runs on your phone, so nothing is sent to Google or anyone else. For more information, see [On-device AI](README.md#on-device-ai).
+
+### Text in images without Google Play services
+
+TalkBack reads text in images with the ML Kit that runs inside Google Play services. On phones without Play services, such as GrapheneOS without sandboxed Google Play, **Describe image** can't read any text. For those phones, install `backtalk-nogms.apk` from the [dev release](https://github.com/trypsynth/backtalk/releases/tag/dev) instead of `backtalk.apk`. It includes the text recognition model, so it reads text with or without Play services, and it only updates to builds of its own kind. The model is built for all three processor types, so this APK is about 30 MB larger. Both are the same app, so you can install one over the other. TalkBack also sends ML Kit's usage log to Google, and Backtalk doesn't.
 
 ### Clear error messages
 

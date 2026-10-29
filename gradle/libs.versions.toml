@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.0"
 kotlin = "2.4.21"
 autoValue = "1.11.1"
 compose = "1.12.1"
@@ -9,6 +9,8 @@ activity = "1.13.0"
 [libraries]
 # Google common
 mlkit-text-recognition = "com.google.android.gms:play-services-mlkit-text-recognition:19.0.2"
+# The same API with the model in the APK, for phones without Google Play services.
+mlkit-text-recognition-bundled = "com.google.mlkit:text-recognition:16.0.1"
 material = "com.google.android.material:material:1.14.0"
 
 # Testing

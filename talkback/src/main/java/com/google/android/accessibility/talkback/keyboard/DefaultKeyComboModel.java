@@ -843,6 +843,7 @@ public class DefaultKeyComboModel implements KeyComboModel {
         context.getString(R.string.keycombo_shortcut_global_adjust_reading_settings_previous));
     addKeyCombo(context.getString(R.string.keycombo_shortcut_global_adjust_reading_setting_next));
     addKeyCombo(context.getString(R.string.keycombo_shortcut_other_copy_last_spoken_phrase));
+    addKeyCombo(context.getString(R.string.keycombo_shortcut_other_append_last_spoken_phrase));
     addKeyCombo(context.getString(R.string.keycombo_shortcut_global_hide_or_show_screen));
     addKeyCombo(context.getString(R.string.keycombo_shortcut_global_pause_backtalk));
     addKeyCombo(context.getString(R.string.keycombo_shortcut_other_voice_profiles));
