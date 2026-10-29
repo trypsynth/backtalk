@@ -210,6 +210,11 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name="com.google.android.accessibility.talkback.WhatsNewActivity"
+            android:exported="false"
+            android:label="@string/title_whats_new" />
+
         <!-- TalkBack Preferences -->
         <activity
             android:name="com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity"

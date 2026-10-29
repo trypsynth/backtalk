@@ -55,6 +55,19 @@ class UpdateCheckerTest {
   }
 
   @Test
+  fun releaseNotesIncludeChangesWhenRunningBuildIsCurrent() {
+    val notes =
+      UpdateChecker.parseReleaseNotes(
+        release(11, "bbbbbbb Two", "aaaaaaa One"),
+        currentBuild = 10,
+        currentHash = "aaaaaaa0",
+      )
+
+    assertEquals(11, notes.build)
+    assertEquals(listOf("Two"), notes.changes)
+  }
+
+  @Test
   fun moveIsOfferedWhateverTheBuild() {
     val move = UpdateChecker.parseMove(release(5, "bbbbbbb New ID", "aaaaaaa Old"), "aaaaaaa0")
     assertTrue(move!!.move)

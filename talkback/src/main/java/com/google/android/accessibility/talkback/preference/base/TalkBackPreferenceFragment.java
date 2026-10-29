@@ -40,7 +40,7 @@ import com.google.android.accessibility.talkback.TalkBackExitController;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.ImageCaptioner;
 import com.google.android.accessibility.talkback.preference.base.PreferenceActionHelper.WebPage;
-import com.google.android.accessibility.talkback.training.OnboardingInitiator;
+import com.google.android.accessibility.talkback.WhatsNewActivity;
 import com.google.android.accessibility.talkback.training.TutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.TvTutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.VendorConfigReader;
@@ -270,7 +270,7 @@ public class TalkBackPreferenceFragment extends TalkbackBaseFragment {
               R.string.wear_new_feature_page_button_content_description,
               /* url= */ null);
     } else {
-      newFeatureIntent = OnboardingInitiator.createOnboardingIntentForSettings(context);
+      newFeatureIntent = WhatsNewActivity.createIntent(context);
     }
     prefNewFeatures.setIntent(newFeatureIntent);
   }

@@ -34,4 +34,11 @@
     <string name="update_install_canceled">Update canceled</string>
     <!-- Toast shown with the settings screen where the user allows Backtalk to install apps. [CHAR LIMIT=NONE] -->
     <string name="update_allow_install">Allow Backtalk to install apps, then try the update again</string>
+
+    <string name="title_whats_new">What\'s new in Backtalk</string>
+    <string name="whats_new_loading">Loading what\'s new</string>
+    <string name="whats_new_build">Changes in build <xliff:g id="build" example="97">%1$d</xliff:g></string>
+    <string name="whats_new_no_changes">No new changes are documented for this build.</string>
+    <string name="whats_new_error">Could not load what\'s new.</string>
+    <string name="whats_new_retry">Retry</string>
 </resources>
