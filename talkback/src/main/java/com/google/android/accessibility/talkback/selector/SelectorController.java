@@ -2605,7 +2605,8 @@ public class SelectorController implements UserInputEventListener {
 
   private int volumePercent(int stream) {
     AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-    int min = audioManager.getStreamMinVolume(stream);
+    int min =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? audioManager.getStreamMinVolume(stream) : 0;
     int max = audioManager.getStreamMaxVolume(stream);
     int volume = audioManager.getStreamVolume(stream);
     return max > min ? Math.round(100f * (volume - min) / (max - min)) : 100;
