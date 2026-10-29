@@ -213,7 +213,7 @@
         <activity
             android:name="com.google.android.accessibility.talkback.WhatsNewActivity"
             android:exported="false"
-            android:label="@string/title_whats_new" />
+            android:label="@string/new_feature_in_talkback_title" />
 
         <!-- TalkBack Preferences -->
         <activity

@@ -105,10 +105,10 @@ object UpdateChecker {
 
   /** Returns the release notes for the current channel, even when this build is up to date. */
   @WorkerThread
-  fun checkLatest(context: Context): ReleaseNotes {
+  fun checkLatest(context: Context, fromHash: String = BuildConfig.COMMIT_HASH): ReleaseNotes {
     val channel = if (context.packageName == AppIdMove.OLD_PACKAGE) OLD_CHANNEL else NEW_CHANNEL
     val json = fetchRelease(context, channel) ?: throw IOException("GitHub has no $channel release")
-    return parseReleaseNotes(json, BuildConfig.COMMIT_COUNT, BuildConfig.COMMIT_HASH)
+    return parseReleaseNotes(json, BuildConfig.COMMIT_COUNT, fromHash)
   }
 
   /**

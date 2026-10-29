@@ -59,7 +59,7 @@ class UpdateCheckerTest {
     val notes =
       UpdateChecker.parseReleaseNotes(
         release(11, "bbbbbbb Two", "aaaaaaa One"),
-        currentBuild = 10,
+        currentBuild = 11,
         currentHash = "aaaaaaa0",
       )
 
