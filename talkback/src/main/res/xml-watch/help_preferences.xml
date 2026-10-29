@@ -7,4 +7,7 @@
   <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
       android:key="@string/pref_practice_gestures_entry_point_key"
       android:title="@string/practice_gestures_title" />
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
+      android:key="@string/pref_new_feature_in_talkback_entry_point_key"
+      android:title="@string/new_feature_in_talkback_title" />
 </PreferenceScreen>

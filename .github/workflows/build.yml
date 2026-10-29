@@ -117,7 +117,7 @@ jobs:
             echo "build: $count"
             echo
             # %H cut to 7 characters, since %h can be longer when a short hash is ambiguous.
-            git log -n 50 --format='%H %s' HEAD | while IFS= read -r line; do
+            git log -n 100 --format='%H %s' HEAD | while IFS= read -r line; do
               echo "- ${line:0:7} ${line:41}"
             done
           } > release-notes.md

@@ -55,6 +55,32 @@ class UpdateCheckerTest {
   }
 
   @Test
+  fun releaseNotesIncludeChangesWhenRunningBuildIsCurrent() {
+    val notes =
+      UpdateChecker.parseReleaseNotes(
+        release(11, "bbbbbbb Two", "aaaaaaa One"),
+        currentBuild = 11,
+        currentHash = "aaaaaaa0",
+      )
+
+    assertEquals(11, notes.build)
+    assertEquals(listOf("Two"), notes.changes)
+  }
+
+  @Test
+  fun releaseNotesUseBuildDistanceWhenRunningHashIsMissing() {
+    val commits = (0..50).map { "%07d Change $it".format(it) }.reversed().toTypedArray()
+    val notes =
+      UpdateChecker.parseReleaseNotes(
+        release(52, *commits),
+        currentBuild = 1,
+        currentHash = "missing",
+      )
+
+    assertEquals(51, notes.changes.size)
+  }
+
+  @Test
   fun moveIsOfferedWhateverTheBuild() {
     val move = UpdateChecker.parseMove(release(5, "bbbbbbb New ID", "aaaaaaa Old"), "aaaaaaa0")
     assertTrue(move!!.move)

@@ -41,6 +41,9 @@ data class UpdateInfo(
   val move: Boolean = false,
 )
 
+/** Release notes for the build on GitHub, including when it is not newer than this build. */
+data class ReleaseNotes(val build: Int, val changes: List<String>)
+
 /**
  * Checks a rolling pre-release on GitHub for a newer development build.
  *
@@ -97,6 +100,14 @@ object UpdateChecker {
       }
     val json = fetchRelease(context, channel) ?: throw IOException("GitHub has no $channel release")
     return parseRelease(json, BuildConfig.COMMIT_COUNT, BuildConfig.COMMIT_HASH, apkName())
+  }
+
+  /** Returns the release notes for the current channel, even when this build is up to date. */
+  @WorkerThread
+  fun checkLatest(context: Context, fromHash: String = BuildConfig.COMMIT_HASH): ReleaseNotes {
+    val channel = if (context.packageName == AppIdMove.OLD_PACKAGE) OLD_CHANNEL else NEW_CHANNEL
+    val json = fetchRelease(context, channel) ?: throw IOException("GitHub has no $channel release")
+    return parseReleaseNotes(json, BuildConfig.COMMIT_COUNT, fromHash)
   }
 
   /**
@@ -163,22 +174,29 @@ object UpdateChecker {
     currentHash: String,
     apkName: String = PHONE_APK_NAME,
   ): UpdateInfo? {
-    val release = JSONObject(json)
-    val lines = release.optString("body").lines().map { it.trim() }
-    val build =
-      lines.firstNotNullOfOrNull { BUILD_LINE.matchEntire(it)?.groupValues?.get(1)?.toIntOrNull() }
-        ?: throw JSONException("The release has no build number")
-    if (build <= currentBuild) {
+    val notes = parseReleaseNotes(json, currentBuild, currentHash)
+    if (notes.build <= currentBuild) {
       return null
     }
 
-    val assets = release.getJSONArray("assets")
+    val assets = JSONObject(json).getJSONArray("assets")
     val downloadUrl =
       (0 until assets.length())
         .map { assets.getJSONObject(it) }
         .firstOrNull { it.optString("name") == apkName }
         ?.getString("browser_download_url")
         ?: throw JSONException("The release has no $apkName")
+
+    return UpdateInfo(notes.build, downloadUrl, notes.changes.take(MAX_CHANGES))
+  }
+
+  @VisibleForTesting
+  fun parseReleaseNotes(json: String, currentBuild: Int, currentHash: String): ReleaseNotes {
+    val release = JSONObject(json)
+    val lines = release.optString("body").lines().map { it.trim() }
+    val build =
+      lines.firstNotNullOfOrNull { BUILD_LINE.matchEntire(it)?.groupValues?.get(1)?.toIntOrNull() }
+        ?: throw JSONException("The release has no build number")
 
     val commits = lines.filter { it.startsWith("- ") }.map { it.removePrefix("- ") }
     val shortHash = currentHash.take(SHORT_HASH_LENGTH)
@@ -192,9 +210,9 @@ object UpdateChecker {
       if (currentIndex >= 0) {
         commits.subList(0, currentIndex)
       } else {
-        commits.take((build - currentBuild).coerceAtMost(MAX_CHANGES))
+        commits.take((build - currentBuild).coerceAtLeast(0))
       }
-    return UpdateInfo(build, downloadUrl, newCommits.map { it.substringAfter(' ') })
+    return ReleaseNotes(build, newCommits.map { it.substringAfter(' ') })
   }
 
   private fun versionName(context: Context): String =

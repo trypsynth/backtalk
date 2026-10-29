@@ -3224,7 +3224,7 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
 
   <!-- For on-boarding. -->
   <!-- A item in settings page to introduce TalkBack new features. [CHAR_LIMIT=NONE]-->
-  <string name="new_feature_in_talkback_title">New features in Backtalk</string>
+  <string name="new_feature_in_talkback_title">What\'s new in Backtalk</string>
   <!-- The title of a dialog that is shown when exiting the tutorial. [CHAR_LIMIT=45]-->
   <string name="exit_tutorial_title">Finished reviewing?</string>
   <!-- The content of the exit tutorial page dialog. [CHAR_LIMIT=NONE]-->
