@@ -194,7 +194,7 @@ object UpdateChecker {
         ?.getString("browser_download_url")
         ?: throw JSONException("The release has no $apkName")
 
-    return UpdateInfo(notes.build, downloadUrl, notes.changes)
+    return UpdateInfo(notes.build, downloadUrl, notes.changes.take(MAX_CHANGES))
   }
 
   @VisibleForTesting
@@ -217,7 +217,7 @@ object UpdateChecker {
       if (currentIndex >= 0) {
         commits.subList(0, currentIndex)
       } else {
-        commits.take((build - currentBuild).coerceAtLeast(0).coerceAtMost(MAX_CHANGES))
+        commits.take((build - currentBuild).coerceAtLeast(0))
       }
     return ReleaseNotes(build, newCommits.map { it.substringAfter(' ') })
   }
