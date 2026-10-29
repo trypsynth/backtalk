@@ -1962,10 +1962,10 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="shortcut_media_next">Next track</string>
     <string name="shortcut_media_rewind">Rewind</string>
     <string name="shortcut_media_fast_forward">Fast forward</string>
-    <!-- Label for the shortcut that turns up the volume. [CHAR_LIMIT=60]-->
-    <string name="shortcut_increase_volume">Increase volume</string>
-    <!-- Label for the shortcut that turns down the volume. [CHAR_LIMIT=60]-->
-    <string name="shortcut_decrease_volume">Decrease volume</string>
+    <!-- Label for the shortcut that turns up the accessibility volume. [CHAR_LIMIT=60]-->
+    <string name="shortcut_increase_volume">Increase accessibility volume</string>
+    <!-- Label for the shortcut that turns down the accessibility volume. [CHAR_LIMIT=60]-->
+    <string name="shortcut_decrease_volume">Decrease accessibility volume</string>
     <!-- Label for the shortcut that perform all apps action. [CHAR_LIMIT=25]-->
     <string name="shortcut_all_apps">All apps</string>
     <!-- Label for the shortcut that perform switch to braille keyboard action. [CHAR_LIMIT=40]-->
@@ -2273,6 +2273,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="summary_support_scroll_seq">Scroll forward or backward</string>
     <!-- Summary for the quick menu containing Accessibility volume change. [CHAR_LIMIT=70] -->
     <string name="summary_support_change_a11y_volume">Increase or decrease accessibility volume</string>
+    <!-- Summary for the quick menu containing media volume change. [CHAR_LIMIT=70] -->
+    <string name="summary_support_change_media_volume">Increase or decrease media volume</string>
     <!-- Title for the quick menu containing screen brightness change. [CHAR_LIMIT=40] -->
     <string name="title_pref_brightness">Brightness</string>
     <!-- Summary for the quick menu containing screen brightness change. [CHAR_LIMIT=70] -->
@@ -2942,6 +2944,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     Description: The user can check or not check this. In another seekbar preference, the user can adjust the slider to change accessibility volume. [CHAR LIMIT=81]
    -->
   <string name="title_pref_a11y_volume">Accessibility volume</string>
+  <!--
+    Source: Title for the preference that allows user to change Media volume.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+   -->
+  <string name="title_pref_media_volume">Media volume</string>
   <!--
     Source: Title for the preference that allows user to typing latency.
     Description: The user can check or not check this. In another seekbar preference, the user can adjust the slider to change latency value. [CHAR LIMIT=60]

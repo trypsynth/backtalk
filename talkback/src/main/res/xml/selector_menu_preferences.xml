@@ -307,6 +307,12 @@
             android:summary="@string/summary_support_change_a11y_volume"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_selector_media_volume_default"
+            android:key="@string/pref_selector_change_media_volume_key"
+            android:title="@string/title_pref_media_volume"
+            android:summary="@string/summary_support_change_media_volume"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_selector_audio_output_device_default"
             android:key="@string/pref_selector_audio_output_device_key"
             android:title="@string/title_pref_audio_output_device"

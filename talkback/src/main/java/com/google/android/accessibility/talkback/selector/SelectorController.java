@@ -22,6 +22,7 @@ import static com.google.android.accessibility.talkback.Feedback.AdjustValue.Act
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Action.DECREASE_VOLUME;
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Action.INCREASE_VOLUME;
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType.STREAM_TYPE_ACCESSIBILITY;
+import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType.STREAM_TYPE_MEDIA;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.BRIGHTEN;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.DIM;
 import static com.google.android.accessibility.talkback.Feedback.Focus.Action.CLICK_CURRENT;
@@ -209,6 +210,10 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_change_a11y_volume_key,
         R.string.selector_a11y_volume_change,
         R.bool.pref_selector_a11y_volume_default),
+    CHANGE_MEDIA_VOLUME(
+        R.string.pref_selector_change_media_volume_key,
+        R.string.selector_media_volume_change,
+        R.bool.pref_selector_media_volume_default),
     CHANGE_BRIGHTNESS(
         R.string.pref_selector_change_brightness_key,
         R.string.selector_brightness_change,
@@ -659,6 +664,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.AUDIO_FOCUS,
           Setting.SCROLLING_SEQUENTIAL,
           Setting.CHANGE_ACCESSIBILITY_VOLUME,
+          Setting.CHANGE_MEDIA_VOLUME,
           Setting.AUDIO_OUTPUT_DEVICE,
           Setting.MEDIA_CONTROLS,
           Setting.CHANGE_BRIGHTNESS,
@@ -974,6 +980,10 @@ public class SelectorController implements UserInputEventListener {
       }
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         actionDescription = context.getString(R.string.title_pref_a11y_volume);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case CHANGE_MEDIA_VOLUME -> {
+        actionDescription = context.getString(R.string.title_pref_media_volume);
         hint = getAdjustSelectedSettingGestures();
       }
       case CHANGE_BRIGHTNESS -> {
@@ -1605,6 +1615,9 @@ public class SelectorController implements UserInputEventListener {
       case MEDIA_CONTROLS -> {
         return FeatureSupport.supportMediaControls();
       }
+      case CHANGE_MEDIA_VOLUME -> {
+        return true;
+      }
       default -> {
         return true;
       }
@@ -1827,6 +1840,10 @@ public class SelectorController implements UserInputEventListener {
       }
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         changeAccessibilityVolume(eventId, isNext);
+        return;
+      }
+      case CHANGE_MEDIA_VOLUME -> {
+        changeMediaVolume(eventId, isNext);
         return;
       }
       case CHANGE_BRIGHTNESS -> {
@@ -2397,43 +2414,64 @@ public class SelectorController implements UserInputEventListener {
     pipeline.returnFeedback(eventId, Feedback.focusDirection(isNext ? PREVIOUS_PAGE : NEXT_PAGE));
   }
 
-  private EventId lastChangeAccessibilityEventId;
+  private EventId lastChangeVolumeEventId;
+  private int listenedVolumeStream = -1;
   private final Handler handler = new Handler(Looper.getMainLooper());
-  private final VolumeChangedListener a11yVolumeChangedListener =
+  private final VolumeChangedListener volumeChangedListener =
       new VolumeChangedListener() {
 
         @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {
-          if (type != AudioManager.STREAM_ACCESSIBILITY) {
+          if (type != listenedVolumeStream) {
             return;
           }
 
           String displayText =
               context.getString(
                   value < prevValue
-                      ? R.string.template_accessibility_volume_change_decrease
-                      : R.string.template_accessibility_volume_change_increase,
+                      ? volumeChangeTemplate(listenedVolumeStream, true)
+                      : volumeChangeTemplate(listenedVolumeStream, false),
                   percent);
-          announceSetting(lastChangeAccessibilityEventId, displayText, getAdjustSelectedSettingGestures());
-          TalkBackUI.Item item =
-              value < prevValue
-                  ? Item.ITEM_ACCESSIBILITY_VOLUME_DECREASE
-                  : Item.ITEM_ACCESSIBILITY_VOLUME_INCREASE;
-          showQuickMenuActionOverlay(lastChangeAccessibilityEventId, displayText, item);
+          announceSetting(
+              lastChangeVolumeEventId, displayText, getAdjustSelectedSettingGestures());
+          if (listenedVolumeStream == AudioManager.STREAM_MUSIC) {
+            showQuickMenuActionOverlay(lastChangeVolumeEventId, displayText);
+          } else {
+            TalkBackUI.Item item =
+                value < prevValue
+                    ? Item.ITEM_ACCESSIBILITY_VOLUME_DECREASE
+                    : Item.ITEM_ACCESSIBILITY_VOLUME_INCREASE;
+            showQuickMenuActionOverlay(lastChangeVolumeEventId, displayText, item);
+          }
 
-          handler.post(() -> volumeMonitor.removeVolumeChangedListener(a11yVolumeChangedListener));
+          handler.post(
+              () -> {
+                volumeMonitor.removeVolumeChangedListener(volumeChangedListener);
+                listenedVolumeStream = -1;
+              });
         }
       };
 
   /** Perform Accessibility volume change. */
   public void changeAccessibilityVolume(EventId eventId, boolean decreaseVolume) {
+    changeVolume(eventId, decreaseVolume, STREAM_TYPE_ACCESSIBILITY);
+  }
+
+  private void changeMediaVolume(EventId eventId, boolean decreaseVolume) {
+    changeVolume(eventId, decreaseVolume, STREAM_TYPE_MEDIA);
+  }
+
+  private void changeVolume(
+      EventId eventId, boolean decreaseVolume, Feedback.AdjustVolume.StreamType streamType) {
     boolean result =
         pipeline.returnFeedback(
             eventId,
-            Feedback.adjustVolume(
-                decreaseVolume ? DECREASE_VOLUME : INCREASE_VOLUME, STREAM_TYPE_ACCESSIBILITY));
+            Feedback.adjustVolume(decreaseVolume ? DECREASE_VOLUME : INCREASE_VOLUME, streamType));
     if (result) {
-      refreshVolumeChangedListener(eventId);
+      lastChangeVolumeEventId = eventId;
+      listenedVolumeStream = volumeStream(streamType);
+      volumeMonitor.removeVolumeChangedListener(volumeChangedListener);
+      volumeMonitor.addVolumeChangedListener(volumeChangedListener);
     } else {
       String displayText =
           atLimit(
@@ -2441,14 +2479,36 @@ public class SelectorController implements UserInputEventListener {
                   ? R.string.template_volume_change_minimum
                   : R.string.template_volume_change_maximum,
               context.getString(
-                  R.string.tb_template_percent, String.valueOf(accessibilityVolumePercent())));
+                  R.string.tb_template_percent,
+                  String.valueOf(volumePercent(volumeStream(streamType)))));
       announceSetting(eventId, displayText, getAdjustSelectedSettingGestures());
-      TalkBackUI.Item item =
-          decreaseVolume
-              ? Item.ITEM_ACCESSIBILITY_VOLUME_MINIMUM
-              : Item.ITEM_ACCESSIBILITY_VOLUME_MAXIMUM;
-      showQuickMenuActionOverlay(eventId, displayText, item);
+      if (volumeStream(streamType) == AudioManager.STREAM_ACCESSIBILITY) {
+        TalkBackUI.Item item =
+            decreaseVolume
+                ? Item.ITEM_ACCESSIBILITY_VOLUME_MINIMUM
+                : Item.ITEM_ACCESSIBILITY_VOLUME_MAXIMUM;
+        showQuickMenuActionOverlay(eventId, displayText, item);
+      } else {
+        showQuickMenuActionOverlay(eventId, displayText);
+      }
     }
+  }
+
+  private static int volumeStream(Feedback.AdjustVolume.StreamType streamType) {
+    return streamType == STREAM_TYPE_MEDIA
+        ? AudioManager.STREAM_MUSIC
+        : AudioManager.STREAM_ACCESSIBILITY;
+  }
+
+  private int volumeChangeTemplate(int stream, boolean decrease) {
+    if (stream == AudioManager.STREAM_MUSIC) {
+      return decrease
+          ? R.string.template_media_volume_change_decrease
+          : R.string.template_media_volume_change_increase;
+    }
+    return decrease
+        ? R.string.template_accessibility_volume_change_decrease
+        : R.string.template_accessibility_volume_change_increase;
   }
 
   private void changeBrightness(EventId eventId, boolean increase) {
@@ -2543,14 +2603,14 @@ public class SelectorController implements UserInputEventListener {
     return context.getString(R.string.template_setting_limit, context.getString(limitResId), value);
   }
 
-  private int accessibilityVolumePercent() {
+  private int volumePercent(int stream) {
     AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     int min =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-            ? audioManager.getStreamMinVolume(AudioManager.STREAM_ACCESSIBILITY)
+            ? audioManager.getStreamMinVolume(stream)
             : 0;
-    int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_ACCESSIBILITY);
-    int volume = audioManager.getStreamVolume(AudioManager.STREAM_ACCESSIBILITY);
+    int max = audioManager.getStreamMaxVolume(stream);
+    int volume = audioManager.getStreamVolume(stream);
     return max > min ? Math.round(100f * (volume - min) / (max - min)) : 100;
   }
 
@@ -2635,12 +2695,6 @@ public class SelectorController implements UserInputEventListener {
                     FeedbackItem.FLAG_NO_HISTORY
                         | FeedbackItem.FLAG_FORCE_FEEDBACK_ALL
                         | FeedbackItem.FLAG_SKIP_DUPLICATE)));
-  }
-
-  private void refreshVolumeChangedListener(EventId eventId) {
-    lastChangeAccessibilityEventId = eventId;
-    volumeMonitor.removeVolumeChangedListener(a11yVolumeChangedListener);
-    volumeMonitor.addVolumeChangedListener(a11yVolumeChangedListener);
   }
 
   private void switchWrapAroundOnOrOff(EventId eventId) {

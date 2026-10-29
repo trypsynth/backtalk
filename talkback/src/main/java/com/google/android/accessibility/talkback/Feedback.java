@@ -1957,7 +1957,8 @@ public abstract class Feedback {
      * Later, we can extend the types for media/call/...,etc
      */
     public enum StreamType {
-      STREAM_TYPE_ACCESSIBILITY
+      STREAM_TYPE_ACCESSIBILITY,
+      STREAM_TYPE_MEDIA
     }
 
     /** Types of adjust volume actions. */

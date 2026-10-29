@@ -690,6 +690,16 @@
   -->
   <string name="template_accessibility_volume_change_decrease">Decrease accessibility volume to <xliff:g id="percent">%1$d</xliff:g> percent.</string>
   <!--
+    Source: String for notifying the user the media volume is increased.
+    Description: This is spoken to the user. [CHAR_LIMIT=NONE]
+  -->
+  <string name="template_media_volume_change_increase">Increase media volume to <xliff:g id="percent">%1$d</xliff:g> percent.</string>
+  <!--
+    Source: String for notifying the user the media volume is decreased.
+    Description: This is spoken to the user. [CHAR_LIMIT=NONE]
+  -->
+  <string name="template_media_volume_change_decrease">Decrease media volume to <xliff:g id="percent">%1$d</xliff:g> percent.</string>
+  <!--
     Source: String for notifying the user the screen brightness is changed.
     Description: This is spoken to the user. [CHAR_LIMIT=NONE]
   -->

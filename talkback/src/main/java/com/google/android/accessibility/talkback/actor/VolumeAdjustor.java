@@ -63,6 +63,14 @@ public class VolumeAdjustor {
     return switch (streamType) {
       // Bluetooth headphones ignore adjustStreamVolume for this stream, so set it instead.
       case STREAM_TYPE_ACCESSIBILITY -> AccessibilityVolumeStep.step(audioManager, decrease, 0);
+      case STREAM_TYPE_MEDIA -> {
+        int before = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        audioManager.adjustStreamVolume(
+            AudioManager.STREAM_MUSIC,
+            decrease ? AudioManager.ADJUST_LOWER : AudioManager.ADJUST_RAISE,
+            0);
+        yield audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) != before;
+      }
       default -> false; // Not supported
     };
   }
