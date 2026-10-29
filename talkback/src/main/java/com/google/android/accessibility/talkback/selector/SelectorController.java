@@ -152,8 +152,6 @@ public class SelectorController implements UserInputEventListener {
   // interaction's ongoing. This flag records the touch interaction start/end, respectively. So that
   // the currentSetting will only happen when touch event's ended.
   private boolean touchActive = false;
-  // Accompanying the 'touchActive' flag, this variable avoids the reassign of the same node.
-  private AccessibilityNodeInfo lastFocusedNode = null;
   private final Handler handler = new Handler(Looper.getMainLooper());
   private final LateSettingSwitch lateSettingSwitch =
       new LateSettingSwitch(handler, this::switchCurrentSetting);
@@ -1208,11 +1206,11 @@ public class SelectorController implements UserInputEventListener {
       return;
     }
 
-    if (nodeInfo == null || nodeInfo.equals(lastFocusedNode)) {
+    if (nodeInfo == null) {
       return;
     }
     if (touchActive) {
-      lastFocusedNode = nodeInfo;
+      lateSettingSwitch.hold(nodeInfo);
     } else {
       lateSettingSwitch.cancel();
       switchCurrentSetting(nodeInfo);
@@ -1257,7 +1255,6 @@ public class SelectorController implements UserInputEventListener {
     if (nodeInfo == null) {
       return;
     }
-    lastFocusedNode = null;
     Optional<ContextualSetting> contextualMenu =
         getMatchedContextualSettingForActivation(
             context, AccessibilityNodeInfoCompat.wrap(nodeInfo), hiddenSettings);
@@ -1291,8 +1288,7 @@ public class SelectorController implements UserInputEventListener {
       verticalNavigator.cancel();
       lateSettingSwitch.pause();
     } else {
-      lateSettingSwitch.schedule(lastFocusedNode);
-      lastFocusedNode = null;
+      lateSettingSwitch.schedule();
     }
   }
 

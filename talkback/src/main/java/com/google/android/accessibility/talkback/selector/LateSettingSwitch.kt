@@ -36,13 +36,16 @@ internal class LateSettingSwitch(
   private var node: AccessibilityNodeInfo? = null
   private val run = Runnable { runNow() }
 
-  /** Picks the control after a moment, for [node] or else the item still waiting. */
-  fun schedule(node: AccessibilityNodeInfo?) {
+  /** Keeps the item that a touch focused, to pick its control when the touch ends. */
+  fun hold(node: AccessibilityNodeInfo) {
+    pause()
+    this.node = node
+  }
+
+  /** Picks the control for the item held, a moment after a touch ends. */
+  fun schedule() {
+    pause()
     if (node != null) {
-      this.node = node
-    }
-    handler.removeCallbacks(run)
-    if (this.node != null) {
       handler.postDelayed(run, DELAY_MS)
     }
   }
@@ -54,13 +57,13 @@ internal class LateSettingSwitch(
 
   /** Forgets the item, because a newer focus picks the control. */
   fun cancel() {
-    handler.removeCallbacks(run)
+    pause()
     node = null
   }
 
   /** Picks the control now if one is waiting, so a reading control uses the right one. */
   fun runNow() {
-    handler.removeCallbacks(run)
+    pause()
     val waiting = node ?: return
     node = null
     switchSetting.switchFor(waiting)

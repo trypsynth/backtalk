@@ -46,7 +46,8 @@ class LateSettingSwitchTest {
 
   @Test
   fun picksAMomentAfterTheTouchEnds() {
-    late.schedule(key)
+    late.hold(key)
+    late.schedule()
     assertEquals(0, picked.size)
     waitFor(LateSettingSwitch.DELAY_MS)
     assertPicked(key)
@@ -54,7 +55,8 @@ class LateSettingSwitchTest {
 
   @Test
   fun aReadingControlPicksAtOnce() {
-    late.schedule(key)
+    late.hold(key)
+    late.schedule()
     late.runNow()
     assertPicked(key)
     waitFor(LateSettingSwitch.DELAY_MS)
@@ -63,7 +65,8 @@ class LateSettingSwitchTest {
 
   @Test
   fun aNewerFocusWins() {
-    late.schedule(key)
+    late.hold(key)
+    late.schedule()
     late.cancel()
     waitFor(LateSettingSwitch.DELAY_MS)
     late.runNow()
@@ -72,20 +75,23 @@ class LateSettingSwitchTest {
 
   @Test
   fun aNewTouchWaitsAndKeepsTheItem() {
-    late.schedule(key)
+    late.hold(key)
+    late.schedule()
     late.pause()
     waitFor(LateSettingSwitch.DELAY_MS)
     assertEquals(0, picked.size)
-    late.schedule(null)
+    late.schedule()
     waitFor(LateSettingSwitch.DELAY_MS)
     assertPicked(key)
   }
 
   @Test
   fun theNextTouchedItemReplacesTheWaitingOne() {
-    late.schedule(key)
+    late.hold(key)
+    late.schedule()
     late.pause()
-    late.schedule(nextKey)
+    late.hold(nextKey)
+    late.schedule()
     waitFor(LateSettingSwitch.DELAY_MS)
     assertPicked(nextKey)
   }
