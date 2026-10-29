@@ -154,6 +154,8 @@ public class SelectorController implements UserInputEventListener {
   private boolean touchActive = false;
   // Accompanying the 'touchActive' flag, this variable avoids the reassign of the same node.
   private AccessibilityNodeInfo lastFocusedNode = null;
+  private final LateSettingSwitch lateSettingSwitch =
+      new LateSettingSwitch(new Handler(Looper.getMainLooper()), this::switchCurrentSetting);
 
   /** Audial feedback announce types. */
   public enum AnnounceType {
@@ -1209,6 +1211,7 @@ public class SelectorController implements UserInputEventListener {
     if (touchActive) {
       lastFocusedNode = nodeInfo;
     } else {
+      lateSettingSwitch.cancel();
       switchCurrentSetting(nodeInfo);
     }
   }
@@ -1283,11 +1286,10 @@ public class SelectorController implements UserInputEventListener {
     if (active) {
       // A touch replaces a move that is waiting for a list to scroll.
       verticalNavigator.cancel();
-    }
-    if (!touchActive) {
-      if (lastFocusedNode != null) {
-        switchCurrentSetting(lastFocusedNode);
-      }
+      lateSettingSwitch.pause();
+    } else {
+      lateSettingSwitch.schedule(lastFocusedNode);
+      lastFocusedNode = null;
     }
   }
 
@@ -1310,6 +1312,7 @@ public class SelectorController implements UserInputEventListener {
 
   private boolean selectPreviousOrNext(
       EventId eventId, AnnounceType announceType, boolean isNext, boolean showOverlay) {
+    lateSettingSwitch.runNow();
     List<Setting> settings = getFilteredSettings();
     List<ScriptReadingControl> controls = Scripts.readingControls();
 
@@ -1749,6 +1752,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Change the value of the selected setting or scroll forward/backard of the seeker. */
   public void adjustSelectedSetting(EventId eventId, boolean isNext) {
+    lateSettingSwitch.runNow();
     @Nullable ScriptReadingControl scriptControl = currentScriptControl(Scripts.readingControls());
     if (scriptControl != null) {
       scriptControl.adjust(isNext);
@@ -1943,6 +1947,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Activate the currently selected action in the actions setting. */
   public void activateCurrentAction(EventId eventId) {
+    lateSettingSwitch.runNow();
     if (!accessibilityFocusMonitor.hasAccessibilityFocus(/* useInputFocusIfEmpty= */ false)) {
       return;
     }
