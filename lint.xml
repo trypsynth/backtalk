@@ -180,6 +180,17 @@
         <ignore regexp="template_media_volume_change_increase" />
         <ignore regexp="title_pref_media_controls" />
         <ignore regexp="title_pref_media_volume" />
+        <ignore regexp="gemini_api_key_dialog_message" />
+        <ignore regexp="gemini_api_key_get" />
+        <ignore regexp="gemini_api_key_hint" />
+        <ignore regexp="gemini_api_key_save" />
+        <ignore regexp="gemini_api_terms_link" />
+        <ignore regexp="summary_pref_gemini_api_key_built_in" />
+        <ignore regexp="summary_pref_gemini_api_key_not_set" />
+        <ignore regexp="summary_pref_gemini_api_key_set" />
+        <ignore regexp="summary_pref_scripts" />
+        <ignore regexp="title_pref_gemini_api_key" />
+        <ignore regexp="title_pref_speech_control" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
