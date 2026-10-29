@@ -191,6 +191,7 @@
         <ignore regexp="summary_pref_scripts" />
         <ignore regexp="title_pref_gemini_api_key" />
         <ignore regexp="title_pref_speech_control" />
+        <ignore regexp="update_wifi_download_failed" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
