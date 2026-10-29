@@ -154,8 +154,9 @@ public class SelectorController implements UserInputEventListener {
   private boolean touchActive = false;
   // Accompanying the 'touchActive' flag, this variable avoids the reassign of the same node.
   private AccessibilityNodeInfo lastFocusedNode = null;
+  private final Handler handler = new Handler(Looper.getMainLooper());
   private final LateSettingSwitch lateSettingSwitch =
-      new LateSettingSwitch(new Handler(Looper.getMainLooper()), this::switchCurrentSetting);
+      new LateSettingSwitch(handler, this::switchCurrentSetting);
 
   /** Audial feedback announce types. */
   public enum AnnounceType {
@@ -1085,6 +1086,7 @@ public class SelectorController implements UserInputEventListener {
    * automatically that make user easier to use screen search navigation.
    */
   public void searchActionPerformed() {
+    lateSettingSwitch.runNow();
     settingToRestore = GRANULARITY_SEARCH;
     setCurrentSetting(
         EVENT_ID_UNTRACKED,
@@ -1166,6 +1168,7 @@ public class SelectorController implements UserInputEventListener {
    */
   @Override
   public void editTextOrSelectableTextSelected(boolean isSelected) {
+    lateSettingSwitch.runNow();
     if (isSelected) {
       settingToRestore = getCurrentSetting(context, prefs);
       setCurrentSetting(
@@ -1450,6 +1453,7 @@ public class SelectorController implements UserInputEventListener {
       return false;
     }
 
+    lateSettingSwitch.runNow();
     setCurrentSetting(EVENT_ID_UNTRACKED, setting, announceType, showOverlay);
     return true;
   }
@@ -2363,7 +2367,6 @@ public class SelectorController implements UserInputEventListener {
   }
 
   private EventId lastChangeAccessibilityEventId;
-  private final Handler handler = new Handler(Looper.getMainLooper());
   private final VolumeChangedListener a11yVolumeChangedListener =
       new VolumeChangedListener() {
 
