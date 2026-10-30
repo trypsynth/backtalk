@@ -22,6 +22,7 @@
     <!-- Must match SpeechControl.PREF_ENABLED. -->
     <string name="pref_speech_control_key" translatable="false">pref_speech_control</string>
     <string name="pref_check_for_updates_key" translatable="false">pref_check_for_updates</string>
+    <string name="pref_app_info_key" translatable="false">pref_app_info</string>
     <string name="pref_auto_update_check_key" translatable="false">pref_auto_update_check</string>
     <string name="pref_show_exit_watermark_key">pref_show_exit_watermark</string>
     <string name="pref_notification_list_key">pref_notification_list</string>

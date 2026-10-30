@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Developer settings action that opens Android's app details for this Backtalk installation. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_open_app_info">معلومات التطبيق</string>
+</resources>

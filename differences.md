@@ -700,6 +700,8 @@ Settings for features that need a touchscreen or a phone are hidden on TVs, such
 
 Watches show the same Backtalk settings as phones, including **Text-to-speech**, all of **Verbosity**, **Individual sounds and vibrations**, **Lift to activate**, **Turn off animations**, **Status readout**, the rotor, the reading controls, the delay settings, update checks, and the circle menu, which is scaled to fit the screen. Settings for features that watches don't support are hidden, such as the braille keyboard, keyboard shortcuts, voice commands, direct touch, on-device AI, **Speaker when away from your ear**, and **Resume Backtalk**.
 
+In **Advanced > Developer settings**, **App info** opens Android’s app-management screen for this Backtalk installation. This provides access when a watch manufacturer leaves Backtalk out of its app lists. The available controls depend on the device. It adds no app-drawer entry.
+
 ### Gestures on watches
 
 Watch screens track only two fingers, so gestures with three or four fingers don't work, and two-finger swipes scroll the app. Watches use the phone's default gestures except for the following:
