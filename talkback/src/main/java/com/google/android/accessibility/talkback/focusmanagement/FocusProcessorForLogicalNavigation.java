@@ -3147,7 +3147,9 @@ public class FocusProcessorForLogicalNavigation {
       }
     }
 
-    // Local TraversalStrategy generated in sub-tree of scrolledNode.
+    // Local TraversalStrategy generated in sub-tree of scrolledNode. The app has just scrolled and
+    // answers one request per frame, so read its nodes in parallel first.
+    WindowNodePrefetcher.prefetch(scrolledNode, service.getPackageName());
     TraversalStrategy localTraversalStrategy =
         TraversalStrategyUtils.getTraversalStrategy(
             scrolledNode, focusFinder, sourceAction.searchDirection);
@@ -3156,21 +3158,20 @@ public class FocusProcessorForLogicalNavigation {
             sourceAction.targetType, localTraversalStrategy.getSpeakingNodesCache());
     Rect previousRect = new Rect();
     focusBeforeScroll.getBoundsInScreen(previousRect);
-    boolean validAccessibilityFocus =
-        focusBeforeScroll.refresh() && AccessibilityNodeInfoUtils.isVisible(focusBeforeScroll);
 
     NavigationAction navigationAction =
         NavigationAction.Builder.copy(sourceAction)
             .setAutoScrollAttempt(sourceAction.autoScrollAttempt + 1)
             .build();
 
-    AccessibilityNodeInfoCompat nodeToFocus;
-    if (validAccessibilityFocus) {
-      // Try to find the next focusable node based on current focus.
-      nodeToFocus =
-          TraversalStrategyUtils.searchFocus(
-              localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
-      if (nodeToFocus == null) {
+    // Try to find the next focusable node based on current focus. The search finds the pivot by its
+    // ID, so reading it again from the app, which is busy drawing the scroll, can wait until the
+    // search finds nothing.
+    AccessibilityNodeInfoCompat nodeToFocus =
+        TraversalStrategyUtils.searchFocus(
+            localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
+    if (nodeToFocus == null) {
+      if (focusBeforeScroll.refresh() && AccessibilityNodeInfoUtils.isVisible(focusBeforeScroll)) {
         Rect newRect = getBoundsAfterScroll(focusBeforeScroll);
         if (previousRect.equals(newRect) && sourceAction.shouldScroll) {
           if (sourceAction.isPrevScrolled) {
@@ -3192,17 +3193,10 @@ public class FocusProcessorForLogicalNavigation {
             eventId);
         return;
       }
-    } else {
-      // Try to find the next focusable node based on current focus.
-      nodeToFocus =
-          TraversalStrategyUtils.searchFocus(
-              localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
       // Fallback solution: Use the first/last item under scrollable node as the target.
-      if (nodeToFocus == null) {
-        nodeToFocus =
-            TraversalStrategyUtils.findFirstFocusInNodeTree(
-                localTraversalStrategy, scrolledNode, sourceAction.searchDirection, nodeFilter);
-      }
+      nodeToFocus =
+          TraversalStrategyUtils.findFirstFocusInNodeTree(
+              localTraversalStrategy, scrolledNode, sourceAction.searchDirection, nodeFilter);
 
       if (nodeToFocus == null) {
         // Since there is no visible/valid accessibility focus on screen, we play safe and don't

@@ -106,6 +106,8 @@ When the next item was only partly on screen, TalkBack scrolled it into view, wa
 
 When the next item is off screen, Backtalk checks once per frame whether the list has moved, rather than wait for the scroll event, which Android sends at most every 100 ms. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen, and from about 320 ms to about 140 ms when the list had to scroll a page.
 
+After a page scroll, Backtalk reads the list's new items from the app in parallel, and reads the old item again only if the search finds nothing next. On an emulator, the slowest page scrolls in Google News reached the speech engine in about 220 ms rather than about 260 ms.
+
 Backtalk also finds the end of a list that's laid out in reverse, such as a chat, correctly.
 
 ### Scroll views that show the next screen immediately
