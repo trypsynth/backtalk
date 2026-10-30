@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the setting that checks GitHub for a newer development build of Backtalk. [CHAR LIMIT=40] -->
+    <string name="title_pref_check_for_updates">البحث عن تحديثات</string>
+    <!-- Summary of the check for updates setting, with the build number of the running app. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_check_for_updates">الإصدار <xliff:g id="build" example="96">%1$d</xliff:g></string>
+    <!-- Title of the switch that turns daily update checks on or off. [CHAR LIMIT=40] -->
+    <string name="title_pref_auto_update_check">البحث تلقائيًا عن تحديثات</string>
+    <!-- Summary of the automatic update check switch. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_auto_update_check">البحث مرة يوميًا وإظهار إشعار عند توفّر إصدار جديد</string>
+    <!-- Title of the notification that says a new build is available. [CHAR LIMIT=NONE] -->
+    <string name="update_notification_title">يتوفّر تحديث لتطبيق Backtalk</string>
+    <!-- Text of the update notification when it has no list of changes. [CHAR LIMIT=NONE] -->
+    <string name="update_notification_text">الإصدار <xliff:g id="build" example="97">%1$d</xliff:g>. انقر للتثبيت.</string>
+    <!-- Title of the dialog that offers to install a new build. [CHAR LIMIT=NONE] -->
+    <string name="update_dialog_title">يتوفّر الإصدار <xliff:g id="build" example="97">%1$d</xliff:g> من Backtalk</string>
+    <!-- Button in the update dialog that downloads and installs the new build. [CHAR LIMIT=20] -->
+    <string name="update_dialog_install">تثبيت</string>
+    <!-- Toast shown when a manual update check starts. [CHAR LIMIT=NONE] -->
+    <string name="update_checking">جارٍ البحث عن تحديثات</string>
+    <!-- Toast shown when a manual update check finds no newer build. [CHAR LIMIT=NONE] -->
+    <string name="update_up_to_date">تطبيق Backtalk محدّث</string>
+    <!-- Toast shown when an update check fails. [CHAR LIMIT=NONE] -->
+    <string name="update_check_failed">تعذّر البحث عن تحديثات</string>
+    <!-- Title of the update progress dialog and download notification channel. [CHAR LIMIT=NONE] -->
+    <string name="update_downloading">جارٍ تنزيل التحديث</string>
+    <!-- Update download status while connecting to the server. [CHAR LIMIT=NONE] -->
+    <string name="update_connecting">جارٍ الاتصال</string>
+    <!-- Update status while checking the APK and preparing its installation. [CHAR LIMIT=NONE] -->
+    <string name="update_preparing">جارٍ التحضير للتثبيت</string>
+    <!-- Update status after handing the APK to Android for installation. [CHAR LIMIT=NONE] -->
+    <string name="update_installing">جارٍ تثبيت التحديث</string>
+    <!-- Update notification inviting the user back to the system install prompt. [CHAR LIMIT=NONE] -->
+    <string name="update_confirm_install">جاهز للتثبيت. افتح للتأكيد.</string>
+    <!-- Update progress dialog status after Android reports success. [CHAR LIMIT=NONE] -->
+    <string name="update_installed">تم تثبيت التحديث</string>
+    <!-- Update progress dialog status after a transfer or preparation failure. [CHAR LIMIT=NONE] -->
+    <string name="update_download_failed">تعذّر تنزيل التحديث أو تحضيره. تحقّق من الاتصال والمساحة المتاحة، ثم حاول مرة أخرى.</string>
+    <!-- Update status after Android interrupted the download or its foreground time expired. [CHAR LIMIT=NONE] -->
+    <string name="update_download_interrupted">تم إيقاف التحديث. حاول مرة أخرى لإعادة التنزيل من البداية.</string>
+    <!-- Button in the update progress dialog to retry a failed or canceled download. [CHAR LIMIT=20] -->
+    <string name="update_retry">إعادة المحاولة</string>
+    <!-- Download progress: percentage, downloaded file size, total file size. [CHAR LIMIT=NONE] -->
+    <string name="update_download_progress"><xliff:g id="percent" example="50">%1$d</xliff:g>%%، <xliff:g id="downloaded" example="25 MB">%2$s</xliff:g> من <xliff:g id="total" example="50 MB">%3$s</xliff:g></string>
+    <!-- Toast shown when the update cannot be downloaded or installed. [CHAR LIMIT=NONE] -->
+    <string name="update_install_failed">تعذّر تثبيت التحديث</string>
+    <!-- Toast shown when the user cancels the install. [CHAR LIMIT=NONE] -->
+    <string name="update_install_canceled">تم إلغاء التحديث</string>
+    <!-- Toast shown with the settings screen where the user allows Backtalk to install apps. [CHAR LIMIT=NONE] -->
+    <string name="update_allow_install">اسمح لتطبيق Backtalk بتثبيت التطبيقات، ثم حاول التحديث مرة أخرى</string>
+</resources>

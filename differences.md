@@ -684,6 +684,8 @@ Backtalk installs as `fyi.quin.backtalk`, so it installs next to Google's TalkBa
 
 Backtalk checks GitHub for new development builds and installs them when you tap its notification. For more information, see [Updates](README.md#updates).
 
+On phones and Wear OS watches, installing an update opens a progress dialog with a Cancel button. The download runs in a foreground service and continues when you leave the dialog or turn off the screen. Open its notification, or choose **Check for updates** again, to return to progress. You can cancel from the dialog or notification, and retry if the download fails. Once the APK has been handed to Android, the system installation prompt opens directly. If you leave that prompt with Home, reopen progress and choose **Install** to return to it. If Android prevents the prompt from opening in the background, open progress through the notification or **Check for updates** to confirm.
+
 ## Android TV
 
 ### Settings on the TV home screen

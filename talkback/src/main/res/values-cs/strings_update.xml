@@ -15,4 +15,22 @@
     <string name="update_install_failed">Aktualizaci se nepodařilo nainstalovat</string>
     <string name="update_install_canceled">Aktualizace zrušena</string>
     <string name="update_allow_install">Povolte Backtalku instalovat aplikace a potom aktualizaci zkuste znovu</string>
+    <!-- Update download status while connecting to the server. [CHAR LIMIT=NONE] -->
+    <string name="update_connecting">Připojování</string>
+    <!-- Update status while checking the APK and preparing its installation. [CHAR LIMIT=NONE] -->
+    <string name="update_preparing">Příprava instalace</string>
+    <!-- Update status after handing the APK to Android for installation. [CHAR LIMIT=NONE] -->
+    <string name="update_installing">Instalace aktualizace</string>
+    <!-- Update notification inviting the user back to the system install prompt. [CHAR LIMIT=NONE] -->
+    <string name="update_confirm_install">Připraveno k instalaci. Otevřením potvrďte.</string>
+    <!-- Update progress dialog status after Android reports success. [CHAR LIMIT=NONE] -->
+    <string name="update_installed">Aktualizace nainstalována</string>
+    <!-- Update progress dialog status after a transfer or preparation failure. [CHAR LIMIT=NONE] -->
+    <string name="update_download_failed">Aktualizaci se nepodařilo stáhnout nebo připravit. Zkontrolujte připojení a volné místo a zkuste to znovu.</string>
+    <!-- Update status after Android interrupted the download or its foreground time expired. [CHAR LIMIT=NONE] -->
+    <string name="update_download_interrupted">Aktualizace byla přerušena. Zkuste ji stáhnout znovu.</string>
+    <!-- Button in the update progress dialog to retry a failed or canceled download. [CHAR LIMIT=20] -->
+    <string name="update_retry">Zkusit znovu</string>
+    <!-- Download progress: percentage, downloaded file size, total file size. [CHAR LIMIT=NONE] -->
+    <string name="update_download_progress"><xliff:g id="percent" example="50">%1$d</xliff:g> %%, <xliff:g id="downloaded" example="25 MB">%2$s</xliff:g> z <xliff:g id="total" example="50 MB">%3$s</xliff:g></string>
 </resources>

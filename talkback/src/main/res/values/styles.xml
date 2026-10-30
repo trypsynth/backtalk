@@ -63,6 +63,12 @@
 
   <!-- The theme applied for mic permissions need for voice commands -->
   <!-- Shows only the dialogs of the sound theme installer, over the app it was opened from. -->
+  <style name="Theme.UpdateDownload" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:backgroundDimEnabled">false</item>
+  </style>
+
   <style name="Theme.SoundThemeInstall" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowIsTranslucent">true</item>
     <item name="android:windowBackground">@android:color/transparent</item>
