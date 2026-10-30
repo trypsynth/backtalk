@@ -2662,7 +2662,7 @@ public class FocusProcessorForLogicalNavigation {
       NavigationAction navigationAction,
       EventId eventId) {
     if (navigationAction.targetType != NavigationTarget.TARGET_DEFAULT
-        || navigationAction.autoScrollAttempt >= MAX_CLIPPED_ITEM_REVEALS
+        || navigationAction.clippedItemReveals >= MAX_CLIPPED_ITEM_REVEALS
         || !TraversalStrategyUtils.isLogicalDirection(navigationAction.searchDirection)) {
       return false;
     }
@@ -2673,10 +2673,21 @@ public class FocusProcessorForLogicalNavigation {
     if (item == null || !showOnScreen(item, eventId)) {
       return false;
     }
-    AutoScrollCallback callback = new AutoScrollCallback(this, navigationAction, pivot);
+    AutoScrollCallback callback =
+        new AutoScrollCallback(
+            this,
+            NavigationAction.Builder.copy(navigationAction)
+                .setClippedItemReveals(navigationAction.clippedItemReveals + 1)
+                .build(),
+            pivot);
     scrollCallback = callback;
     Rect pivotBefore = new Rect();
     pivot.getBoundsInScreen(pivotBefore);
+    // A list that ignored one reveal in this swipe won't take another.
+    NavigationAction noMoreReveals =
+        NavigationAction.Builder.copy(navigationAction)
+            .setClippedItemReveals(MAX_CLIPPED_ITEM_REVEALS)
+            .build();
     postEarlyScrollCheck(
         callback,
         scrollable,
@@ -2684,17 +2695,11 @@ public class FocusProcessorForLogicalNavigation {
         eventId,
         REVEAL_CHECK_RETRIES,
         () -> {
-          if (!autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId)) {
+          if (!autoScroll(scrollableNodeInfo, pivot, noMoreReveals, eventId)) {
             // Navigate again without revealing, so that the swipe can still scroll the list around
             // this one or search on.
             scrollCallback = null;
-            onDirectionalNavigationAction(
-                pivot,
-                ignoreDescendantsOfPivot,
-                NavigationAction.Builder.copy(navigationAction)
-                    .setAutoScrollAttempt(MAX_CLIPPED_ITEM_REVEALS)
-                    .build(),
-                eventId);
+            onDirectionalNavigationAction(pivot, ignoreDescendantsOfPivot, noMoreReveals, eventId);
           }
         });
     return true;
@@ -3354,32 +3359,13 @@ public class FocusProcessorForLogicalNavigation {
         // Where Android's copy of the nodes can be cleared, this read was fresh, so a row that only
         // moved sideways has no next item to wait for. A pivot cut off at the top keeps its top while
         // the list moves, so its bottom counts too.
-        boolean freshRead = BuildVersionUtils.isAtLeastT();
         boolean stillMoving =
-            freshRead
+            BuildVersionUtils.isAtLeastT()
                 ? previousRect.top != newRect.top || previousRect.bottom != newRect.bottom
                 : !previousRect.equals(newRect);
         if (stillMoving && settleRetries > 0) {
-          pendingSettleLook =
-              () -> {
-                pendingSettleLook = null;
-                AccessibilityNodeInfoCompat currentFocus =
-                    accessibilityFocusMonitor.getAccessibilityFocus(
-                        /* useInputFocusIfEmpty= */ false);
-                // Same rule as onAutoScrolled: only focus placed elsewhere stops the navigation.
-                if (scrollCallback == null
-                    && (currentFocus == null || currentFocus.equals(focusBeforeScroll))) {
-                  clearNodeCacheAndRefresh(scrolledNode);
-                  // The next look compares with the bounds of this one, so it can't tell that the
-                  // list has scrolled, whatever the scroll event reported.
-                  NavigationAction scrolledAction =
-                      NavigationAction.Builder.copy(sourceAction).setIsPrevScrolled(true).build();
-                  handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
-                      scrolledNode, focusBeforeScroll, scrolledAction, settleRetries - 1, eventId);
-                }
-              };
-          earlyScrollCheckHandler.postDelayed(
-              pendingSettleLook, freshRead ? SETTLE_RETRY_FRESH_MS : SETTLE_RETRY_MS);
+          lookAgainAfterSettling(
+              scrolledNode, focusBeforeScroll, sourceAction, settleRetries, newRect, eventId);
           return;
         }
         if (previousRect.equals(newRect) && sourceAction.shouldScroll) {
@@ -3434,6 +3420,48 @@ public class FocusProcessorForLogicalNavigation {
     }
 
     setAccessibilityFocusInternal(nodeToFocus, navigationAction, eventId);
+  }
+
+  /**
+   * Searches again once the list has stopped. Where reads are fresh, watching the pivot alone tells
+   * that, without reading the whole list on each look.
+   */
+  private void lookAgainAfterSettling(
+      @NonNull AccessibilityNodeInfoCompat scrolledNode,
+      @NonNull AccessibilityNodeInfoCompat focusBeforeScroll,
+      NavigationAction sourceAction,
+      int settleRetries,
+      @NonNull Rect lastBounds,
+      EventId eventId) {
+    boolean freshRead = BuildVersionUtils.isAtLeastT();
+    pendingSettleLook =
+        () -> {
+          pendingSettleLook = null;
+          AccessibilityNodeInfoCompat currentFocus =
+              accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
+          // Same rule as onAutoScrolled: only focus placed elsewhere stops the navigation.
+          if (scrollCallback != null
+              || (currentFocus != null && !currentFocus.equals(focusBeforeScroll))) {
+            return;
+          }
+          if (freshRead && settleRetries > 1 && focusBeforeScroll.refresh()) {
+            Rect bounds = getBoundsAfterScroll(focusBeforeScroll);
+            if (bounds.top != lastBounds.top || bounds.bottom != lastBounds.bottom) {
+              lookAgainAfterSettling(
+                  scrolledNode, focusBeforeScroll, sourceAction, settleRetries - 1, bounds, eventId);
+              return;
+            }
+          }
+          clearNodeCacheAndRefresh(scrolledNode);
+          // The next look compares with the bounds of this one, so it can't tell that the list has
+          // scrolled, whatever the scroll event reported.
+          NavigationAction scrolledAction =
+              NavigationAction.Builder.copy(sourceAction).setIsPrevScrolled(true).build();
+          handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
+              scrolledNode, focusBeforeScroll, scrolledAction, settleRetries - 1, eventId);
+        };
+    earlyScrollCheckHandler.postDelayed(
+        pendingSettleLook, freshRead ? SETTLE_RETRY_FRESH_MS : SETTLE_RETRY_MS);
   }
 
   @VisibleForTesting
