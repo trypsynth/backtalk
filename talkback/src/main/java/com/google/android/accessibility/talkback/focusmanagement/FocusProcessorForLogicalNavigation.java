@@ -2882,7 +2882,9 @@ public class FocusProcessorForLogicalNavigation {
     int deltaY = pivotPresent ? pivotBefore.top - pivotAfter.top : DELTA_UNDEFINED;
     LogUtils.d(TAG, "checkScrollEarly: scrolled, deltaX=%s deltaY=%s", deltaX, deltaY);
     // The scroll event that would clear Android's copy of these nodes hasn't arrived yet.
-    service.clearCachedSubtree(scrollable.unwrap());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      service.clearCachedSubtree(scrollable.unwrap());
+    }
     scrollable.refresh();
     onAutoScrolled(scrollable, eventId, deltaX, deltaY);
   }
