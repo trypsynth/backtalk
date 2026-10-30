@@ -24,8 +24,26 @@
     <string name="update_up_to_date">Backtalk is up to date</string>
     <!-- Toast shown when an update check fails. [CHAR LIMIT=NONE] -->
     <string name="update_check_failed">Could not check for updates</string>
-    <!-- Toast shown when the update download starts. [CHAR LIMIT=NONE] -->
+    <!-- Title of the update progress dialog and download notification channel. [CHAR LIMIT=NONE] -->
     <string name="update_downloading">Downloading update</string>
+    <!-- Update download status while connecting to the server. [CHAR LIMIT=NONE] -->
+    <string name="update_connecting">Connecting</string>
+    <!-- Update status while checking the APK and preparing its installation. [CHAR LIMIT=NONE] -->
+    <string name="update_preparing">Preparing installation</string>
+    <!-- Update status after handing the APK to Android for installation. [CHAR LIMIT=NONE] -->
+    <string name="update_installing">Installing update</string>
+    <!-- Update notification inviting the user back to the system install prompt. [CHAR LIMIT=NONE] -->
+    <string name="update_confirm_install">Ready to install. Open to confirm.</string>
+    <!-- Update progress dialog status after Android reports success. [CHAR LIMIT=NONE] -->
+    <string name="update_installed">Update installed</string>
+    <!-- Update progress dialog status after a transfer or preparation failure. [CHAR LIMIT=NONE] -->
+    <string name="update_download_failed">Could not download or prepare the update. Check your connection and available storage, then try again.</string>
+    <!-- Update status after Android interrupted the download or its foreground time expired. [CHAR LIMIT=NONE] -->
+    <string name="update_download_interrupted">The update was interrupted. Try again to restart the download.</string>
+    <!-- Button in the update progress dialog to retry a failed or canceled download. [CHAR LIMIT=20] -->
+    <string name="update_retry">Retry</string>
+    <!-- Download progress: percentage, downloaded file size, total file size. [CHAR LIMIT=NONE] -->
+    <string name="update_download_progress"><xliff:g id="percent" example="50">%1$d</xliff:g>%%, <xliff:g id="downloaded" example="25 MB">%2$s</xliff:g> of <xliff:g id="total" example="50 MB">%3$s</xliff:g></string>
     <!-- Toast shown when the update cannot be downloaded or installed. [CHAR LIMIT=NONE] -->
     <string name="update_install_failed">Could not install the update</string>
     <!-- Toast shown on a watch when the update cannot be downloaded over Wi-Fi, for example because the Wi-Fi connection dropped. [CHAR LIMIT=NONE] -->
