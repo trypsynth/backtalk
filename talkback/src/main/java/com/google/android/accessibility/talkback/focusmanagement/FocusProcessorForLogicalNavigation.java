@@ -188,7 +188,11 @@ public class FocusProcessorForLogicalNavigation {
   private static final int EARLY_SCROLL_RETRIES = 6;
   // Android sends scroll events, which clear the saved nodes of the list, at most every 100 ms.
   private static final long SETTLE_RETRY_MS = 120;
-  private static final int SETTLE_RETRIES = 3;
+  private static final int SETTLE_RETRIES = 6;
+  // Where Android's copy of the nodes can be cleared, the next look doesn't need a scroll event.
+  private static final long SETTLE_RETRY_FRESH_MS = 40;
+  // A list that accepts showing an item has moved by the first check, so few are needed.
+  private static final int REVEAL_CHECK_RETRIES = 2;
   private static final int MAX_CLIPPED_ITEM_REVEALS = 2;
 
   // Checks whether a page scroll has already moved the list, before its scroll event arrives.
@@ -2675,6 +2679,7 @@ public class FocusProcessorForLogicalNavigation {
         scrollable,
         pivotBefore,
         eventId,
+        REVEAL_CHECK_RETRIES,
         () -> {
           if (!autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId)) {
             // Navigate again without revealing, so that the swipe can still scroll the list around
@@ -2827,6 +2832,7 @@ public class FocusProcessorForLogicalNavigation {
           scrollableNodeInfo.getNode(),
           pivotBefore,
           eventId,
+          EARLY_SCROLL_RETRIES,
           /* onNothingMoved= */ null);
     }
     return scrolled;
@@ -2837,11 +2843,10 @@ public class FocusProcessorForLogicalNavigation {
       AccessibilityNodeInfoCompat scrollable,
       Rect pivotBefore,
       EventId eventId,
+      int retries,
       @Nullable Runnable onNothingMoved) {
     earlyScrollCheckHandler.post(
-        () ->
-            checkScrollEarly(
-                callback, scrollable, pivotBefore, eventId, EARLY_SCROLL_RETRIES, onNothingMoved));
+        () -> checkScrollEarly(callback, scrollable, pivotBefore, eventId, retries, onNothingMoved));
   }
 
   /**
@@ -3317,7 +3322,8 @@ public class FocusProcessorForLogicalNavigation {
         Rect newRect = getBoundsAfterScroll(focusBeforeScroll);
         // The list is still moving, and what the search read may be from before it moved. Scrolling
         // again now would pass a whole page that never came on screen.
-        if (!previousRect.equals(newRect) && settleRetries > 0) {
+        // A row moving sideways can't pass a page, and its next item is usually outside the row.
+        if (previousRect.top != newRect.top && settleRetries > 0) {
           earlyScrollCheckHandler.postDelayed(
               () -> {
                 AccessibilityNodeInfoCompat currentFocus =
@@ -3326,6 +3332,9 @@ public class FocusProcessorForLogicalNavigation {
                 // Same rule as onAutoScrolled: only focus placed elsewhere stops the navigation.
                 if (scrollCallback == null
                     && (currentFocus == null || currentFocus.equals(focusBeforeScroll))) {
+                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    service.clearCachedSubtree(scrolledNode.unwrap());
+                  }
                   scrolledNode.refresh();
                   // The next look compares with the bounds of this one, so it can't tell that the
                   // list has scrolled, whatever the scroll event reported.
@@ -3335,7 +3344,9 @@ public class FocusProcessorForLogicalNavigation {
                       scrolledNode, focusBeforeScroll, scrolledAction, settleRetries - 1, eventId);
                 }
               },
-              SETTLE_RETRY_MS);
+              Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                  ? SETTLE_RETRY_FRESH_MS
+                  : SETTLE_RETRY_MS);
           return;
         }
         if (previousRect.equals(newRect) && sourceAction.shouldScroll) {
