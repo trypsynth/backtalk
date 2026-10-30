@@ -68,6 +68,8 @@ With low-latency audio on, Backtalk also watches for a speech engine that stops 
 
 Low-latency audio is on by default, except on Wear OS watches. If you used an earlier version of Backtalk with the setting off, Backtalk turns it on once when you update. If speech or sounds break up, turn the setting off. Low-latency speech requires Android 11 or later; on older versions, only Backtalk's sounds use the fast path. Speech falls back to the usual path for engines that play their own audio or that report errors. Each sound plays the usual way the first time that Backtalk uses it, and 3D sounds still play through the 3D player.
 
+On some phones, such as Samsung's, speech came out of the earpiece after a phone call. Backtalk now waits up to 3 seconds after a call for Android to leave the call's audio, and sends low-latency speech to the media output if Android still holds it on the earpiece.
+
 ### Less lag while scrolling
 
 After each scroll event, TalkBack searched the list for a new item to focus. The search blocked touch exploration and could make gestures fail. Backtalk searches once, after scrolling stops.
@@ -184,6 +186,8 @@ TalkBack echoed a word such as "don't" as two words. Backtalk echoes it as one w
 
 **Verbosity** > **Order of item details** sets the order in which Backtalk says an item's name, type, and state. TalkBack has this setting in **Advanced settings** and offers three orders to choose from. Backtalk lists the name, type, and state, and you put them in any of the six orders: touch and hold a detail and drag it up or down, or use its **Move up** and **Move down** actions. With Backtalk on, double-tap and hold a detail, then drag it. Backtalk says the detail's position as you pick it up, move it, and drop it.
 
+The order also applies to a button or other control that has no name of its own and is named by the text inside it. TalkBack always said such a control's type first, as in "Button, Upload". Backtalk puts the text where the name goes, so with the default order you hear "Upload, button".
+
 TalkBack ignored the order for a row whose checkbox or switch has no text of its own, such as the rows in **Reading controls**, and always read the checkbox's type and state before the row's text. Backtalk reads such a row as one control, with the row's text as its name, in the order that you chose.
 
 ### "Backtalk off" at the right volume
@@ -215,6 +219,14 @@ With **After the letter, no delay** and **Instead of the letter**, Backtalk says
 
 The **High** preset uses **After the letter, delayed** and the **Low** preset uses **Off**. Your choice from the switch carries over.
 
+### Speech when you touch the screen
+
+With **Controls** > **Touch and activation** > **Stop speech when touching the screen** on, which is the default, touching the screen stops speech, even notifications and messages that new speech doesn't cut off. Activating an item, with a double tap, the activation key or a braille display, stops it too, so that what the item says when activated, such as a switch's new state, is said at once rather than after the rest of the item. Turn the switch off to keep speech going until touch moves focus to another item.
+
+### Sounds while speech is off
+
+When you turn speech off with its gesture or keyboard shortcut, TalkBack also dropped the sounds and vibrations that go with each item, so moving focus or activating an item gave no feedback at all. Backtalk still plays them, so you can tell that focus moved while speech is off.
+
 ## Notifications
 
 ### Samsung watch notification content
@@ -245,7 +257,13 @@ TalkBack marked its notices that it was updated, or that gestures changed, as on
 
 Backtalk keeps your choice when devices connect or disconnect, or when other apps start playing. If the device that you chose isn't connected, Backtalk uses another external device, and the setting shows "(disconnected)" next to the device name. During phone calls, Android decides where audio plays.
 
+When you choose Bluetooth headphones that already play your media, Backtalk plays there the way media does. It only takes the call route, which puts headphones into call mode with lower-quality sound for every app, when Android wouldn't play Backtalk's audio on the device otherwise, such as when media plays on another Bluetooth device.
+
 To switch quickly, add **Audio output device** in **Reading controls**. Swiping up or down with it goes through **System default**, **Phone speaker** and each connected device, and changes the same setting.
+
+### Media controls
+
+To control music, podcasts and other audio playing in the background without leaving the app you're in, add **Media controls** in **Reading controls**. Swipe up or down to choose **Previous track**, **Rewind**, **Play/pause**, **Fast forward**, **Next track** or **Stop**, and double-tap to do it. **Media volume**, also in **Reading controls**, changes the media volume with a swipe up or down, as **Accessibility volume** does for Backtalk's own. Both are off by default. **Previous track**, **Next track**, **Rewind**, **Fast forward** and **Stop media** are also gesture actions, next to **Play or pause media**.
 
 ### Accessibility volume on Bluetooth headphones
 
@@ -401,6 +419,14 @@ When you turn on **Controls** > **Touch and activation** > **Volume keys adjust 
 These items are off by default in the Backtalk menu: **Actions**, **Screen search**, **Add or edit labels**, **Describe text formatting**, **Copy last spoken phrase**, **Spoken language**, **Voice commands**, **Keyboard shortcuts**, and **Braille display settings**. You can still use actions with the **Actions** reading control. **Text-to-speech** stays on, so that you can reach speech settings if your speech engine crashes, and Backtalk adds a **Pause Backtalk** item.
 
 To change the items, go to **Backtalk menu**, under **Controls** in Backtalk settings. In TalkBack, this screen is under **Customize menus**.
+
+### Add last spoken phrase to clipboard
+
+**Add last spoken phrase to clipboard** adds what Backtalk last said to the text it copied, on a new line, so that you can copy several phrases into one block. Copy the first phrase with **Copy last spoken phrase**, then add each of the others. It's an item you can turn on in the Backtalk menu, a gesture action, and a keyboard shortcut. From Android 10, Android doesn't let Backtalk read the clipboard, so the phrase is added to what Backtalk last copied, not to anything you copied in another app.
+
+### Clear text
+
+When a text field with text in it has focus, the edit options in the Backtalk menu have **Clear text**, which deletes all of its text at once.
 
 ### Circle menu
 
@@ -610,6 +636,10 @@ Google's source release doesn't include working Gemini support, so without an AP
 
 Backtalk can describe images and screens with a model that runs on your phone, so nothing is sent to Google or anyone else. For more information, see [On-device AI](README.md#on-device-ai).
 
+### Text in images without Google Play services
+
+TalkBack reads text in images with the ML Kit that runs inside Google Play services. On phones without Play services, such as GrapheneOS without sandboxed Google Play, **Describe image** can't read any text. For those phones, install `backtalk-nogms.apk` from the [dev release](https://github.com/trypsynth/backtalk/releases/tag/dev) instead of `backtalk.apk`. It includes the text recognition model, so it reads text with or without Play services, and it only updates to builds of its own kind. The model is built for all three processor types, so this APK is about 30 MB larger. Both are the same app, so you can install one over the other. TalkBack also sends ML Kit's usage log to Google, and Backtalk doesn't.
+
 ### Clear error messages
 
 When Gemini can't describe something, TalkBack says "Something went wrong". Backtalk says what failed: the key wasn't accepted, the usage limit was reached, Gemini is busy, Gemini took too long, or there's no internet connection. For other errors, Backtalk says the error code and the first sentence of Google's message, in English. Describe screen speaks its errors instead of showing them in a toast.
@@ -703,3 +733,7 @@ On Samsung watches, turn on **Controls** > **Touch and activation** > **Reserve 
 ### Backtalk menu on watches
 
 The Backtalk menu scrolls on watches, so you can reach every item. **Describe screen** is off in the watch menu by default, and **Pause Backtalk** isn't available on watches.
+
+### Updates over Wi-Fi on watches
+
+A watch near its phone usually goes online through the phone over Bluetooth, which is slow for an update. When you install an update on a watch, Backtalk turns on the watch's Wi-Fi and downloads the update over a saved network in range, then lets the watch go back to its phone. If Wi-Fi doesn't connect within 20 seconds, the update downloads through the phone as before. If the download over Wi-Fi fails, for example because the connection drops, Backtalk says so, and you can install the update again.

@@ -31,7 +31,6 @@ import android.media.session.PlaybackState
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.service.notification.NotificationListenerService
 import android.text.InputType
 import android.util.Log
 import android.util.TypedValue
@@ -150,9 +149,7 @@ class NotificationListActivity : AppCompatActivity(), NotificationList.Listener 
     parts = NotificationParts.enabledParts(SharedPreferencesUtils.getSharedPreferences(this))
     waitingForList = !NotificationList.isConnected
     if (NotificationList.isAccessGranted(this) && !NotificationList.isConnected) {
-      NotificationListenerService.requestRebind(
-        ComponentName(this, NotificationListService::class.java)
-      )
+      NotificationListService.rebind(this)
     }
     show()
   }

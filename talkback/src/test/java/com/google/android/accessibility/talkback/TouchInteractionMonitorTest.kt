@@ -300,6 +300,30 @@ class TouchInteractionMonitorTest {
   }
 
   @Test
+  fun swipeThatStartsSlowlyIsAGestureRatherThanTouchExploration() {
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    // The finger creeps right, short of the swipe distance, until just before the touch exploration
+    // delay ends (#351).
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 40f + 4f * step, 200f, 24L * step)
+    }
+    runUntil(145)
+    // The move that crosses the swipe distance happens before the delay ends, but Android passes it
+    // on only after the delay has ended.
+    val crossing = MotionEvent.obtain(downTime, start + 148, ACTION_MOVE, 140f, 200f, 0)
+    main.postAtTime(
+      { callController("onMotionEvent", MotionEvent::class.java, crossing) },
+      start + 156,
+    )
+    touchAt(ACTION_UP, 160f, 200f, 170)
+    runUntil(400)
+
+    assertEquals(listOf<Thread>(), reporter.requests)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.gestures)
+  }
+
+  @Test
   fun doubleTapThatWaitedOnTheBusyMainThreadIsNotTakenForAHold() {
     stateChangeAt(STATE_TOUCH_INTERACTING, 0)
     touchAt(ACTION_DOWN, 160f, 200f, 0)

@@ -1102,6 +1102,8 @@
     <string name="keycombo_menu_other_language_options">Show installed languages</string>
     <!-- Keyboard key combination assignment for copying the last spoken phrase. [CHAR LIMIT=60] -->
     <string name="keycombo_menu_other_copy_last_spoken_phrase">Copy last spoken phrase</string>
+    <!-- Keyboard key combination assignment for adding the last spoken phrase to the text on the clipboard. [CHAR LIMIT=60] -->
+    <string name="keycombo_menu_other_append_last_spoken_phrase">Add last spoken phrase to clipboard</string>
     <!-- Keyboard key combination assignment for toggle selection [CHAR LIMIT=40] -->
     <string name="keycombo_menu_other_toggle_selection" translatable="false">@string/shortcut_toggle_selection</string>
     <!-- Keyboard key combination assignment for opening the TTS settings. [CHAR LIMIT=60] -->
@@ -1957,10 +1959,20 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="shortcut_voice_input">Start or end voice input</string>
     <!-- Label for the shortcut that plays/pauses or start/stop voice input [CHAR_LIMIT=90]-->
     <string name="shortcut_media_control_or_voice_input">Play or pause media, start or end voice input</string>
-    <!-- Label for the shortcut that turns up the volume. [CHAR_LIMIT=60]-->
-    <string name="shortcut_increase_volume">Increase volume</string>
-    <!-- Label for the shortcut that turns down the volume. [CHAR_LIMIT=60]-->
-    <string name="shortcut_decrease_volume">Decrease volume</string>
+    <!-- Gesture action that stops what is playing in the app playing media. [CHAR_LIMIT=60] -->
+    <string name="shortcut_media_stop">Stop media</string>
+    <!-- Gesture action that skips to the previous track in the app playing media. [CHAR_LIMIT=60] -->
+    <string name="shortcut_media_previous">Previous track</string>
+    <!-- Gesture action that skips to the next track in the app playing media. [CHAR_LIMIT=60] -->
+    <string name="shortcut_media_next">Next track</string>
+    <!-- Gesture action that rewinds what is playing in the app playing media. [CHAR_LIMIT=60] -->
+    <string name="shortcut_media_rewind">Rewind</string>
+    <!-- Gesture action that fast-forwards what is playing in the app playing media. [CHAR_LIMIT=60] -->
+    <string name="shortcut_media_fast_forward">Fast forward</string>
+    <!-- Label for the shortcut that turns up the accessibility volume. [CHAR_LIMIT=60]-->
+    <string name="shortcut_increase_volume">Increase accessibility volume</string>
+    <!-- Label for the shortcut that turns down the accessibility volume. [CHAR_LIMIT=60]-->
+    <string name="shortcut_decrease_volume">Decrease accessibility volume</string>
     <!-- Label for the shortcut that perform all apps action. [CHAR_LIMIT=25]-->
     <string name="shortcut_all_apps">All apps</string>
     <!-- Label for the shortcut that perform switch to braille keyboard action. [CHAR_LIMIT=40]-->
@@ -2075,6 +2087,12 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_read_from_top">Read from top</string>
     <!-- Label for the menu item that lets the user copies the last spoken phrase. [CHAR_LIMIT=130] -->
     <string name="title_copy_last_spoken_phrase">Copy last spoken phrase</string>
+    <!-- Backtalk menu item and gesture action that adds the last phrase Backtalk said to the text it copied, on a new line, so that several phrases can be copied together. [CHAR LIMIT=NONE] -->
+    <string name="title_append_last_spoken_phrase">Add last spoken phrase to clipboard</string>
+    <!-- Edit options menu item that deletes all the text in the focused text field. [CHAR LIMIT=40] -->
+    <string name="title_edittext_clear">Clear text</string>
+    <!-- Spoken when the text in a text field could not be cleared. [CHAR LIMIT=NONE] -->
+    <string name="cannot_clear_feedback">Can\'t clear the text</string>
     <!-- Label for the menu item that lets the user spells the last spoken phrase. [CHAR_LIMIT=130] -->
     <string name="title_spell_last_spoken_phrase">Spell last spoken phrase</string>
     <!-- Label for the menu item that lets the user repeats the last spoken phrase. [CHAR_LIMIT=130] -->
@@ -2149,6 +2167,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <!-- Summary for the menu item that lets the user change the read from cursor position. [CHAR_LIMIT=NONE] -->
     <string name="summary_read_from_current">Starting from the focused item, read all items on the screen</string>
     <!-- Summary for the menu item that lets the user copies the last spoken phrase. [CHAR_LIMIT=NONE] -->
+    <!-- Summary of the setting that shows Add last spoken phrase to clipboard in the Backtalk menu. [CHAR LIMIT=NONE] -->
+    <string name="summary_append_last_spoken_phrase">Add the last phrase Backtalk said to the text you copied, on a new line, to copy several phrases together</string>
     <string name="summary_copy_last_spoken_phrase">Copy the last phrase Backtalk said to the clipboard so you can paste the text</string>
     <!-- Summary for the menu item that lets the user spells the last spoken phrase. [CHAR_LIMIT=NONE] -->
     <string name="summary_spell_last_spoken_phrase">Spell each letter of the last phrase that Backtalk said</string>
@@ -2178,6 +2198,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="not_selectable">Not selectable</string>
     <!-- Summary for the navigation options menu or quick menu containing actions. [CHAR_LIMIT=190] -->
     <string name="summary_actions">Perform actions</string>
+    <!-- Summary for the navigation options menu or quick menu containing media controls. [CHAR_LIMIT=190] -->
+    <string name="summary_media_controls">Control media playback</string>
     <!-- Summary for the navigation options menu or quick menu containing spell check. [CHAR_LIMIT=100] -->
     <string name="summary_spell_check">Jump between spelling and grammar suggestions</string>
     <!-- Summary for the navigation options menu or quick menu containing characters. [CHAR_LIMIT=190] -->
@@ -2266,6 +2288,8 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="summary_support_scroll_seq">Scroll forward or backward</string>
     <!-- Summary for the quick menu containing Accessibility volume change. [CHAR_LIMIT=70] -->
     <string name="summary_support_change_a11y_volume">Increase or decrease accessibility volume</string>
+    <!-- Summary for the quick menu containing media volume change. [CHAR_LIMIT=70] -->
+    <string name="summary_support_change_media_volume">Increase or decrease media volume</string>
     <!-- Title for the quick menu containing screen brightness change. [CHAR_LIMIT=40] -->
     <string name="title_pref_brightness">Brightness</string>
     <!-- Summary for the quick menu containing screen brightness change. [CHAR_LIMIT=70] -->
@@ -2936,6 +2960,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
    -->
   <string name="title_pref_a11y_volume">Accessibility volume</string>
   <!--
+    Source: Title for the preference that allows user to change Media volume.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+   -->
+  <string name="title_pref_media_volume">Media volume</string>
+  <!--
     Source: Title for the preference that allows user to typing latency.
     Description: The user can check or not check this. In another seekbar preference, the user can adjust the slider to change latency value. [CHAR LIMIT=60]
    -->
@@ -3015,6 +3044,23 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     Description: The user can check or not check this. [CHAR LIMIT=81]
    -->
   <string name="title_pref_selector_actions">Actions</string>
+  <!--
+    Source: Title for the preference that allows user to control media playback.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+   -->
+  <string name="title_pref_media_controls">Media controls</string>
+  <!-- Action in the Media controls reading control that skips to the previous item. [CHAR_LIMIT=30] -->
+  <string name="media_action_previous">Previous track</string>
+  <!-- Action in the Media controls reading control that rewinds the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_rewind">Rewind</string>
+  <!-- Action in the Media controls reading control that plays or pauses the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_play_pause">Play/pause</string>
+  <!-- Action in the Media controls reading control that stops the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_stop">Stop</string>
+  <!-- Action in the Media controls reading control that fast-forwards the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_fast_forward">Fast forward</string>
+  <!-- Action in the Media controls reading control that skips to the next item. [CHAR_LIMIT=30] -->
+  <string name="media_action_next">Next track</string>
   <!--
   Source: Title for Cache keyboard keys for announcement setting.
   Description: The user can switch it. [CHAR+LIMIT="NONE"]

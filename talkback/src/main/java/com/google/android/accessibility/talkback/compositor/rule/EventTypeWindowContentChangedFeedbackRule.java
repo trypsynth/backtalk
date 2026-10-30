@@ -114,7 +114,10 @@ public final class EventTypeWindowContentChangedFeedbackRule {
     int nodeRole = Role.getRole(node);
     int nodeLiveRegion = node.getLiveRegion();
     int queueMode = queueMode(nodeLiveRegion);
-    boolean isChromeEvent = isEventFromChrome(node, event);
+    boolean onlyAnnounceChangedLiveRegionNodes =
+        FeatureFlagReader.enableOnlyAnnounceChangedLiveRegionNodes(context);
+    // The Chrome ancestor walk only affects the optional changed-live-region policy.
+    boolean isChromeEvent = onlyAnnounceChangedLiveRegionNodes && isEventFromChrome(node, event);
 
     CharSequence ttsOutput;
     // Do not handle the live region root node content change if the event comes from chrome. Chrome
@@ -127,8 +130,7 @@ public final class EventTypeWindowContentChangedFeedbackRule {
     // 3) Flag on + Chrome event -> do not handle live region root node content change. Instead,
     // handle the live region descendant node content change later.
     if (nodeLiveRegion != ACCESSIBILITY_LIVE_REGION_NONE
-        && (!FeatureFlagReader.enableOnlyAnnounceChangedLiveRegionNodes(context)
-            || !isChromeEvent)) {
+        && (!onlyAnnounceChangedLiveRegionNodes || !isChromeEvent)) {
       ttsOutput = treeNodesDescription.aggregateNodeTreeDescription(node, event);
     } else {
       ttsOutput =
@@ -145,7 +147,7 @@ public final class EventTypeWindowContentChangedFeedbackRule {
     // that should be announced by TalkBack. This may include the root node or any of its
     // descendants.
     if (TextUtils.isEmpty(ttsOutput)
-        && FeatureFlagReader.enableOnlyAnnounceChangedLiveRegionNodes(context)
+        && onlyAnnounceChangedLiveRegionNodes
         && isChromeEvent) {
       // Check whether `node` is a live region root node. If not, see if any of its ancestors are a
       // live region root node.
@@ -316,7 +318,14 @@ public final class EventTypeWindowContentChangedFeedbackRule {
       GlobalVariables globalVariables) {
     int nodeRole = Role.getRole(node);
     int contentChangeType = getContentChangeType(event.getContentChangeTypes());
-    boolean isSelfOrAncestorFocused = AccessibilityNodeInfoUtils.isSelfOrAncestorFocused(node);
+    // Subtree/geometry updates are frequent during web scrolling. Only these three speech rules
+    // inspect ancestor focus; the other rules must not pay for a remote parent walk.
+    boolean needsFocusCheck =
+        contentChangeType == CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION
+            || (contentChangeType == CONTENT_CHANGE_TYPE_TEXT && nodeRole != Role.ROLE_EDIT_TEXT)
+            || contentChangeType == CONTENT_CHANGE_TYPE_STATE_DESCRIPTION;
+    boolean isSelfOrAncestorFocused =
+        needsFocusCheck && AccessibilityNodeInfoUtils.isSelfOrAncestorFocused(node);
 
     LogUtils.v(
         TAG,

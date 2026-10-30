@@ -16,6 +16,7 @@
 package com.google.android.accessibility.talkback.compositor.roledescription;
 
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 import androidx.annotation.IntDef;
@@ -177,11 +178,33 @@ public class RoleDescriptionExtractor {
         AccessibilityNodeInfoCompat parentNode = node.getParent();
         if (parentNode != null
             && Role.getRole(parentNode) == Role.ROLE_PAGER
-            && AccessibilityNodeInfoUtils.countVisibleChildren(parentNode) == 1) {
+            && hasExactlyOneVisibleChild(parentNode, node)) {
           return pagerPageDescription;
         }
         return defaultDescription;
       }
     }
+  }
+
+  /** Page-role selection needs child visibility, without downloading every page's descendants. */
+  static boolean hasExactlyOneVisibleChild(
+      AccessibilityNodeInfoCompat parent, AccessibilityNodeInfoCompat knownChild) {
+    // getParent() already established this relationship. A pager with a single child needs no
+    // remote getChild() query for the very node whose description is being composed.
+    return parent.getChildCount() == 1
+        ? knownChild.isVisibleToUser() : hasExactlyOneVisibleChild(parent);
+  }
+
+  static boolean hasExactlyOneVisibleChild(AccessibilityNodeInfoCompat node) {
+    int visible = 0;
+    for (int i = 0; i < node.getChildCount(); i++) {
+      AccessibilityNodeInfoCompat child = Build.VERSION.SDK_INT >= 33
+          ? node.getChild(i, AccessibilityNodeInfoCompat.FLAG_PREFETCH_ANCESTORS
+              | AccessibilityNodeInfoCompat.FLAG_PREFETCH_SIBLINGS) : node.getChild(i);
+      if (child != null && child.isVisibleToUser() && ++visible > 1) {
+        return false;
+      }
+    }
+    return visible == 1;
   }
 }

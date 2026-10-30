@@ -215,8 +215,10 @@ public class TextEventFilter {
           if (dropTextChangeEvent(event)) {
             return;
           }
-          // Update text change history.
-          textEventHistory.setTextChangesAwaitingSelection(1);
+          // Update text change history. Compose text fields send the selection event before the
+          // text change event, and it is already dropped.
+          textEventHistory.setTextChangesAwaitingSelection(
+              textEventHistory.takeSelectionBeforeTextChange(event, TEXT_SELECTION_DELAY) ? 0 : 1);
           textEventHistory.setLastTextChangeTime(event.getEventTime());
           textEventHistory.setLastTextChangePackageName(event.getPackageName());
           if (voiceRecognitionActive) {

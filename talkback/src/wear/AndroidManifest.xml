@@ -10,6 +10,9 @@
         android:name="android.hardware.type.watch"
         android:required="true" />
 
+    <!-- Asks for Wi-Fi to download an update, rather than through the phone over Bluetooth. -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+
     <!--
            This instructs the Home app to get the licenses from this app and
            show them on the Companion when requested.

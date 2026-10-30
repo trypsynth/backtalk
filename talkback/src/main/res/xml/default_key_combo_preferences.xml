@@ -153,6 +153,9 @@
         <com.google.android.accessibility.talkback.preference.base.KeyboardShortcutDialogPreference
             android:key="@string/keycombo_shortcut_other_copy_last_spoken_phrase"
             android:title="@string/keycombo_menu_other_copy_last_spoken_phrase"/>
+        <com.google.android.accessibility.talkback.preference.base.KeyboardShortcutDialogPreference
+            android:key="@string/keycombo_shortcut_other_append_last_spoken_phrase"
+            android:title="@string/keycombo_menu_other_append_last_spoken_phrase"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/pref_web_navigation_actions_category_key"

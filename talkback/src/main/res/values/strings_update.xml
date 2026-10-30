@@ -28,6 +28,8 @@
     <string name="update_downloading">Downloading update</string>
     <!-- Toast shown when the update cannot be downloaded or installed. [CHAR LIMIT=NONE] -->
     <string name="update_install_failed">Could not install the update</string>
+    <!-- Toast shown on a watch when the update cannot be downloaded over Wi-Fi, for example because the Wi-Fi connection dropped. [CHAR LIMIT=NONE] -->
+    <string name="update_wifi_download_failed">Could not download the update over Wi-Fi</string>
     <!-- Toast shown when the user cancels the install. [CHAR LIMIT=NONE] -->
     <string name="update_install_canceled">Update canceled</string>
     <!-- Toast shown with the settings screen where the user allows Backtalk to install apps. [CHAR LIMIT=NONE] -->

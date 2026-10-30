@@ -372,6 +372,8 @@ class Actors {
         case SAVE_LAST -> speaker.saveLastUtterance();
         case COPY_SAVED -> speaker.copySavedUtteranceToClipboard(eventId);
         case COPY_LAST -> speaker.copyLastUtteranceToClipboard(eventId);
+        case APPEND_SAVED -> speaker.appendSavedUtteranceToClipboard(eventId);
+        case APPEND_LAST -> speaker.appendLastUtteranceToClipboard(eventId);
         case REPEAT_SAVED -> speaker.repeatSavedUtterance();
         case REPEAT_LAST -> unused = speaker.repeatLastUtterance();
         case SPELL_SAVED -> speaker.spellSavedUtterance();
@@ -502,6 +504,7 @@ class Actors {
             case CUT -> editor.cut(edit.node(), eventId);
             case PASTE -> editor.paste(edit.node(), eventId);
             case DELETE -> editor.delete(edit.node(), eventId);
+            case CLEAR -> editor.clear(edit.node(), eventId);
             case CURSOR_TO_BEGINNING ->
                 editor.cursorToBeginning(edit.node(), edit.stopSelecting(), eventId);
             case CURSOR_TO_END -> editor.cursorToEnd(edit.node(), edit.stopSelecting(), eventId);

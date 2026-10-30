@@ -20,6 +20,10 @@ The emoji names are from the [Unicode CLDR](https://cldr.unicode.org/) and the U
 
 Scripts run in [QuickJS-NG](https://github.com/quickjs-ng/quickjs), copyright Fabrice Bellard, Charlie Gordon, Ben Noordhuis and Saúl Ibarra Corretgé, used under the MIT License, which is in `scripting/quickjs/src/main/assets/quickjs/LICENSE`. The build downloads its source, pinned by version and checksum in `scripting/quickjs/src/main/cpp/CMakeLists.txt`.
 
+## Contributing
+
+Before you open a pull request, please read [Contributing to Backtalk](CONTRIBUTING.md).
+
 ## Build
 
 You need JDK 17 or newer, the Android SDK with platform 37, and NDK 27.3.13750724. The Gradle wrapper downloads the correct Gradle version, so you do not need to install Gradle.
@@ -71,6 +75,8 @@ Answers take several seconds and use battery, more than the cloud on a mid-range
 
 Install the APK on your device with adb.
 
+To build the phone APK for phones without Google Play services, add `-PbundledOcr` to the Gradle command.
+
 On Windows, `.\deploy.ps1` builds the APK and installs it with adb. This script needs PowerShell 7. To install the last build without building again, use `-SkipBuild`.
 
 Backtalk installs as `fyi.quin.backtalk`, so it does not replace Google's TalkBack. The two apps have separate settings. Because its app ID is its own, Backtalk also installs on GrapheneOS and other ROMs that ship the AOSP TalkBack as a system app named `com.android.talkback`.
@@ -89,7 +95,7 @@ To make the switch fully automatic, grant the new app permission to change secur
 
 ## Updates
 
-Each change to Backtalk is built on GitHub as a development build, on the [dev release](https://github.com/trypsynth/backtalk/releases/tag/dev) page. `backtalk.apk` is for phones and `backtalk-wear.apk` is for Wear OS watches, and each checks for updates of its own kind. The [latest release](https://github.com/trypsynth/backtalk/releases/tag/latest) holds the last build with the old app ID, which moves old installs to the new one. Backtalk checks for a new build when it starts and about once a day. When there is one, it shows a notification with the list of changes. Tap the notification to download and install the new build. The first time, Android asks you to allow Backtalk to install apps.
+Each change to Backtalk is built on GitHub as a development build, on the [dev release](https://github.com/trypsynth/backtalk/releases/tag/dev) page. `backtalk.apk` is for phones and `backtalk-wear.apk` is for Wear OS watches. `backtalk-nogms.apk` is for phones without Google Play services, such as GrapheneOS without sandboxed Google Play: it carries its own model for reading text in images, so it is about 30 MB larger. Each checks for updates of its own kind. The [latest release](https://github.com/trypsynth/backtalk/releases/tag/latest) holds the last build with the old app ID, which moves old installs to the new one. Backtalk checks for a new build when it starts and about once a day. When there is one, it shows a notification with the list of changes. Tap the notification to download and install the new build. The first time, Android asks you to allow Backtalk to install apps. A watch downloads the update over Wi-Fi when a saved network is in range, rather than through the phone over Bluetooth.
 
 To check now, go to **Check for updates** in Backtalk settings. To stop the daily checks, turn off **Automatically check for updates**.
 

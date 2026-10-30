@@ -182,6 +182,9 @@ public class SpeechControllerImpl implements SpeechController {
   /** Talkback speech deliberately saved by a caller of saveLastUtterance() */
   private @Nullable FeedbackItem savedUtterance;
 
+  /** Backtalk: the text Backtalk last put on the clipboard, which appending adds to. */
+  private @Nullable CharSequence textCopied;
+
   private final Context mContext;
 
   /** The SpeechController delegate, used to provide callbacks. */
@@ -294,6 +297,9 @@ public class SpeechControllerImpl implements SpeechController {
 
   /** Whether voice feedback is mute. */
   private boolean isMuteSpeech = false;
+
+  /** Whether muted speech still plays its earcons and haptics, as when the user turned speech off. */
+  private boolean playFeedbackWhileMuted = false;
 
   /** Records whether should silence speech */
   private boolean shouldSilentSpeech = false;
@@ -766,8 +772,28 @@ public class SpeechControllerImpl implements SpeechController {
     return copyUtteranceToClipboard(getLastUtterance(), eventId);
   }
 
+  /** Backtalk: adds the saved speech to what was copied, on a line of its own. */
+  public boolean appendSavedUtteranceToClipboard(EventId eventId) {
+    return copyUtteranceToClipboard(savedUtterance, eventId, /* append= */ true);
+  }
+
+  /** Backtalk: adds the last phrase spoken to what was copied, on a line of its own. */
+  public boolean appendLastUtteranceToClipboard(EventId eventId) {
+    return copyUtteranceToClipboard(getLastUtterance(), eventId, /* append= */ true);
+  }
+
   /** Copies a phrase spoken by TalkBack to clipboard */
   public boolean copyUtteranceToClipboard(FeedbackItem item, EventId eventId) {
+    return copyUtteranceToClipboard(item, eventId, /* append= */ false);
+  }
+
+  /**
+   * Copies a phrase spoken by TalkBack to clipboard, or with {@code append}, adds it after what
+   * was copied. From Android 10, only the app in front can read the clipboard, so what was copied
+   * is the text Backtalk last put there.
+   */
+  private boolean copyUtteranceToClipboard(
+      @Nullable FeedbackItem item, EventId eventId, boolean append) {
     if (item == null) {
       return false;
     }
@@ -783,8 +809,21 @@ public class SpeechControllerImpl implements SpeechController {
 
     final ClipboardManager clipboard =
         (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+    CharSequence added = copyableText;
+    if (append) {
+      CharSequence before = textCopied;
+      if (FeatureSupport.supportReadClipboard()) {
+        ClipData current = clipboard.getPrimaryClip();
+        before =
+            (current != null && current.getItemCount() > 0) ? current.getItemAt(0).getText() : null;
+      }
+      if (!TextUtils.isEmpty(before)) {
+        copyableText = TextUtils.concat(before, "\n", copyableText);
+      }
+    }
     ClipData clip = ClipData.newPlainText(null, copyableText);
     clipboard.setPrimaryClip(clip);
+    textCopied = copyableText;
 
     // Verify that we actually have the utterance on the clipboard
     if (FeatureSupport.supportReadClipboard()) {
@@ -792,8 +831,10 @@ public class SpeechControllerImpl implements SpeechController {
     }
     if (clip != null && clip.getItemCount() > 0 && clip.getItemAt(0).getText() != null) {
       speak(
-          mContext.getString(
-              R.string.template_text_copied, clip.getItemAt(0).getText().toString()) /* text */,
+          append
+              ? mContext.getString(R.string.template_text_appended, added.toString())
+              : mContext.getString(
+                  R.string.template_text_copied, clip.getItemAt(0).getText().toString()),
           QUEUE_MODE_INTERRUPT /* queue mode */,
           0 /* flags */,
           null /* speech params */,
@@ -1086,10 +1127,11 @@ public class SpeechControllerImpl implements SpeechController {
     if (isMuteSpeech) {
       // Un-mute the speech, then speak the state.
       isMuteSpeech = false;
+      playFeedbackWhileMuted = false;
       speak(
           mContext.getString(R.string.function_on),
           QUEUE_MODE_BIT_UNINTERRUPTIBLE_BY_NEW_SPEECH,
-          /* flags= */ 0,
+          FeedbackItem.FLAG_FORCE_FEEDBACK_ALL,
           /* speechParams= */ null,
           EVENT_ID_UNTRACKED);
     } else {
@@ -1097,10 +1139,11 @@ public class SpeechControllerImpl implements SpeechController {
       speak(
           mContext.getString(R.string.function_off),
           QUEUE_MODE_BIT_UNINTERRUPTIBLE_BY_NEW_SPEECH,
-          /* flags= */ 0,
+          FeedbackItem.FLAG_FORCE_FEEDBACK_ALL,
           /* speechParams= */ null,
           EVENT_ID_UNTRACKED);
       isMuteSpeech = true;
+      playFeedbackWhileMuted = true;
     }
   }
 
@@ -1112,6 +1155,7 @@ public class SpeechControllerImpl implements SpeechController {
   @Override
   public void setMute(boolean mute) {
     isMuteSpeech = mute;
+    playFeedbackWhileMuted = false;
   }
 
   /**
@@ -1169,6 +1213,11 @@ public class SpeechControllerImpl implements SpeechController {
 
     if (isMuteSpeech) {
       LogUtils.v(TAG, "Voice feedback is off.");
+      // The sounds and vibrations of the utterance still play, like those that come without
+      // speech, such as touching empty space.
+      if (playFeedbackWhileMuted) {
+        playEarconsAndHaptics(earcons, haptics, nonSpeechParams, eventId);
+      }
       return;
     }
 
@@ -2122,7 +2171,8 @@ public class SpeechControllerImpl implements SpeechController {
     // for capital letter, or a phonetic word said in place of one
     if (text != null
         && ((text.length() == 1 && Character.isUpperCase(text.charAt(0)))
-            || CapitalLetterSpan.covers(text))) {
+            || CapitalLetterSpan.covers(text)
+            || CapitalLetterSpan.leads(text))) {
       switch (capLetterFeedback) {
         case CAPITAL_LETTERS_TYPE_SPEAK_CAP -> {
           // To resolve the limitation of [length == 1]. "Say capital" is handled by compositor
@@ -2183,13 +2233,32 @@ public class SpeechControllerImpl implements SpeechController {
     return true;
   }
 
+  private void playEarconsAndHaptics(
+      @Nullable Set<Integer> earcons,
+      @Nullable Set<Integer> haptics,
+      @Nullable Bundle nonSpeechParams,
+      @Nullable EventId eventId) {
+    if (earcons != null) {
+      playEarcons(earcons, nonSpeechParams == null ? Bundle.EMPTY : nonSpeechParams, eventId);
+    }
+    if (haptics != null && feedbackController != null) {
+      for (int keyResId : haptics) {
+        feedbackController.playHaptic(keyResId, eventId);
+      }
+    }
+  }
+
   /**
    * Plays all earcons stored in a {@link FeedbackFragment}.
    *
    * @param fragment The fragment to process
    */
   private void playEarconsFromFragment(FeedbackFragment fragment, @Nullable EventId eventId) {
-    final Bundle nonSpeechParams = fragment.getNonSpeechParams();
+    playEarcons(fragment.getEarcons(), fragment.getNonSpeechParams(), eventId);
+  }
+
+  private void playEarcons(
+      Set<Integer> earcons, Bundle nonSpeechParams, @Nullable EventId eventId) {
     final float earconRate = nonSpeechParams.getFloat(Utterance.KEY_METADATA_EARCON_RATE, 1.0f);
     final float earconVolume = nonSpeechParams.getFloat(Utterance.KEY_METADATA_EARCON_VOLUME, 1.0f);
     final float earconX = nonSpeechParams.getFloat(Utterance.KEY_METADATA_EARCON_X, -1.0f);
@@ -2198,7 +2267,7 @@ public class SpeechControllerImpl implements SpeechController {
         nonSpeechParams.getBoolean(Utterance.KEY_METADATA_EARCON_VIBRATES, true);
 
     if (feedbackController != null) {
-      for (int keyResId : fragment.getEarcons()) {
+      for (int keyResId : earcons) {
         if (earconVibrates) {
           feedbackController.playAuditory(
               keyResId, earconRate, earconVolume, earconX, earconY, eventId);

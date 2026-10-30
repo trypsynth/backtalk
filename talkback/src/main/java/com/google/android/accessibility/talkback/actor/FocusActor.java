@@ -46,6 +46,7 @@ import com.google.android.accessibility.talkback.actor.helper.FocusActorHelper;
 import com.google.android.accessibility.talkback.compositor.GlobalVariables;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.focusmanagement.AccessibilityFocusMonitor;
+import com.google.android.accessibility.talkback.focusmanagement.FocusFeedbackMapper;
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenStateMonitor;
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
@@ -173,6 +174,12 @@ public class FocusActor implements UserInputEventListener {
   public boolean clickCurrentFocus(EventId eventId) {
     AccessibilityNodeInfoCompat currentFocus =
         accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
+    // Backtalk: activating the item stops speech, as touching does, so that what the click says,
+    // such as a switch's new state, isn't held back until the rest of the item has been read. A
+    // quick double tap can end before touching the screen has stopped it (#315).
+    if (currentFocus != null && pipeline != null && FocusFeedbackMapper.touchStopsSpeech()) {
+      pipeline.returnFeedback(eventId, Feedback.part().setInterruptGentle(true));
+    }
     return clickNode(currentFocus, eventId, /* touchIfDirect= */ true);
   }
 

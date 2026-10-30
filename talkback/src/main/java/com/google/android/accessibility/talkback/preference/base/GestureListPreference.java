@@ -379,6 +379,32 @@ public final class GestureListPreference extends AccessibilitySuiteDialogPrefere
                 resources.getString(R.string.shortcut_value_media_control),
                 TYPE_ACTION_ITEM));
       }
+
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_media_stop),
+              resources.getString(R.string.shortcut_value_media_stop),
+              TYPE_ACTION_ITEM));
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_media_previous),
+              resources.getString(R.string.shortcut_value_media_previous),
+              TYPE_ACTION_ITEM));
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_media_next),
+              resources.getString(R.string.shortcut_value_media_next),
+              TYPE_ACTION_ITEM));
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_media_rewind),
+              resources.getString(R.string.shortcut_value_media_rewind),
+              TYPE_ACTION_ITEM));
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_media_fast_forward),
+              resources.getString(R.string.shortcut_value_media_fast_forward),
+              TYPE_ACTION_ITEM));
     }
 
     if (FeatureFlagReader.enableVoiceDictationShortcut(getContext())) {

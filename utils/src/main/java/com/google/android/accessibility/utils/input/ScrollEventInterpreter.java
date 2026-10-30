@@ -267,13 +267,16 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
         }
         // fall through
       case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-        ScrollEventInterpretation interpretation = interpret(event);
+        // Reuse one source snapshot for this callback. The next event fetches a fresh source
+        // with the platform default prefetch policy.
+        AccessibilityNodeInfo sourceNode = AccessibilityEventUtils.getSource(event);
+        ScrollEventInterpretation interpretation = interpret(event, sourceNode);
         if (interpretation == null) {
           return;
         }
 
         if (interpretation.hasValidIndex && !interpretation.isDuplicateEvent) {
-          cacheScrollPositionInfo(event);
+          cacheScrollPositionInfo(event, sourceNode);
         }
 
         notifyListenersWithInterpretation(event, interpretation, eventId);
@@ -292,8 +295,8 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
   }
 
   @Nullable
-  private ScrollEventInterpretation interpret(AccessibilityEvent event) {
-    AccessibilityNodeInfo sourceNode = event.getSource();
+  private ScrollEventInterpretation interpret(
+      AccessibilityEvent event, @Nullable AccessibilityNodeInfo sourceNode) {
     if (sourceNode == null) {
       return ScrollEventInterpretation.DEFAULT_INTERPRETATION;
     }
@@ -314,7 +317,8 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
     @UserAction final int userAction;
     final int scrollInstanceId;
 
-    @Nullable ScrollActionRecord autoScrollRecord = getAutoScrollRecordIfAvailable(event);
+    AccessibilityNodeInfoCompat source = AccessibilityNodeInfoCompat.wrap(sourceNode);
+    @Nullable ScrollActionRecord autoScrollRecord = getAutoScrollRecordIfAvailable(event, source);
     if (autoScrollRecord == null) {
       scrollInstanceId = SCROLL_INSTANCE_ID_UNDEFINED;
       // Note that TYPE_WINDOW_CONTENT_CHANGED events can also be interpreted as manual scroll
@@ -325,7 +329,7 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
       // navigation after that, accessibility focus might go to the beginning of screen.
       // We take into account TYPE_WINDOW_CONTENT_CHANGED events to provide more
       // fine-grained manual scroll callback.
-      if (isFromFinishedAutoScroll(event)) {
+      if (isFromFinishedAutoScroll(event, source)) {
         // TalkBack's own scroll, still moving after it went far enough to count as complete. As a
         // manual scroll, it would move the focus that the scroll has just placed.
         userAction = ScrollActionRecord.ACTION_UNKNOWN;
@@ -351,7 +355,8 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
     final boolean hasValidIndex = hasValidIndex(event);
     final boolean isDuplicateEvent = hasValidIndex && isDuplicateEvent(sourceNodeIdentifier, event);
     final boolean isMediaPlayerAutoScroll = isAutomaticMediaScrollEvent(event);
-    final boolean isFromScrollable = isFromScrollable(event);
+    final boolean isFromScrollable = event.getEventType() == TYPE_VIEW_SCROLLED
+        && sourceNode.isScrollable();
 
     ScrollEventInterpretation interpretation =
         new ScrollEventInterpretation(
@@ -367,15 +372,15 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
   }
 
   /** Returns AutoScrollRecord if the {@code event} is resulted from cached auto-scroll action. */
-  private @Nullable ScrollActionRecord getAutoScrollRecordIfAvailable(AccessibilityEvent event) {
+  private @Nullable ScrollActionRecord getAutoScrollRecordIfAvailable(
+      AccessibilityEvent event, AccessibilityNodeInfoCompat source) {
     @Nullable ScrollActionRecord autoScrollRecord = scrollActorState.get();
     if (autoScrollRecord == null) {
       return null;
     }
 
     if (isFromAutoScrollAction(event, autoScrollRecord)) {
-      AccessibilityNodeInfoCompat node = AccessibilityEventUtils.sourceCompat(event);
-      return autoScrollRecord.scrolledNodeMatches(node) ? autoScrollRecord : null;
+      return autoScrollRecord.scrolledNodeMatches(source) ? autoScrollRecord : null;
     } else {
       return null;
     }
@@ -385,11 +390,12 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
    * Whether the {@code event} comes from the last auto-scroll that was reset as complete, from the
    * same node and within the time an auto-scroll record lasts.
    */
-  private boolean isFromFinishedAutoScroll(AccessibilityEvent event) {
+  private boolean isFromFinishedAutoScroll(
+      AccessibilityEvent event, AccessibilityNodeInfoCompat source) {
     @Nullable ScrollActionRecord finished = finishedScrollRecord.get();
     return finished != null
         && isFromAutoScrollAction(event, finished)
-        && finished.scrolledNodeMatches(AccessibilityEventUtils.sourceCompat(event));
+        && finished.scrolledNodeMatches(source);
   }
 
   /** Checks whether the {@code event} is resulted from cached auto-scroll action. */
@@ -503,8 +509,8 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
         && (event.getMaxScrollX() > 0 || event.getMaxScrollY() > 0);
   }
 
-  private void cacheScrollPositionInfo(AccessibilityEvent event) {
-    AccessibilityNodeInfo sourceNode = event.getSource();
+  private void cacheScrollPositionInfo(
+      AccessibilityEvent event, @Nullable AccessibilityNodeInfo sourceNode) {
     if (sourceNode == null) {
       return;
     }
@@ -529,15 +535,6 @@ public class ScrollEventInterpreter implements AccessibilityEventListener {
         && audioPlaybackMonitor.isPlaybackSourceActive(
             AudioPlaybackMonitor.PlaybackSource.USAGE_MEDIA)
         && !touchMonitor.isUserTouchingScreen();
-  }
-
-  private static boolean isFromScrollable(@NonNull AccessibilityEvent event) {
-    if (event.getEventType() != TYPE_VIEW_SCROLLED) {
-      return false;
-    }
-    @Nullable AccessibilityNodeInfoCompat source = AccessibilityEventUtils.sourceCompat(event);
-    // If we cannot check source validity, assume that it's scrollable.
-    return (source == null) || source.isScrollable();
   }
 
   /** Caches scroll position from {@link AccessibilityEvent}. */

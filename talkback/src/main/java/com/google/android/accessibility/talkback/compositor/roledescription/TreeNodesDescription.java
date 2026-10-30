@@ -62,6 +62,9 @@ public class TreeNodesDescription {
   private final GlobalVariables globalVariables;
   private final RoleDescriptionExtractor roleDescriptionExtractor;
 
+  /** Whether links are read as part of the web element being described. */
+  private boolean readWebLinks;
+
   public TreeNodesDescription(
       Context context,
       ImageContents imageContents,
@@ -327,6 +330,10 @@ public class TreeNodesDescription {
             || role == Role.ROLE_LIST
             || role == Role.ROLE_PAGER
             || isDescriptionEmpty)) {
+      // A web element that the page moves input focus to, such as a post that a site's keyboard
+      // shortcut moves to, is read with the names of the links in it, such as its author's.
+      boolean outerReadWebLinks = readWebLinks;
+      readWebLinks = readWebLinks || isFocusableWebContainer(node);
       // Append the node description if needed. It recurse on all visible & un-focusable children,
       // ascending.
       ReorderedChildrenIterator childIterator =
@@ -354,6 +361,18 @@ public class TreeNodesDescription {
                       : "")
               .append(String.format(", isAccessibilityFocusable=%b", isAccessibilityFocusable));
 
+          if (isVisible
+              && isAccessibilityFocusable
+              && !shouldAppendChildNode
+              && readWebLinks
+              && AccessibilityNodeInfoUtils.isChromeRoleLink(childNode)) {
+            CharSequence linkName =
+                AccessibilityNodeFeedbackUtils.getNodeTextOrLabelDescription(
+                    childNode, context, imageContents, globalVariables);
+            logString.append(String.format("\n        > appendLinkName= {%s}", linkName));
+            joinList.add(linkName);
+            continue;
+          }
           if (isVisible && (!isAccessibilityFocusable || shouldAppendChildNode)) {
             if (namelessControl == null
                 && isContentDescriptionEmpty
@@ -362,6 +381,13 @@ public class TreeNodesDescription {
                 && role != Role.ROLE_PAGER
                 && isNamelessControl(childNode, event)) {
               namelessControl = childNode;
+              continue;
+            }
+            // White space between the elements of a web page would be read as "Space".
+            if (isWhiteSpaceText(childNode)
+                && (readWebLinks
+                    || !TextUtils.isEmpty(AccessibilityNodeInfoUtils.getChromeRole(node))
+                    || !TextUtils.isEmpty(AccessibilityNodeInfoUtils.getChromeRole(childNode)))) {
               continue;
             }
             // Join the tree description of child node.
@@ -374,15 +400,71 @@ public class TreeNodesDescription {
           }
         }
       }
+      readWebLinks = outerReadWebLinks;
     }
 
     LogUtils.v(TAG, "      treeNodesDescription:  %s", logString);
+
+    // A node with no name of its own, such as a button whose label is a child view, is named by its
+    // children, so their text takes the name's place in the description order. Otherwise the type
+    // would always come first.
+    if (joinList.size() > 1
+        && namelessControl == null
+        && role != Role.ROLE_GRID
+        && role != Role.ROLE_LIST
+        && role != Role.ROLE_PAGER
+        // A pager page says its position and "page" around its contents.
+        && !(roleDescriptionExtractor.getRoleDescription(node) instanceof PagerPageDescription)
+        && isNamedByChildren(node)) {
+      RoleDescription roleDescription = roleDescriptionExtractor.getRoleDescription(node);
+      CharSequence childrenText =
+          CompositorUtils.joinCharSequences(
+              joinList.subList(1, joinList.size()), CompositorUtils.getSeparator(), PRUNE_EMPTY);
+      CharSequence description =
+          RoleDescriptionExtractor.joinInOrder(
+              globalVariables.getDescriptionOrder(),
+              childrenText,
+              roleDescription.nodeRole(node, context, globalVariables),
+              roleDescription.nodeState(event, node, context, globalVariables));
+      return description;
+    }
 
     CharSequence description =
         CompositorUtils.joinCharSequences(joinList, CompositorUtils.getSeparator(), PRUNE_EMPTY);
     return namelessControl == null
         ? description
         : describeWithNamelessControl(description, namelessControl, event);
+  }
+
+  /** Whether {@code node} has no name, or "Unlabelled" description, of its own. */
+  private boolean isNamedByChildren(AccessibilityNodeInfoCompat node) {
+    RoleDescription roleDescription = roleDescriptionExtractor.getRoleDescription(node);
+    return !roleDescription.shouldIgnoreDescription(node)
+        && TextUtils.isEmpty(roleDescription.nodeName(node, context, globalVariables))
+        && TextUtils.isEmpty(
+            AccessibilityNodeFeedbackUtils.getUnlabelledNodeDescription(
+                Role.getRole(node), node, context, imageContents, globalVariables));
+  }
+
+  /**
+   * Whether {@code node} is a web element with no role of its own, such as a post, that the page
+   * can move input focus to, so that the links in it are part of what it says.
+   */
+  static boolean isFocusableWebContainer(AccessibilityNodeInfoCompat node) {
+    int role = Role.getRole(node);
+    return node.isFocusable()
+        && !TextUtils.isEmpty(AccessibilityNodeInfoUtils.getChromeRole(node))
+        && !AccessibilityNodeInfoUtils.isChromeRoleLink(node)
+        && (role == Role.ROLE_NONE || role == Role.ROLE_VIEW_GROUP);
+  }
+
+  /** Whether {@code node} is only white space, with no children or description. */
+  static boolean isWhiteSpaceText(AccessibilityNodeInfoCompat node) {
+    CharSequence text = node.getText();
+    return node.getChildCount() == 0
+        && !TextUtils.isEmpty(text)
+        && TextUtils.getTrimmedLength(text) == 0
+        && TextUtils.isEmpty(node.getContentDescription());
   }
 
   /**

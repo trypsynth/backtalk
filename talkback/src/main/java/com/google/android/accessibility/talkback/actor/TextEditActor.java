@@ -579,6 +579,23 @@ public class TextEditActor implements VoiceDictationDelegate {
     return moveCursor(node, selectionStart, eventId);
   }
 
+  /** Backtalk: deletes all the text in edit-text and announces it. */
+  public boolean clear(AccessibilityNodeInfoCompat node, EventId eventId) {
+    if (node == null || Role.getRole(node) != Role.ROLE_EDIT_TEXT) {
+      return false;
+    }
+    Bundle arguments = new Bundle();
+    arguments.putCharSequence(ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, "");
+    boolean result = PerformActionUtils.performAction(node, ACTION_SET_TEXT, arguments, eventId);
+    turnOffSelectionMode(node, eventId, /* clearSelection= */ false);
+    pipeline.returnFeedback(
+        eventId,
+        Feedback.speech(
+            service.getString(result ? R.string.value_text_cleared : R.string.cannot_clear_feedback),
+            SPEAK_OPTIONS));
+    return result;
+  }
+
   /** Executes and announces paste text in edit-text. Modifies edit history. */
   public boolean paste(AccessibilityNodeInfoCompat node, EventId eventId) {
     if (node == null || Role.getRole(node) != Role.ROLE_EDIT_TEXT) {

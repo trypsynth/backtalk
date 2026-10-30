@@ -17,6 +17,7 @@
 package com.google.android.accessibility.talkback.update
 
 import android.content.Context
+import android.net.Network
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
 import com.google.android.accessibility.talkback.BuildConfig
@@ -67,6 +68,11 @@ object UpdateChecker {
   @VisibleForTesting const val PHONE_APK_NAME = "backtalk.apk"
   /** The watch build, so that a watch never installs the phone app. */
   @VisibleForTesting const val WATCH_APK_NAME = "backtalk-wear.apk"
+  /**
+   * The phone build with ML Kit's text recognition model, for phones without Google Play services,
+   * so that it never updates to a build whose text recognition needs them.
+   */
+  @VisibleForTesting const val NO_PLAY_SERVICES_APK_NAME = "backtalk-nogms.apk"
   private const val SHORT_HASH_LENGTH = 7
   private const val MAX_CHANGES = 50
   private const val TIMEOUT_MS = 30_000
@@ -135,9 +141,15 @@ object UpdateChecker {
     apkName: String = PHONE_APK_NAME,
   ): UpdateInfo? = parseRelease(json, currentBuild = 0, currentHash, apkName)?.copy(move = true)
 
-  /** Opens a connection with the timeouts and user agent that GitHub requests should use. */
-  fun openConnection(context: Context, url: String): HttpURLConnection {
-    val connection = URL(url).openConnection() as HttpURLConnection
+  /**
+   * Opens a connection with the timeouts and user agent that GitHub requests should use. The
+   * connection goes over [network] if there is one, and over the default network otherwise. Only
+   * this connection uses [network], including its name lookups and redirects.
+   */
+  fun openConnection(context: Context, url: String, network: Network? = null): HttpURLConnection {
+    val target = URL(url)
+    val connection =
+      (network?.openConnection(target) ?: target.openConnection()) as HttpURLConnection
     connection.connectTimeout = TIMEOUT_MS
     connection.readTimeout = TIMEOUT_MS
     connection.setRequestProperty("User-Agent", "Backtalk/${versionName(context)}")
@@ -145,7 +157,11 @@ object UpdateChecker {
   }
 
   private fun apkName(): String =
-    if (FormFactorUtils.isAndroidWear()) WATCH_APK_NAME else PHONE_APK_NAME
+    when {
+      FormFactorUtils.isAndroidWear() -> WATCH_APK_NAME
+      BuildConfig.BUNDLED_OCR -> NO_PLAY_SERVICES_APK_NAME
+      else -> PHONE_APK_NAME
+    }
 
   @VisibleForTesting
   fun parseRelease(

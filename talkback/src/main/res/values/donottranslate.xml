@@ -225,6 +225,8 @@
     <string name="pref_selector_special_widget_index_key" translatable="false">pref_selector_special_widget_index_key</string>
     <string name="pref_selector_scroll_seq_key" translatable="false">pref_selector_scroll_seq_key </string>
     <string name="pref_selector_change_a11y_volume_key" translatable="false">pref_selector_change_a11y_volume_key </string>
+    <string name="pref_selector_change_media_volume_key" translatable="false">pref_selector_change_media_volume_key</string>
+    <string name="pref_selector_media_controls_key" translatable="false">pref_selector_media_controls_key</string>
     <string name="pref_selector_change_brightness_key" translatable="false">pref_selector_change_brightness_key</string>
     <string name="pref_selector_change_touch_focus_latency_key" translatable="false">pref_selector_change_touch_focus_latency_key</string>
     <string name="pref_selector_change_typing_focus_latency_key" translatable="false">pref_selector_change_typing_focus_latency_key</string>
@@ -501,6 +503,7 @@
   <string name="keycombo_shortcut_other_custom_actions">keycombo_shortcut_other_custom_actions</string>
   <string name="keycombo_shortcut_other_language_options">keycombo_shortcut_other_language_options</string>
   <string name="keycombo_shortcut_other_copy_last_spoken_phrase">keycombo_shortcut_other_copy_last_spoken_phrase</string>
+  <string name="keycombo_shortcut_other_append_last_spoken_phrase">keycombo_shortcut_other_append_last_spoken_phrase</string>
   <string name="keycombo_shortcut_other_toggle_selection">keycombo_shortcut_other_toggle_selection</string>
   <string name="keycombo_shortcut_other_open_tts_settings">keycombo_shortcut_other_open_tts_settings</string>
   <string name="keycombo_shortcut_other_open_talkback_settings">keycombo_shortcut_other_open_talkback_settings</string>
@@ -1160,6 +1163,7 @@
         <item>@android:string/cut</item>
         <item>@android:string/paste</item>
         <item>@string/title_copy_last_spoken_phrase</item>
+        <item>@string/title_append_last_spoken_phrase</item>
     </string-array>
 
     <!-- Shortcut preference value of text editing -->
@@ -1173,6 +1177,7 @@
         <item>@string/shortcut_value_cut</item>
         <item>@string/shortcut_value_paste</item>
         <item>@string/shortcut_value_copy_last_spoken_phrase</item>
+        <item>@string/shortcut_value_append_last_spoken_phrase</item>
     </string-array>
 
   <!-- The shortcut of unsupported gestures -->
@@ -1228,6 +1233,11 @@
   <string name="shortcut_value_media_control">MEDIA_CONTROL</string>
   <string name="shortcut_value_voice_input">VOICE_INPUT</string>
   <string name="shortcut_value_media_control_or_voice_input">MEDIA_CONTROL_OR_VOICE_INPUT</string>
+  <string name="shortcut_value_media_stop" translatable="false">MEDIA_STOP</string>
+  <string name="shortcut_value_media_previous" translatable="false">MEDIA_PREVIOUS</string>
+  <string name="shortcut_value_media_next" translatable="false">MEDIA_NEXT</string>
+  <string name="shortcut_value_media_rewind" translatable="false">MEDIA_REWIND</string>
+  <string name="shortcut_value_media_fast_forward" translatable="false">MEDIA_FAST_FORWARD</string>
   <string name="shortcut_value_increase_volume">INCREASE_VOLUME</string>
   <string name="shortcut_value_decrease_volume">DECREASE_VOLUME</string>
   <string name="shortcut_value_pass_through_next_gesture">ENABLE_PASS_THROUGH</string>
@@ -1244,6 +1254,7 @@
   <string name="shortcut_value_cut" translatable="false">CUT</string>
   <string name="shortcut_value_paste" translatable="false">PASTE</string>
   <string name="shortcut_value_copy_last_spoken_phrase" translatable="false">COPY_LAST_SPOKEN_UTTERANCE</string>
+  <string name="shortcut_value_append_last_spoken_phrase" translatable="false">APPEND_LAST_SPOKEN_UTTERANCE</string>
   <string name="shortcut_value_pause_or_resume_feedback">PAUSE_FEEDBACK</string>
   <string name="shortcut_value_all_apps" translatable="false">ALL_APPS</string>
   <string name="shortcut_value_braille_keyboard" translatable="false">BRAILLE_KEYBOARD</string>
@@ -1566,6 +1577,7 @@
     <bool name="pref_selector_hide_screen_default">false</bool>
     <bool name="pref_selector_scroll_seq_default">false</bool>
     <bool name="pref_selector_a11y_volume_default">false</bool>
+    <bool name="pref_selector_media_volume_default">false</bool>
     <bool name="pref_selector_brightness_default">true</bool>
     <bool name="pref_selector_typing_focus_latency_default">false</bool>
     <bool name="pref_selector_lift_to_activate_default">false</bool>
@@ -1580,6 +1592,7 @@
     <bool name="pref_selector_control_telling_time_default">false</bool>
     <bool name="pref_selector_audio_focus_default">false</bool>
     <bool name="pref_selector_actions_default">true</bool>
+    <bool name="pref_selector_media_controls_default">false</bool>
     <bool name="pref_selector_granularity_headings_default">true</bool>
     <bool name="pref_selector_granularity_words_default">true</bool>
     <bool name="pref_selector_granularity_paragraphs_default">true</bool>
@@ -1624,6 +1637,7 @@
     <bool name="pref_show_context_menu_read_from_top_default">false</bool>
     <bool name="pref_show_context_menu_read_from_current_default">true</bool>
     <bool name="pref_show_context_menu_copy_last_spoken_phrase_default">false</bool>
+    <bool name="pref_show_context_menu_append_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_spell_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_repeat_last_spoken_phrase_default">false</bool>
     <bool name="pref_show_context_menu_find_on_screen_default">false</bool>
@@ -1794,6 +1808,7 @@
     <item name="edittext_breakout_cut" type="id" />
     <item name="edittext_breakout_copy" type="id" />
     <item name="edittext_breakout_paste" type="id" />
+    <item name="edittext_breakout_clear" type="id" />
     <item name="edittext_breakout_select_all" type="id" />
     <item name="edittext_breakout_start_selection_mode" type="id" />
     <item name="edittext_breakout_end_selection_mode" type="id" />
@@ -1823,6 +1838,7 @@
     <string name="pref_show_context_menu_read_from_top_setting_key" translatable="false">pref_read_from_top_menu_setting_key</string>
     <string name="pref_show_context_menu_read_from_current_setting_key" translatable="false">pref_read_from_current_menu_setting_key</string>
     <string name="pref_show_context_menu_copy_last_spoken_phrase_setting_key" translatable="false">pref_copy_last_spoken_phrase_menu_setting_key</string>
+    <string name="pref_show_context_menu_append_last_spoken_phrase_setting_key" translatable="false">pref_append_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_spell_last_spoken_phrase_setting_key" translatable="false">pref_spell_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_repeat_last_spoken_phrase_setting_key" translatable="false">pref_repeat_last_spoken_phrase_menu_setting_key</string>
     <string name="pref_show_context_menu_find_on_screen_setting_key" translatable="false">pref_find_on_screen_menu_setting_key</string>
@@ -1890,12 +1906,14 @@
     <string name="selector_audio_focus" translatable="false">AUDIO_DUCKING</string>
     <string name="selector_scroll_seq" translatable="false">SELECTOR_SCROLL_SEQ</string>
     <string name="selector_a11y_volume_change" translatable="false">SELECTOR_A11y_VOLUME_CHANGE</string>
+    <string name="selector_media_volume_change" translatable="false">SELECTOR_MEDIA_VOLUME_CHANGE</string>
     <string name="selector_brightness_change" translatable="false">SELECTOR_BRIGHTNESS_CHANGE</string>
     <string name="selector_typing_focus_latency_change" translatable="false">SELECTOR_TYPING_FOCUS_LATENCY_CHANGE</string>
     <string name="selector_lift_to_activate_change" translatable="false">SELECTOR_LIFT_TO_ACTIVATE_CHANGE</string>
     <string name="selector_wrap_around" translatable="false">SELECTOR_WRAP_AROUND</string>
     <string name="selector_tablet_held_up_faces_away" translatable="false">SELECTOR_TABLET_HELD_UP_FACES_AWAY</string>
     <string name="selector_audio_output_device" translatable="false">SELECTOR_AUDIO_OUTPUT_DEVICE</string>
+    <string name="selector_media_controls" translatable="false">SELECTOR_MEDIA_CONTROLS</string>
     <string name="selector_vertical_navigation" translatable="false">SELECTOR_VERTICAL_NAVIGATION</string>
     <string name="selector_switch_tts_engine" translatable="false">SELECTOR_SWITCH_TTS_ENGINE</string>
     <string name="selector_voice_profile" translatable="false">SELECTOR_VOICE_PROFILE</string>

@@ -36,6 +36,7 @@ import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.Role;
+import com.google.android.accessibility.utils.TelegramChatCell;
 import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.accessibility.utils.input.TextEventInterpreter;
 import com.google.android.accessibility.utils.monitor.TouchMonitor;
@@ -440,6 +441,11 @@ public class EventFilter {
                 node, AccessibilityNodeInfoCompat.ACTION_SELECT))
         || AccessibilityNodeInfoUtils.isPage(node)
         || WebInterfaceUtils.supportsWebActions(node)) {
+      return false;
+    }
+    // A Telegram chat list row may still describe the conversation it showed before it was reused,
+    // until the app fills in its focus event.
+    if (TelegramChatCell.isDescribedOnFocus(node)) {
       return false;
     }
     AccessibilityWindowInfo window = AccessibilityNodeInfoUtils.getWindow(node.unwrap());

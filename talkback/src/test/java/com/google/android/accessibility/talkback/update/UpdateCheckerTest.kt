@@ -97,4 +97,26 @@ class UpdateCheckerTest {
   fun aWatchNeverTakesThePhoneBuild() {
     UpdateChecker.parseRelease(release(11), 10, "", UpdateChecker.WATCH_APK_NAME)
   }
+
+  @Test
+  fun theBuildWithoutPlayServicesGetsItsOwnBuild() {
+    val release = JSONObject(releaseWithBothBuilds(11))
+    release
+      .getJSONArray("assets")
+      .put(
+        JSONObject()
+          .put("name", "backtalk-nogms.apk")
+          .put("browser_download_url", "https://example.com/backtalk-nogms.apk")
+      )
+    assertEquals(
+      "https://example.com/backtalk-nogms.apk",
+      UpdateChecker.parseRelease(release.toString(), 10, "", UpdateChecker.NO_PLAY_SERVICES_APK_NAME)!!
+        .downloadUrl,
+    )
+  }
+
+  @Test(expected = JSONException::class)
+  fun theBuildWithoutPlayServicesNeverTakesThePhoneBuild() {
+    UpdateChecker.parseRelease(release(11), 10, "", UpdateChecker.NO_PLAY_SERVICES_APK_NAME)
+  }
 }

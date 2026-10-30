@@ -3411,7 +3411,7 @@ public class AccessibilityNodeInfoUtils {
    * Returns {@code true}, if the input method for the {@code node} won't display spelling
    * suggestions.
    */
-  private static boolean hasNoSuggestionsNeed(int input) {
+  public static boolean hasNoSuggestionsNeed(int input) {
     return input == TYPE_TEXT_FLAG_NO_SUGGESTIONS;
   }
 

@@ -157,6 +157,41 @@
         <ignore regexp="summary_pref_suppress_extra_screen_on_speech" />
         <ignore regexp="title_pref_direct_click" />
         <ignore regexp="summary_pref_direct_click" />
+        <ignore regexp="template_text_appended" />
+        <ignore regexp="keycombo_menu_other_append_last_spoken_phrase" />
+        <ignore regexp="title_append_last_spoken_phrase" />
+        <ignore regexp="summary_append_last_spoken_phrase" />
+        <ignore regexp="title_edittext_clear" />
+        <ignore regexp="cannot_clear_feedback" />
+        <ignore regexp="media_action_fast_forward" />
+        <ignore regexp="media_action_next" />
+        <ignore regexp="media_action_play_pause" />
+        <ignore regexp="media_action_previous" />
+        <ignore regexp="media_action_rewind" />
+        <ignore regexp="media_action_stop" />
+        <ignore regexp="shortcut_media_fast_forward" />
+        <ignore regexp="shortcut_media_next" />
+        <ignore regexp="shortcut_media_previous" />
+        <ignore regexp="shortcut_media_rewind" />
+        <ignore regexp="shortcut_media_stop" />
+        <ignore regexp="summary_media_controls" />
+        <ignore regexp="summary_support_change_media_volume" />
+        <ignore regexp="template_media_volume_change_decrease" />
+        <ignore regexp="template_media_volume_change_increase" />
+        <ignore regexp="title_pref_media_controls" />
+        <ignore regexp="title_pref_media_volume" />
+        <ignore regexp="gemini_api_key_dialog_message" />
+        <ignore regexp="gemini_api_key_get" />
+        <ignore regexp="gemini_api_key_hint" />
+        <ignore regexp="gemini_api_key_save" />
+        <ignore regexp="gemini_api_terms_link" />
+        <ignore regexp="summary_pref_gemini_api_key_built_in" />
+        <ignore regexp="summary_pref_gemini_api_key_not_set" />
+        <ignore regexp="summary_pref_gemini_api_key_set" />
+        <ignore regexp="summary_pref_scripts" />
+        <ignore regexp="title_pref_gemini_api_key" />
+        <ignore regexp="title_pref_speech_control" />
+        <ignore regexp="update_wifi_download_failed" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,

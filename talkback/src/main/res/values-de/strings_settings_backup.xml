@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the settings screen and its entry in the main list, for saving and restoring all settings. [CHAR LIMIT=40] -->
+    <string name="settings_backup_title">Sichern und wiederherstellen</string>
+    <!-- Backup and restore: saves all settings to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export">Einstellungen exportieren</string>
+    <!-- Summary of the export action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_export_summary">Speichert alle Einstellungen in einer Datei.</string>
+    <!-- Backup and restore: loads all settings from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import">Einstellungen importieren</string>
+    <!-- Summary of the import action. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_summary">Ersetzt deine Einstellungen durch die einer exportierten Datei. Einstellungen, die an dieses Telefon gebunden sind, wie etwa verbundene Braillezeilen und dein Gemini-API-Schlüssel, bleiben unverändert.</string>
+    <!-- Toast after the settings were saved to a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_export_done">Einstellungen exportiert</string>
+    <!-- Toast when the settings could not be saved to a file. [CHAR LIMIT=60] -->
+    <string name="settings_backup_export_failed">Die Einstellungen konnten nicht exportiert werden</string>
+    <!-- Toast after the settings were restored from a file. [CHAR LIMIT=40] -->
+    <string name="settings_backup_import_done">Einstellungen importiert</string>
+    <!-- Dialog message after the settings were restored, when some of them only take effect once Backtalk is turned off and on again. [CHAR LIMIT=NONE] -->
+    <string name="settings_backup_import_restart">Einige importierte Einstellungen werden erst wirksam, wenn Backtalk aus- und wieder eingeschaltet wird.</string>
+    <!-- Toast when a file could not be read as a settings backup. [CHAR LIMIT=60] -->
+    <string name="settings_backup_import_failed">Diese Datei konnte nicht gelesen werden</string>
+</resources>

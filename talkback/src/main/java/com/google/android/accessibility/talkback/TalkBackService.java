@@ -229,6 +229,7 @@ import com.google.android.accessibility.talkback.monitor.ProximitySensorMonitor;
 import com.google.android.accessibility.talkback.monitor.RingerModeAndScreenMonitor;
 import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression;
 import com.google.android.accessibility.talkback.monitor.VolumeMonitor;
+import com.google.android.accessibility.talkback.notificationlist.NotificationListService;
 import com.google.android.accessibility.talkback.pause.PauseController;
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
 import com.google.android.accessibility.talkback.scripting.ScriptHost;
@@ -1011,6 +1012,7 @@ public class TalkBackService extends AccessibilityServiceCompat
       scriptHost = null;
     }
     SpeechControl.detach();
+    NotificationListService.onBacktalkStopped();
 
     if (audioDeviceRouter != null) {
       audioDeviceRouter.shutdown();
@@ -4361,6 +4363,7 @@ public class TalkBackService extends AccessibilityServiceCompat
   private void startScripts() {
     if (pipeline != null && speechController != null) {
       SpeechControl.attach(this, pipeline.getFeedbackReturner(), speechController);
+      NotificationListService.onBacktalkStarted(this);
     }
     if (scriptHost != null || pipeline == null || !UserManagerCompat.isUserUnlocked(this)) {
       return;

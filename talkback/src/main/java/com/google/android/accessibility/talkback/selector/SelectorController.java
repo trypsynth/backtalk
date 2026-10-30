@@ -22,8 +22,10 @@ import static com.google.android.accessibility.talkback.Feedback.AdjustValue.Act
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Action.DECREASE_VOLUME;
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Action.INCREASE_VOLUME;
 import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType.STREAM_TYPE_ACCESSIBILITY;
+import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.StreamType.STREAM_TYPE_MEDIA;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.BRIGHTEN;
 import static com.google.android.accessibility.talkback.Feedback.DimScreen.Action.DIM;
+import static com.google.android.accessibility.talkback.Feedback.Focus.Action.CLICK_CURRENT;
 import static com.google.android.accessibility.talkback.Feedback.Focus.Action.CLICK_NODE;
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.NEXT_PAGE;
 import static com.google.android.accessibility.talkback.Feedback.FocusDirection.Action.PREVIOUS_PAGE;
@@ -51,6 +53,7 @@ import static com.google.android.accessibility.talkback.selector.SelectorControl
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_SEARCH;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_TYPO;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.GRANULARITY_WINDOWS;
+import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.MEDIA_CONTROLS;
 import static com.google.android.accessibility.talkback.selector.SelectorController.Setting.TABLET_HELD_UP_FACES_AWAY;
 import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED;
 import static com.google.android.accessibility.utils.monitor.InputModeTracker.INPUT_MODE_TOUCH;
@@ -147,6 +150,9 @@ public class SelectorController implements UserInputEventListener {
   /** The current action id selected for the actions setting. */
   private ContextMenuItemId currentActionId;
 
+  /** The currently selected media action in the media controls setting. */
+  private MediaAction currentMediaActionId = MediaAction.MEDIA_PLAY_PAUSE;
+
   private boolean hasRequestServiceHandlesDoubleTap = false;
   // To reduce the frequency of currentSetting update, we don't update the setting while the touch
   // interaction's ongoing. This flag records the touch interaction start/end, respectively. So that
@@ -205,6 +211,10 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_change_a11y_volume_key,
         R.string.selector_a11y_volume_change,
         R.bool.pref_selector_a11y_volume_default),
+    CHANGE_MEDIA_VOLUME(
+        R.string.pref_selector_change_media_volume_key,
+        R.string.selector_media_volume_change,
+        R.bool.pref_selector_media_volume_default),
     CHANGE_BRIGHTNESS(
         R.string.pref_selector_change_brightness_key,
         R.string.selector_brightness_change,
@@ -393,6 +403,10 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_audio_output_device_key,
         R.string.selector_audio_output_device,
         R.bool.pref_selector_audio_output_device_default),
+    MEDIA_CONTROLS(
+        R.string.pref_selector_media_controls_key,
+        R.string.selector_media_controls,
+        R.bool.pref_selector_media_controls_default),
     VERTICAL_NAVIGATION(
         R.string.pref_selector_vertical_navigation_key,
         R.string.selector_vertical_navigation,
@@ -651,7 +665,9 @@ public class SelectorController implements UserInputEventListener {
           Setting.AUDIO_FOCUS,
           Setting.SCROLLING_SEQUENTIAL,
           Setting.CHANGE_ACCESSIBILITY_VOLUME,
+          Setting.CHANGE_MEDIA_VOLUME,
           Setting.AUDIO_OUTPUT_DEVICE,
+          Setting.MEDIA_CONTROLS,
           Setting.CHANGE_BRIGHTNESS,
           Setting.CHANGE_TOUCH_FOCUS_LATENCY,
           Setting.CHANGE_TYPING_FOCUS_LATENCY,
@@ -745,6 +761,9 @@ public class SelectorController implements UserInputEventListener {
       hiddenSettingsBuilder.add(TABLET_HELD_UP_FACES_AWAY);
     } else if (!FeatureSupport.doesServiceHandleDoubleTap()) {
       hiddenSettingsBuilder.add(ACTIONS);
+    }
+    if (!FeatureSupport.supportMediaControls()) {
+      hiddenSettingsBuilder.add(MEDIA_CONTROLS);
     }
     // Hide SEARCH in selector.
     if (!FeatureFlagReader.enableScreenSearchNavigation(context)
@@ -964,6 +983,10 @@ public class SelectorController implements UserInputEventListener {
         actionDescription = context.getString(R.string.title_pref_a11y_volume);
         hint = getAdjustSelectedSettingGestures();
       }
+      case CHANGE_MEDIA_VOLUME -> {
+        actionDescription = context.getString(R.string.title_pref_media_volume);
+        hint = getAdjustSelectedSettingGestures();
+      }
       case CHANGE_BRIGHTNESS -> {
         actionDescription = context.getString(R.string.title_pref_brightness);
         hint = getAdjustSelectedSettingGestures();
@@ -1002,6 +1025,11 @@ public class SelectorController implements UserInputEventListener {
       }
       case AUDIO_OUTPUT_DEVICE -> {
         actionDescription = context.getString(R.string.title_pref_audio_output_device);
+        hint = getAdjustSelectedSettingGestures();
+      }
+      case MEDIA_CONTROLS -> {
+        requestServiceHandlesDoubleTap(eventId, true);
+        actionDescription = context.getString(R.string.title_pref_media_controls);
         hint = getAdjustSelectedSettingGestures();
       }
       case VERTICAL_NAVIGATION -> {
@@ -1159,16 +1187,37 @@ public class SelectorController implements UserInputEventListener {
   }
 
   /**
-   * When the selection mode of edit text is changed, the default setting would change to
-   * GRANULARITY_CHARACTERS. Users still can change setting by themselves. If users did not change
-   * the setting during the selection mode life time, system will change the setting back to its
-   * original value when the selection mode stops.
+   * The text granularity of a reading control that selection mode can keep: characters, words,
+   * paragraphs, and lines where text selection by lines works. Null for any other reading control.
+   */
+  public static @Nullable CursorGranularity selectionGranularityOf(Setting setting) {
+    return switch (setting) {
+      case GRANULARITY_CHARACTERS -> CursorGranularity.CHARACTER;
+      case GRANULARITY_WORDS -> CursorGranularity.WORD;
+      case GRANULARITY_PARAGRAPHS -> CursorGranularity.PARAGRAPH;
+      case GRANULARITY_LINES ->
+          FeatureSupport.supportInputConnectionByA11yService() ? CursorGranularity.LINE : null;
+      default -> null;
+    };
+  }
+
+  /**
+   * When selection mode starts, a reading control that moves through text stays, so selection goes
+   * by the characters, words, lines or paragraphs the user was reading by. Any other reading control
+   * changes to GRANULARITY_CHARACTERS. Users still can change setting by themselves. If users did
+   * not change the setting during the selection mode life time, system will change the setting back
+   * to its original value when the selection mode stops.
    */
   @Override
   public void editTextOrSelectableTextSelected(boolean isSelected) {
     lateSettingSwitch.runNow();
     if (isSelected) {
-      settingToRestore = getCurrentSetting(context, prefs);
+      Setting current = getCurrentSetting(context, prefs);
+      if (selectionGranularityOf(current) != null) {
+        settingToRestore = null;
+        return;
+      }
+      settingToRestore = current;
       setCurrentSetting(
           EVENT_ID_UNTRACKED,
           Setting.GRANULARITY_CHARACTERS,
@@ -1587,6 +1636,12 @@ public class SelectorController implements UserInputEventListener {
         }
         return typoGranularity.get().isNodeSupportSetting(context, node);
       }
+      case MEDIA_CONTROLS -> {
+        return FeatureSupport.supportMediaControls();
+      }
+      case CHANGE_MEDIA_VOLUME -> {
+        return true;
+      }
       default -> {
         return true;
       }
@@ -1764,7 +1819,7 @@ public class SelectorController implements UserInputEventListener {
       restoreSetting();
       currentSetting = getCurrentSetting(context, prefs);
     }
-    if (!ACTIONS.equals(currentSetting)) {
+    if (!ACTIONS.equals(currentSetting) && !MEDIA_CONTROLS.equals(currentSetting)) {
       // Log for ACTION is counted when double-tapping.
       analytics.onSelectorActionEvent(currentSetting);
     }
@@ -1810,6 +1865,10 @@ public class SelectorController implements UserInputEventListener {
       }
       case CHANGE_ACCESSIBILITY_VOLUME -> {
         changeAccessibilityVolume(eventId, isNext);
+        return;
+      }
+      case CHANGE_MEDIA_VOLUME -> {
+        changeMediaVolume(eventId, isNext);
         return;
       }
       case CHANGE_BRIGHTNESS -> {
@@ -1924,6 +1983,10 @@ public class SelectorController implements UserInputEventListener {
         navigateTypo(eventId, isNext);
         return;
       }
+      case MEDIA_CONTROLS -> {
+        changeMediaAction(eventId, isNext);
+        return;
+      }
     }
   }
 
@@ -1980,6 +2043,21 @@ public class SelectorController implements UserInputEventListener {
                       .setHint(context.getString(R.string.hint_select_action))
                       .build()));
     }
+  }
+
+  /** Activates the currently selected media action in the media controls setting. */
+  public void activateCurrentMediaAction(EventId eventId) {
+    // The persisted setting can still be MEDIA_CONTROLS after the preference was turned off, so
+    // the double-tap falls back to the regular click.
+    if (!prefs.getBoolean(
+        context.getString(MEDIA_CONTROLS.prefKeyResId),
+        context.getResources().getBoolean(MEDIA_CONTROLS.defaultValueResId))) {
+      pipeline.returnFeedback(eventId, Feedback.focus(CLICK_CURRENT));
+      return;
+    }
+    analytics.onSelectorActionEvent(MEDIA_CONTROLS);
+    MediaControls.dispatch(context, currentMediaActionId);
+    showQuickMenuActionOverlay(eventId, context.getString(currentMediaActionId.getTitleResId()));
   }
 
   /**
@@ -2362,42 +2440,63 @@ public class SelectorController implements UserInputEventListener {
     pipeline.returnFeedback(eventId, Feedback.focusDirection(isNext ? PREVIOUS_PAGE : NEXT_PAGE));
   }
 
-  private EventId lastChangeAccessibilityEventId;
-  private final VolumeChangedListener a11yVolumeChangedListener =
+  private EventId lastChangeVolumeEventId;
+  private int listenedVolumeStream = -1;
+  private final VolumeChangedListener volumeChangedListener =
       new VolumeChangedListener() {
 
         @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {
-          if (type != AudioManager.STREAM_ACCESSIBILITY) {
+          if (type != listenedVolumeStream) {
             return;
           }
 
           String displayText =
               context.getString(
                   value < prevValue
-                      ? R.string.template_accessibility_volume_change_decrease
-                      : R.string.template_accessibility_volume_change_increase,
+                      ? volumeChangeTemplate(listenedVolumeStream, true)
+                      : volumeChangeTemplate(listenedVolumeStream, false),
                   percent);
-          announceSetting(lastChangeAccessibilityEventId, displayText, getAdjustSelectedSettingGestures());
-          TalkBackUI.Item item =
-              value < prevValue
-                  ? Item.ITEM_ACCESSIBILITY_VOLUME_DECREASE
-                  : Item.ITEM_ACCESSIBILITY_VOLUME_INCREASE;
-          showQuickMenuActionOverlay(lastChangeAccessibilityEventId, displayText, item);
+          announceSetting(
+              lastChangeVolumeEventId, displayText, getAdjustSelectedSettingGestures());
+          if (listenedVolumeStream == AudioManager.STREAM_MUSIC) {
+            showQuickMenuActionOverlay(lastChangeVolumeEventId, displayText);
+          } else {
+            TalkBackUI.Item item =
+                value < prevValue
+                    ? Item.ITEM_ACCESSIBILITY_VOLUME_DECREASE
+                    : Item.ITEM_ACCESSIBILITY_VOLUME_INCREASE;
+            showQuickMenuActionOverlay(lastChangeVolumeEventId, displayText, item);
+          }
 
-          handler.post(() -> volumeMonitor.removeVolumeChangedListener(a11yVolumeChangedListener));
+          handler.post(
+              () -> {
+                volumeMonitor.removeVolumeChangedListener(volumeChangedListener);
+                listenedVolumeStream = -1;
+              });
         }
       };
 
   /** Perform Accessibility volume change. */
   public void changeAccessibilityVolume(EventId eventId, boolean decreaseVolume) {
+    changeVolume(eventId, decreaseVolume, STREAM_TYPE_ACCESSIBILITY);
+  }
+
+  private void changeMediaVolume(EventId eventId, boolean decreaseVolume) {
+    changeVolume(eventId, decreaseVolume, STREAM_TYPE_MEDIA);
+  }
+
+  private void changeVolume(
+      EventId eventId, boolean decreaseVolume, Feedback.AdjustVolume.StreamType streamType) {
     boolean result =
         pipeline.returnFeedback(
             eventId,
-            Feedback.adjustVolume(
-                decreaseVolume ? DECREASE_VOLUME : INCREASE_VOLUME, STREAM_TYPE_ACCESSIBILITY));
+            Feedback.adjustVolume(decreaseVolume ? DECREASE_VOLUME : INCREASE_VOLUME, streamType));
     if (result) {
-      refreshVolumeChangedListener(eventId);
+      lastChangeVolumeEventId = eventId;
+      listenedVolumeStream = volumeStream(streamType);
+      volumeMonitor.removeVolumeChangedListener(volumeChangedListener);
+      volumeMonitor.addVolumeChangedListener(volumeChangedListener);
     } else {
       String displayText =
           atLimit(
@@ -2405,14 +2504,36 @@ public class SelectorController implements UserInputEventListener {
                   ? R.string.template_volume_change_minimum
                   : R.string.template_volume_change_maximum,
               context.getString(
-                  R.string.tb_template_percent, String.valueOf(accessibilityVolumePercent())));
+                  R.string.tb_template_percent,
+                  String.valueOf(volumePercent(volumeStream(streamType)))));
       announceSetting(eventId, displayText, getAdjustSelectedSettingGestures());
-      TalkBackUI.Item item =
-          decreaseVolume
-              ? Item.ITEM_ACCESSIBILITY_VOLUME_MINIMUM
-              : Item.ITEM_ACCESSIBILITY_VOLUME_MAXIMUM;
-      showQuickMenuActionOverlay(eventId, displayText, item);
+      if (volumeStream(streamType) == AudioManager.STREAM_ACCESSIBILITY) {
+        TalkBackUI.Item item =
+            decreaseVolume
+                ? Item.ITEM_ACCESSIBILITY_VOLUME_MINIMUM
+                : Item.ITEM_ACCESSIBILITY_VOLUME_MAXIMUM;
+        showQuickMenuActionOverlay(eventId, displayText, item);
+      } else {
+        showQuickMenuActionOverlay(eventId, displayText);
+      }
     }
+  }
+
+  private static int volumeStream(Feedback.AdjustVolume.StreamType streamType) {
+    return streamType == STREAM_TYPE_MEDIA
+        ? AudioManager.STREAM_MUSIC
+        : AudioManager.STREAM_ACCESSIBILITY;
+  }
+
+  private int volumeChangeTemplate(int stream, boolean decrease) {
+    if (stream == AudioManager.STREAM_MUSIC) {
+      return decrease
+          ? R.string.template_media_volume_change_decrease
+          : R.string.template_media_volume_change_increase;
+    }
+    return decrease
+        ? R.string.template_accessibility_volume_change_decrease
+        : R.string.template_accessibility_volume_change_increase;
   }
 
   private void changeBrightness(EventId eventId, boolean increase) {
@@ -2507,14 +2628,12 @@ public class SelectorController implements UserInputEventListener {
     return context.getString(R.string.template_setting_limit, context.getString(limitResId), value);
   }
 
-  private int accessibilityVolumePercent() {
+  private int volumePercent(int stream) {
     AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     int min =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-            ? audioManager.getStreamMinVolume(AudioManager.STREAM_ACCESSIBILITY)
-            : 0;
-    int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_ACCESSIBILITY);
-    int volume = audioManager.getStreamVolume(AudioManager.STREAM_ACCESSIBILITY);
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ? audioManager.getStreamMinVolume(stream) : 0;
+    int max = audioManager.getStreamMaxVolume(stream);
+    int volume = audioManager.getStreamVolume(stream);
     return max > min ? Math.round(100f * (volume - min) / (max - min)) : 100;
   }
 
@@ -2599,12 +2718,6 @@ public class SelectorController implements UserInputEventListener {
                     FeedbackItem.FLAG_NO_HISTORY
                         | FeedbackItem.FLAG_FORCE_FEEDBACK_ALL
                         | FeedbackItem.FLAG_SKIP_DUPLICATE)));
-  }
-
-  private void refreshVolumeChangedListener(EventId eventId) {
-    lastChangeAccessibilityEventId = eventId;
-    volumeMonitor.removeVolumeChangedListener(a11yVolumeChangedListener);
-    volumeMonitor.addVolumeChangedListener(a11yVolumeChangedListener);
   }
 
   private void switchWrapAroundOnOrOff(EventId eventId) {
@@ -2707,6 +2820,19 @@ public class SelectorController implements UserInputEventListener {
               : context.getString(R.string.use_action_hint));
       showQuickMenuActionOverlay(eventId, displayText);
     }
+  }
+
+  /** Selects the previous or next media action in the media controls setting. */
+  private void changeMediaAction(EventId eventId, boolean isNext) {
+    MediaAction[] actions = MediaAction.values();
+    int index = Math.max(0, Arrays.asList(actions).indexOf(currentMediaActionId));
+    index = (index + (isNext ? 1 : actions.length - 1)) % actions.length;
+    currentMediaActionId = actions[index];
+    // All media actions are triggered by double-tap.
+    requestServiceHandlesDoubleTap(eventId, true);
+    String displayText = context.getString(currentMediaActionId.getTitleResId());
+    announceSetting(eventId, displayText, context.getString(R.string.use_action_hint));
+    showQuickMenuActionOverlay(eventId, displayText);
   }
 
   /**
