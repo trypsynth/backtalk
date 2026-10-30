@@ -2683,11 +2683,6 @@ public class FocusProcessorForLogicalNavigation {
     scrollCallback = callback;
     Rect pivotBefore = new Rect();
     pivot.getBoundsInScreen(pivotBefore);
-    // A list that ignored one reveal in this swipe won't take another.
-    NavigationAction noMoreReveals =
-        NavigationAction.Builder.copy(navigationAction)
-            .setClippedItemReveals(MAX_CLIPPED_ITEM_REVEALS)
-            .build();
     postEarlyScrollCheck(
         callback,
         scrollable,
@@ -2695,6 +2690,11 @@ public class FocusProcessorForLogicalNavigation {
         eventId,
         REVEAL_CHECK_RETRIES,
         () -> {
+          // A list that ignored one reveal in this swipe won't take another.
+          NavigationAction noMoreReveals =
+              NavigationAction.Builder.copy(navigationAction)
+                  .setClippedItemReveals(MAX_CLIPPED_ITEM_REVEALS)
+                  .build();
           if (!autoScroll(scrollableNodeInfo, pivot, noMoreReveals, eventId)) {
             // Navigate again without revealing, so that the swipe can still scroll the list around
             // this one or search on.
@@ -3361,7 +3361,7 @@ public class FocusProcessorForLogicalNavigation {
         // the list moves, so its bottom counts too.
         boolean stillMoving =
             BuildVersionUtils.isAtLeastT()
-                ? previousRect.top != newRect.top || previousRect.bottom != newRect.bottom
+                ? topOrBottomMoved(previousRect, newRect)
                 : !previousRect.equals(newRect);
         if (stillMoving && settleRetries > 0) {
           lookAgainAfterSettling(
@@ -3444,11 +3444,20 @@ public class FocusProcessorForLogicalNavigation {
               || (currentFocus != null && !currentFocus.equals(focusBeforeScroll))) {
             return;
           }
-          if (freshRead && settleRetries > 1 && focusBeforeScroll.refresh()) {
+          // A pivot that has left the screen can't tell whether the list has stopped.
+          if (freshRead
+              && settleRetries > 1
+              && focusBeforeScroll.refresh()
+              && AccessibilityNodeInfoUtils.isVisible(focusBeforeScroll)) {
             Rect bounds = getBoundsAfterScroll(focusBeforeScroll);
-            if (bounds.top != lastBounds.top || bounds.bottom != lastBounds.bottom) {
+            if (topOrBottomMoved(lastBounds, bounds)) {
               lookAgainAfterSettling(
-                  scrolledNode, focusBeforeScroll, sourceAction, settleRetries - 1, bounds, eventId);
+                  scrolledNode,
+                  focusBeforeScroll,
+                  sourceAction,
+                  settleRetries - 1,
+                  bounds,
+                  eventId);
               return;
             }
           }
@@ -3462,6 +3471,10 @@ public class FocusProcessorForLogicalNavigation {
         };
     earlyScrollCheckHandler.postDelayed(
         pendingSettleLook, freshRead ? SETTLE_RETRY_FRESH_MS : SETTLE_RETRY_MS);
+  }
+
+  private static boolean topOrBottomMoved(@NonNull Rect before, @NonNull Rect after) {
+    return before.top != after.top || before.bottom != after.bottom;
   }
 
   @VisibleForTesting

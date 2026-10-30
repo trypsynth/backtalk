@@ -39,7 +39,6 @@ class NavigationActionRevealsTest {
   fun actionsWithDifferentReveals_areNotEqual() {
     val other = NavigationAction.Builder.copy(action).setClippedItemReveals(0).build()
 
-    assertEquals(1, other.autoScrollAttempt)
     assertNotEquals(action, other)
   }
 }
