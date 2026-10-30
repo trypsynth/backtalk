@@ -51,7 +51,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -188,15 +187,18 @@ public class FocusProcessorForLogicalNavigation {
   private static final int EARLY_SCROLL_RETRIES = 6;
   // Android sends scroll events, which clear the saved nodes of the list, at most every 100 ms.
   private static final long SETTLE_RETRY_MS = 120;
-  private static final int SETTLE_RETRIES = 6;
+  private static final int SETTLE_RETRIES = 3;
   // Where Android's copy of the nodes can be cleared, the next look doesn't need a scroll event.
   private static final long SETTLE_RETRY_FRESH_MS = 40;
+  private static final int SETTLE_RETRIES_FRESH = 6;
   // A list that accepts showing an item has moved by the first check, so few are needed.
   private static final int REVEAL_CHECK_RETRIES = 2;
   private static final int MAX_CLIPPED_ITEM_REVEALS = 2;
 
   // Checks whether a page scroll has already moved the list, before its scroll event arrives.
   private final Handler earlyScrollCheckHandler = new Handler(Looper.getMainLooper());
+  // The next look at a list that is still moving, which a new navigation replaces.
+  private @Nullable Runnable pendingSettleLook;
 
   // Target to put focus on on the next window navigation action
   private @Nullable AccessibilityNodeInfoCompat stealWindowNavigationTarget = null;
@@ -250,6 +252,7 @@ public class FocusProcessorForLogicalNavigation {
       LogUtils.w(TAG, "Cannot perform navigation action: action type undefined.");
       return false;
     }
+    cancelSettleLook();
     AccessibilityNodeInfoCompat pivot = getPivotNodeForNavigationAction(navigationAction);
     if (pivot == null) {
       // Ideally the pivot should never be null. Do the null check in case of exception.
@@ -2734,11 +2737,20 @@ public class FocusProcessorForLogicalNavigation {
     return null;
   }
 
-  /** An item reaching both edges, such as a card in a row, can't be shown any better. */
+  /**
+   * An item reaching both edges, such as a card in a row, can't be shown any better. Screen bounds
+   * stop at the edge of the list, so an item that only ends there is told apart by its full size.
+   */
+  @SuppressWarnings("deprecation") // getBoundsInParent is the only unclipped size a node reports.
   private static boolean isCutOffAhead(
       @NonNull AccessibilityNodeInfoCompat item, @NonNull Rect list, boolean forward) {
     Rect bounds = new Rect();
     item.getBoundsInScreen(bounds);
+    Rect size = new Rect();
+    item.getBoundsInParent(size);
+    if (size.height() > 0 && bounds.height() >= size.height()) {
+      return false;
+    }
     return forward
         ? bounds.bottom >= list.bottom && bounds.top > list.top
         : bounds.top <= list.top && bounds.bottom < list.bottom;
@@ -2887,12 +2899,25 @@ public class FocusProcessorForLogicalNavigation {
     int deltaX = pivotPresent ? pivotBefore.left - pivotAfter.left : DELTA_UNDEFINED;
     int deltaY = pivotPresent ? pivotBefore.top - pivotAfter.top : DELTA_UNDEFINED;
     LogUtils.d(TAG, "checkScrollEarly: scrolled, deltaX=%s deltaY=%s", deltaX, deltaY);
-    // The scroll event that would clear Android's copy of these nodes hasn't arrived yet.
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      service.clearCachedSubtree(scrollable.unwrap());
-    }
-    scrollable.refresh();
+    // The scroll event that would throw away the saved order hasn't arrived yet.
+    TraversalTreeCache.clear("list moved");
+    clearNodeCacheAndRefresh(scrollable);
     onAutoScrolled(scrollable, eventId, deltaX, deltaY);
+  }
+
+  /** Reads {@code node} again, without waiting for the scroll event that clears Android's copy. */
+  private void clearNodeCacheAndRefresh(@NonNull AccessibilityNodeInfoCompat node) {
+    if (BuildVersionUtils.isAtLeastT()) {
+      service.clearCachedSubtree(node.unwrap());
+    }
+    node.refresh();
+  }
+
+  private void cancelSettleLook() {
+    if (pendingSettleLook != null) {
+      earlyScrollCheckHandler.removeCallbacks(pendingSettleLook);
+      pendingSettleLook = null;
+    }
   }
 
   /**
@@ -3267,7 +3292,11 @@ public class FocusProcessorForLogicalNavigation {
       NavigationAction sourceAction,
       EventId eventId) {
     handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
-        scrolledNode, focusBeforeScroll, sourceAction, SETTLE_RETRIES, eventId);
+        scrolledNode,
+        focusBeforeScroll,
+        sourceAction,
+        BuildVersionUtils.isAtLeastT() ? SETTLE_RETRIES_FRESH : SETTLE_RETRIES,
+        eventId);
   }
 
   private void handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
@@ -3323,24 +3352,24 @@ public class FocusProcessorForLogicalNavigation {
         // The list is still moving, and what the search read may be from before it moved. Scrolling
         // again now would pass a whole page that never came on screen.
         // Where Android's copy of the nodes can be cleared, this read was fresh, so a row that only
-        // moved sideways has no next item to wait for.
+        // moved sideways has no next item to wait for. A pivot cut off at the top keeps its top while
+        // the list moves, so its bottom counts too.
+        boolean freshRead = BuildVersionUtils.isAtLeastT();
         boolean stillMoving =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                ? previousRect.top != newRect.top
+            freshRead
+                ? previousRect.top != newRect.top || previousRect.bottom != newRect.bottom
                 : !previousRect.equals(newRect);
         if (stillMoving && settleRetries > 0) {
-          earlyScrollCheckHandler.postDelayed(
+          pendingSettleLook =
               () -> {
+                pendingSettleLook = null;
                 AccessibilityNodeInfoCompat currentFocus =
                     accessibilityFocusMonitor.getAccessibilityFocus(
                         /* useInputFocusIfEmpty= */ false);
                 // Same rule as onAutoScrolled: only focus placed elsewhere stops the navigation.
                 if (scrollCallback == null
                     && (currentFocus == null || currentFocus.equals(focusBeforeScroll))) {
-                  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    service.clearCachedSubtree(scrolledNode.unwrap());
-                  }
-                  scrolledNode.refresh();
+                  clearNodeCacheAndRefresh(scrolledNode);
                   // The next look compares with the bounds of this one, so it can't tell that the
                   // list has scrolled, whatever the scroll event reported.
                   NavigationAction scrolledAction =
@@ -3348,10 +3377,9 @@ public class FocusProcessorForLogicalNavigation {
                   handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
                       scrolledNode, focusBeforeScroll, scrolledAction, settleRetries - 1, eventId);
                 }
-              },
-              Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-                  ? SETTLE_RETRY_FRESH_MS
-                  : SETTLE_RETRY_MS);
+              };
+          earlyScrollCheckHandler.postDelayed(
+              pendingSettleLook, freshRead ? SETTLE_RETRY_FRESH_MS : SETTLE_RETRY_MS);
           return;
         }
         if (previousRect.equals(newRect) && sourceAction.shouldScroll) {

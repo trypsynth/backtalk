@@ -95,6 +95,22 @@ class ClippedItemAheadTest {
     assertEquals(AccessibilityNodeInfoCompat.wrap(previous), find(pivot, forward = false))
   }
 
+  @Test
+  fun forward_returnsNothingWhenTheItemEndsExactlyAtTheEdge() {
+    val (holder, pivot) = item(600, 1000)
+    holder.setBoundsInParent(Rect(0, 0, 100, 400))
+
+    assertNull(find(pivot, forward = true))
+  }
+
+  @Test
+  fun forward_returnsTheItemWhenItsFullSizeIsLargerThanWhatIsShown() {
+    val (holder, pivot) = item(600, 1000)
+    holder.setBoundsInParent(Rect(0, 0, 100, 700))
+
+    assertEquals(AccessibilityNodeInfoCompat.wrap(holder), find(pivot, forward = true))
+  }
+
   /** A card in a row of cards reaches both edges of the row, and so does one taller than the list. */
   @Test
   fun returnsNothingForAnItemReachingBothEdges() {

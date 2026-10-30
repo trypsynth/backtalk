@@ -79,7 +79,7 @@ object WindowNodePrefetcher {
   private val running = AtomicInteger()
 
   /** No waiting before this time, so that one swipe's scrolls don't each wait [MAX_WAIT_MS]. */
-  private var restUntil = 0L
+  @Volatile private var restUntil = 0L
 
   /**
    * Reads the nodes below [root] into Android's node cache, waiting at most [MAX_WAIT_MS]. Does
