@@ -3322,8 +3322,13 @@ public class FocusProcessorForLogicalNavigation {
         Rect newRect = getBoundsAfterScroll(focusBeforeScroll);
         // The list is still moving, and what the search read may be from before it moved. Scrolling
         // again now would pass a whole page that never came on screen.
-        // A row moving sideways can't pass a page, and its next item is usually outside the row.
-        if (previousRect.top != newRect.top && settleRetries > 0) {
+        // Where Android's copy of the nodes can be cleared, this read was fresh, so a row that only
+        // moved sideways has no next item to wait for.
+        boolean stillMoving =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                ? previousRect.top != newRect.top
+                : !previousRect.equals(newRect);
+        if (stillMoving && settleRetries > 0) {
           earlyScrollCheckHandler.postDelayed(
               () -> {
                 AccessibilityNodeInfoCompat currentFocus =
