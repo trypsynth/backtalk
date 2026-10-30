@@ -2623,7 +2623,8 @@ public class FocusProcessorForLogicalNavigation {
         return false;
       }
 
-      if (revealClippedItem(scrollableNodeInfo, pivot, navigationAction, eventId)
+      if (revealClippedItem(
+              scrollableNodeInfo, pivot, ignoreDescendantsOfPivot, navigationAction, eventId)
           || autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId)) {
         return true;
       }
@@ -2649,6 +2650,7 @@ public class FocusProcessorForLogicalNavigation {
   private boolean revealClippedItem(
       @NonNull ScrollableNodeInfo scrollableNodeInfo,
       @NonNull AccessibilityNodeInfoCompat pivot,
+      boolean ignoreDescendantsOfPivot,
       NavigationAction navigationAction,
       EventId eventId) {
     if (navigationAction.targetType != NavigationTarget.TARGET_DEFAULT
@@ -2667,15 +2669,25 @@ public class FocusProcessorForLogicalNavigation {
     scrollCallback = callback;
     Rect pivotBefore = new Rect();
     pivot.getBoundsInScreen(pivotBefore);
-    earlyScrollCheckHandler.post(
-        () ->
-            checkScrollEarly(
-                callback,
-                scrollable,
-                pivotBefore,
-                eventId,
-                EARLY_SCROLL_RETRIES,
-                () -> autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId)));
+    postEarlyScrollCheck(
+        callback,
+        scrollable,
+        pivotBefore,
+        eventId,
+        () -> {
+          if (!autoScroll(scrollableNodeInfo, pivot, navigationAction, eventId)) {
+            // Navigate again without revealing, so that the swipe can still scroll the list around
+            // this one or search on.
+            scrollCallback = null;
+            onDirectionalNavigationAction(
+                pivot,
+                ignoreDescendantsOfPivot,
+                NavigationAction.Builder.copy(navigationAction)
+                    .setAutoScrollAttempt(MAX_CLIPPED_ITEM_REVEALS)
+                    .build(),
+                eventId);
+          }
+        });
     return true;
   }
 
@@ -2688,10 +2700,9 @@ public class FocusProcessorForLogicalNavigation {
       @NonNull AccessibilityNodeInfoCompat scrollable,
       @NonNull AccessibilityNodeInfoCompat pivot,
       boolean forward) {
-    AccessibilityNodeInfoCompat holder = pivot;
-    while (holder != null && !scrollable.equals(holder.getParent())) {
-      holder = holder.getParent();
-    }
+    AccessibilityNodeInfoCompat holder =
+        AccessibilityNodeInfoUtils.getSelfOrMatchingAncestor(
+            pivot, Filter.node(node -> scrollable.equals(node.getParent())));
     if (holder == null) {
       return null;
     }
@@ -2710,10 +2721,9 @@ public class FocusProcessorForLogicalNavigation {
         return null;
       }
       AccessibilityNodeInfoCompat next = scrollable.getChild(nextIndex);
-      if (next == null || !next.isVisibleToUser()) {
-        return null;
-      }
-      return isCutOffAhead(next, list, forward) ? next : null;
+      return next != null && next.isVisibleToUser() && isCutOffAhead(next, list, forward)
+          ? next
+          : null;
     }
     return null;
   }
@@ -2811,19 +2821,26 @@ public class FocusProcessorForLogicalNavigation {
     if (scrolled
         && scrollCallback != null
         && navigationAction.targetType == NavigationTarget.TARGET_DEFAULT) {
-      AutoScrollCallback callback = scrollCallback;
-      AccessibilityNodeInfoCompat scrollable = scrollableNodeInfo.getNode();
-      earlyScrollCheckHandler.post(
-          () ->
-              checkScrollEarly(
-                  callback,
-                  scrollable,
-                  pivotBefore,
-                  eventId,
-                  EARLY_SCROLL_RETRIES,
-                  /* onNothingMoved= */ null));
+      postEarlyScrollCheck(
+          scrollCallback,
+          scrollableNodeInfo.getNode(),
+          pivotBefore,
+          eventId,
+          /* onNothingMoved= */ null);
     }
     return scrolled;
+  }
+
+  private void postEarlyScrollCheck(
+      AutoScrollCallback callback,
+      AccessibilityNodeInfoCompat scrollable,
+      Rect pivotBefore,
+      EventId eventId,
+      @Nullable Runnable onNothingMoved) {
+    earlyScrollCheckHandler.post(
+        () ->
+            checkScrollEarly(
+                callback, scrollable, pivotBefore, eventId, EARLY_SCROLL_RETRIES, onNothingMoved));
   }
 
   /**
@@ -3298,13 +3315,19 @@ public class FocusProcessorForLogicalNavigation {
         if (!previousRect.equals(newRect) && settleRetries > 0) {
           earlyScrollCheckHandler.postDelayed(
               () -> {
+                AccessibilityNodeInfoCompat currentFocus =
+                    accessibilityFocusMonitor.getAccessibilityFocus(
+                        /* useInputFocusIfEmpty= */ false);
+                // Same rule as onAutoScrolled: only focus placed elsewhere stops the navigation.
                 if (scrollCallback == null
-                    && focusBeforeScroll.equals(
-                        accessibilityFocusMonitor.getAccessibilityFocus(
-                            /* useInputFocusIfEmpty= */ false))) {
+                    && (currentFocus == null || currentFocus.equals(focusBeforeScroll))) {
                   scrolledNode.refresh();
+                  // The next look compares with the bounds of this one, so it can't tell that the
+                  // list has scrolled, whatever the scroll event reported.
+                  NavigationAction scrolledAction =
+                      NavigationAction.Builder.copy(sourceAction).setIsPrevScrolled(true).build();
                   handleViewAutoScrolledForDirectionalNavigationWithDefaultTarget(
-                      scrolledNode, focusBeforeScroll, sourceAction, settleRetries - 1, eventId);
+                      scrolledNode, focusBeforeScroll, scrolledAction, settleRetries - 1, eventId);
                 }
               },
               SETTLE_RETRY_MS);
