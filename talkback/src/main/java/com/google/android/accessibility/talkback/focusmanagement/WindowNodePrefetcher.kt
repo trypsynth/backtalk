@@ -34,8 +34,8 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 /**
- * Reads the nodes of a window from the app on several threads at once, before the reading order is
- * built from them on the main thread.
+ * Reads the nodes of a window, or of a part of one, from the app on several threads at once, before
+ * the search order is built from them on the main thread.
  *
  * Building the order asks the app for one node at a time. Each request waits until the app's main
  * thread has finished what it is doing, and an app that redraws on every frame, such as One UI's
@@ -79,14 +79,16 @@ object WindowNodePrefetcher {
    * Reads the nodes below [root] into Android's node cache, waiting at most [MAX_WAIT_MS]. Does
    * nothing for a window of [ownPackage]: its requests are answered on the main thread, which is
    * waiting here. Does nothing either while every thread is still waiting for an earlier window,
-   * since none of them could start on this one.
+   * since none of them could start on this one, or when [root] is web content, whose order is not
+   * built.
    */
   @JvmStatic
   fun prefetch(root: AccessibilityNodeInfoCompat, ownPackage: String) {
     if (
       Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
         TextUtils.equals(root.packageName, ownPackage) ||
-        running.get() >= THREADS
+        running.get() >= THREADS ||
+        WebInterfaceUtils.supportsWebActions(root)
     ) {
       return
     }

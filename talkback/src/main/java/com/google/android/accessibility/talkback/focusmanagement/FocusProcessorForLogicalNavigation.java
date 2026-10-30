@@ -3159,9 +3159,8 @@ public class FocusProcessorForLogicalNavigation {
     Rect previousRect = new Rect();
     focusBeforeScroll.getBoundsInScreen(previousRect);
     // A search up, down, left or right starts from where the pivot is on screen now.
-    boolean pivotRefreshed =
-        TraversalStrategyUtils.isSpatialDirection(sourceAction.searchDirection)
-            && focusBeforeScroll.refresh();
+    boolean spatial = TraversalStrategyUtils.isSpatialDirection(sourceAction.searchDirection);
+    boolean pivotRefreshed = spatial && focusBeforeScroll.refresh();
 
     NavigationAction navigationAction =
         NavigationAction.Builder.copy(sourceAction)
@@ -3175,7 +3174,7 @@ public class FocusProcessorForLogicalNavigation {
         TraversalStrategyUtils.searchFocus(
             localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
     if (nodeToFocus == null) {
-      if ((pivotRefreshed || focusBeforeScroll.refresh())
+      if ((spatial ? pivotRefreshed : focusBeforeScroll.refresh())
           && AccessibilityNodeInfoUtils.isVisible(focusBeforeScroll)) {
         Rect newRect = getBoundsAfterScroll(focusBeforeScroll);
         if (previousRect.equals(newRect) && sourceAction.shouldScroll) {
