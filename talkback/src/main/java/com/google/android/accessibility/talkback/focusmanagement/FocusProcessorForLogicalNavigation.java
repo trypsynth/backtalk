@@ -3158,15 +3158,19 @@ public class FocusProcessorForLogicalNavigation {
             sourceAction.targetType, localTraversalStrategy.getSpeakingNodesCache());
     Rect previousRect = new Rect();
     focusBeforeScroll.getBoundsInScreen(previousRect);
+    // A search up, down, left or right starts from where the pivot is on screen now.
+    if (TraversalStrategyUtils.isSpatialDirection(sourceAction.searchDirection)) {
+      focusBeforeScroll.refresh();
+    }
 
     NavigationAction navigationAction =
         NavigationAction.Builder.copy(sourceAction)
             .setAutoScrollAttempt(sourceAction.autoScrollAttempt + 1)
             .build();
 
-    // Try to find the next focusable node based on current focus. The search finds the pivot by its
-    // ID, so reading it again from the app, which is busy drawing the scroll, can wait until the
-    // search finds nothing.
+    // Try to find the next focusable node based on current focus. A search in reading order finds
+    // the pivot by its ID, so reading it again from the app, which is busy drawing the scroll, can
+    // wait until the search finds nothing.
     AccessibilityNodeInfoCompat nodeToFocus =
         TraversalStrategyUtils.searchFocus(
             localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);

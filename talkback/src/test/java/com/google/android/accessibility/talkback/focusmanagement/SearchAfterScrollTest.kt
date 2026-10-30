@@ -32,8 +32,9 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 /**
- * After a scroll, the next item is searched for from the node focused before it, without first
- * reading that node again from the app. So what it holds from before the scroll must not matter.
+ * After a scroll, the next item in reading order is searched for from the node focused before it,
+ * without first reading that node again from the app. So what it holds from before the scroll must
+ * not matter. A search up, down, left or right does use its bounds, so it reads the node first.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
