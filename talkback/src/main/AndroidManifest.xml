@@ -130,6 +130,18 @@
     <application
         android:supportsRtl="true">
 
+        <service
+            android:name="com.google.android.accessibility.talkback.update.UpdateDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <activity
+            android:name="com.google.android.accessibility.talkback.update.UpdateDownloadActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:label="@string/update_downloading"
+            android:theme="@style/Theme.UpdateDownload" />
+
         <!-- Keeps the on-device model download running and shows its progress. -->
         <service
             android:name="com.google.android.accessibility.talkback.actor.gemini.local.ModelDownloadService"

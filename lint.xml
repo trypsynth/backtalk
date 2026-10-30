@@ -192,6 +192,30 @@
         <ignore regexp="title_pref_gemini_api_key" />
         <ignore regexp="title_pref_speech_control" />
         <ignore regexp="update_wifi_download_failed" />
+        <ignore regexp="title_pref_check_for_updates" />
+        <ignore regexp="summary_pref_check_for_updates" />
+        <ignore regexp="title_pref_auto_update_check" />
+        <ignore regexp="summary_pref_auto_update_check" />
+        <ignore regexp="update_notification_title" />
+        <ignore regexp="update_notification_text" />
+        <ignore regexp="update_dialog_title" />
+        <ignore regexp="update_dialog_install" />
+        <ignore regexp="update_checking" />
+        <ignore regexp="update_up_to_date" />
+        <ignore regexp="update_check_failed" />
+        <ignore regexp="update_downloading" />
+        <ignore regexp="update_install_failed" />
+        <ignore regexp="update_install_canceled" />
+        <ignore regexp="update_allow_install" />
+        <ignore regexp="update_connecting" />
+        <ignore regexp="update_preparing" />
+        <ignore regexp="update_installing" />
+        <ignore regexp="update_confirm_install" />
+        <ignore regexp="update_installed" />
+        <ignore regexp="update_download_failed" />
+        <ignore regexp="update_download_interrupted" />
+        <ignore regexp="update_retry" />
+        <ignore regexp="update_download_progress" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
