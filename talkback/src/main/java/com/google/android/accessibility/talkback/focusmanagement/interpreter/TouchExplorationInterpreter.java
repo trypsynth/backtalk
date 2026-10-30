@@ -26,6 +26,7 @@ import android.view.accessibility.AccessibilityEvent;
 import androidx.annotation.Nullable;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.focusmanagement.action.TouchExplorationAction;
+import com.google.android.accessibility.talkback.gesture.EdgeMenuTouch;
 import com.google.android.accessibility.utils.AccessibilityEventListener;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.FeatureSupport;
@@ -134,7 +135,11 @@ public class TouchExplorationInterpreter implements AccessibilityEventListener {
         }
       }
       default -> {
-        if (SystemClock.uptimeMillis() - event.getEventTime() > LATE_HOVER_MS) {
+        if (EdgeMenuTouch.isOwned()) {
+          // An edge menu follows the finger; the items under it aren't explored.
+          pendingHover = null;
+          result = false;
+        } else if (SystemClock.uptimeMillis() - event.getEventTime() > LATE_HOVER_MS) {
           setHoverAside(event, eventId);
           result = false;
         } else {

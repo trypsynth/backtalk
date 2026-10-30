@@ -364,6 +364,9 @@
     <string name="pref_category_1finger_shortcuts_key" translatable="false">pref_category_1finger_shortcuts</string>
     <string name="pref_category_1finger_back_forth_shortcuts_key" translatable="false">pref_category_1finger_back_forth_shortcuts</string>
     <string name="pref_category_1finger_angle_shortcuts_key" translatable="false">pref_category_1finger_angle_shortcuts</string>
+    <string name="pref_category_edge_gestures_key" translatable="false">pref_category_edge_gestures</string>
+    <string name="pref_edge_left_screen_key" translatable="false">pref_edge_left_screen</string>
+    <string name="pref_edge_right_screen_key" translatable="false">pref_edge_right_screen</string>
     <string name="pref_category_2finger_shortcuts_key" translatable="false">pref_category_2finger_shortcuts</string>
     <string name="pref_category_3finger_shortcuts_key" translatable="false">pref_category_3finger_shortcuts</string>
     <string name="pref_category_4finger_shortcuts_key" translatable="false">pref_category_4finger_shortcuts</string>

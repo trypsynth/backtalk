@@ -44,6 +44,7 @@ import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.focusmanagement.action.TouchExplorationAction;
+import com.google.android.accessibility.talkback.gesture.EdgeMenuTouch;
 import com.google.android.accessibility.talkback.scripting.Scripts;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
@@ -414,7 +415,9 @@ public class FocusProcessorForTapAndTouchExploration {
     long currentTime = SystemClock.uptimeMillis();
 
     boolean result = false;
-    if (mayBeLiftToType
+    if (EdgeMenuTouch.isOwned()) {
+      // The finger lifted on an edge menu item, which the menu performs itself.
+    } else if (mayBeLiftToType
         && !isSplitTap
         && ((isEnableLiftToType() && supportsLiftToType(lastFocusableNodeBeingTouched))
             || shouldLiftToActivate(lastFocusableNodeBeingTouched))) {
@@ -506,7 +509,8 @@ public class FocusProcessorForTapAndTouchExploration {
 
     @Override
     protected void handleMessage(Message msg, FocusProcessorForTapAndTouchExploration parent) {
-      if (parent == null) {
+      if (parent == null || EdgeMenuTouch.isOwned()) {
+        // An edge menu took the touch over from the node under the finger.
         return;
       }
       switch (msg.what) {

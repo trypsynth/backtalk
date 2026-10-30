@@ -94,6 +94,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.UserManagerCompat;
@@ -188,6 +189,7 @@ import com.google.android.accessibility.talkback.gesture.GestureController;
 import com.google.android.accessibility.talkback.gesture.GestureHistory;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
 import com.google.android.accessibility.talkback.gesture.OtherTouchExplorers;
+import com.google.android.accessibility.talkback.gesture.ScreenPoint;
 import com.google.android.accessibility.talkback.gesture.TwoFingerRotationTracker;
 import com.google.android.accessibility.talkback.gesture.VibrationWatchGestureSettings;
 import com.google.android.accessibility.talkback.imagecaption.ImageCaptionStorage;
@@ -306,10 +308,12 @@ import com.google.android.accessibility.utils.output.EditTextActionHistory;
 import com.google.android.accessibility.utils.output.EmojiSpeech;
 import com.google.android.accessibility.utils.output.FailoverTextToSpeech;
 import com.google.android.accessibility.utils.output.FeedbackController;
+import com.google.android.accessibility.utils.output.FeedbackItem;
 import com.google.android.accessibility.utils.output.FeedbackProcessingUtils;
 import com.google.android.accessibility.utils.output.ScrollActionRecord;
 import com.google.android.accessibility.utils.output.SelectionStateReader;
 import com.google.android.accessibility.utils.output.SpeechController;
+import com.google.android.accessibility.utils.output.SpeechController.SpeakOptions;
 import com.google.android.accessibility.utils.output.SpeechController.UtteranceCompleteRunnable;
 import com.google.android.accessibility.utils.output.SpeechControllerImpl;
 import com.google.android.accessibility.utils.output.SpeechControllerImpl.CapitalLetterHandlingMethod;
@@ -1602,6 +1606,77 @@ public class TalkBackService extends AccessibilityServiceCompat
       return true;
     }
     return false;
+  }
+
+  /**
+   * Says the item of an edge menu that the finger reached, with the action {@code action}, or that
+   * lifting now cancels the menu with null.
+   */
+  public void onEdgeMenuItem(@Nullable String action) {
+    if (!isServiceActive() || PauseController.isPaused() || pipeline == null) {
+      return;
+    }
+    String text =
+        action == null
+            ? getString(R.string.radial_menu_cancel)
+            : GestureShortcutMapping.getActionString(this, action);
+    pipeline
+        .getFeedbackReturner()
+        .returnFeedback(
+            EVENT_ID_UNTRACKED,
+            Feedback.speech(
+                    text,
+                    SpeakOptions.create()
+                        .setQueueMode(SpeechController.QUEUE_MODE_INTERRUPT)
+                        .setFlags(
+                            FeedbackItem.FLAG_NO_HISTORY | FeedbackItem.FLAG_FORCE_FEEDBACK_ALL))
+                .vibration(R.array.view_actionable_pattern)
+                .sound(R.raw.focus_actionable));
+  }
+
+  /**
+   * Tells the user that the finger rests on an edge with a menu, so sliding it toward the middle
+   * opens the menu, and focuses the item under the finger at ({@code x}, {@code y}), as touch
+   * exploration would have.
+   */
+  public void onEdgeRest(float x, float y) {
+    if (!isServiceActive() || PauseController.isPaused() || pipeline == null) {
+      return;
+    }
+    pipeline
+        .getFeedbackReturner()
+        .returnFeedback(
+            EVENT_ID_UNTRACKED,
+            Feedback.sound(R.raw.radial_menu_1).vibration(R.array.view_clicked_pattern));
+    List<AccessibilityWindowInfo> windows = getWindows();
+    @Nullable AccessibilityNodeInfoCompat node =
+        windows == null ? null : ScreenPoint.focusableNodeAt(windows, (int) x, (int) y);
+    if (node != null) {
+      pipeline
+          .getInterpretationReceiver()
+          .input(
+              EVENT_ID_UNTRACKED,
+              Interpretation.Touch.create(
+                  node.isAccessibilityFocused()
+                      ? Interpretation.Touch.Action.TOUCH_FOCUSED_NODE
+                      : Interpretation.Touch.Action.TOUCH_UNFOCUSED_NODE,
+                  node));
+    }
+  }
+
+  /** Performs the action of an edge gesture, or of the edge menu item that the finger lifted on. */
+  public void performEdgeAction(String action) {
+    if (!isServiceActive() || PauseController.isPaused() || gestureController == null) {
+      return;
+    }
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onUserInteraction();
+    }
+    if (screenFocusRestorer != null) {
+      screenFocusRestorer.onUserInteraction();
+    }
+    getFeedbackController().playAuditory(R.raw.gesture_end, EVENT_ID_UNTRACKED);
+    gestureController.performAction(action, EVENT_ID_UNTRACKED);
   }
 
   private void provisionTouchExplore(boolean enabled) {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The accessibility actions of an item of an edge menu in the edge's settings. -->
+<resources>
+    <item name="edge_menu_item_move_up" type="id" />
+    <item name="edge_menu_item_move_down" type="id" />
+    <item name="edge_menu_item_remove" type="id" />
+</resources>

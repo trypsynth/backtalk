@@ -23,9 +23,11 @@ import static android.accessibilityservice.TouchInteractionController.STATE_DELE
 import static android.accessibilityservice.TouchInteractionController.STATE_DRAGGING;
 import static android.accessibilityservice.TouchInteractionController.STATE_TOUCH_EXPLORING;
 import static android.accessibilityservice.TouchInteractionController.STATE_TOUCH_INTERACTING;
+import static android.view.MotionEvent.ACTION_CANCEL;
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_POINTER_DOWN;
+import static android.view.MotionEvent.ACTION_UP;
 import static android.view.MotionEvent.INVALID_POINTER_ID;
 import static com.google.android.accessibility.talkback.PrimesController.TimerAction.TOUCH_EXPLORE_DELAY_100;
 import static com.google.android.accessibility.talkback.PrimesController.TimerAction.TOUCH_EXPLORE_DELAY_150;
@@ -60,6 +62,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.view.accessibility.AccessibilityWindowInfo;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -70,10 +73,17 @@ import com.google.android.accessibility.talkback.actor.DirectClick;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorForTapAndTouchExploration;
+import com.google.android.accessibility.talkback.gesture.Edge;
+import com.google.android.accessibility.talkback.gesture.EdgeGesture;
+import com.google.android.accessibility.talkback.gesture.EdgeGestureSettings;
+import com.google.android.accessibility.talkback.gesture.EdgeMenu;
+import com.google.android.accessibility.talkback.gesture.EdgeMenuTouch;
+import com.google.android.accessibility.talkback.gesture.ScreenPoint;
 import com.google.android.accessibility.talkback.gesture.TwoFingerRotationTracker;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityServiceCompatUtils;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
+import com.google.android.accessibility.utils.FormFactorUtils;
 import com.google.android.accessibility.utils.Performance;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
@@ -184,6 +194,39 @@ public class TouchInteractionMonitor
   private boolean clearGestureDetectorOnNextDown = false;
   // Recognizes two fingers turning around each other. A recognized rotation owns the whole touch.
   private final TwoFingerRotationTracker rotationTracker;
+  // The edge that the current touch started on, if edge gestures are on, or null.
+  private @Nullable Edge touchEdge;
+  // The hidden menu of an edge, which owns the touch from when the finger slides toward the middle.
+  private final EdgeMenu edgeMenu;
+  // The finger rests on an edge with a menu. Touch exploration would stop the motion events the
+  // menu needs, so this monitor keeps the touch until the finger slides inward or along the edge.
+  private boolean edgeRested = false;
+  // Where the finger rested on the edge, and how many fingers went down in this interaction.
+  private float edgeRestX;
+  private float edgeRestY;
+  private float lastTouchX;
+  private float lastTouchY;
+  private int downsInInteraction = 0;
+  // Read again on each touch, as the user may change it.
+  private float edgeWidthPixels;
+  private final float pixelsPerCm;
+  private final float edgeMenuMaxStepPixels;
+  private final float edgeMenuStartPixels;
+  // A double tap on an edge whose triple tap has an action waits for a third tap. While it waits,
+  // the double tap is kept here and a third tap close to it is taken by this monitor.
+  private static final int THIRD_TAP_NONE = 0;
+  private static final int THIRD_TAP_WAITING = 1;
+  private static final int THIRD_TAP_DOWN = 2;
+  // The third touch was no tap, so the double tap went ahead; ignore the rest of the touch.
+  private static final int THIRD_TAP_SWALLOWING = 3;
+  private int thirdTapState = THIRD_TAP_NONE;
+  private @Nullable Edge pendingTripleTapEdge;
+  private float pendingTapX;
+  private float pendingTapY;
+  private long thirdTapDownTime;
+  private final int doubleTapSlop;
+  private final int tapSlop;
+  private final Runnable pendingDoubleTapTimeout = this::flushPendingDoubleTap;
   // Whether double tap and double tap and hold will be dispatched to the service or handled in
   // the framework.
   private boolean serviceHandlesDoubleTap = false;
@@ -381,6 +424,29 @@ public class TouchInteractionMonitor
     passthroughTotalSlop = passthroughSlopMultiplier * touchSlop;
     rotationTracker =
         new TwoFingerRotationTracker(passthroughTotalSlop, touchSlop, this::onRotationStep);
+    tapSlop = touchSlop;
+    doubleTapSlop =
+        (int)
+            (ViewConfiguration.get(context).getScaledDoubleTapSlop()
+                * FeatureFlagReader.gestureDoubleTapSlopMultiplier(service));
+    edgeMenu =
+        new EdgeMenu(
+            new EdgeMenu.Listener() {
+              @Override
+              public void onItemFocused(@NonNull String action) {
+                mainHandler.post(() -> service.onEdgeMenuItem(action));
+              }
+
+              @Override
+              public void onCancelled() {
+                mainHandler.post(() -> service.onEdgeMenuItem(null));
+              }
+
+              @Override
+              public void onItemChosen(@NonNull String action) {
+                mainHandler.post(() -> service.performEdgeAction(action));
+              }
+            });
     sharedPreferences = prefs;
     typingFocusTimeout = FeatureFlagReader.typingFocusTimeout(service);
     touchFocusTimeout = FeatureFlagReader.touchFocusTimeout(service);
@@ -419,6 +485,10 @@ public class TouchInteractionMonitor
             + SWIPE_START_MARGIN_MS;
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     edgeSwipeHeightPixels = metrics.ydpi / GestureUtils.CM_PER_INCH * EDGE_SWIPE_HEIGHT_CM;
+    pixelsPerCm = metrics.xdpi / GestureUtils.CM_PER_INCH;
+    edgeWidthPixels = pixelsPerCm * EdgeGestureSettings.widthCm(prefs);
+    edgeMenuMaxStepPixels = pixelsPerCm * EdgeGestureSettings.MAX_MENU_STEP_CM;
+    edgeMenuStartPixels = pixelsPerCm * EdgeGestureSettings.MENU_START_CM;
 
     LogUtils.v(LOG_TAG, "Touch Slop: %s", touchSlop);
     previousState = STATE_CLEAR;
@@ -458,6 +528,10 @@ public class TouchInteractionMonitor
 
   public void stop() {
     stateInActive = false;
+    mainHandler.removeCallbacks(pendingDoubleTapTimeout);
+    thirdTapState = THIRD_TAP_NONE;
+    edgeMenu.clear();
+    edgeRested = false;
     context.unregisterComponentCallbacks(this);
     if (typingFocusTimeout || touchFocusTimeout) {
       sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
@@ -516,6 +590,8 @@ public class TouchInteractionMonitor
       int action = event.getActionMasked();
       if (action == ACTION_DOWN) {
         fingerDown = true;
+        // A new touch: touch exploration may handle it again, whatever the last one was.
+        EdgeMenuTouch.setOwned(false);
       } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
         fingerDown = false;
       }
@@ -526,6 +602,9 @@ public class TouchInteractionMonitor
       }
     } else {
       LogUtils.e(LOG_TAG, "Event is null.");
+      return;
+    }
+    if (handleThirdTap(event)) {
       return;
     }
     if (followingHeldTouch) {
@@ -540,6 +619,9 @@ public class TouchInteractionMonitor
       return;
     }
     receivedPointerTracker.onMotionEvent(event);
+    if (handleEdgeMenu(event)) {
+      return;
+    }
     if (handleRotation(event)) {
       return;
     }
@@ -747,6 +829,7 @@ public class TouchInteractionMonitor
 
   private void clear() {
     gestureStarted = false;
+    downsInInteraction = 0;
     clearGestureDetectorOnNextDown = false;
     rotationTracker.clear();
     stateChangeRequested = false;
@@ -1052,6 +1135,18 @@ public class TouchInteractionMonitor
     // Log isDefaultDisplay/gestureId/onGestureDetectedTime. The targetGestureTimeout is the current
     // time minus lastMotionEventTransmissionLatency
     Performance.getInstance().onGestureRecognized(eventId, gestureId);
+    @Nullable String edgeSwipe = edgeSwipeAction(gestureId);
+    if (edgeSwipe != null) {
+      dispatchEdgeActionAndClear(edgeSwipe);
+      return;
+    }
+    if (gestureId == AccessibilityService.GESTURE_DOUBLE_TAP
+        && serviceHandlesDoubleTap
+        && touchEdge != null
+        && edgeAction(touchEdge, EdgeGesture.TRIPLE_TAP) != null) {
+      deferDoubleTap(gestureEvent, touchEdge);
+      return;
+    }
     if (gestureId == AccessibilityService.GESTURE_DOUBLE_TAP) {
       if (serviceHandlesDoubleTap) {
         dispatchGestureToMainThreadAndClear(gestureEvent);
@@ -1194,6 +1289,240 @@ public class TouchInteractionMonitor
         new AccessibilityGestureEvent(gestureId, displayId, new ArrayList<MotionEvent>()));
   }
 
+  /**
+   * Passes the touch to the edge menu once the finger has rested on the edge and slid inward. A
+   * quick swipe off the edge doesn't rest, so it stays a swipe. Returns true if the event belongs
+   * to the menu or to the resting finger.
+   */
+  private boolean handleEdgeMenu(MotionEvent event) {
+    int action = event.getActionMasked();
+    if (action == ACTION_DOWN) {
+      edgeMenu.clear();
+      edgeRested = false;
+      downsInInteraction++;
+      edgeWidthPixels = pixelsPerCm * EdgeGestureSettings.widthCm(sharedPreferences);
+      @Nullable Edge edge =
+          EdgeGestureSettings.isEnabled(sharedPreferences) && !FormFactorUtils.isAndroidWear()
+              ? EdgeGestureSettings.edgeAt(event.getX(), screenWidth(), edgeWidthPixels)
+              : null;
+      // The keyboard's keys on the edges type when the finger lifts, which takes touch exploration.
+      touchEdge = edge != null && isOnKeyboard(event.getX(), event.getY()) ? null : edge;
+    }
+    lastTouchX = event.getX();
+    lastTouchY = event.getY();
+    if (action == ACTION_DOWN) {
+      return false;
+    }
+    if (edgeMenu.isOpen()) {
+      switch (action) {
+        case ACTION_MOVE -> edgeMenu.move(event.getX());
+        case ACTION_POINTER_DOWN -> edgeMenu.abandon();
+        case ACTION_UP -> edgeMenu.lift();
+        case ACTION_CANCEL -> edgeMenu.clear();
+        default -> {}
+      }
+      return true;
+    }
+    if (!edgeRested || touchEdge == null) {
+      return false;
+    }
+    switch (action) {
+      case ACTION_MOVE -> {
+        if (edgeMenu.open(
+            touchEdge,
+            event.getX(),
+            EdgeGestureSettings.menuActions(sharedPreferences, touchEdge, unassignedAction()),
+            screenWidth(),
+            edgeWidthPixels,
+            edgeRestX,
+            edgeMenuStartPixels,
+            edgeMenuMaxStepPixels)) {
+          edgeRested = false;
+          if (LogUtils.shouldLog(Log.DEBUG)) {
+            Log.d(DEBUG_GESTURE_TAG, "Edge menu opened on " + touchEdge);
+          }
+          gestureDetector.clear();
+          // The matchers miss the rest of this touch, so a new touch in this interaction starts
+          // them over.
+          clearGestureDetectorOnNextDown = true;
+          return true;
+        }
+        if (Math.abs(event.getY() - edgeRestY) > 2 * tapSlop) {
+          // The finger explores along the edge, so the items there are explored as anywhere else.
+          edgeRested = false;
+          requestTouchExploration("edgeExplore");
+          return true;
+        }
+      }
+      // A second finger landed: the touch is handled as anywhere else, as a gesture, a scroll or a
+      // drag. A lift leaves the item that the finger rested on focused.
+      case ACTION_POINTER_DOWN, ACTION_UP, ACTION_CANCEL -> edgeRested = false;
+      default -> {}
+    }
+    // The gesture matchers follow the resting finger, for a second finger that may land.
+    return false;
+  }
+
+  /**
+   * Keeps a finger resting on an edge with a menu from starting touch exploration, which would stop
+   * the motion events the menu needs, and focuses the item under it instead. Returns true if it
+   * did.
+   */
+  private boolean restOnEdge() {
+    if (touchEdge == null
+        || state != STATE_TOUCH_INTERACTING
+        || !fingerDown
+        || downsInInteraction != 1
+        || receivedPointerTracker.getReceivedPointerDownCount() != 1
+        || EdgeGestureSettings.edgeAt(lastTouchX, screenWidth(), edgeWidthPixels) != touchEdge
+        || EdgeGestureSettings.menuActions(sharedPreferences, touchEdge, unassignedAction())
+            .isEmpty()) {
+      return false;
+    }
+    if (LogUtils.shouldLog(Log.DEBUG)) {
+      Log.d(DEBUG_GESTURE_TAG, "Finger rests on " + touchEdge);
+    }
+    edgeRested = true;
+    edgeRestX = lastTouchX;
+    edgeRestY = lastTouchY;
+    requestTouchExplorationDelayed.cancel();
+    float x = lastTouchX;
+    float y = lastTouchY;
+    mainHandler.post(() -> service.onEdgeRest(x, y));
+    return true;
+  }
+
+  private boolean isOnKeyboard(float x, float y) {
+    List<AccessibilityWindowInfo> windows = service.getWindows();
+    return windows != null && ScreenPoint.isOnKeyboard(windows, (int) x, (int) y);
+  }
+
+  /** Returns the action that the edge where the touch started has for {@code gestureId}. */
+  private @Nullable String edgeSwipeAction(int gestureId) {
+    if (touchEdge == null) {
+      return null;
+    }
+    return switch (gestureId) {
+      case GESTURE_SWIPE_UP -> edgeAction(touchEdge, EdgeGesture.SWIPE_UP);
+      case GESTURE_SWIPE_DOWN -> edgeAction(touchEdge, EdgeGesture.SWIPE_DOWN);
+      default -> null;
+    };
+  }
+
+  private @Nullable String edgeAction(Edge edge, EdgeGesture gesture) {
+    if (!EdgeGestureSettings.isEnabled(sharedPreferences)) {
+      return null;
+    }
+    return EdgeGestureSettings.action(sharedPreferences, edge, gesture, unassignedAction());
+  }
+
+  private String unassignedAction() {
+    return context.getString(R.string.shortcut_value_unassigned);
+  }
+
+  private float screenWidth() {
+    return context.getResources().getDisplayMetrics().widthPixels;
+  }
+
+  /** Performs the action of an edge gesture in place of the gesture's own action. */
+  private void dispatchEdgeActionAndClear(String action) {
+    mainHandler.post(() -> service.performEdgeAction(action));
+    clear();
+    clearGestureDetectorOnNextDown = true;
+  }
+
+  /**
+   * Holds back a double tap on {@code edge}, whose triple tap has an action, for the time allowed
+   * between taps. A third tap close to it in that time performs the triple tap's action instead.
+   */
+  private void deferDoubleTap(AccessibilityGestureEvent gestureEvent, Edge edge) {
+    List<MotionEvent> events = gestureEvent.getMotionEvents();
+    if (!events.isEmpty()) {
+      // The event may be recycled after this call, so only its place is kept.
+      MotionEvent last = events.get(events.size() - 1);
+      pendingTapX = last.getX();
+      pendingTapY = last.getY();
+    }
+    pendingTripleTapEdge = edge;
+    thirdTapState = THIRD_TAP_WAITING;
+    mainHandler.removeCallbacks(pendingDoubleTapTimeout);
+    mainHandler.postDelayed(pendingDoubleTapTimeout, GestureConfiguration.getMultiTapTimeoutMs());
+    clear();
+    clearGestureDetectorOnNextDown = true;
+  }
+
+  /** Performs the double tap that was held back for a third tap. */
+  private void flushPendingDoubleTap() {
+    mainHandler.removeCallbacks(pendingDoubleTapTimeout);
+    if (pendingTripleTapEdge == null) {
+      return;
+    }
+    pendingTripleTapEdge = null;
+    if (thirdTapState == THIRD_TAP_WAITING) {
+      thirdTapState = THIRD_TAP_NONE;
+    }
+    dispatchGestureToMainThread(
+        new AccessibilityGestureEvent(GESTURE_DOUBLE_TAP, displayId, new ArrayList<MotionEvent>()));
+  }
+
+  /**
+   * Takes the third tap after a double tap that waits for one. Returns true if the event belongs to
+   * it, so nothing else may handle it.
+   */
+  private boolean handleThirdTap(MotionEvent event) {
+    int action = event.getActionMasked();
+    switch (thirdTapState) {
+      case THIRD_TAP_WAITING -> {
+        if (action != ACTION_DOWN) {
+          return false;
+        }
+        if (Math.hypot(event.getX() - pendingTapX, event.getY() - pendingTapY) > doubleTapSlop) {
+          // A touch somewhere else: the double tap goes ahead, and this touch is a new one.
+          flushPendingDoubleTap();
+          return false;
+        }
+        mainHandler.removeCallbacks(pendingDoubleTapTimeout);
+        thirdTapState = THIRD_TAP_DOWN;
+        thirdTapDownTime = event.getEventTime();
+        return true;
+      }
+      case THIRD_TAP_DOWN -> {
+        if (action == ACTION_UP) {
+          thirdTapState = THIRD_TAP_NONE;
+          @Nullable Edge edge = pendingTripleTapEdge;
+          @Nullable String tripleTapAction =
+              edge == null ? null : edgeAction(edge, EdgeGesture.TRIPLE_TAP);
+          if (tripleTapAction != null
+              && event.getEventTime() - thirdTapDownTime < ViewConfiguration.getLongPressTimeout()) {
+            mainHandler.removeCallbacks(pendingDoubleTapTimeout);
+            pendingTripleTapEdge = null;
+            mainHandler.post(() -> service.performEdgeAction(tripleTapAction));
+          } else {
+            flushPendingDoubleTap();
+          }
+        } else if (action == ACTION_POINTER_DOWN
+            || action == ACTION_CANCEL
+            || (action == ACTION_MOVE
+                && Math.hypot(event.getX() - pendingTapX, event.getY() - pendingTapY)
+                    > doubleTapSlop + tapSlop)) {
+          // Not a tap after all.
+          thirdTapState = action == ACTION_CANCEL ? THIRD_TAP_NONE : THIRD_TAP_SWALLOWING;
+          flushPendingDoubleTap();
+        }
+        return true;
+      }
+      case THIRD_TAP_SWALLOWING -> {
+        if (action == ACTION_UP || action == ACTION_CANCEL) {
+          thirdTapState = THIRD_TAP_NONE;
+        }
+        return true;
+      }
+      default -> {
+        return false;
+      }
+    }
+  }
+
   /** Dispatch a gesture event to the main thread of the service, but do not clear state. */
   private void dispatchGestureToMainThread(AccessibilityGestureEvent gestureEvent) {
     mainHandler.post(
@@ -1210,6 +1539,9 @@ public class TouchInteractionMonitor
           && state == STATE_TOUCH_INTERACTING) {
         keepMonitorTouchExplore = false;
         requestTouchExplorationDelayed.cancel();
+        if (restOnEdge()) {
+          return;
+        }
         requestTouchExploration("onGestureCancelled");
       }
     }
@@ -1476,6 +1808,9 @@ public class TouchInteractionMonitor
 
     @Override
     public void run() {
+      if (restOnEdge()) {
+        return;
+      }
       if (timerAction != null) {
         primesController.recordDuration(timerAction, startTime, SystemClock.uptimeMillis());
       }

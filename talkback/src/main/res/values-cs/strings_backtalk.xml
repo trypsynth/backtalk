@@ -133,4 +133,21 @@
     <string name="title_pref_restore_focus_on_back">Obnovit zaměření při návratu zpět</string>
     <!-- Phone Advanced settings summary: return to the remembered item on the previous screen. -->
     <string name="summary_pref_restore_focus_on_back">Při návratu zpět na obrazovku přejít na poslední zaměřenou položku.</string>
+
+    <!-- Edge gestures. -->
+    <string name="title_pref_category_edge_gestures">Gesta od okraje</string>
+    <string name="title_pref_edge_gestures">Gesta od okraje</string>
+    <string name="summary_pref_edge_gestures">Gesta začínající na levém nebo pravém okraji obrazovky mají vlastní akce. Podržte prst na okraji, dokud neuslyšíte zvuk nabídky, pak ho posuňte ke středu, uslyšíte nabídku okraje, a zvednutím prstu na položce ji provedete. Položky na okraji prozkoumáte posouváním prstu podél něj. Dvojité klepnutí na okraj funguje jako kdekoli jinde. Vyžaduje zapnutou možnost Zpracování gest v aplikaci Backtalk.</string>
+    <string name="title_pref_edge_left">Levý okraj</string>
+    <string name="title_pref_edge_right">Pravý okraj</string>
+    <string name="title_pref_category_edge_gesture_actions">Gesta na tomto okraji</string>
+    <string name="title_pref_edge_triple_tap">Trojité klepnutí</string>
+    <string name="summary_pref_edge_menu_item">Nabídka okraje</string>
+    <string name="title_pref_edge_width">Šířka okraje</string>
+    <string name="template_edge_width_cm"><xliff:g id="width" example="1,25">%1$s</xliff:g> cm</string>
+    <string name="title_pref_edge_menu_add">Přidat do nabídky okraje</string>
+    <string name="edge_menu_item_change">Změnit akci</string>
+    <string name="edge_menu_item_move_up">Posunout výš</string>
+    <string name="edge_menu_item_move_down">Posunout níž</string>
+    <string name="edge_menu_item_remove">Odstranit</string>
 </resources>

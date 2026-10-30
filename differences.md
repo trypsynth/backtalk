@@ -334,6 +334,20 @@ Each step of 30 degrees, a twelfth of a turn, moves one reading control, so you 
 
 The rotor requires Android 13 or later and **Handle gestures in Backtalk** turned on. You can assign other actions to **Rotate clockwise with 2 fingers** and **Rotate counterclockwise with 2 fingers** in gesture settings.
 
+### Edge gestures
+
+The left and right edges of the screen can each have actions of their own. To set them up, go to gesture settings, turn on **Edge gestures**, and open **Left edge** or **Right edge**. Each edge is a strip 1 cm wide. To change that, move the **Edge width** slider, from 0.5 cm to 2 cm in steps of 0.25 cm.
+
+Each edge has a hidden menu of up to 10 actions. Rest a finger on the edge until you hear the menu sound, then slide it toward the middle of the screen without lifting it. Backtalk says the first item of the menu once your finger has slid 0.5 cm from where it rested, however wide the edge is, and each next item as you slide further. Lift your finger to perform the item you're on, or slide back to where it rested and lift to cancel. The steps between items are 1 cm wide, or narrower when that many items wouldn't fit across the screen.
+
+To add an item to the menu, choose **Add to edge menu**, after the gestures of the edge, and choose its action. The items you have added are listed after the gestures, in their order, above **Add to edge menu**. Each item has the actions **Move up**, **Move down**, and **Remove**, and tapping it lists them too, with **Change action**.
+
+When your finger rests on an edge that has a menu, Backtalk plays the menu sound and says the item under your finger, as exploring by touch would. It doesn't explore by touch there, because Android stops telling Backtalk where the finger is once exploring starts. To explore the items along that edge, slide your finger up or down, and Backtalk explores as anywhere else. Lifting your finger on the edge leaves the item it rested on focused, but **Lift to activate** doesn't activate it there. Double-tapping the edge activates the focused item, a quick swipe from the edge that doesn't rest on it first is still an ordinary swipe, and a gesture with two fingers that starts after one finger rested on the edge is recognized. An edge without menu items is explored as before, and so is the keyboard, so its keys on the edges type as usual. Swipe up, swipe down, and triple-tap on the keyboard don't have the edge's actions either.
+
+You can also give **Swipe up**, **Swipe down**, and **Triple-tap** with one finger an action of their own on each edge. These replace the gesture's usual action only when it starts on that edge; a gesture without an action on the edge does what it does elsewhere. While an edge has a triple tap, a double tap on that edge waits for the time between taps before it activates the item, in case a third tap follows.
+
+Edge gestures require Android 13 or later and **Handle gestures in Backtalk** turned on. They are off by default, and they aren't on Wear OS watches.
+
 ### Lift to activate
 
 Backtalk can activate the item under your finger when you lift your finger after exploring by touch, as TalkBack already does for keys on the keyboard. In **Controls** > **Touch and activation** > **Lift to activate**, choose **Only on navigation bar** to use it for the Back, Home, and Overview buttons only, or **Entire screen** to use it everywhere. It's **Disabled** by default. With **Only on navigation bar**, a single tap presses the button, and Backtalk says which one, such as "Back" or "Home". To stop this, turn off **Controls** > **Touch and activation** > **Speak navigation bar buttons**.

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the category in gesture settings for gestures that start on the left or right edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_category_edge_gestures">Edge gestures</string>
+    <!-- Title of the switch that turns edge gestures on. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_gestures">Edge gestures</string>
+    <!-- Summary of the switch that turns edge gestures on. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_edge_gestures">Give gestures that start on the left or right edge actions of their own. Rest a finger on an edge until you hear the menu sound, then slide it toward the middle to hear the edge menu, and lift on an item to perform it. To explore the items on an edge, slide along it. Double-tapping an edge still works as anywhere else. Requires Handle gestures in Backtalk.</string>
+    <!-- Title of the slider that sets how wide the left and right edges of the screen are. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_width">Edge width</string>
+    <!-- The width of the screen edges, in centimeters, such as "1.25 cm". [CHAR LIMIT=20] -->
+    <string name="template_edge_width_cm"><xliff:g id="width" example="1.25">%1$s</xliff:g> cm</string>
+    <!-- Title of the screen with the actions of the left edge. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_left">Left edge</string>
+    <!-- Title of the screen with the actions of the right edge. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_right">Right edge</string>
+    <!-- Title of the category of gestures on one edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_category_edge_gesture_actions">Gestures on this edge</string>
+    <!-- Title of the setting for a one-finger triple tap on an edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_triple_tap">Triple-tap</string>
+    <!-- Summary of an item of the hidden menu of an edge, listed after the edge's gestures under the item's action. [CHAR LIMIT=40] -->
+    <string name="summary_pref_edge_menu_item">Edge menu</string>
+    <!-- Title of the setting after an edge's gestures and menu items that adds an item to the edge's hidden menu. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_menu_add">Add to edge menu</string>
+    <!-- Option of an item of an edge menu that chooses another action for it. [CHAR LIMIT=40] -->
+    <string name="edge_menu_item_change">Change action</string>
+    <!-- Option and accessibility action of an item of an edge menu that moves it one place up. [CHAR LIMIT=40] -->
+    <string name="edge_menu_item_move_up">Move up</string>
+    <!-- Option and accessibility action of an item of an edge menu that moves it one place down. [CHAR LIMIT=40] -->
+    <string name="edge_menu_item_move_down">Move down</string>
+    <!-- Option and accessibility action of an item of an edge menu that removes it from the menu. [CHAR LIMIT=40] -->
+    <string name="edge_menu_item_remove">Remove</string>
+</resources>

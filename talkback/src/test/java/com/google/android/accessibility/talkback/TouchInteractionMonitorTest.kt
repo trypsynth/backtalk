@@ -18,6 +18,7 @@ package com.google.android.accessibility.talkback
 
 import android.accessibilityservice.AccessibilityGestureEvent
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityService.GESTURE_2_FINGER_SWIPE_UP
 import android.accessibilityservice.AccessibilityService.GESTURE_DOUBLE_TAP
 import android.accessibilityservice.AccessibilityService.GESTURE_SWIPE_RIGHT
 import android.accessibilityservice.AccessibilityService.GestureResultCallback
@@ -28,6 +29,7 @@ import android.accessibilityservice.TouchInteractionController.STATE_DELEGATING
 import android.accessibilityservice.TouchInteractionController.STATE_TOUCH_EXPLORING
 import android.accessibilityservice.TouchInteractionController.STATE_TOUCH_INTERACTING
 import android.graphics.Point
+import android.graphics.Rect
 import android.hardware.display.DisplayManager
 import android.os.Handler
 import android.os.Looper
@@ -38,12 +40,18 @@ import android.view.KeyCharacterMap
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_MOVE
+import android.view.MotionEvent.ACTION_POINTER_DOWN
+import android.view.MotionEvent.ACTION_POINTER_UP
 import android.view.MotionEvent.ACTION_UP
 import android.view.ViewConfiguration
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.google.android.accessibility.talkback.actor.DirectClick
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics
+import com.google.android.accessibility.talkback.gesture.Edge
+import com.google.android.accessibility.talkback.gesture.EdgeGestureSettings
+import com.google.android.accessibility.utils.FormFactorUtils
 import com.google.android.accessibility.utils.SharedPreferencesUtils
 import java.time.Duration
 import org.junit.After
@@ -82,6 +90,24 @@ class TouchInteractionMonitorTest {
     override fun onGestureDetectionStarted() {
       threads.add(Thread.currentThread())
     }
+
+    val edgeEvents = mutableListOf<String>()
+
+    override fun onEdgeRest(x: Float, y: Float) {
+      edgeEvents += "ready"
+    }
+
+    var windowsOnScreen = listOf<AccessibilityWindowInfo>()
+
+    override fun getWindows(): List<AccessibilityWindowInfo> = windowsOnScreen
+
+    override fun onEdgeMenuItem(action: String?) {
+      edgeEvents += "item $action"
+    }
+
+    override fun performEdgeAction(action: String) {
+      edgeEvents += "perform $action"
+    }
   }
 
   /** Records the threads that ask the controller for touch exploration. */
@@ -115,6 +141,7 @@ class TouchInteractionMonitorTest {
       setBoolean(null, false)
     }
     service = Robolectric.buildService(RecordingService::class.java).get()
+    FormFactorUtils.initialize(service)
     controller =
       TouchInteractionController::class
         .java
@@ -184,6 +211,53 @@ class TouchInteractionMonitorTest {
       downTime = eventTime
     }
     val event = MotionEvent.obtain(downTime, eventTime, action, x, y, 0)
+    main.postAtTime({ callController("onMotionEvent", MotionEvent::class.java, event) }, eventTime)
+  }
+
+  /**
+   * Two fingers touch at ([x], [y]) and ([x2], [y2]) [timeMs] after the start, the second one
+   * being the one that lands or lifts with [action] ACTION_POINTER_DOWN or ACTION_POINTER_UP.
+   */
+  private fun twoFingersAt(action: Int, x: Float, y: Float, x2: Float, y2: Float, timeMs: Long) {
+    val eventTime = start + timeMs
+    val properties =
+      Array(2) { index ->
+        MotionEvent.PointerProperties().apply {
+          id = index
+          toolType = MotionEvent.TOOL_TYPE_FINGER
+        }
+      }
+    val coords =
+      arrayOf(
+        MotionEvent.PointerCoords().apply {
+          this.x = x
+          this.y = y
+        },
+        MotionEvent.PointerCoords().apply {
+          this.x = x2
+          this.y = y2
+        },
+      )
+    val maskedAction =
+      if (action == ACTION_MOVE) action
+      else action or (1 shl MotionEvent.ACTION_POINTER_INDEX_SHIFT)
+    val event =
+      MotionEvent.obtain(
+        downTime,
+        eventTime,
+        maskedAction,
+        2,
+        properties,
+        coords,
+        0,
+        0,
+        1f,
+        1f,
+        0,
+        0,
+        InputDevice.SOURCE_TOUCHSCREEN,
+        0,
+      )
     main.postAtTime({ callController("onMotionEvent", MotionEvent::class.java, event) }, eventTime)
   }
 
@@ -478,5 +552,120 @@ class TouchInteractionMonitorTest {
     assertTrue(TouchInteractionMonitor.isFingerDown())
     assertFalse(monitor.isReadyForDirectClick())
     assertEquals(listOf<GestureDescription>(), pressGestures)
+  }
+
+  /** Turns edge gestures on, with [actions] in the menu of the left edge. */
+  private fun useLeftEdgeMenu(vararg actions: String) {
+    val prefs = SharedPreferencesUtils.getSharedPreferences(service)
+    prefs.edit().putBoolean(EdgeGestureSettings.PREF_ENABLED, true).commit()
+    EdgeGestureSettings.setMenuActions(prefs, Edge.LEFT, actions.toList())
+  }
+
+  @Test
+  fun aFingerRestingOnAnEdgeWithAMenuOpensTheMenuRatherThanExploring() {
+    useLeftEdgeMenu("first", "second")
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 200f, 0)
+    runUntil(250)
+    // Touch exploration would stop the moves from coming in, so the touch stays with the monitor.
+    assertEquals(listOf<Thread>(), reporter.requests)
+    assertEquals(listOf("ready"), service.edgeEvents)
+
+    touchAt(ACTION_MOVE, 80f, 200f, 260)
+    touchAt(ACTION_MOVE, 150f, 200f, 280)
+    touchAt(ACTION_UP, 150f, 200f, 300)
+    runUntil(350)
+
+    assertEquals(listOf<Thread>(), reporter.requests)
+    assertEquals(
+      listOf("ready", "item first", "item second", "perform second"),
+      service.edgeEvents,
+    )
+  }
+
+  @Test
+  fun aWideEdgeOpensTheMenuSoonAfterWhereTheFingerRested() {
+    useLeftEdgeMenu("first", "second")
+    val prefs = SharedPreferencesUtils.getSharedPreferences(service)
+    prefs
+      .edit()
+      .putInt(EdgeGestureSettings.PREF_WIDTH, EdgeGestureSettings.MAX_WIDTH_QUARTERS)
+      .commit()
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 200f, 0)
+    runUntil(250)
+    // Still well inside the 2 cm edge, but 0.5 cm from where the finger rested.
+    touchAt(ACTION_MOVE, 40f, 200f, 260)
+    touchAt(ACTION_UP, 40f, 200f, 280)
+    runUntil(330)
+
+    assertEquals(listOf<Thread>(), reporter.requests)
+    assertEquals(listOf("ready", "item first", "perform first"), service.edgeEvents)
+  }
+
+  @Test
+  fun aFingerRestingOnAnEdgeExploresOnceItSlidesAlongTheEdge() {
+    useLeftEdgeMenu("first")
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 200f, 0)
+    runUntil(250)
+    touchAt(ACTION_MOVE, 2f, 300f, 260)
+    runUntil(270)
+
+    assertEquals(listOf(mainThread), reporter.requests)
+    assertEquals(listOf("ready"), service.edgeEvents)
+  }
+
+  @Test
+  fun aFingerRestingOnAnEdgeWithoutAMenuExploresAsAnywhereElse() {
+    useLeftEdgeMenu()
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 200f, 0)
+    runUntil(250)
+
+    assertEquals(listOf(mainThread), reporter.requests)
+    assertEquals(listOf<String>(), service.edgeEvents)
+  }
+
+  @Test
+  fun aTwoFingerGestureThatStartsAfterRestingOnAnEdgeIsRecognized() {
+    useLeftEdgeMenu("first")
+    // Otherwise the swipe would be a scroll that goes to the app.
+    monitor.setTwoFingerPassthroughEnabled(false)
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 400f, 0)
+    runUntil(185)
+    assertEquals(listOf("ready"), service.edgeEvents)
+
+    // The second finger lands within the time a two-finger swipe allows between the fingers.
+    twoFingersAt(ACTION_POINTER_DOWN, 2f, 400f, 102f, 400f, 190)
+    for (step in 1..6) {
+      val y = 400f - 40f * step
+      twoFingersAt(ACTION_MOVE, 2f, y, 102f, y, 190L + 15 * step)
+    }
+    twoFingersAt(ACTION_POINTER_UP, 2f, 160f, 102f, 160f, 290)
+    touchAt(ACTION_UP, 2f, 160f, 300)
+    runUntil(600)
+
+    assertEquals(listOf(GESTURE_2_FINGER_SWIPE_UP), service.gestures)
+    assertEquals(listOf("ready"), service.edgeEvents)
+  }
+
+  @Test
+  fun theKeyboardOnAnEdgeIsExploredAsAnywhereElse() {
+    useLeftEdgeMenu("first")
+    service.windowsOnScreen =
+      listOf(
+        AccessibilityWindowInfo.obtain().apply {
+          shadowOf(this).setType(AccessibilityWindowInfo.TYPE_INPUT_METHOD)
+          shadowOf(this).setBoundsInScreen(Rect(0, 150, 480, 400))
+        }
+      )
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 2f, 200f, 0)
+    runUntil(250)
+
+    assertEquals(listOf(mainThread), reporter.requests)
+    assertEquals(listOf<String>(), service.edgeEvents)
   }
 }

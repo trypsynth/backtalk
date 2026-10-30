@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The right edge's gestures and hidden menu. Keys must match EdgeGestureSettings. The menu
+     items, and the item that adds one, are added after the gestures in EdgeGesturesFragment. They
+     can't have a category of their own, which would be empty here and so be filtered out. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
+      android:key="pref_category_edge_right_gestures"
+      android:title="@string/title_pref_category_edge_gesture_actions">
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/shortcut_value_unassigned"
+        android:key="pref_edge_right_swipe_up"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_up"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/shortcut_value_unassigned"
+        android:key="pref_edge_right_swipe_down"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_down"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/shortcut_value_unassigned"
+        android:key="pref_edge_right_triple_tap"
+        android:summary="%s"
+        android:title="@string/title_pref_edge_triple_tap"/>
+  </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
+</PreferenceScreen>

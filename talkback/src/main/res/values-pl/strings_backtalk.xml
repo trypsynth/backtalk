@@ -683,4 +683,19 @@
   <string name="new_theme_exists">Temat o tej nazwie już istnieje.</string>
   <string name="new_theme_needs_name">Wpisz nazwę.</string>
   <string name="sound_theme_customisation">Dostosowywanie dźwięków</string>
+  <string name="title_pref_category_edge_gestures">Gesty krawędziowe</string>
+  <string name="title_pref_edge_gestures">Gesty krawędziowe</string>
+  <string name="summary_pref_edge_gestures">Gesty zaczęte na lewej lub prawej krawędzi ekranu mają własne akcje. Przytrzymaj palec na krawędzi, aż usłyszysz dźwięk menu, potem przesuń go w stronę środka, aby usłyszeć menu krawędziowe, i podnieś go na pozycji, aby ją wykonać. Aby eksplorować elementy na krawędzi, przesuwaj palec wzdłuż niej. Dwukrotne dotknięcie krawędzi działa jak wszędzie indziej. Wymaga włączenia opcji Używaj gestów w Backtalku.</string>
+  <string name="title_pref_edge_left">Lewa krawędź</string>
+  <string name="title_pref_edge_right">Prawa krawędź</string>
+  <string name="title_pref_category_edge_gesture_actions">Gesty na tej krawędzi</string>
+  <string name="title_pref_edge_triple_tap">Trzykrotne dotknięcie</string>
+  <string name="summary_pref_edge_menu_item">Menu krawędziowe</string>
+  <string name="title_pref_edge_width">Szerokość krawędzi</string>
+  <string name="template_edge_width_cm">%1$s cm</string>
+  <string name="title_pref_edge_menu_add">Dodaj do menu krawędziowego</string>
+  <string name="edge_menu_item_change">Zmień akcję</string>
+  <string name="edge_menu_item_move_up">Przesuń wyżej</string>
+  <string name="edge_menu_item_move_down">Przesuń niżej</string>
+  <string name="edge_menu_item_remove">Usuń</string>
 </resources>

@@ -192,6 +192,23 @@
         <ignore regexp="title_pref_gemini_api_key" />
         <ignore regexp="title_pref_speech_control" />
         <ignore regexp="update_wifi_download_failed" />
+        <ignore regexp="title_pref_category_edge_gestures" />
+        <ignore regexp="title_pref_edge_gestures" />
+        <ignore regexp="summary_pref_edge_gestures" />
+        <ignore regexp="title_pref_edge_left" />
+        <ignore regexp="title_pref_edge_right" />
+        <ignore regexp="title_pref_category_edge_gesture_actions" />
+        <ignore regexp="title_pref_edge_triple_tap" />
+        <ignore regexp="title_pref_category_edge_menu" />
+        <ignore regexp="template_pref_edge_menu_item" />
+        <ignore regexp="title_pref_edge_width" />
+        <ignore regexp="template_edge_width_cm" />
+        <ignore regexp="title_pref_edge_menu_add" />
+        <ignore regexp="summary_pref_edge_menu_item" />
+        <ignore regexp="edge_menu_item_change" />
+        <ignore regexp="edge_menu_item_move_up" />
+        <ignore regexp="edge_menu_item_move_down" />
+        <ignore regexp="edge_menu_item_remove" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
