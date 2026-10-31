@@ -1637,6 +1637,8 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   void undoSwipeEarly() {
     interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
+    AccessibilityNodeInfoCompat movedTo =
+        accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
     if (earlySwipeNavigation != null) {
       // A scroll the swipe started must not move focus on when it ends.
       earlySwipeNavigation.cancelAutoScrollFocus();
@@ -1657,6 +1659,11 @@ public class TalkBackService extends AccessibilityServiceCompat
                       .setSourceAction(FocusActionInfo.FOCUS_SYNCHRONIZATION)
                       .setForceMuteFeedback(true)
                       .build()));
+    }
+    // A swipe and hold is performed straight after this, before the app's focus event updates
+    // Android's copy of where focus is, and would otherwise move on from the item undone.
+    if (movedTo != null && BuildVersionUtils.isAtLeastT()) {
+      clearCachedSubtree(movedTo.unwrap());
     }
     earlySwipePivot = null;
   }
