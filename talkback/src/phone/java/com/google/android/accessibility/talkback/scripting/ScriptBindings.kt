@@ -27,18 +27,20 @@ private constructor(
   val menu: List<BoundCommand>,
   val controls: List<BoundCommand>,
   val navigation: List<BoundNavigation>,
+  val voice: Map<String, BoundCommand>,
 ) {
   val layers: Set<ScriptInput.Keys> =
     keys.keys.filter { it.next != null }.mapTo(HashSet()) { it.first }
 
   companion object {
-    val EMPTY = ScriptBindings(emptyMap(), emptyMap(), emptyList(), emptyList(), emptyList())
+    val EMPTY = ScriptBindings(emptyMap(), emptyMap(), emptyList(), emptyList(), emptyList(), emptyMap())
 
     fun of(runtimes: List<ScriptRuntime>, store: ScriptStore): ScriptBindings {
       val gestures = HashMap<String, BoundCommand>()
       val keys = HashMap<ScriptInput.Keys, BoundCommand>()
       val menu = mutableListOf<BoundCommand>()
       val controls = mutableListOf<BoundCommand>()
+      val voice = HashMap<String, BoundCommand>()
       for (runtime in runtimes) {
         val commands = runtime.script.manifest.commands.filter { it.id in runtime.commands }
         if (commands.isEmpty() || !runtime.allowed(ScriptPermission.INPUT, "Commands")) continue
@@ -49,6 +51,7 @@ private constructor(
             when (binding) {
               is CommandBinding.Gesture -> gestures.putIfAbsent(binding.name, bound)
               is CommandBinding.KeyCombo -> keys.putIfAbsent(binding.keys, bound)
+              is CommandBinding.Voice -> voice.putIfAbsent(binding.phrase.trim().lowercase(), bound)
               CommandBinding.MenuItem -> menu += bound
               CommandBinding.ReadingControl -> controls += bound
             }
@@ -66,7 +69,7 @@ private constructor(
               BoundNavigation(runtime, index, item)
             }
           }
-      return ScriptBindings(gestures, keys, menu, controls, navigation)
+      return ScriptBindings(gestures, keys, menu, controls, navigation, voice)
     }
   }
 }

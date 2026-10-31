@@ -248,8 +248,8 @@ A command is something the user runs. Declare it in the manifest, and give it at
 
 ```js
 commands: [
-  { id: 'unread', title: 'Next unread', gesture: 'swipeUpThenRight', keys: 'backtalk+u' },
-  { id: 'summary', title: 'Read summary', menu: true },
+  { id: 'unread', title: 'Next unread', gesture: 'swipeUpThenRight', keys: 'backtalk+u', voice: 'next unread' },
+  { id: 'summary', title: 'Read summary', menu: true, voice: ['read summary', 'summarize'] },
   { id: 'messages', title: 'Messages', control: true },
 ],
 ```
@@ -258,18 +258,37 @@ commands: [
 *   `keys` is keys or a list. Keys start with `backtalk`, Backtalk's modifier key, then any of `shift`, `ctrl`, `alt` and `meta`, then a key: `'backtalk+shift+n'`. A second key can follow a comma: `'backtalk+t, s'`.
 *   `menu: true` adds the command to the Backtalk menu.
 *   `control: true` adds it to the reading controls. Swiping up or down with the control selected runs the command with `direction` set to `'previous'` or `'next'`.
+*   `voice` is a voice phrase or a list of phrases that trigger the command when spoken.
 
-Commands need the `input` permission. The user can turn each gesture and key off on the script's page, or assign others. While a script runs, its gestures and keys come before Backtalk's own, except for the gesture assigned to **Turn all scripts on or off**.
+Commands need the `input` permission. The user can turn each gesture, key, and voice trigger off on the script's page, or assign others. While a script runs, its gestures, keys and voice commands come before Backtalk's built-in actions, except for the gesture assigned to **Turn all scripts on or off**.
 
 ```js
 backtalk.onCommand('unread', (event) => {
-  // event.id, event.via ('gesture', 'keys', 'menu' or 'control'), event.direction, event.node
+  // event.id, event.via ('gesture', 'keys', 'menu', 'control' or 'voice'), event.direction, event.command, event.remainder, event.node
 });
 ```
 
-`event.node` is the focused item. Return `false` to have Backtalk do what the gesture or keys normally do.
+`event.node` is the focused item. Return `false` to have Backtalk do what the action normally does.
 
-`backtalk.bind(command, { gesture })` or `backtalk.bind(command, { keys })` adds a gesture or keys to a declared command, and `backtalk.unbind` removes one.
+`backtalk.bind(command, { gesture })`, `backtalk.bind(command, { keys })` or `backtalk.bind(command, { voice: 'phrase' })` adds a trigger to a declared command, and `backtalk.unbind` removes one.
+
+#### Custom voice commands
+
+A script can also register dynamic voice commands directly:
+
+```js
+// Exact or fuzzy phrase match:
+backtalk.onVoiceCommand('cheer', (event) => {
+  backtalk.speak('You are doing great!');
+});
+
+// Wildcard capture pattern:
+backtalk.onVoiceCommand('search for *', (event) => {
+  backtalk.speak('Searching for ' + event.remainder);
+});
+```
+
+`onVoiceCommand` returns a function that unregisters the command. Return text or `{ speak: text }` to speak feedback.
 
 ### Navigation
 

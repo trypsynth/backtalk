@@ -407,4 +407,6 @@
   <string name="voice_commands_call_needs_newer_android">Ending calls by voice needs Android 9 or later</string>
   <!-- Spoken when Android refuses to place, answer or end a call. [CHAR_LIMIT=NONE] -->
   <string name="voice_commands_call_failed">Could not complete the call</string>
+  <!-- Shown in a script's list of triggers for a voice command; %1$s is the phrase to say. [CHAR_LIMIT=NONE] -->
+  <string name="script_binding_voice">Voice: "%1$s"</string>
 </resources>
