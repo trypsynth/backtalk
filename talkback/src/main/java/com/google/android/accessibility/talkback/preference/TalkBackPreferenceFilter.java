@@ -279,6 +279,54 @@ public class TalkBackPreferenceFilter {
     CUSTOMIZE_GESTURE_3FINGER_QUADRUPLE_TAP(
         R.string.pref_shortcut_3finger_4tap_key,
         SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_UP_THEN_HOLD(
+        R.string.pref_shortcut_up_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_DOWN_THEN_HOLD(
+        R.string.pref_shortcut_down_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_LEFT_THEN_HOLD(
+        R.string.pref_shortcut_left_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_RIGHT_THEN_HOLD(
+        R.string.pref_shortcut_right_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_UP_AND_DOWN_THEN_HOLD(
+        R.string.pref_shortcut_up_and_down_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_DOWN_AND_UP_THEN_HOLD(
+        R.string.pref_shortcut_down_and_up_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_LEFT_AND_RIGHT_THEN_HOLD(
+        R.string.pref_shortcut_left_and_right_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_RIGHT_AND_LEFT_THEN_HOLD(
+        R.string.pref_shortcut_right_and_left_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_UP_AND_LEFT_THEN_HOLD(
+        R.string.pref_shortcut_up_and_left_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_UP_AND_RIGHT_THEN_HOLD(
+        R.string.pref_shortcut_up_and_right_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_DOWN_AND_LEFT_THEN_HOLD(
+        R.string.pref_shortcut_down_and_left_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_DOWN_AND_RIGHT_THEN_HOLD(
+        R.string.pref_shortcut_down_and_right_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_LEFT_AND_UP_THEN_HOLD(
+        R.string.pref_shortcut_left_and_up_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_LEFT_AND_DOWN_THEN_HOLD(
+        R.string.pref_shortcut_left_and_down_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_RIGHT_AND_UP_THEN_HOLD(
+        R.string.pref_shortcut_right_and_up_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
+    CUSTOMIZE_GESTURE_RIGHT_AND_DOWN_THEN_HOLD(
+        R.string.pref_shortcut_right_and_down_then_hold_key,
+        SHOW_IF_SERVICE_GESTURE_DETECTION | HIDDEN_ON_WATCH),
     CUSTOMIZE_GESTURE_2FINGER_ROTATE_CLOCKWISE(
         R.string.pref_shortcut_2finger_rotate_clockwise_key,
         SHOW_IF_SERVICE_GESTURE_DETECTION),

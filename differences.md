@@ -334,6 +334,14 @@ Each step of 30 degrees, a twelfth of a turn, moves one reading control, so you 
 
 The rotor requires Android 13 or later and **Handle gestures in Backtalk** turned on. You can assign other actions to **Rotate clockwise with 2 fingers** and **Rotate counterclockwise with 2 fingers** in gesture settings.
 
+### Swipe and hold
+
+Each one-finger swipe has a second version that ends with your finger resting on the screen: swipe, then keep your finger still for at least 0.25 seconds. This doubles the number of one-finger gestures. For example, swipe right and lift to move to the next item, or swipe right and hold to do another action. With angle and back-and-forth swipes, make the whole swipe first, such as left then up, and then hold. The action happens while your finger is still on the screen.
+
+In gesture settings, these gestures are at the end of the one-finger gestures, the back-and-forth gestures, and the angle gestures, such as **Swipe right and hold** or **Swipe left then up and hold**. None of them has an action by default. Until you assign one, that swipe works as before, even if you pause before lifting your finger.
+
+Swipe and hold gestures require Android 13 or later and **Handle gestures in Backtalk** turned on.
+
 ### Lift to activate
 
 Backtalk can activate the item under your finger when you lift your finger after exploring by touch, as TalkBack already does for keys on the keyboard. In **Controls** > **Touch and activation** > **Lift to activate**, choose **Only on navigation bar** to use it for the Back, Home, and Overview buttons only, or **Entire screen** to use it everywhere. It's **Disabled** by default. With **Only on navigation bar**, a single tap presses the button, and Backtalk says which one, such as "Back" or "Home". To stop this, turn off **Controls** > **Touch and activation** > **Speak navigation bar buttons**.
@@ -358,9 +366,9 @@ When a window opens, or you go back, TalkBack moves focus into it: back to the i
 
 ### Gestures recognized by Backtalk
 
-By default, Backtalk recognizes gestures itself instead of leaving this to Android, which makes the rotor and the quadruple-tap with three fingers possible. TalkBack leaves this off.
+By default, Backtalk recognizes gestures itself instead of leaving this to Android, which makes the rotor, swipe and hold gestures, and the quadruple-tap with three fingers possible. TalkBack leaves this off.
 
-To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** is hidden.
+To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor, swipe and hold gestures, and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** is hidden.
 
 While another accessibility service that explores by touch is on, such as another screen reader or a screen reader's helper service, Backtalk leaves gestures to Android, as if this setting were off. Android has one gesture mode that all services share, so when both services handle touches, double tap and double-tap and hold can stop working. When the other service turns off, Backtalk recognizes gestures itself again.
 
