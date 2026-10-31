@@ -735,6 +735,8 @@
 
     <string name="pref_show_continuous_reading_mode_dialog">pref_show_continuous_reading_mode_dialog</string>
     <string name="pref_show_voice_command_dialog">pref_show_voice_command_dialog</string>
+    <string name="pref_voice_click_controls_key" translatable="false">pref_voice_click_controls</string>
+    <bool name="pref_voice_click_controls_default">false</bool>
     <string name="pref_show_pass_through_mode_dialog" translatable="false">pref_show_pass_through_mode_dialog</string>
     <string name="pref_show_phone_permission_dialog">pref_show_phone_permission_dialog</string>
     <string name="pref_show_voice_input_download_dialog">pref_show_voice_input_download_dialog</string>
