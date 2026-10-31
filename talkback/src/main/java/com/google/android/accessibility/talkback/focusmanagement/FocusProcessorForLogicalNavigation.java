@@ -191,8 +191,6 @@ public class FocusProcessorForLogicalNavigation {
   // Where Android's copy of the nodes can be cleared, the next look doesn't need a scroll event.
   private static final long SETTLE_RETRY_FRESH_MS = 40;
   private static final int SETTLE_RETRIES_FRESH = 6;
-  // A list that accepts showing an item has moved by the first check, so few are needed.
-  private static final int REVEAL_CHECK_RETRIES = 2;
   private static final int MAX_CLIPPED_ITEM_REVEALS = 2;
 
   // Checks whether a page scroll has already moved the list, before its scroll event arrives.
@@ -2688,7 +2686,9 @@ public class FocusProcessorForLogicalNavigation {
         scrollable,
         pivotBefore,
         eventId,
-        REVEAL_CHECK_RETRIES,
+        // A busy app or a smooth scroll can start moving after a few frames, and a page scroll on
+        // top of it would skip items.
+        EARLY_SCROLL_RETRIES,
         () -> {
           // A list that ignored one reveal in this swipe won't take another.
           NavigationAction noMoreReveals =
