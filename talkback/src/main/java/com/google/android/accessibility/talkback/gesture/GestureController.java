@@ -862,6 +862,11 @@ public class GestureController {
     return service.getString(R.string.shortcut_value_toggle_scripts).equals(action);
   }
 
+  public boolean isCapturedOrDisabled(int gestureId) {
+    return captureGestureIdToAnnouncements.containsKey(gestureId)
+        || disabledGestures.contains(gestureId);
+  }
+
   private boolean gestureHandledByTraining(int gestureId, boolean isFingerprintGesture) {
     // TalkBack can ignore the gesture, which is handled by OnGestureListener.onCaptureGesture(), if
     // captured gesture list exists and the current window is training.

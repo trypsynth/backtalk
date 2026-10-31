@@ -152,6 +152,8 @@ class LazyScriptHost(
   override fun onGesture(name: String, fallback: Runnable): Boolean =
     manager?.onGesture(name, fallback) == true
 
+  override fun takesGesture(name: String): Boolean = manager?.takesGesture(name) == true
+
   override fun onKeys(
     modifiers: Int,
     keyCode: Int,

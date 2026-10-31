@@ -36,6 +36,7 @@ import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorF
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
 import com.google.android.accessibility.talkback.preference.TalkBackPreferenceFilter;
 import com.google.android.accessibility.talkback.speech.SpeechCacheController;
+import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.material.A11yAlertDialogWrapper;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
@@ -190,6 +191,7 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
 
     updatePreference(false);
     removeCacheKeyBoardPreferenceIfNeeded();
+    removeSwipeBeforeLiftPreferenceIfNeeded();
   }
 
   @VisibleForTesting
@@ -211,6 +213,7 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
             context.getString(R.string.pref_typing_focus_time_out_first_update_key),
             context.getString(R.string.pref_touch_focus_time_out_key),
             context.getString(R.string.pref_cache_keyboard_keys),
+            context.getString(R.string.pref_swipe_before_lift_key),
             context.getString(R.string.pref_speak_items_before_scroll_key),
             context.getString(R.string.pref_first_item_interrupts_window_name_key));
         dialogInterface.dismiss();
@@ -269,6 +272,13 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
             context.getResources().getBoolean(R.bool.pref_reduce_window_delay_default));
       }
 
+      TwoStatePreference swipeBeforeLiftPreference =
+          findPreference(getString(R.string.pref_swipe_before_lift_key));
+      if (swipeBeforeLiftPreference != null) {
+        swipeBeforeLiftPreference.setChecked(
+            context.getResources().getBoolean(R.bool.pref_swipe_before_lift_default));
+      }
+
       TwoStatePreference speakItemsBeforeScrollPreference =
           findPreference(getString(R.string.pref_speak_items_before_scroll_key));
       if (speakItemsBeforeScrollPreference != null) {
@@ -306,6 +316,14 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
               R.string.pref_typing_confirmation_key,
               R.string.pref_typing_confirmation_default);
       longPressDuration.setEnabled(typingMethod != DOUBLE_TAP);
+    }
+  }
+
+  /** Moving before the finger lifts needs Backtalk to detect the gestures itself. */
+  private void removeSwipeBeforeLiftPreferenceIfNeeded() {
+    Preference pref = findPreferenceByResId(R.string.pref_swipe_before_lift_key);
+    if (pref != null && !FeatureSupport.supportGestureDetection()) {
+      getPreferenceScreen().removePreference(pref);
     }
   }
 
