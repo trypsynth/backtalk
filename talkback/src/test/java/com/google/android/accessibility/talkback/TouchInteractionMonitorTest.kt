@@ -336,6 +336,33 @@ class TouchInteractionMonitorTest {
   }
 
   @Test
+  fun quickSwipeIsPerformedEarlyBeforeItGoesTheSwipeStartDistance() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    touchAt(ACTION_MOVE, 80f, 200f, 15)
+    runUntil(20)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+  }
+
+  @Test
+  fun slowerSwipeIsPerformedEarlyOnlyAtTheSwipeStartDistance() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    for (step in 1..5) {
+      touchAt(ACTION_MOVE, 40f + 8f * step, 200f, 25L * step)
+    }
+    runUntil(130)
+    assertEquals(listOf<Int>(), service.earlySwipes)
+
+    touchAt(ACTION_MOVE, 120f, 200f, 140)
+    runUntil(145)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+  }
+
+  @Test
   fun swipeThatCannotStartEarlyIsPerformedWhenItsFingerLifts() {
     swipeRightWithoutLifting()
     touchAt(ACTION_UP, 280f, 200f, 100)

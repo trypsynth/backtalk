@@ -56,6 +56,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -155,12 +156,23 @@ public class TouchInteractionMonitor
   private final ReceivedPointerTracker receivedPointerTracker;
   private int draggingPointerId = INVALID_POINTER_ID;
   private final TalkBackService service;
+  // How far and how soon, at the speed a swipe has to start at, the finger has to move for a swipe
+  // to be performed ahead of the 1 cm at which the swipe starts.
+  private static final float EARLY_SWIPE_MM = 5;
+  private static final long EARLY_SWIPE_MAX_MS = 75;
+
   private final Handler mainHandler;
   private final GestureManifold gestureDetector;
   private boolean gestureStarted = false;
   // The swipe already performed in this touch, before its finger lifted, or 0. The touch has to end
   // as that swipe, or the swipe is undone.
   private int earlySwipe = 0;
+  // The one-finger swipe that the finger is moving the way of, and where and when it came down, to
+  // perform the swipe once the finger has moved quickly enough for EARLY_SWIPE_MM.
+  private int earlySwipeCandidate = 0;
+  private float downX;
+  private float downY;
+  private long downTimeMs;
   // Whether a gesture was performed while fingers were still down, such as a double tap and hold,
   // so that the rest of the touch follows the circle menu instead of being a gesture. The offset
   // keeps the followed point from jumping when one of the fingers lifts.
@@ -562,6 +574,22 @@ public class TouchInteractionMonitor
         eventId = Performance.getInstance().onGestureEventReceived(displayId, event);
       }
       gestureDetector.onMotionEvent(eventId, event);
+    }
+    if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+      earlySwipeCandidate = 0;
+      downX = event.getX();
+      downY = event.getY();
+      downTimeMs = event.getEventTime();
+    } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE
+        && earlySwipeCandidate != 0
+        && earlySwipe == 0
+        && event.getEventTime() - downTimeMs <= EARLY_SWIPE_MAX_MS
+        && Math.hypot(event.getX() - downX, event.getY() - downY)
+            >= TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_MM,
+                EARLY_SWIPE_MM,
+                service.getResources().getDisplayMetrics())) {
+      performSwipeEarly(earlySwipeCandidate);
     }
     if (earlySwipe != 0) {
       int action = event.getActionMasked();
@@ -1226,6 +1254,9 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureCancelled(int gestureId) {
+    if (gestureId == earlySwipeCandidate) {
+      earlySwipeCandidate = 0;
+    }
     if (touchExploreGate.remove(gestureId)) {
       if (keepMonitorTouchExplore
           && touchExploreGate.isEmpty()
@@ -1239,6 +1270,9 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureProcessing(int gestureId) {
+    if (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT) {
+      earlySwipeCandidate = gestureId;
+    }
     if (gestureId >= GESTURE_SWIPE_UP && gestureId <= GESTURE_SWIPE_DOWN_AND_RIGHT) {
       // A one-finger swipe moving its way: touch exploration waits until the swipe either starts
       // or runs out of time to, so that a swipe that starts slowly isn't explored.
@@ -1267,9 +1301,14 @@ public class TouchInteractionMonitor
     // TYPE_GESTURE_DETECTION_END when using TalkBack gesture detection. So the module has to
     // manually notify the service that gesture detection has been started.
     service.onGestureDetectionStarted();
-    if (earlySwipe == 0
-        && (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT)
-        && service.canStartSwipeEarly(gestureId)) {
+    if (earlySwipe == 0 && (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT)) {
+      performSwipeEarly(gestureId);
+    }
+  }
+
+  private void performSwipeEarly(int gestureId) {
+    earlySwipeCandidate = 0;
+    if (service.canStartSwipeEarly(gestureId)) {
       earlySwipe = gestureId;
       mainHandler.post(() -> service.startSwipeEarly(gestureId, displayId));
     }
