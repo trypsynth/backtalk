@@ -113,6 +113,39 @@ class GestureMatcherFactory {
     MAPPER_GESTURE_SWIPE_UP_AND_DOWN(GESTURE_SWIPE_UP_AND_DOWN, 1, 0, UP, DOWN),
     MAPPER_GESTURE_SWIPE_UP_AND_LEFT(GESTURE_SWIPE_UP_AND_LEFT, 1, 0, UP, LEFT),
     MAPPER_GESTURE_SWIPE_UP_AND_RIGHT(GESTURE_SWIPE_UP_AND_RIGHT, 1, 0, UP, RIGHT),
+    // Swipes that end with the finger resting on the screen.
+    MAPPER_GESTURE_SWIPE_UP_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_UP_THEN_HOLD, 1, 0, true, UP, NONE),
+    MAPPER_GESTURE_SWIPE_DOWN_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_DOWN_THEN_HOLD, 1, 0, true, DOWN, NONE),
+    MAPPER_GESTURE_SWIPE_LEFT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_LEFT_THEN_HOLD, 1, 0, true, LEFT, NONE),
+    MAPPER_GESTURE_SWIPE_RIGHT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_RIGHT_THEN_HOLD, 1, 0, true, RIGHT, NONE),
+    MAPPER_GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD, 1, 0, true, UP, DOWN),
+    MAPPER_GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD, 1, 0, true, DOWN, UP),
+    MAPPER_GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD, 1, 0, true, LEFT, RIGHT),
+    MAPPER_GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD, 1, 0, true, RIGHT, LEFT),
+    MAPPER_GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD, 1, 0, true, UP, LEFT),
+    MAPPER_GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD, 1, 0, true, UP, RIGHT),
+    MAPPER_GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD, 1, 0, true, DOWN, LEFT),
+    MAPPER_GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD, 1, 0, true, DOWN, RIGHT),
+    MAPPER_GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD, 1, 0, true, LEFT, UP),
+    MAPPER_GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD, 1, 0, true, LEFT, DOWN),
+    MAPPER_GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD, 1, 0, true, RIGHT, UP),
+    MAPPER_GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD(
+        GestureManifold.GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD, 1, 0, true, RIGHT, DOWN),
     // Set up multi-finger gestures to be enabled later.
     // Two-finger taps.
     MAPPER_GESTURE_2_FINGER_SINGLE_TAP(GESTURE_2_FINGER_SINGLE_TAP, 2, 1, NONE, NONE),
@@ -249,6 +282,20 @@ class GestureMatcherFactory {
     if (gestureMatchConfig.finger == 1) {
       // swipe
       if (gestureMatchConfig.tap == 0) {
+        if (gestureMatchConfig.isHold) {
+          int[] directions =
+              gestureMatchConfig.direction2 == NONE
+                  ? new int[] {gestureMatchConfig.direction1}
+                  : new int[] {gestureMatchConfig.direction1, gestureMatchConfig.direction2};
+          return new Swipe(
+              context,
+              directions,
+              gestureMatchConfig.gestureId,
+              /* completesOnHold= */ true,
+              listener,
+              configResolver,
+              logger);
+        }
         if (gestureMatchConfig.direction2 == NONE) {
           return new Swipe(
               context,

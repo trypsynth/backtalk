@@ -47,6 +47,8 @@ class Swipe extends GestureMatcher {
   public static final int RIGHT = 1;
   public static final int UP = 2;
   public static final int DOWN = 3;
+  /** How long the finger rests at the end of a swipe before a swipe-and-hold completes. */
+  public static final int HOLD_TIMEOUT_MS = 250;
   // This is the calculated movement threshold used track if the user is still
   // moving their finger.
   private final float gestureDetectionThresholdPixels;
@@ -78,6 +80,12 @@ class Swipe extends GestureMatcher {
   // Constants for separating gesture segments
   private static final float ANGLE_THRESHOLD = 0.0f;
   private final boolean invalidSwipeGestureEarlyDetection;
+  // Whether this matches the swipe followed by a rest of the finger, instead of the swipe and lift.
+  private final boolean completesOnHold;
+  private final GestureConfigProvider configProvider;
+  // Where the finger was when this last checked whether a swipe-and-hold can complete.
+  private float holdCheckX;
+  private float holdCheckY;
 
   Swipe(
       Context context,
@@ -86,7 +94,7 @@ class Swipe extends GestureMatcher {
       GestureMatcher.StateChangeListener listener,
       GestureConfigProvider configProvider,
       GestureMatcher.AnalyticsEventLogger logger) {
-    this(context, new int[] {direction}, gesture, listener, configProvider, logger);
+    this(context, new int[] {direction}, gesture, false, listener, configProvider, logger);
   }
 
   Swipe(
@@ -97,13 +105,21 @@ class Swipe extends GestureMatcher {
       GestureMatcher.StateChangeListener listener,
       GestureConfigProvider configProvider,
       GestureMatcher.AnalyticsEventLogger logger) {
-    this(context, new int[] {direction1, direction2}, gesture, listener, configProvider, logger);
+    this(
+        context,
+        new int[] {direction1, direction2},
+        gesture,
+        false,
+        listener,
+        configProvider,
+        logger);
   }
 
-  private Swipe(
+  Swipe(
       Context context,
       int[] directions,
       int gesture,
+      boolean completesOnHold,
       GestureMatcher.StateChangeListener listener,
       GestureConfigProvider configProvider,
       GestureMatcher.AnalyticsEventLogger logger) {
@@ -115,6 +131,8 @@ class Swipe extends GestureMatcher {
     int maxTimeToContinueSwipeMsPerCm =
         context.getResources().getInteger(R.integer.config_max_time_to_continue_swipe_ms_per_cm);
     invalidSwipeGestureEarlyDetection = configProvider.invalidSwipeGestureEarlyDetection();
+    this.completesOnHold = completesOnHold;
+    this.configProvider = configProvider;
     maxStartThreshold = (int) (maxTimeToStartSwipeMsPerCm * gestureConfirmDistanceCm);
     maxContinueThreshold =
         // The tolerance of gesture time was actually greater than this value. Considering the
@@ -146,12 +164,18 @@ class Swipe extends GestureMatcher {
     baseTime = 0;
     previousGestureX = Float.NaN;
     previousGestureY = Float.NaN;
+    holdCheckX = Float.NaN;
+    holdCheckY = Float.NaN;
     strokeBuffer.clear();
     super.clear();
   }
 
   @Override
   protected void onDown(EventId eventId, MotionEvent event) {
+    if (completesOnHold && !configProvider.isSwipeAndHoldAssigned(getGestureId())) {
+      cancelGesture(event);
+      return;
+    }
     if (Float.isNaN(baseX) && Float.isNaN(baseY)) {
       baseX = event.getX();
       baseY = event.getY();
@@ -209,7 +233,9 @@ class Swipe extends GestureMatcher {
     } else if (getState() == STATE_CLEAR && timeDelta > maxStartThreshold) {
         cancelGesture(event);
         return;
-    } else if (getState() == STATE_GESTURE_STARTED && (timeDelta > maxContinueThreshold)) {
+    } else if (getState() == STATE_GESTURE_STARTED
+        && (timeDelta > maxContinueThreshold)
+        && !isWaitingForHold()) {
       cancelGesture(event);
       return;
     }
@@ -220,10 +246,36 @@ class Swipe extends GestureMatcher {
       previousGestureY = y;
       strokeBuffer.add(new PointF(x, y));
     }
+    if (completesOnHold && getState() == STATE_GESTURE_STARTED) {
+      waitForHold(eventId, event);
+    }
+  }
+
+  private boolean isWaitingForHold() {
+    return completesOnHold && delayedTransition.isPending();
+  }
+
+  // Moving beyond the touch slop starts the wait for the rest again.
+  private void waitForHold(EventId eventId, MotionEvent event) {
+    float x = event.getX();
+    float y = event.getY();
+    if (isWaitingForHold() && Math.hypot(x - holdCheckX, y - holdCheckY) < touchSlop) {
+      return;
+    }
+    holdCheckX = x;
+    holdCheckY = y;
+    cancelPendingTransitions();
+    if (strokeMatches(strokeBuffer)) {
+      completeAfter(HOLD_TIMEOUT_MS, eventId, event);
+    }
   }
 
   @Override
   protected void onUp(EventId eventId, MotionEvent event) {
+    if (completesOnHold && getState() != STATE_CLEAR) {
+      cancelGesture(event);
+      return;
+    }
     switch (getState()) {
       case STATE_GESTURE_STARTED -> {}
       case STATE_CLEAR -> {
@@ -268,9 +320,18 @@ class Swipe extends GestureMatcher {
    * @param event The raw motion event to pass to the listener callbacks.
    */
   private void recognizeGesture(EventId eventId, MotionEvent event) {
-    if (strokeBuffer.size() < 2) {
+    if (strokeMatches(strokeBuffer)) {
+      gestureMotionEventLog(VERBOSE, "Completed.");
+      completeGesture(eventId, event);
+    } else {
       cancelGesture(event);
-      return;
+    }
+  }
+
+  /** Returns whether the sampled points of a stroke follow this swipe's directions. */
+  private boolean strokeMatches(ArrayList<PointF> stroke) {
+    if (stroke.size() < 2) {
+      return false;
     }
 
     // Look at mStrokeBuffer and extract 2 line segments, delimited by near-perpendicular
@@ -280,7 +341,7 @@ class Swipe extends GestureMatcher {
     // 90 degrees.
 
     ArrayList<PointF> path = new ArrayList<>();
-    PointF lastDelimiter = strokeBuffer.get(0);
+    PointF lastDelimiter = stroke.get(0);
     path.add(lastDelimiter);
 
     float dX = 0; // Sum of unit vectors from last delimiter to each following point
@@ -289,8 +350,8 @@ class Swipe extends GestureMatcher {
     float length = 0; // Vector length from delimiter to most recent point
 
     PointF next = null;
-    for (int i = 1; i < strokeBuffer.size(); ++i) {
-      next = strokeBuffer.get(i);
+    for (int i = 1; i < stroke.size(); ++i) {
+      next = stroke.get(i);
       if (count > 0) {
         // Average of unit vectors from delimiter to following points
         float currentDX = dX / count;
@@ -338,21 +399,17 @@ class Swipe extends GestureMatcher {
 
     path.add(next);
     gestureMotionEventLog(VERBOSE, "path = %s", path.toString());
-    // Classify line segments, and call Listener callbacks.
-    recognizeGesturePath(eventId, event, path);
+    return pathMatches(path);
   }
 
   /**
-   * Classifies a pair of line segments, by direction. Calls Listener callbacks for success or
-   * failure.
+   * Classifies a pair of line segments, by direction.
    *
-   * @param event The raw motion event to pass to the listener's onGestureCanceled method.
-   * @param path A sequence of motion line segments derived from motion points in mStrokeBuffer.
+   * @param path A sequence of motion line segments derived from motion points in a stroke.
    */
-  private void recognizeGesturePath(EventId eventId, MotionEvent event, ArrayList<PointF> path) {
+  private boolean pathMatches(ArrayList<PointF> path) {
     if (path.size() != directions.length + 1) {
-      cancelGesture(event);
-      return;
+      return false;
     }
     for (int i = 0; i < path.size() - 1; ++i) {
       PointF start = path.get(i);
@@ -367,12 +424,10 @@ class Swipe extends GestureMatcher {
             "Found direction %s  when expecting %s",
             directionToString(direction),
             directionToString(directions[i]));
-        cancelGesture(event);
-        return;
+        return false;
       }
     }
-    gestureMotionEventLog(VERBOSE, "Completed.");
-    completeGesture(eventId, event);
+    return true;
   }
 
   private static int toDirection(float dX, float dY) {
@@ -401,6 +456,9 @@ class Swipe extends GestureMatcher {
     builder.append("Swipe ").append(directionToString(directions[0]));
     for (int i = 1; i < directions.length; ++i) {
       builder.append(" and ").append(directionToString(directions[i]));
+    }
+    if (completesOnHold) {
+      builder.append(" then hold");
     }
     return builder.toString();
   }

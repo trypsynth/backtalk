@@ -324,6 +324,38 @@ public class AccessibilityServiceCompatUtils {
       case GestureManifold.GESTURE_2_FINGER_ROTATE_COUNTERCLOCKWISE ->
           "GESTURE_2_FINGER_ROTATE_COUNTERCLOCKWISE";
       case GestureManifold.GESTURE_3_FINGER_QUADRUPLE_TAP -> "GESTURE_3_FINGER_QUADRUPLE_TAP";
+      case GestureManifold.GESTURE_SWIPE_UP_THEN_HOLD ->
+          "GESTURE_SWIPE_UP_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_DOWN_THEN_HOLD ->
+          "GESTURE_SWIPE_DOWN_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_LEFT_THEN_HOLD ->
+          "GESTURE_SWIPE_LEFT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_RIGHT_THEN_HOLD ->
+          "GESTURE_SWIPE_RIGHT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD ->
+          "GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD ->
+          "GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD ->
+          "GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD ->
+          "GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD ->
+          "GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD ->
+          "GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD ->
+          "GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD ->
+          "GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD ->
+          "GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD ->
+          "GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD ->
+          "GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD";
+      case GestureManifold.GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD ->
+          "GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD";
       default -> "(unhandled " + gestureId + ")";
     };
   }
