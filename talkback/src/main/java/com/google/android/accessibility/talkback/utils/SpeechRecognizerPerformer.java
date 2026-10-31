@@ -41,6 +41,7 @@ import android.text.TextUtils;
 import androidx.annotation.IntDef;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
+import androidx.core.os.HandlerCompat;
 import com.google.android.accessibility.talkback.permission.PermissionUtils;
 import com.google.android.accessibility.utils.DelayHandler;
 import com.google.android.accessibility.utils.SettingsUtils;
@@ -88,7 +89,7 @@ public class SpeechRecognizerPerformer {
   public @Nullable SpeechRecognizer speechRecognizer;
   private boolean isListening = false;
   private boolean sessionActive = false;
-  private final boolean partialResultFastFeedback;
+  private boolean partialResultFastFeedback;
   private String cachedResult = "";
 
   private @Nullable Intent recognizerIntent;
@@ -179,7 +180,8 @@ public class SpeechRecognizerPerformer {
             // Nothing heard.
           } else {
             if (partialResultFastFeedback
-                && executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {
+                && HandlerCompat.hasCallbacks(
+                    executeCommandDelayHandler, speechRecognitionDelayedSender)) {
               LogUtils.v(
                   TAG, "Perform the pending command immediately before the error determined.");
               // When a runnable handling the received command is pending, EXEC the runnable and
@@ -241,7 +243,7 @@ public class SpeechRecognizerPerformer {
     }
     // When the cachedResult has a pending (partial-result) speech, call-back with the
     // result immediately.
-    if (executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {
+    if (HandlerCompat.hasCallbacks(executeCommandDelayHandler, speechRecognitionDelayedSender)) {
       executeCommandDelayHandler.removeCallbacks(speechRecognitionDelayedSender);
     }
     speechRecognitionDelayedSender =
@@ -276,6 +278,18 @@ public class SpeechRecognizerPerformer {
    */
   public void setListener(SpeechRecognizerRequester speechRecognizerRequester) {
     this.speechRecognizerRequester = speechRecognizerRequester;
+  }
+
+  /** Applies a recognition policy change without carrying an unfinished command across it. */
+  public void setPartialResultFastFeedback(boolean enabled) {
+    if (partialResultFastFeedback == enabled) {
+      return;
+    }
+    stopListening();
+    stopListeningDelayHandler.removeMessages();
+    reset();
+    cachedResult = "";
+    partialResultFastFeedback = enabled;
   }
 
   public void doListening() {
@@ -314,7 +328,7 @@ public class SpeechRecognizerPerformer {
     if (speechRecognizer != null) {
       speechRecognizer.stopListening();
     }
-    if (executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {
+    if (HandlerCompat.hasCallbacks(executeCommandDelayHandler, speechRecognitionDelayedSender)) {
       executeCommandDelayHandler.removeCallbacks(speechRecognitionDelayedSender);
     }
   }

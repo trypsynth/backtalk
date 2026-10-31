@@ -6,6 +6,8 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="title_pref_voice_command_device_actions" />
+        <ignore regexp="summary_pref_voice_command_device_actions" />
         <ignore regexp="settings_backup_title" />
         <ignore regexp="settings_backup_export" />
         <ignore regexp="settings_backup_export_summary" />

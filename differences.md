@@ -396,6 +396,14 @@ When you turn on **Controls** > **Touch and activation** > **Volume keys adjust 
 
 ## Backtalk menu
 
+### Open apps and click items by voice
+
+Turn on **Controls** > **Open apps and click by voice** in Backtalk settings to use these commands. This switch is off by default. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity, allowing small speech recognition errors. If no app qualifies, or two apps tie for the closest match, it speaks the existing message for unrecognized commands.
+
+You can also say the full name of a visible button or clickable item, such as **Save**, without saying "click". Backtalk moves accessibility focus to it and clicks it. Matching ignores case, extra spaces, and trailing speech punctuation; item names are not fuzzy-matched. Labels inside a clickable item and accessibility descriptions of icon buttons are supported. Hidden, off-screen, and disabled items, and items covered by another window, are excluded. Backtalk does not scroll to find an item or click the previously focused item when a name is missing. Duplicate visible names are left unclicked.
+
+With the switch on, Backtalk waits for the completed utterance before acting. An **Open** request takes priority over other commands; otherwise a matching visible item takes priority, followed by the existing voice commands. Unrecognized requests use the existing spoken error message. Turning the switch off cancels pending actions and restores the usual voice commands and recognition timing.
+
 ### Shorter menu by default
 
 These items are off by default in the Backtalk menu: **Actions**, **Screen search**, **Add or edit labels**, **Describe text formatting**, **Copy last spoken phrase**, **Spoken language**, **Voice commands**, **Keyboard shortcuts**, and **Braille display settings**. You can still use actions with the **Actions** reading control. **Text-to-speech** stays on, so that you can reach speech settings if your speech engine crashes, and Backtalk adds a **Pause Backtalk** item.
