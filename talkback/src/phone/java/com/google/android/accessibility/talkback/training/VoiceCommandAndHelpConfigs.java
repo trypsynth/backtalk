@@ -124,6 +124,12 @@ final class VoiceCommandAndHelpConfigs {
           .addTextWithBullet(R.string.voice_commands_quick_settings)
           .addTextWithBullet(R.string.voice_commands_overview)
           .addSubText(R.string.voice_commands_help_overview_description)
+          .addTextWithBullet(R.string.voice_commands_help_dnd)
+          .addSubText(R.string.voice_commands_help_dnd_description)
+          .addTextWithBullet(R.string.voice_commands_help_call)
+          .addSubText(R.string.voice_commands_help_call_description)
+          .addTextWithBullet(R.string.voice_commands_help_call_control)
+          .addSubText(R.string.voice_commands_help_call_control_description)
           .addTextWithBullet(R.string.voice_commands_all_apps, SUPPORT_SYSTEM_ACTIONS)
           .addTextWithBullet(R.string.voice_commands_assistant)
           .addSubText(R.string.voice_commands_help_assistant_description);
