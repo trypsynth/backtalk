@@ -1606,6 +1606,53 @@ public class TalkBackService extends AccessibilityServiceCompat
     return false;
   }
 
+  // Where accessibility focus was before the swipe that was performed before its finger lifted.
+  private @Nullable AccessibilityNodeInfoCompat earlySwipePivot;
+
+  /**
+   * Whether a swipe that has just started can be performed before its finger lifts: only one that
+   * moves to the next or previous item, whose effect can be undone if the finger goes on to draw
+   * another gesture.
+   */
+  boolean canStartSwipeEarly(int gestureId) {
+    if (!isServiceActive()
+        || PauseController.isPaused()
+        || (menuManager != null && menuManager.isMenuShowing())) {
+      return false;
+    }
+    String action = gestureShortcutMapping.getActionKeyFromGestureId(gestureId);
+    return getString(R.string.shortcut_value_next).equals(action)
+        || getString(R.string.shortcut_value_previous).equals(action);
+  }
+
+  void startSwipeEarly(int gestureId, int displayId) {
+    earlySwipePivot = accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
+    if (LogUtils.shouldLog(Log.DEBUG)) {
+      Log.d("BacktalkEarlySwipe", "start " + gestureId);
+    }
+    handleOnGestureById(displayId, gestureId);
+  }
+
+  void undoSwipeEarly() {
+    if (LogUtils.shouldLog(Log.DEBUG)) {
+      Log.d("BacktalkEarlySwipe", "undo");
+    }
+    interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
+    if (earlySwipePivot != null && earlySwipePivot.refresh()) {
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(
+              EVENT_ID_UNTRACKED,
+              Feedback.focus(
+                  earlySwipePivot,
+                  new FocusActionInfo.Builder()
+                      .setSourceAction(FocusActionInfo.FOCUS_SYNCHRONIZATION)
+                      .setForceMuteFeedback(true)
+                      .build()));
+    }
+    earlySwipePivot = null;
+  }
+
   private void provisionTouchExplore(boolean enabled) {
     requestTouchExploration(enabled);
   }

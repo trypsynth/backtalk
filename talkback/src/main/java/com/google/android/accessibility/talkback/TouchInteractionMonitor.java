@@ -158,6 +158,9 @@ public class TouchInteractionMonitor
   private final Handler mainHandler;
   private final GestureManifold gestureDetector;
   private boolean gestureStarted = false;
+  // The swipe already performed in this touch, before its finger lifted, or 0. The touch has to end
+  // as that swipe, or the swipe is undone.
+  private int earlySwipe = 0;
   // Whether a gesture was performed while fingers were still down, such as a double tap and hold,
   // so that the rest of the touch follows the circle menu instead of being a gesture. The offset
   // keeps the followed point from jumping when one of the fingers lifts.
@@ -560,6 +563,14 @@ public class TouchInteractionMonitor
       }
       gestureDetector.onMotionEvent(eventId, event);
     }
+    if (earlySwipe != 0) {
+      int action = event.getActionMasked();
+      if (action == MotionEvent.ACTION_UP
+          || action == MotionEvent.ACTION_CANCEL
+          || action == ACTION_POINTER_DOWN) {
+        abandonEarlySwipe();
+      }
+    }
     if (!gestureStarted) {
       switch (state) {
         case STATE_TOUCH_INTERACTING -> handleMotionEventStateTouchInteracting(event);
@@ -724,6 +735,9 @@ public class TouchInteractionMonitor
       }
     }
 
+    if (state == STATE_TOUCH_EXPLORING || state == STATE_DRAGGING || state == STATE_DELEGATING) {
+      abandonEarlySwipe();
+    }
     previousState = this.state;
     this.state = state;
     requestTouchExplorationDelayed.cancel();
@@ -1021,6 +1035,14 @@ public class TouchInteractionMonitor
         "TalkBack gesture id:%s detected",
         AccessibilityServiceCompatUtils.gestureIdToString(gestureEvent.getGestureId()));
     keepMonitorTouchExplore = false;
+    if (earlySwipe != 0 && gestureEvent.getGestureId() == earlySwipe) {
+      // Already performed, when the finger had gone far enough.
+      earlySwipe = 0;
+      clear();
+      clearGestureDetectorOnNextDown = true;
+      return;
+    }
+    abandonEarlySwipe();
     // As the state is controlled in controller, it could be switched to CLEAR by its internal
     // handling. We have to honor the gesture detection in CLEAR state unless the previous state is
     // dragging or delegating.
@@ -1245,6 +1267,20 @@ public class TouchInteractionMonitor
     // TYPE_GESTURE_DETECTION_END when using TalkBack gesture detection. So the module has to
     // manually notify the service that gesture detection has been started.
     service.onGestureDetectionStarted();
+    if (earlySwipe == 0
+        && (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT)
+        && service.canStartSwipeEarly(gestureId)) {
+      earlySwipe = gestureId;
+      mainHandler.post(() -> service.startSwipeEarly(gestureId, displayId));
+    }
+  }
+
+  /** Undoes the swipe performed early, as the touch has turned out to be something else. */
+  private void abandonEarlySwipe() {
+    if (earlySwipe != 0) {
+      earlySwipe = 0;
+      mainHandler.post(service::undoSwipeEarly);
+    }
   }
 
   public void setMultiFingerGesturesEnabled(boolean mode) {
