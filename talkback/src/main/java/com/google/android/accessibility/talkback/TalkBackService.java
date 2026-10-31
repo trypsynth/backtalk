@@ -922,6 +922,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   @Override
   public boolean onUnbind(Intent intent) {
+    if (voiceCommandProcessor != null) {
+      voiceCommandProcessor.shutdown();
+    }
     if (screenFocusRestorer != null) {
       screenFocusRestorer.shutdown();
     }
@@ -962,6 +965,9 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   @Override
   public void onDestroy() {
+    if (voiceCommandProcessor != null) {
+      voiceCommandProcessor.shutdown();
+    }
     unlockedBootHandler.removeCallbacks(checkUnlockedBoot);
     if (screenFocusRestorer != null) {
       screenFocusRestorer.shutdown();
@@ -3564,6 +3570,12 @@ public class TalkBackService extends AccessibilityServiceCompat
             this,
             R.string.pref_echo_recognized_text_speech_key,
             R.bool.pref_echo_recognized_text_default));
+    voiceCommandActor.setOpenAppsEnabled(
+        SharedPreferencesUtils.getBooleanPref(
+            prefs,
+            res,
+            R.string.pref_voice_open_apps_key,
+            R.bool.pref_voice_open_apps_default));
 
     // Reload speech preferences.
     pipeline.setOverlayEnabled(
