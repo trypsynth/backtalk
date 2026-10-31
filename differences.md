@@ -32,7 +32,11 @@ When you double-tap a switch, most apps change it before they finish the click. 
 
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.
 
-Backtalk doesn't prepare anything for the first swipe on a screen or after the screen changes, and it discards prepared speech after 5 seconds.
+Backtalk doesn't prepare the wording for the first swipe on a screen, and it discards prepared wording after 5 seconds. Once a screen has been quiet for a moment after a swipe scrolls or changes it, Backtalk reads the screen again and prepares the next swipe, including an item just off screen.
+
+### Speech audio made in advance
+
+When low-latency audio is on, Backtalk asks the speech engine for the audio of the next and previous items ahead of time, and a swipe that lands on one plays it without waiting for the engine. This works with any engine that hands over its audio. To keep the engine free for this, short speech (up to 200 characters) now always goes through a second connection that makes audio faster than it plays. Audio is reused only for the same text, voice, rate and pitch, is kept in memory only, and uses at most 8 MB. In testing on an emulator with Google News and the Google engine, the median time from lifting your finger to the first audio fell from 115 ms to 14 ms, and about four in five swipes used audio made in advance. The engine does more work per swipe, so this may use more battery, and a network voice would use more data.
 
 ### Items that a swipe scrolls into view
 

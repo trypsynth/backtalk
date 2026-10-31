@@ -230,6 +230,8 @@ public class FailoverTextToSpeech {
 
   /** The engine loaded into the current TTS. */
   private String ttsEngine;
+  // Whether the main connection to the engine has been given speech that it may still be saying.
+  private boolean engineMaySpeak;
 
   public static final String PREF_TTS_ENGINE_KEY = "pref_tts_engine";
   public static final String PREF_USE_ACCESSIBILITY_STREAM_KEY = "pref_use_accessibility_stream";
@@ -931,6 +933,7 @@ public class FailoverTextToSpeech {
    * made to this object after calling this method.
    */
   public void shutdown() {
+    PreparedAudio.shutdown();
     // The player outlives this engine, so speech it holds or waits for must not block the next.
     releaseLowLatencyAudio();
     allowDeviceSleep();
@@ -1539,6 +1542,31 @@ public class FailoverTextToSpeech {
     @Nullable LowLatencyAudio player = lowLatencyPlayer();
     if (player == null || utteranceId == null || TextUtils.isEmpty(text)) {
       return tts.speak(text, queueMode, bundle, utteranceId);
+    }
+    // Short speech comes from a second connection, which makes its audio without waiting for it to
+    // play, so that the engine can go on to make what the next swipe will say. See PreparedAudio.
+    @Nullable Voice voice = tts.getVoice();
+    if (PreparedAudio.canSpeak(context, ttsEngine, voice, text)) {
+      if (queueMode != QUEUE_ADD) {
+        LowLatencyAudio.stopAllStreams();
+        if (engineMaySpeak) {
+          engineMaySpeak = false;
+          tts.stop();
+        }
+      }
+      LowLatencyAudio.SpeechStream preparedStream =
+          player.openStream(
+              utteranceId,
+              floatParam(bundle, SpeechParam.VOLUME, 1f),
+              floatParam(bundle, Engine.KEY_PARAM_PAN, 0f),
+              lowLatencyListener);
+      lowLatencyRequests.put(utteranceId, Pair.create(text, bundle));
+      PreparedAudio.speak(text, voice, bundle, preparedStream, queueMode != QUEUE_ADD);
+      return TextToSpeech.SUCCESS;
+    }
+    engineMaySpeak = true;
+    if (queueMode != QUEUE_ADD) {
+      PreparedAudio.stopMaking();
     }
     watchForEngineHang(queueMode, utteranceId);
     if (queueMode != QUEUE_ADD) {

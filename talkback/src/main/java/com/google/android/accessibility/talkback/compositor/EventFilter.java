@@ -31,6 +31,7 @@ import com.google.android.accessibility.talkback.compositor.rule.EventTypeViewAc
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCache;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
+import com.google.android.accessibility.utils.output.PreparedAudio;
 import com.google.android.accessibility.utils.AccessibilityEventUtils;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils;
@@ -46,6 +47,7 @@ import com.google.android.accessibility.utils.traversal.TraversalStrategy.Search
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -83,6 +85,11 @@ public class EventFilter {
   private @Nullable AccessibilityNodeInfoCompat lastFocusedNode;
   private final Handler handler = new Handler(Looper.getMainLooper());
   private final Runnable prepareSwipeTargets = this::prepareSwipeTargets;
+  private final Runnable prepareAfterSettling = this::prepareAfterSettling;
+  private @Nullable Consumer<AccessibilityNodeInfoCompat> orderBuilder;
+  private long lastFocusMoveTime;
+  private static final long SETTLE_MS = 120;
+  private static final long PREPARE_AGAIN_FOR_MS = 3000;
 
   /**
    * How long after focus moves the announcements of the next and previous nodes are prepared: after
@@ -126,6 +133,36 @@ public class EventFilter {
 
   public void setTargetPredictor(@Nullable TargetPredictor predictor) {
     targetPredictor = predictor;
+  }
+
+  public void setOrderBuilder(Consumer<AccessibilityNodeInfoCompat> builder) {
+    orderBuilder = builder;
+  }
+
+  /**
+   * After an event that may have thrown away the saved reading order, such as a swipe's scroll,
+   * prepares the next swipe again once the window has been quiet for a moment. Only soon after
+   * focus moved, as a screen that keeps changing would otherwise be read over and over.
+   */
+  public void onWindowEvent() {
+    AccessibilityNodeInfoCompat pivot = lastFocusedNode;
+    if (pivot == null
+        || orderBuilder == null
+        || SystemClock.uptimeMillis() - lastFocusMoveTime > PREPARE_AGAIN_FOR_MS
+        || TraversalTreeCache.rootFor(pivot) != null) {
+      return;
+    }
+    handler.removeCallbacks(prepareAfterSettling);
+    handler.postDelayed(prepareAfterSettling, SETTLE_MS);
+  }
+
+  private void prepareAfterSettling() {
+    AccessibilityNodeInfoCompat pivot = lastFocusedNode;
+    if (pivot == null || orderBuilder == null || fingerDown.getAsBoolean()) {
+      return;
+    }
+    orderBuilder.accept(pivot);
+    prepareSwipeTargets();
   }
 
   /** Sets how to tell whether a finger is on the screen, so that a swipe never waits for this. */
@@ -470,10 +507,12 @@ public class EventFilter {
   /** Prepares the announcements of the nodes next to {@code node}, which focus just moved to. */
   private void onFocusMoved(AccessibilityNodeInfoCompat node) {
     lastFocusedNode = node;
+    lastFocusMoveTime = SystemClock.uptimeMillis();
     handler.removeCallbacks(prepareSwipeTargets);
     if (targetPredictor != null) {
       handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);
     }
+    onWindowEvent();
   }
 
   /**
@@ -534,6 +573,7 @@ public class EventFilter {
     }
     if (hasSpeech(feedback)) {
       PreparedFocusSpeech.put(node, feedback, containerTitle);
+      PreparedAudio.prepare(feedback.ttsOutput().get());
     }
   }
 

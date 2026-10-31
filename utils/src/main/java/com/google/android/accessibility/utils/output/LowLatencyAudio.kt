@@ -410,6 +410,13 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
       }
     }
 
+    /** The engine could not make the audio, so this is to be said another way. */
+    fun fail() {
+      synchronized(lock) {
+        if (streams.remove(this)) abandon(playerFailed = false)
+      }
+    }
+
     /** Removes this stream without reporting anything, as if it had never been opened. */
     fun discard() {
       synchronized(lock) {
