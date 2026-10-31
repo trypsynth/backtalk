@@ -24,6 +24,8 @@
         <ignore regexp="voice_commands_call_no_call" />
         <ignore regexp="voice_commands_call_needs_newer_android" />
         <ignore regexp="voice_commands_call_failed" />
+        <ignore regexp="title_pref_voice_open_apps" />
+        <ignore regexp="summary_pref_voice_open_apps" />
         <ignore regexp="title_pref_open_app_info" />
         <ignore regexp="title_pref_shortcut_up_then_hold" />
         <ignore regexp="title_pref_shortcut_down_then_hold" />
@@ -41,8 +43,6 @@
         <ignore regexp="title_pref_shortcut_left_and_down_then_hold" />
         <ignore regexp="title_pref_shortcut_right_and_up_then_hold" />
         <ignore regexp="title_pref_shortcut_right_and_down_then_hold" />
-        <ignore regexp="title_pref_voice_command_device_actions" />
-        <ignore regexp="summary_pref_voice_command_device_actions" />
         <ignore regexp="settings_backup_title" />
         <ignore regexp="settings_backup_export" />
         <ignore regexp="settings_backup_export_summary" />

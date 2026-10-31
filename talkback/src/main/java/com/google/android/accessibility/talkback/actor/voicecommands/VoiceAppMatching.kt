@@ -4,8 +4,8 @@ package com.google.android.accessibility.talkback.actor.voicecommands
 import java.text.Normalizer
 import java.util.Locale
 
-/** Matching rules shared by app names and the labels exposed by the current screen. */
-internal object VoiceCommandMatching {
+/** Full-name matching for installed apps. */
+internal object VoiceAppMatching {
   private val whitespace = Regex("[\\s\\p{Z}]+")
 
   fun normalize(text: CharSequence?): String =
@@ -16,18 +16,13 @@ internal object VoiceCommandMatching {
       .trimEnd('.', ',', '!', '?', ':', ';', '،', '؟', '؛')
       .trimEnd()
 
-  /** A bare "Open" can still name a visible button. Only "Open <name>" is an app request. */
+  /** Only "Open <name>" is an app request. */
   fun appName(command: String): String? {
     val normalized = normalize(command)
     return when {
       normalized.startsWith("open ") -> normalized.substring(5).trim()
       else -> null
     }
-  }
-
-  fun sameLabel(command: String, label: CharSequence?): Boolean {
-    val normalized = normalize(command)
-    return normalized.isNotEmpty() && normalized == normalize(label)
   }
 
   /** Full-name Levenshtein similarity, from 0 to 100; never a substring/partial match. */

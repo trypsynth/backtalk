@@ -428,14 +428,6 @@ When you turn on **Controls** > **Touch and activation** > **Volume keys adjust 
 
 ## Backtalk menu
 
-### Open apps and click items by voice
-
-Turn on **Controls** > **Open apps and click by voice** in Backtalk settings to use these commands. This switch is off by default. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity, allowing small speech recognition errors. If no app qualifies, or two apps tie for the closest match, it speaks the existing message for unrecognized commands.
-
-You can also say the full name of a visible button or clickable item, such as **Save**, without saying "click". Backtalk moves accessibility focus to it and clicks it. Matching ignores case, extra spaces, and trailing speech punctuation; item names are not fuzzy-matched. Labels inside a clickable item and accessibility descriptions of icon buttons are supported. Hidden, off-screen, and disabled items, and items covered by another window, are excluded. Backtalk does not scroll to find an item or click the previously focused item when a name is missing. Duplicate visible names are left unclicked.
-
-With the switch on, Backtalk waits for the completed utterance before acting. An **Open** request takes priority over other commands; otherwise a matching visible item takes priority, followed by the existing voice commands. Unrecognized requests use the existing spoken error message. Turning the switch off cancels pending actions and restores the usual voice commands and recognition timing.
-
 ### Shorter menu by default
 
 These items are off by default in the Backtalk menu: **Actions**, **Screen search**, **Add or edit labels**, **Describe text formatting**, **Copy last spoken phrase**, **Spoken language**, **Voice commands**, **Keyboard shortcuts**, and **Braille display settings**. You can still use actions with the **Actions** reading control. **Text-to-speech** stays on, so that you can reach speech settings if your speech engine crashes, and Backtalk adds a **Pause Backtalk** item.
@@ -463,6 +455,12 @@ To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**.
 ### Calls
 
 Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
+
+### Open an app by name
+
+Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
+
+With the switch on, Backtalk waits for the completed utterance before opening an app. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
 
 ## Screen and brightness
 

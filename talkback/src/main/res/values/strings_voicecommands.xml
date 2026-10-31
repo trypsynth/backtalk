@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Switch in Backtalk settings, under Controls, enabling app launching and visible item activation by voice. [CHAR LIMIT=60] -->
-    <string name="title_pref_voice_command_device_actions">Open apps and click by voice</string>
-    <!-- Summary of the voice actions switch. The spoken prefix "Open" is currently English; button names follow the app's labels. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_voice_command_device_actions">In Voice commands, say \"Open\" followed by an app name, or say the full name of a visible button to activate it.</string>
+    <!-- Switch in Backtalk settings, under Controls, enabling app launching by voice. [CHAR LIMIT=60] -->
+    <string name="title_pref_voice_open_apps">Open apps by voice</string>
+    <!-- Summary of the app opening switch. The spoken prefix "Open" is currently English; app names follow their displayed labels. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_voice_open_apps">In Voice commands, say \"Open\" followed by an app name to open it.</string>
     <!--
       Source: Possible user requests from voice commands to read from top.
       Description: Looks for keyword "read" to see if user has asked to read from top. [CHAR LIMIT=40]
