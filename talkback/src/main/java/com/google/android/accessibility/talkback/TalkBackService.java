@@ -152,6 +152,7 @@ import com.google.android.accessibility.talkback.braille.TalkBackForBrailleImeIm
 import com.google.android.accessibility.talkback.braille.TalkBackForBrailleImeImpl.TalkBackPrivateMethodProvider;
 import com.google.android.accessibility.talkback.compositor.Compositor;
 import com.google.android.accessibility.talkback.compositor.CompositorUtils;
+import com.google.android.accessibility.talkback.compositor.EarlyClickState;
 import com.google.android.accessibility.talkback.compositor.EarlyFocusSpeech;
 import com.google.android.accessibility.talkback.compositor.EventFilter;
 import com.google.android.accessibility.talkback.compositor.GlobalVariables;
@@ -2201,6 +2202,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             globalVariables,
             processorPhoneticLetters,
             getCompositorFlavor());
+    accessibilityEventProcessor.setCompositor(compositor);
     // TODO: Make pipeline run Compositor, which returns speech feedback, no callback.
 
     analytics =
@@ -2440,7 +2442,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 directionNavigationActor,
                 editor,
                 labelManager,
-                new NodeActionPerformer(),
+                new NodeActionPerformer(new EarlyClickState(compositor::sayClickStateEarly)),
                 systemActionPerformer,
                 languageActor,
                 passThroughModeActor,
