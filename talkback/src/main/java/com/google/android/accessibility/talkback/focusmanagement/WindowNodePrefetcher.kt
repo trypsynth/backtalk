@@ -34,8 +34,8 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 /**
- * Reads the nodes of a window from the app on several threads at once, before the reading order is
- * built from them on the main thread.
+ * Reads the nodes of a window, or of a part of one, from the app on several threads at once, before
+ * the search order is built from them on the main thread.
  *
  * Building the order asks the app for one node at a time. Each request waits until the app's main
  * thread has finished what it is doing, and an app that redraws on every frame, such as One UI's
@@ -56,6 +56,9 @@ object WindowNodePrefetcher {
   /** How long the main thread waits for the nodes before it reads the rest itself. */
   private const val MAX_WAIT_MS = 300L
 
+  /** How long to leave the reading to the main thread after running out of [MAX_WAIT_MS]. */
+  private const val REST_AFTER_TIMEOUT_MS = 1000L
+
   /** Stops a window with a very large or looped tree. */
   private const val MAX_NODES = 5000
 
@@ -75,25 +78,33 @@ object WindowNodePrefetcher {
   /** Threads reading nodes now. All of them can still be waiting for an app that stopped answering. */
   private val running = AtomicInteger()
 
+  /** No waiting before this time, so that one swipe's scrolls don't each wait [MAX_WAIT_MS]. */
+  @Volatile private var restUntil = 0L
+
   /**
    * Reads the nodes below [root] into Android's node cache, waiting at most [MAX_WAIT_MS]. Does
    * nothing for a window of [ownPackage]: its requests are answered on the main thread, which is
    * waiting here. Does nothing either while every thread is still waiting for an earlier window,
-   * since none of them could start on this one.
+   * since none of them could start on this one, when [root] is web content, whose order is not
+   * built, or just after a read that ran out of time.
    */
   @JvmStatic
   fun prefetch(root: AccessibilityNodeInfoCompat, ownPackage: String) {
     if (
       Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
         TextUtils.equals(root.packageName, ownPackage) ||
-        running.get() >= THREADS
+        running.get() >= THREADS ||
+        SystemClock.uptimeMillis() < restUntil ||
+        WebInterfaceUtils.supportsWebActions(root)
     ) {
       return
     }
     val start = SystemClock.uptimeMillis()
     val walk = Walk(start + MAX_WAIT_MS)
     walk.submit(root.unwrap())
-    walk.await()
+    if (!walk.await()) {
+      restUntil = SystemClock.uptimeMillis() + REST_AFTER_TIMEOUT_MS
+    }
     if (LogUtils.shouldLog(Log.DEBUG)) {
       Log.d(TAG, "Read ${walk.nodes.get()} nodes in ${SystemClock.uptimeMillis() - start} ms")
     }
@@ -158,17 +169,21 @@ object WindowNodePrefetcher {
       }
     }
 
-    fun await() {
-      lock.withLock {
-        while (pending > 0) {
-          val left = deadline - SystemClock.uptimeMillis()
-          if (left <= 0) {
-            break
+    /** Returns whether all the nodes were read in time. */
+    fun await(): Boolean {
+      val inTime =
+        lock.withLock {
+          while (pending > 0) {
+            val left = deadline - SystemClock.uptimeMillis()
+            if (left <= 0) {
+              break
+            }
+            finished.await(left, TimeUnit.MILLISECONDS)
           }
-          finished.await(left, TimeUnit.MILLISECONDS)
+          pending == 0
         }
-      }
       stopped = true
+      return inTime
     }
   }
 }
