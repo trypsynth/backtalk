@@ -1159,9 +1159,6 @@ public class TalkBackService extends AccessibilityServiceCompat
     int eventType = event.getEventType();
     TraversalTreeCache.onAccessibilityEvent(event);
     PreparedFocusSpeech.onAccessibilityEvent(event);
-    if (eventFilter != null) {
-      eventFilter.onWindowEvent();
-    }
     if (directTouchController != null) {
       directTouchController.onAccessibilityEvent(event);
     }
@@ -2714,7 +2711,6 @@ public class TalkBackService extends AccessibilityServiceCompat
           }
         });
     eventFilter.setTargetPredictor(directionNavigationActor::predictTarget);
-    eventFilter.setOrderBuilder(directionNavigationActor::buildOrder);
     eventFilter.setFingerDownSupplier(
         () ->
             FeatureSupport.supportGestureDetection()

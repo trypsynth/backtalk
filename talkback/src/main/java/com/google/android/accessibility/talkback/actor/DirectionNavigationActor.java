@@ -169,10 +169,6 @@ public class DirectionNavigationActor implements UserInputEventListener {
     return focusProcessorForLogicalNavigation.predictTarget(pivot, searchDirection);
   }
 
-  public void buildOrder(AccessibilityNodeInfoCompat pivot) {
-    focusProcessorForLogicalNavigation.buildOrder(pivot);
-  }
-
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
     focusProcessorForLogicalNavigation.setPipeline(pipeline);

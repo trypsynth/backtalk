@@ -1192,32 +1192,13 @@ public class FocusProcessorForLogicalNavigation {
             NavigationTarget.TARGET_DEFAULT, traversalStrategy.getSpeakingNodesCache());
     AccessibilityNodeInfoCompat target =
         TraversalStrategyUtils.searchFocus(traversalStrategy, pivot, searchDirection, nodeFilter);
-    // A node just off screen counts: the swipe will scroll to it, and it's said the same.
     if (target == null
         || target.getWindowId() != pivot.getWindowId()
+        || !target.isVisibleToUser()
         || WebInterfaceUtils.supportsWebActions(target)) {
       return null;
     }
     return target;
-  }
-
-  /**
-   * Reads the reading order of the window of {@code pivot} from the app, if none is saved. The next
-   * swipe would have to do this otherwise.
-   */
-  public void buildOrder(@NonNull AccessibilityNodeInfoCompat pivot) {
-    if (TraversalTreeCache.rootFor(pivot) != null || WebInterfaceUtils.supportsWebActions(pivot)) {
-      return;
-    }
-    AccessibilityNodeInfoCompat rootNode = AccessibilityNodeInfoUtils.getRoot(pivot);
-    if (rootNode == null) {
-      return;
-    }
-    TraversalStrategy traversalStrategy =
-        createPrefetchedTraversal(rootNode, TraversalStrategy.SEARCH_FOCUS_FORWARD);
-    if (traversalStrategy instanceof OrderedTraversalStrategy orderedStrategy) {
-      TraversalTreeCache.put(rootNode, orderedStrategy);
-    }
   }
 
   private boolean navigateToDefaultOrMacroGranularityTarget(
