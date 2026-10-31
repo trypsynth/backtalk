@@ -102,7 +102,6 @@ import com.google.android.accessibility.utils.Role;
 import com.google.android.accessibility.utils.Role.RoleName;
 import com.google.android.accessibility.utils.ScrollableNodeInfo;
 import com.google.android.accessibility.utils.SettingsUtils;
-import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.accessibility.utils.WindowUtils;
 import com.google.android.accessibility.utils.input.CursorGranularity;
@@ -200,15 +199,6 @@ public class FocusProcessorForLogicalNavigation {
   private final Handler earlyScrollCheckHandler = new Handler(Looper.getMainLooper());
   // The next look at a list that is still moving, which a new navigation replaces.
   private @Nullable Runnable pendingSettleLook;
-
-  // Lets the speech of the item start and a swipe that turns into another gesture be undone first.
-  private static final long SCROLL_AHEAD_DELAY_MS = 300;
-  // A swipe this soon after scrolling ahead waits for that scroll, rather than scrolling a page more.
-  private static final long SCROLL_AHEAD_WAIT_MS = 300;
-  private @Nullable Runnable pendingScrollAhead;
-  private @Nullable AccessibilityNodeInfoCompat scrollAheadPivot;
-  private final Rect scrollAheadPivotBefore = new Rect();
-  private long scrollAheadStart;
 
   // Target to put focus on on the next window navigation action
   private @Nullable AccessibilityNodeInfoCompat stealWindowNavigationTarget = null;
@@ -1216,10 +1206,6 @@ public class FocusProcessorForLogicalNavigation {
       boolean ignoreDescendantsOfPivot,
       NavigationAction navigationAction,
       EventId eventId) {
-    cancelPendingScrollAhead();
-    if (waitForScrollAhead(pivot, ignoreDescendantsOfPivot, navigationAction, eventId)) {
-      return true;
-    }
     int searchDirection = navigationAction.searchDirection;
     int logicalDirection =
         TraversalStrategyUtils.getLogicalDirection(
@@ -1418,10 +1404,9 @@ public class FocusProcessorForLogicalNavigation {
     }
 
     AccessibilityNodeInfoCompat target = navigationResult.getNode();
-    boolean scrolled = false;
 
     if ((target != null) && navigationAction.shouldScroll) {
-      scrolled =
+      boolean scrolled =
           ensureOnScreen(
               target,
               navigationAction.searchDirection,
@@ -1471,13 +1456,6 @@ public class FocusProcessorForLogicalNavigation {
           TraversalTreeCache.clear("focus failed");
           return navigateToDefaultOrMacroGranularityTarget(
               pivot, ignoreDescendantsOfPivot, navigationAction, eventId);
-        }
-        if (focused && !scrolled) {
-          scheduleScrollAhead(
-              target,
-              navigationAction,
-              reusableOrderedStrategy(traversalStrategy, rootNode, target),
-              eventId);
         }
         return focused;
       }
@@ -2604,164 +2582,6 @@ public class FocusProcessorForLogicalNavigation {
         Feedback.nodeAction(node, AccessibilityActionCompat.ACTION_SHOW_ON_SCREEN.getId()));
   }
 
-  /** Whether scrolling ahead can follow {@code action}: a plain swipe to the next or previous item. */
-  @VisibleForTesting
-  static boolean canScrollAheadAfter(NavigationAction action) {
-    return action.actionType == NavigationAction.DIRECTIONAL_NAVIGATION
-        && action.targetType == NavigationTarget.TARGET_DEFAULT
-        && action.shouldScroll
-        && TraversalStrategyUtils.isLogicalDirection(action.searchDirection);
-  }
-
-  private void scheduleScrollAhead(
-      @NonNull AccessibilityNodeInfoCompat target,
-      NavigationAction navigationAction,
-      @Nullable OrderedTraversalStrategy windowOrderedStrategy,
-      EventId eventId) {
-    if (!canScrollAheadAfter(navigationAction)
-        || WebInterfaceUtils.supportsWebActions(target)
-        || !SharedPreferencesUtils.getBooleanPref(
-            SharedPreferencesUtils.getSharedPreferences(service),
-            service.getResources(),
-            R.string.pref_scroll_lists_ahead_key,
-            R.bool.pref_scroll_lists_ahead_default)) {
-      return;
-    }
-    pendingScrollAhead =
-        () -> {
-          pendingScrollAhead = null;
-          scrollAhead(target, navigationAction, windowOrderedStrategy, eventId);
-        };
-    earlyScrollCheckHandler.postDelayed(pendingScrollAhead, SCROLL_AHEAD_DELAY_MS);
-  }
-
-  private void cancelPendingScrollAhead() {
-    if (pendingScrollAhead != null) {
-      earlyScrollCheckHandler.removeCallbacks(pendingScrollAhead);
-      pendingScrollAhead = null;
-    }
-  }
-
-  /**
-   * Scrolls the list once focus has landed, when the next item is cut off or not on screen yet, not
-   * when the next swipe asks for it, so that swipe has nothing to wait for. It is the same scroll
-   * the next swipe would do, so it passes nothing that swipe wouldn't, but focus stays put.
-   * Scroll views already show their next item at once, so they are left to that.
-   */
-  private void scrollAhead(
-      @NonNull AccessibilityNodeInfoCompat target,
-      NavigationAction navigationAction,
-      @Nullable OrderedTraversalStrategy windowOrderedStrategy,
-      EventId eventId) {
-    if (scrollCallback != null
-        || !target.equals(
-            accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false))
-        || !target.refresh()) {
-      return;
-    }
-    ScrollableNodeInfo scrollableNodeInfo =
-        ScrollableNodeInfo.findScrollableNodeForDirection(
-            navigationAction.searchDirection,
-            target,
-            /* includeSelf= */ false,
-            WindowUtils.isScreenLayoutRTL(service));
-    if (scrollableNodeInfo == null
-        || OffscreenContent.keepsAllContent(scrollableNodeInfo.getNode())) {
-      return;
-    }
-    if (!TraversalStrategyUtils.isAutoScrollEdgeListItem(
-        target,
-        scrollableNodeInfo,
-        /* ignoreDescendantsOfPivot= */ false,
-        navigationAction.searchDirection,
-        focusFinder,
-        windowOrderedStrategy)) {
-      // The next item is in the tree, but the next swipe would have to bring it fully on screen.
-      AccessibilityNodeInfoCompat next =
-          windowOrderedStrategy == null
-              ? null
-              : TraversalStrategyUtils.searchFocus(
-                  windowOrderedStrategy,
-                  target,
-                  navigationAction.searchDirection,
-                  AccessibilityNodeInfoUtils.FILTER_SHOULD_FOCUS);
-      if (next != null && next.isVisibleToUser()) {
-        ensureOnScreen(next, navigationAction.searchDirection, windowOrderedStrategy, eventId);
-      }
-      return;
-    }
-    AccessibilityNodeInfoCompat scrollable = scrollableNodeInfo.getNode();
-    Rect before = new Rect();
-    target.getBoundsInScreen(before);
-    AccessibilityNodeInfoCompat clipped =
-        findClippedItemAhead(
-            scrollable, target, navigationAction.searchDirection == SEARCH_FOCUS_FORWARD);
-    boolean started = clipped != null && showOnScreen(clipped, eventId);
-    if (!started) {
-      Integer direction =
-          scrollableNodeInfo.getSupportedScrollDirection(navigationAction.searchDirection);
-      started =
-          direction != null
-              && pipeline.returnFeedback(
-                  eventId,
-                  Feedback.scroll(
-                      scrollable,
-                      ScrollActionRecord.ACTION_AUTO_SCROLL,
-                      TraversalStrategyUtils.convertSearchDirectionToScrollAction(direction),
-                      ScrollActionRecord.FOCUS,
-                      ScrollTimeout.SCROLL_TIMEOUT_LONG,
-                      navigationAction.autoScrollAttempt,
-                      /* autoScrollSuccessChecker= */ null));
-    }
-    if (started) {
-      scrollAheadPivot = target;
-      scrollAheadPivotBefore.set(before);
-      scrollAheadStart = SystemClock.uptimeMillis();
-    }
-  }
-
-  /**
-   * Holds a swipe that comes while the scroll ahead may not have moved the list yet. The swipe would
-   * see the same edge and scroll a second page, passing the items the first one brought on screen.
-   * It carries on as soon as the pivot moves, or navigates as usual if the list never does.
-   */
-  private boolean waitForScrollAhead(
-      @NonNull AccessibilityNodeInfoCompat pivot,
-      boolean ignoreDescendantsOfPivot,
-      NavigationAction navigationAction,
-      EventId eventId) {
-    AccessibilityNodeInfoCompat scrollPivot = scrollAheadPivot;
-    scrollAheadPivot = null;
-    if (!pivot.equals(scrollPivot)
-        || scrollCallback != null
-        || navigationAction.targetType != NavigationTarget.TARGET_DEFAULT
-        || SystemClock.uptimeMillis() - scrollAheadStart > SCROLL_AHEAD_WAIT_MS) {
-      return false;
-    }
-    ScrollableNodeInfo scrollableNodeInfo =
-        ScrollableNodeInfo.findScrollableNodeForDirection(
-            navigationAction.searchDirection,
-            pivot,
-            /* includeSelf= */ false,
-            WindowUtils.isScreenLayoutRTL(service));
-    if (scrollableNodeInfo == null) {
-      return false;
-    }
-    AutoScrollCallback callback = new AutoScrollCallback(this, navigationAction, pivot);
-    scrollCallback = callback;
-    postEarlyScrollCheck(
-        callback,
-        scrollableNodeInfo.getNode(),
-        new Rect(scrollAheadPivotBefore),
-        eventId,
-        EARLY_SCROLL_RETRIES,
-        () -> {
-          scrollCallback = null;
-          onDirectionalNavigationAction(pivot, ignoreDescendantsOfPivot, navigationAction, eventId);
-        });
-    return true;
-  }
-
   /**
    * Tries to perform scroll if the pivot is at the edge of a scrollable container and suitable
    * autoscroll.
@@ -3213,7 +3033,6 @@ public class FocusProcessorForLogicalNavigation {
   public void cancelAutoScrollFocus() {
     scrollCallback = null;
     cancelSettleLook();
-    cancelPendingScrollAhead();
   }
 
   /** Determines feedback for auto-scroll failure after directional-navigation action. */

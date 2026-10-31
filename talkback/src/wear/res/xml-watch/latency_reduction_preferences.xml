@@ -33,12 +33,6 @@
         android:key="@string/pref_swipe_before_lift_key" />
 
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
-        android:defaultValue="@bool/pref_scroll_lists_ahead_default"
-        android:title="@string/title_pref_scroll_lists_ahead"
-        android:summary="@string/summary_pref_scroll_lists_ahead"
-        android:key="@string/pref_scroll_lists_ahead_key" />
-
-    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="@bool/pref_speak_items_before_scroll_default"
         android:title="@string/title_pref_speak_items_before_scroll"
         android:key="@string/pref_speak_items_before_scroll_key" />

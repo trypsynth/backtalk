@@ -194,8 +194,6 @@
         <ignore regexp="update_wifi_download_failed" />
         <ignore regexp="title_pref_swipe_before_lift" />
         <ignore regexp="summary_pref_swipe_before_lift" />
-        <ignore regexp="title_pref_scroll_lists_ahead" />
-        <ignore regexp="summary_pref_scroll_lists_ahead" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
