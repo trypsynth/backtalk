@@ -158,8 +158,14 @@ public class SelectorController implements UserInputEventListener {
   // interaction's ongoing. This flag records the touch interaction start/end, respectively. So that
   // the currentSetting will only happen when touch event's ended.
   private boolean touchActive = false;
-  // Accompanying the 'touchActive' flag, this variable avoids the reassign of the same node.
-  private AccessibilityNodeInfo lastFocusedNode = null;
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private final LateSettingSwitch lateSettingSwitch =
+      new LateSettingSwitch(handler, this::switchCurrentSetting);
+
+  /** Stops a reading control waiting to be picked from asking the app after the service stops. */
+  public void shutdown() {
+    lateSettingSwitch.cancel();
+  }
 
   /** Audial feedback announce types. */
   public enum AnnounceType {
@@ -1111,6 +1117,7 @@ public class SelectorController implements UserInputEventListener {
    * automatically that make user easier to use screen search navigation.
    */
   public void searchActionPerformed() {
+    lateSettingSwitch.runNow();
     settingToRestore = GRANULARITY_SEARCH;
     setCurrentSetting(
         EVENT_ID_UNTRACKED,
@@ -1208,6 +1215,7 @@ public class SelectorController implements UserInputEventListener {
    */
   @Override
   public void editTextOrSelectableTextSelected(boolean isSelected) {
+    lateSettingSwitch.runNow();
     if (isSelected) {
       Setting current = getCurrentSetting(context, prefs);
       if (selectionGranularityOf(current) != null) {
@@ -1252,12 +1260,13 @@ public class SelectorController implements UserInputEventListener {
       return;
     }
 
-    if (nodeInfo == null || nodeInfo.equals(lastFocusedNode)) {
+    if (nodeInfo == null) {
       return;
     }
     if (touchActive) {
-      lastFocusedNode = nodeInfo;
+      lateSettingSwitch.hold(nodeInfo);
     } else {
+      lateSettingSwitch.cancel();
       switchCurrentSetting(nodeInfo);
     }
   }
@@ -1300,7 +1309,6 @@ public class SelectorController implements UserInputEventListener {
     if (nodeInfo == null) {
       return;
     }
-    lastFocusedNode = null;
     Optional<ContextualSetting> contextualMenu =
         getMatchedContextualSettingForActivation(
             context, AccessibilityNodeInfoCompat.wrap(nodeInfo), hiddenSettings);
@@ -1332,11 +1340,9 @@ public class SelectorController implements UserInputEventListener {
     if (active) {
       // A touch replaces a move that is waiting for a list to scroll.
       verticalNavigator.cancel();
-    }
-    if (!touchActive) {
-      if (lastFocusedNode != null) {
-        switchCurrentSetting(lastFocusedNode);
-      }
+      lateSettingSwitch.pause();
+    } else {
+      lateSettingSwitch.schedule();
     }
   }
 
@@ -1359,6 +1365,7 @@ public class SelectorController implements UserInputEventListener {
 
   private boolean selectPreviousOrNext(
       EventId eventId, AnnounceType announceType, boolean isNext, boolean showOverlay) {
+    lateSettingSwitch.runNow();
     List<Setting> settings = getFilteredSettings();
     List<ScriptReadingControl> controls = Scripts.readingControls();
 
@@ -1496,6 +1503,7 @@ public class SelectorController implements UserInputEventListener {
       return false;
     }
 
+    lateSettingSwitch.runNow();
     setCurrentSetting(EVENT_ID_UNTRACKED, setting, announceType, showOverlay);
     return true;
   }
@@ -1804,6 +1812,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Change the value of the selected setting or scroll forward/backard of the seeker. */
   public void adjustSelectedSetting(EventId eventId, boolean isNext) {
+    lateSettingSwitch.runNow();
     @Nullable ScriptReadingControl scriptControl = currentScriptControl(Scripts.readingControls());
     if (scriptControl != null) {
       scriptControl.adjust(isNext);
@@ -2006,6 +2015,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Activate the currently selected action in the actions setting. */
   public void activateCurrentAction(EventId eventId) {
+    lateSettingSwitch.runNow();
     if (!accessibilityFocusMonitor.hasAccessibilityFocus(/* useInputFocusIfEmpty= */ false)) {
       return;
     }
@@ -2437,7 +2447,6 @@ public class SelectorController implements UserInputEventListener {
 
   private EventId lastChangeVolumeEventId;
   private int listenedVolumeStream = -1;
-  private final Handler handler = new Handler(Looper.getMainLooper());
   private final VolumeChangedListener volumeChangedListener =
       new VolumeChangedListener() {
 

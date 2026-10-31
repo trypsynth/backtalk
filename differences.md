@@ -12,6 +12,12 @@ When you swiped to an item, TalkBack waited for the app to confirm the new focus
 
 This doesn't apply when focus moves to another window, when the screen changes, or during continuous reading. Keys on the keyboard, sliders, progress bars, pages in a pager, and web content still wait for the app.
 
+### Typed letters said sooner
+
+When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first.
+
+As a key is typed, the keyboard also reports that your finger left the key. TalkBack asked the keyboard about each of these reports and then ignored the answer. Backtalk doesn't ask. On an emulator, typing in Android's Settings search with Gboard, these two changes together took the median time from lifting your finger to the start of speech from about 92 ms to about 71 ms, and the median time to the key's vibration from about 192 ms to about 165 ms.
+
 ### Next swipe prepared in advance
 
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.

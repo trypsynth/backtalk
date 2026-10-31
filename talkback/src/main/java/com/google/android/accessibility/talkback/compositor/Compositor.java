@@ -452,6 +452,11 @@ public class Compositor {
       AccessibilityEvent event, @Nullable EventId eventId, EventInterpretation eventInterpreted) {
 
     @Event int eventType = eventInterpreted.getEvent();
+    if (!USE_LEGACY_COMPOSITOR_JSON && !talkbackFeedbackProvider.hasFeedbackRule(eventType)) {
+      // Nothing is given for it, such as for the keyboard's hover exit as a key is typed, so skip
+      // reading its source, a round trip to an app that is often busy then.
+      return;
+    }
 
     // TODO: getSource may cost time
     // Allocate source node.
