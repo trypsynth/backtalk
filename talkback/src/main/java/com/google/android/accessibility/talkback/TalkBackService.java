@@ -186,6 +186,7 @@ import com.google.android.accessibility.talkback.focusmanagement.interpreter.Scr
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.TouchExplorationInterpreter;
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
+import com.google.android.accessibility.talkback.gesture.EarlySwipePolicy;
 import com.google.android.accessibility.talkback.gesture.GestureController;
 import com.google.android.accessibility.talkback.gesture.GestureHistory;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
@@ -1621,7 +1622,11 @@ public class TalkBackService extends AccessibilityServiceCompat
         && getBooleanPref(
             R.string.pref_swipe_before_lift_key, R.bool.pref_swipe_before_lift_default)
         && (menuManager == null || !menuManager.isMenuShowing())
-        && gestureController.onlyMovesToAdjacentItem(gestureId);
+        && EarlySwipePolicy.onlyMovesToAdjacentItem(
+            this,
+            gestureId,
+            gestureController,
+            pipeline.getActorState().getDirectionNavigation().getCurrentGranularity());
   }
 
   void startSwipeEarly(int gestureId, int displayId) {
