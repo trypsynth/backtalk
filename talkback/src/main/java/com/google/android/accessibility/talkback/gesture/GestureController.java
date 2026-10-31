@@ -862,6 +862,23 @@ public class GestureController {
     return service.getString(R.string.shortcut_value_toggle_scripts).equals(action);
   }
 
+  /**
+   * Whether the gesture does nothing but move focus to the next or previous item, which can be
+   * undone by moving focus back. Moving by character, word or line also moves the text cursor.
+   */
+  public boolean onlyMovesToAdjacentItem(int gestureId) {
+    CursorGranularity granularity = actorState.getDirectionNavigation().getCurrentGranularity();
+    if (captureGestureIdToAnnouncements.containsKey(gestureId)
+        || disabledGestures.contains(gestureId)
+        || granularity.isMicroGranularity()
+        || granularity == CursorGranularity.ROW_COLUMN) {
+      return false;
+    }
+    String action = gestureShortcutMapping.getActionKeyFromGestureId(gestureId);
+    return service.getString(R.string.shortcut_value_next).equals(action)
+        || service.getString(R.string.shortcut_value_previous).equals(action);
+  }
+
   private boolean gestureHandledByTraining(int gestureId, boolean isFingerprintGesture) {
     // TalkBack can ignore the gesture, which is handled by OnGestureListener.onCaptureGesture(), if
     // captured gesture list exists and the current window is training.

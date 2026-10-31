@@ -33,6 +33,12 @@
         android:key="pref_low_latency_audio" />
 
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="true"
+        android:title="@string/title_pref_swipe_before_lift"
+        android:summary="@string/summary_pref_swipe_before_lift"
+        android:key="pref_swipe_before_lift" />
+
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
         android:defaultValue="@bool/pref_speak_items_before_scroll_default"
         android:title="@string/title_pref_speak_items_before_scroll"
         android:key="@string/pref_speak_items_before_scroll_key" />

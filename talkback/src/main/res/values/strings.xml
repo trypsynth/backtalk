@@ -2536,6 +2536,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <!-- Reduce delays: summary of the low-latency audio switch. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_low_latency_audio">Play Backtalk\'s sounds and speech through the phone\'s fastest audio path, so you hear them sooner. Turn it off if speech or sounds break up or sound wrong.</string>
 
+    <!-- Reduce delays: switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=50] -->
+    <string name="title_pref_swipe_before_lift">Move before you lift your finger</string>
+    <!-- Reduce delays: summary of the switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_swipe_before_lift">Move to the next or previous item as soon as your finger starts a swipe, rather than when it lifts. If the swipe turns into another gesture, such as right then down, you may briefly hear the next item before Backtalk moves back.</string>
+
     <!-- Label for touch explore time out. [CHAR LIMIT=NONE]-->
     <string name="value_touch_explore_time_out_150ms">0.15 seconds</string>
     <!-- Label for touch explore time out. [CHAR LIMIT=NONE]-->
