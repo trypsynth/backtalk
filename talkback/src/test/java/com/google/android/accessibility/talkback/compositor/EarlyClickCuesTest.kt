@@ -60,6 +60,21 @@ class EarlyClickCuesTest {
   }
 
   @Test
+  fun aClickWhoseSourceIsGoneIsTakenForOneSaidEarly() {
+    now = 105L
+    cues.saidEarly("row", "switch")
+    assertTrue(cues.takeSaidEarly(null, eventTime = 100L))
+    assertFalse(cues.hasSaidEarly())
+  }
+
+  @Test
+  fun aLaterClickWhoseSourceIsGoneIsNotTakenForOneSaidEarly() {
+    now = 105L
+    cues.saidEarly("row", "switch")
+    assertFalse(cues.takeSaidEarly(null, eventTime = 400L))
+  }
+
+  @Test
   fun aClickSaidEarlyIsSkippedOnce() {
     now = 105L
     cues.saidEarly("row", "switch")

@@ -56,11 +56,13 @@ class EarlyClickCues(private val clock: () -> Long = SystemClock::uptimeMillis) 
 
   /**
    * Whether the click on [node] sent at [eventTime] had its cues given by [saidEarly]. Forgets that
-   * click. A later click on the same item, sent after its state was said, is not matched.
+   * click. A later click on the same item, sent after its state was said, is not matched. A null
+   * [node] is an event whose source is gone, as when the click removed the item, and matches any.
    */
-  fun takeSaidEarly(node: Any, eventTime: Long): Boolean =
+  fun takeSaidEarly(node: Any?, eventTime: Long): Boolean =
     saidEarly.removeFirst {
-      (it.target == node || it.changed == node) && eventTime <= it.time + CLOCK_SLACK_MS
+      (node == null || it.target == node || it.changed == node) &&
+        eventTime <= it.time + CLOCK_SLACK_MS
     } != null
 
   /** Called when the click sent at [eventTime] was matched by [takeSaidEarly]. */

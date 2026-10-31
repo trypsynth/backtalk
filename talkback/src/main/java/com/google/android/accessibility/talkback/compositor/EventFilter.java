@@ -81,6 +81,12 @@ public class EventFilter {
   private BooleanSupplier fingerDown = () -> false;
   // The node that accessibility focus last moved to, as far as this filter knows.
   private @Nullable AccessibilityNodeInfoCompat lastFocusedNode;
+  // What to put back if the app refuses the focus being set, which updated the state that follows
+  // focus before the app answered. Null if that focus left the state alone.
+  private GlobalVariables.@Nullable SavedFocusState focusStateBeforeAction;
+  private @Nullable AccessibilityNodeInfoCompat lastFocusedNodeBeforeAction;
+  // How many times preparing the swipe targets has waited for a finger to lift.
+  private int prepareWaits;
   private final Handler handler = new Handler(Looper.getMainLooper());
   private final Runnable prepareSwipeTargets = this::prepareSwipeTargets;
 
@@ -89,6 +95,12 @@ public class EventFilter {
    * the app's focus event has been handled, and usually before the next swipe starts.
    */
   private static final long PREPARE_DELAY_MS = 30;
+
+  /**
+   * How many times preparing waits for a finger to lift, about a second, which a swipe's lift comes
+   * well within. A longer touch is exploring the screen, and focus will have moved on by its end.
+   */
+  private static final int MAX_PREPARE_WAITS = 34;
 
   /**
    * Whether a swipe's target that is only partly on screen is spoken before the swipe has scrolled
@@ -271,6 +283,7 @@ public class EventFilter {
       @Nullable EventId eventId,
       long actionTime,
       boolean continuousReading) {
+    focusStateBeforeAction = null;
     if (continuousReading || !speakFocusEarly(node, info, eventId, actionTime)) {
       // A node spoken early before, whose event never came here, must not hide this focus.
       earlyFocusSpeech.forget(node);
@@ -278,11 +291,17 @@ public class EventFilter {
   }
 
   /**
-   * Forgets {@code node}, whose focus the app refused after {@link #onAccessibilityFocusStarting}.
+   * Forgets {@code node}, whose focus the app refused after {@link #onAccessibilityFocusStarting},
+   * and puts back the state that followed the focus it would have replaced.
    *
    * @return whether it was spoken, so that the speech names an item that is not focused
    */
   public boolean onAccessibilityFocusFailed(AccessibilityNodeInfoCompat node) {
+    if (focusStateBeforeAction != null) {
+      globalVariables.restoreFocusState(focusStateBeforeAction);
+      focusStateBeforeAction = null;
+      onFocusMoved(lastFocusedNodeBeforeAction);
+    }
     return earlyFocusSpeech.forgetSpoken(node);
   }
 
@@ -344,6 +363,8 @@ public class EventFilter {
     // The speech is composed from the state that follows focus, so it is updated first, and the
     // app's event must then not update it a second time, whether or not the speech succeeds:
     // moving the collection state twice would lose "list, N items" or "in table".
+    focusStateBeforeAction = globalVariables.saveFocusState();
+    lastFocusedNodeBeforeAction = lastFocusedNode;
     globalVariables.updateStateFromFocusedNode(node);
     globalVariables.updateCollectionStateFromFocusedNode(node, event);
     lastHoverEnteredNode = null;
@@ -468,8 +489,9 @@ public class EventFilter {
   }
 
   /** Prepares the announcements of the nodes next to {@code node}, which focus just moved to. */
-  private void onFocusMoved(AccessibilityNodeInfoCompat node) {
+  private void onFocusMoved(@Nullable AccessibilityNodeInfoCompat node) {
     lastFocusedNode = node;
+    prepareWaits = 0;
     handler.removeCallbacks(prepareSwipeTargets);
     if (targetPredictor != null) {
       handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);
@@ -490,7 +512,10 @@ public class EventFilter {
     if (fingerDown.getAsBoolean()) {
       // A swipe may be starting, and must not wait for this. A swipe that moved focus before its
       // finger lifted is still going, so try again rather than leave the next swipe unprepared.
-      handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);
+      if (prepareWaits < MAX_PREPARE_WAITS) {
+        prepareWaits++;
+        handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);
+      }
       return;
     }
     for (int direction : SWIPE_DIRECTIONS) {

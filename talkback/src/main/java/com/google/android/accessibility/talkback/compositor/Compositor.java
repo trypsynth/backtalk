@@ -477,9 +477,8 @@ public class Compositor {
   public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
     long eventTime = event.getEventTime();
     // Only ask the event for its source, a round trip to the app, when a click could match it.
-    @Nullable AccessibilityNodeInfoCompat source =
-        earlyClickCues.hasSaidEarly() ? AccessibilityEventUtils.sourceCompat(event) : null;
-    if (source != null && earlyClickCues.takeSaidEarly(source, eventTime)) {
+    if (earlyClickCues.hasSaidEarly()
+        && earlyClickCues.takeSaidEarly(AccessibilityEventUtils.sourceCompat(event), eventTime)) {
       // Cues and state given by sayClickStateEarly() are not given again.
       earlyClickCues.said(eventTime);
       return;

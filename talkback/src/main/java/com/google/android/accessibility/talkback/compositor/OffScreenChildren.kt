@@ -34,7 +34,7 @@ object OffScreenChildren {
         continue
       }
       child.getBoundsInScreen(childBounds)
-      if (isOffScreen(visible = false, childBounds, bounds)) {
+      if (isOffScreen(childBounds, bounds)) {
         return true
       }
     }
@@ -42,10 +42,10 @@ object OffScreenChildren {
   }
 
   /**
-   * Whether a child is off screen. A child that the app reports as not visible, but that lies
-   * inside its parent, is not: some apps report a slider in a list item that way, such as the
-   * volume rows in Sound settings, and no scroll would change it.
+   * Whether a child that the app reports as not visible is off screen. One that lies inside its
+   * parent is not: some apps report a slider in a list item that way, such as the volume rows in
+   * Sound settings, and no scroll would change it.
    */
-  internal fun isOffScreen(visible: Boolean, bounds: Rect, parentBounds: Rect): Boolean =
-    !visible && (bounds.isEmpty || !parentBounds.contains(bounds))
+  internal fun isOffScreen(bounds: Rect, parentBounds: Rect): Boolean =
+    bounds.isEmpty || !parentBounds.contains(bounds)
 }

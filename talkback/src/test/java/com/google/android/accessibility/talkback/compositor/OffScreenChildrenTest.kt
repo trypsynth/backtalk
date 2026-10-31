@@ -33,18 +33,13 @@ class OffScreenChildrenTest {
   private val slider = Rect(84, 815, 870, 941)
 
   @Test
-  fun aVisibleChildIsOnScreen() {
-    assertFalse(isOffScreen(visible = true, bounds = slider, parentBounds = item))
-  }
-
-  @Test
   fun aHiddenChildInsideItsItemIsOnScreen() {
-    assertFalse(isOffScreen(visible = false, bounds = slider, parentBounds = item))
+    assertFalse(isOffScreen(bounds = slider, parentBounds = item))
   }
 
   @Test
   fun aHiddenChildWithNoBoundsIsOffScreen() {
-    assertTrue(isOffScreen(visible = false, bounds = Rect(), parentBounds = item))
+    assertTrue(isOffScreen(bounds = Rect(), parentBounds = item))
   }
 
   @Test
@@ -52,6 +47,6 @@ class OffScreenChildrenTest {
     // An item cut off at the bottom of the screen, with a line of text below the cut.
     val shownPart = Rect(0, 2200, 1080, 2340)
     val textBelow = Rect(40, 2340, 1040, 2420)
-    assertTrue(isOffScreen(visible = false, bounds = textBelow, parentBounds = shownPart))
+    assertTrue(isOffScreen(bounds = textBelow, parentBounds = shownPart))
   }
 }

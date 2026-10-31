@@ -36,6 +36,7 @@ import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorF
 import com.google.android.accessibility.talkback.preference.PreferencesActivityUtils;
 import com.google.android.accessibility.talkback.preference.TalkBackPreferenceFilter;
 import com.google.android.accessibility.talkback.speech.SpeechCacheController;
+import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.material.A11yAlertDialogWrapper;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
@@ -190,6 +191,7 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
 
     updatePreference(false);
     removeCacheKeyBoardPreferenceIfNeeded();
+    removeSwipeBeforeLiftPreferenceIfNeeded();
   }
 
   @VisibleForTesting
@@ -314,6 +316,14 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
               R.string.pref_typing_confirmation_key,
               R.string.pref_typing_confirmation_default);
       longPressDuration.setEnabled(typingMethod != DOUBLE_TAP);
+    }
+  }
+
+  /** Moving before the finger lifts needs Backtalk to detect the gestures itself. */
+  private void removeSwipeBeforeLiftPreferenceIfNeeded() {
+    Preference pref = findPreferenceByResId(R.string.pref_swipe_before_lift_key);
+    if (pref != null && !FeatureSupport.supportGestureDetection()) {
+      getPreferenceScreen().removePreference(pref);
     }
   }
 
