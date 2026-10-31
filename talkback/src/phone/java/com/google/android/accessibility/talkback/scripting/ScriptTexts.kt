@@ -61,6 +61,8 @@ fun Context.bindingText(binding: CommandBinding): String =
       getString(R.string.script_binding_gesture, ScriptInput.gestureTitle(this, binding.name))
     is CommandBinding.KeyCombo ->
       getString(R.string.script_binding_keys, ScriptInput.keysTitle(this, binding.keys))
+    is CommandBinding.Voice ->
+      getString(R.string.script_binding_voice, binding.phrase)
     CommandBinding.MenuItem -> getString(R.string.script_binding_menu)
     CommandBinding.ReadingControl -> getString(R.string.script_binding_control)
   }

@@ -159,6 +159,8 @@ class LazyScriptHost(
     fallback: Runnable,
   ): Boolean = manager?.onKeys(modifiers, keyCode, withBacktalkModifier, fallback) == true
 
+  override fun onVoiceCommand(command: String): Boolean = manager?.onVoiceCommand(command) == true
+
   override fun menuItems(): List<ScriptMenuItem> = manager?.menuItems().orEmpty()
 
   override fun readingControls(): List<ScriptReadingControl> =

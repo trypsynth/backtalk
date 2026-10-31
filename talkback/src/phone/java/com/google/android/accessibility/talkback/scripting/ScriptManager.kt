@@ -27,6 +27,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.google.android.accessibility.scripting.quickjs.QuickJsException
 import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCache
+import com.google.android.accessibility.talkback.actor.voicecommands.VoiceCommandFuzzyMatcher
 import java.util.concurrent.CountDownLatch
 import org.json.JSONObject
 
@@ -161,6 +162,65 @@ class ScriptManager(
 
   override fun onPausedChanged(paused: Boolean) {
     feedback.paused = paused
+  }
+
+  override fun onVoiceCommand(command: String): Boolean {
+    if (activation.inBacktalk) return false
+    val norm = VoiceCommandFuzzyMatcher.normalize(command)
+    if (norm.isBlank()) return false
+
+    // 1. Check manifest voice bindings
+    for ((phrase, bound) in bindings.voice) {
+      if (norm.equals(phrase, ignoreCase = true) || VoiceCommandFuzzyMatcher.matchesPhrase(norm, phrase)) {
+        runCommand(bound, "voice", command = command)
+        return true
+      }
+    }
+
+    // 2. Check dynamic voice commands in loaded runtimes
+    for (runtime in loaded.values) {
+      if (!runtime.isLoaded || !runtime.allowed(ScriptPermission.INPUT, "Voice")) continue
+      for (pattern in runtime.voicePatterns) {
+        val normPattern = pattern.trim().lowercase()
+        var matched = false
+        var remainder: String? = null
+
+        if (normPattern.contains('*')) {
+          val prefix = normPattern.substringBefore('*').trim()
+          val suffix = normPattern.substringAfter('*').trim()
+          if (norm.startsWith(prefix) && (suffix.isEmpty() || norm.endsWith(suffix))) {
+            matched = true
+            remainder = norm.removePrefix(prefix).removeSuffix(suffix).trim()
+          }
+        } else if (norm == normPattern || VoiceCommandFuzzyMatcher.matchesPhrase(norm, normPattern)) {
+          matched = true
+        }
+
+        if (matched) {
+          onScriptThread {
+            if (runtime.isLoaded) {
+              val copy = focusedNode()?.let { AccessibilityNodeInfoCompat.obtain(it) }
+              val data = jsonObject(
+                "command" to command,
+                "pattern" to pattern,
+                "remainder" to remainder,
+                "node" to runtime.snapshotIfAllowed(copy),
+              )
+              val result = runtime.dispatch("voiceCommand", data)
+              result?.let {
+                val toSpeak = runCatching { JSONObject(it).optString("speak") }.getOrNull()
+                if (!toSpeak.isNullOrEmpty()) {
+                  feedback.speak(toSpeak, interrupt = false)
+                }
+              }
+            }
+          }
+          return true
+        }
+      }
+    }
+
+    return false
   }
 
   override fun onGesture(name: String, fallback: Runnable): Boolean =
@@ -404,6 +464,8 @@ class ScriptManager(
     via: String,
     node: AccessibilityNodeInfoCompat? = null,
     direction: String? = null,
+    command: String? = null,
+    remainder: String? = null,
     fallback: Runnable? = null,
   ) {
     @Suppress("DEPRECATION") val copy = node?.let { AccessibilityNodeInfoCompat.obtain(it) }
@@ -416,6 +478,8 @@ class ScriptManager(
               "id" to bound.command.id,
               "via" to via,
               "direction" to direction,
+              "command" to command,
+              "remainder" to remainder,
               "node" to runtime.snapshotIfAllowed(copy ?: focusedNode()),
             )
           runtime.dispatch("command", data)
