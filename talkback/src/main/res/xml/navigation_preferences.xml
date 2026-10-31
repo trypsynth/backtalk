@@ -26,6 +26,11 @@
       android:key="@string/pref_auto_enter_table_navigation_key"
       android:title="@string/pref_auto_enter_table_navigation_title" />
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+      android:defaultValue="@bool/pref_preserve_web_reading_control_default"
+      android:key="@string/pref_preserve_web_reading_control_key"
+      android:summary="@string/summary_pref_preserve_web_reading_control"
+      android:title="@string/title_pref_preserve_web_reading_control" />
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_smart_browse_mode_default"
       android:key="@string/pref_smart_browse_mode_key"
       android:title="@string/title_smart_browse_mode"

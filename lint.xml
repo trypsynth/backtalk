@@ -75,6 +75,8 @@
         <ignore regexp="phonetic_letters_mode_instead_of_letter" />
         <ignore regexp="title_pref_touch_activation" />
         <ignore regexp="title_pref_navigation" />
+        <ignore regexp="title_pref_preserve_web_reading_control" />
+        <ignore regexp="summary_pref_preserve_web_reading_control" />
         <ignore regexp="title_pref_focus_new_windows" />
         <ignore regexp="title_pref_category_apps" />
         <ignore regexp="individual_sound_screen_on" />

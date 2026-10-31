@@ -374,6 +374,10 @@ While another accessibility service that explores by touch is on, such as anothe
 
 ## Navigation
 
+### Preserve the selected web reading control
+
+When **Controls** > **Navigation** > **Keep selected reading control on web pages** is on, Backtalk keeps the web reading control you selected, such as **Headings** or **Links**, while you move through page content. It does not automatically switch to **Actions**; you can still choose **Actions** manually. The switch is off by default.
+
 ### Returning to a screen
 
 On phones, **Controls** > **Navigation** > **Restore focus when going back** lets Backtalk remember the last item you read on up to 20 recent app screens and browser pages while the service is running. This switch is off by default. Restoration starts only when you use Back, including the Back gesture/key or a recognized app Back button. It tries to focus the same item, including when an app recreates its list or automatically focuses the toolbar. This also works when an app opens a post or link in another app: using Back from the browser or other app restores the originating item. Forward navigation, switching apps, and opening or reading the status bar do not trigger restoration. User input on the returned screen cancels pending restoration. This memory clears when Backtalk stops or you change the restoration switch. With the switch off, Backtalk keeps its usual focus behavior and does not capture or restore these bookmarks.
