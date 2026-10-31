@@ -88,6 +88,12 @@ When the next item was only partly on screen, TalkBack scrolled it into view, wa
 
 When the next item is off screen, Backtalk checks once per frame whether the list has moved, rather than wait for the scroll event, which Android sends at most every 100 ms. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen, and from about 320 ms to about 140 ms when the list had to scroll a page.
 
+On Android 13 and later, Backtalk reads a list's new items in parallel after a page scroll. On an emulator, the slowest page scrolls in Google News reached the speech engine in about 220 ms rather than about 260 ms.
+
+Also on Android 13 and later, when a row of cards scrolls sideways and has no next item, Backtalk moves on straight away. While a list is still moving, Backtalk looks for the next item every 40 ms rather than every 120 ms. On all versions, it stops trying to bring a cut-off item on screen sooner if the list doesn't respond. On an emulator in Google News, the slowest 5% to 7% of swipes reached the speech engine in about 225 ms rather than about 310 ms, and swipes that scroll a row went from about 250 ms to under 150 ms.
+
+Backtalk also doesn't skip what a page scroll would carry past. When the current card or the next one is cut off by the list's far edge, Backtalk brings that card on screen instead of scrolling a page. When the list is still moving and nothing new can be found yet, it looks again, up to 3 times, instead of scrolling a second page. When a row of cards in a feed refuses to scroll further, it scrolls the list around the row instead of leaving the list. In a walk of 120 swipes through Google News on an emulator, items heard only when swiping back went from 10 to 0, and jumps to the Home tab stopped. Swipes that have to wait for the list are still slower: speech usually starts about 250 to 500 ms after the finger lifts, compared with about 140 ms for a typical swipe.
+
 Backtalk also finds the end of a list that's laid out in reverse, such as a chat, correctly.
 
 ### Scroll views that show the next screen immediately

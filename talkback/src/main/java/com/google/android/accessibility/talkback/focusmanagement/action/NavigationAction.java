@@ -80,6 +80,7 @@ public class NavigationAction {
   public final boolean useInputFocusAsPivotIfEmpty;
   public final CursorGranularity originalNavigationGranularity;
   public final int autoScrollAttempt;
+  public final int clippedItemReveals;
   public final boolean isPrevScrolled;
   public final int prevScrollDeltaSumX;
   public final int prevScrollDeltaSumY;
@@ -97,6 +98,7 @@ public class NavigationAction {
     useInputFocusAsPivotIfEmpty = builder.useInputFocusAsPivotIfEmpty;
     originalNavigationGranularity = builder.originalNavigationGranularity;
     autoScrollAttempt = builder.autoScrollAttempt;
+    clippedItemReveals = builder.clippedItemReveals;
     isPrevScrolled = builder.isPrevScrolled;
     prevScrollDeltaSumX = builder.prevScrollDeltaSumX;
     prevScrollDeltaSumY = builder.prevScrollDeltaSumY;
@@ -117,6 +119,7 @@ public class NavigationAction {
         useInputFocusAsPivotIfEmpty,
         originalNavigationGranularity,
         autoScrollAttempt,
+        clippedItemReveals,
         isPrevScrolled,
         prevScrollDeltaSumX,
         prevScrollDeltaSumY,
@@ -139,6 +142,7 @@ public class NavigationAction {
         && this.useInputFocusAsPivotIfEmpty == other.useInputFocusAsPivotIfEmpty
         && this.originalNavigationGranularity == other.originalNavigationGranularity
         && this.autoScrollAttempt == other.autoScrollAttempt
+        && this.clippedItemReveals == other.clippedItemReveals
         && this.isPrevScrolled == other.isPrevScrolled
         && this.prevScrollDeltaSumX == other.prevScrollDeltaSumX
         && this.prevScrollDeltaSumY == other.prevScrollDeltaSumY
@@ -161,6 +165,7 @@ public class NavigationAction {
     sb.append(", useInputFocusAsPivotIfEmpty=").append(useInputFocusAsPivotIfEmpty);
     sb.append(", originalNavigationGranularity=").append(originalNavigationGranularity);
     sb.append(", autoScrollAttempt=").append(autoScrollAttempt);
+    sb.append(", clippedItemReveals=").append(clippedItemReveals);
     sb.append(", isPrevScrolled=").append(isPrevScrolled);
     sb.append(", prevScrollDeltaSumX=").append(prevScrollDeltaSumX);
     sb.append(", prevScrollDeltaSumY=").append(prevScrollDeltaSumY);
@@ -197,6 +202,7 @@ public class NavigationAction {
     private boolean useInputFocusAsPivotIfEmpty = false;
     private @Nullable CursorGranularity originalNavigationGranularity = null;
     private int autoScrollAttempt = 0;
+    private int clippedItemReveals = 0;
     private boolean isPrevScrolled = false;
     private int prevScrollDeltaSumX = 0;
     private int prevScrollDeltaSumY = 0;
@@ -215,6 +221,7 @@ public class NavigationAction {
       builder.useInputFocusAsPivotIfEmpty = action.useInputFocusAsPivotIfEmpty;
       builder.originalNavigationGranularity = action.originalNavigationGranularity;
       builder.autoScrollAttempt = action.autoScrollAttempt;
+      builder.clippedItemReveals = action.clippedItemReveals;
       builder.isPrevScrolled = action.isPrevScrolled;
       builder.prevScrollDeltaSumX = action.prevScrollDeltaSumX;
       builder.prevScrollDeltaSumY = action.prevScrollDeltaSumY;
@@ -274,6 +281,12 @@ public class NavigationAction {
     public Builder setOriginalNavigationGranularity(
         CursorGranularity originalNavigationGranularity) {
       this.originalNavigationGranularity = originalNavigationGranularity;
+      return this;
+    }
+
+    @CanIgnoreReturnValue
+    public Builder setClippedItemReveals(int clippedItemReveals) {
+      this.clippedItemReveals = clippedItemReveals;
       return this;
     }
 
