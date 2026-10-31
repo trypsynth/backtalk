@@ -2541,6 +2541,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <!-- Reduce delays: summary of the switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_swipe_before_lift">Move to the next or previous item as soon as your finger starts a swipe, rather than when it lifts. If the swipe turns into another gesture, such as right then down, you may briefly hear the next item before Backtalk moves back.</string>
 
+    <!-- Reduce delays: switch that scrolls a list when focus reaches the last item on screen. [CHAR LIMIT=50] -->
+    <string name="title_pref_scroll_lists_ahead">Scroll lists ahead of you</string>
+    <!-- Reduce delays: summary of the switch that scrolls a list when focus reaches the last item on screen. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_scroll_lists_ahead">Scroll a list while an item is being read if the next item is cut off or not on screen yet, so that your next swipe doesn\'t have to wait for it.</string>
+
     <!-- Label for touch explore time out. [CHAR LIMIT=NONE]-->
     <string name="value_touch_explore_time_out_150ms">0.15 seconds</string>
     <!-- Label for touch explore time out. [CHAR LIMIT=NONE]-->

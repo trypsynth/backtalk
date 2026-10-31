@@ -42,6 +42,10 @@ If the swipe turns into something else, such as right then down, or a second fin
 
 This applies only when the swipe moves to the next or previous item, and not when you move by character, word, line or table row, or in a tutorial. To turn this off, go to **Controls** > **Touch and activation** > **Reduce delay** and turn off **Move before you lift your finger**.
 
+### Scrolling lists ahead of you
+
+When you swipe to an item and the next one is cut off or not on screen yet, Backtalk can scroll the list while the item is being read, so your next swipe has nothing to wait for. This is off by default. To turn it on, go to **Controls** > **Touch and activation** > **Reduce delay** and turn on **Scroll lists ahead of you**.
+
 ### Items that a swipe scrolls into view
 
 When a swipe moves to a list item that is only partly on screen, the list scrolls it into view. By default, Backtalk then waits for the app to confirm the new focus, as TalkBack does, so these swipes don't get the faster speech above. Speaking straight away would come before the list had scrolled, when the item's text can still be off screen, and only its place in the list, such as "20 of 80", would be said.
