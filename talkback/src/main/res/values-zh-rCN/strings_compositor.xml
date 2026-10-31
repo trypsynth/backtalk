@@ -174,8 +174,10 @@
   <string name="template_partial_magnification_scale_changed">当前局部屏幕放大比例为百分之 %1$d</string>
   <string name="magnification_off">已关闭放大功能</string>
   <string name="template_speech_rate_change">语速为 %1$d%%</string>
-  <string name="template_accessibility_volume_change_increase">将无障碍功能音量调高至百分之 %1$d。</string>
-  <string name="template_accessibility_volume_change_decrease">将无障碍功能音量调低至百分之 %1$d。</string>
+  <string name="template_accessibility_volume_change_increase">调高无障碍音量至 %1$d%。</string>
+  <string name="template_accessibility_volume_change_decrease">调低无障碍音量至 %1$d%。</string>
+  <string name="template_media_volume_change_decrease">调低媒体音量至 <xliff:g id="percent">%1$d</xliff:g>%。</string>
+  <string name="template_media_volume_change_increase">调高媒体音量至 <xliff:g id="percent">%1$d</xliff:g>%。</string>
   <string name="template_touch_explore_latency_changed">输入焦点延迟：%1$d 毫秒。</string>
   <string name="template_touch_latency_reach_maximum">最大值</string>
   <string name="template_touch_latency_reach_minimum">最小值</string>
