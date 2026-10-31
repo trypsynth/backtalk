@@ -426,6 +426,12 @@ If you open the menu with a gesture that ends with your fingers still on the scr
 
 To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**. It's off by default.
 
+## Voice commands
+
+### Calls
+
+Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
+
 ## Screen and brightness
 
 ### Brightness reading control

@@ -140,6 +140,7 @@ public class VoiceCommandProcessor {
   private SelectorController selectorController;
   private ActorState actorState;
   private final TalkBackAnalytics analytics;
+  private final CallVoiceCommands callVoiceCommands;
 
   private boolean echoNotRecognizedTextEnabled;
 
@@ -258,10 +259,12 @@ public class VoiceCommandProcessor {
     this.accessibilityFocusMonitor = accessibilityFocusMonitor;
     this.selectorController = selectorController;
     this.analytics = analytics;
+    this.callVoiceCommands = new CallVoiceCommands(service);
   }
 
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
+    this.callVoiceCommands.setPipeline(pipeline);
   }
 
   public void setActorState(ActorState actorState) {
@@ -309,6 +312,13 @@ public class VoiceCommandProcessor {
     }
     LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
     EventId eventId = EVENT_ID_UNTRACKED;
+
+    // Calls, and the answers to their questions ("say yes to confirm")
+    if (callVoiceCommands.handleCommand(
+        VoiceCommandFuzzyMatcher.normalize(command), isPartialResult)) {
+      analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+      return true;
+    }
 
     // Gemini voice command
     // command format: Gemini

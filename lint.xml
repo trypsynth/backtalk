@@ -6,6 +6,24 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="voice_commands_help_call" />
+        <ignore regexp="voice_commands_help_call_description" />
+        <ignore regexp="voice_commands_help_call_control" />
+        <ignore regexp="voice_commands_help_call_control_description" />
+        <ignore regexp="voice_commands_call_confirm" />
+        <ignore regexp="voice_commands_call_confirm_speaker" />
+        <ignore regexp="voice_commands_call_calling" />
+        <ignore regexp="voice_commands_call_cancelled" />
+        <ignore regexp="voice_commands_call_contact_not_found" />
+        <ignore regexp="voice_commands_call_choose" />
+        <ignore regexp="voice_commands_call_choose_item" />
+        <ignore regexp="voice_commands_call_permission_needed" />
+        <ignore regexp="voice_commands_call_answering" />
+        <ignore regexp="voice_commands_call_declining" />
+        <ignore regexp="voice_commands_call_hanging_up" />
+        <ignore regexp="voice_commands_call_no_call" />
+        <ignore regexp="voice_commands_call_needs_newer_android" />
+        <ignore regexp="voice_commands_call_failed" />
         <ignore regexp="title_pref_open_app_info" />
         <ignore regexp="title_pref_shortcut_up_then_hold" />
         <ignore regexp="title_pref_shortcut_down_then_hold" />
