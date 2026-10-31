@@ -52,6 +52,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -300,6 +301,7 @@ public class Compositor {
 
   private final GlobalVariables globalVariables;
   private final TextComposer textComposer = this::parseTTSText;
+  private final EarlyClickCues earlyClickCues = new EarlyClickCues();
 
   /////////////////////////////////////////////////////////////////////////////////
   // Inner classes
@@ -464,6 +466,47 @@ public class Compositor {
   }
 
   /**
+   * Gives the sound and vibration for a click as soon as its event arrives. The event is handled
+   * about 150 ms later, once the clicked item has updated, and then only says its new state.
+   */
+  public void giveClickCuesEarly(AccessibilityEvent event, @Nullable EventId eventId) {
+    long eventTime = event.getEventTime();
+    // Only ask the event for its source, a round trip to the app, when a click could match it.
+    if (earlyClickCues.hasSaidEarly()
+        && earlyClickCues.takeSaidEarly(AccessibilityEventUtils.sourceCompat(event), eventTime)) {
+      // Cues and state given by sayClickStateEarly() are not given again.
+      earlyClickCues.said(eventTime);
+      return;
+    }
+    // Without the source, the click rule gives its cues and no speech.
+    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, new HandleEventOptions().object(event));
+    earlyClickCues.given(eventTime);
+  }
+
+  /**
+   * Gives the cues and new state of {@code target}, which Backtalk clicked, as soon as the app has
+   * carried out the click. {@code changed} is the target or the child whose state changed. The
+   * click event's cues and speech, which would say the same, are then skipped.
+   */
+  public void sayClickStateEarly(
+      AccessibilityNodeInfoCompat target,
+      AccessibilityNodeInfoCompat changed,
+      @Nullable EventId eventId) {
+    earlyClickCues.saidEarly(target, changed);
+    HandleEventOptions options = new HandleEventOptions().source(changed);
+    EventFeedback feedback = getEventFeedback(EVENT_TYPE_VIEW_CLICKED, options);
+    // The click rule leaves a state that the app describes to the app's state event, which comes
+    // later and says the same, unless a script silences it.
+    if (TextUtils.isEmpty(feedback.ttsOutput().orElse(null)) && !Scripts.isSilenced(changed)) {
+      CharSequence state =
+          AccessibilityNodeFeedbackUtils.getNodeStateDescription(changed, mContext, globalVariables);
+      feedback = feedback.toBuilder().setTtsOutput(Optional.of(state)).build();
+    }
+    options.preparedFeedback = feedback;
+    handleEvent(EVENT_TYPE_VIEW_CLICKED, eventId, options);
+  }
+
+  /**
    * Handles an event made inside Backtalk for {@code sourceNode}, which the event cannot hold. If
    * {@code preparedFeedback} is not null, it is the feedback that {@link #getFeedback} returned for
    * the same event earlier, and is used instead of working it out again.
@@ -528,9 +571,20 @@ public class Compositor {
       return;
     }
 
+    @Nullable AccessibilityEvent clickEvent =
+        (event == EVENT_TYPE_VIEW_CLICKED) ? options.eventObject : null;
+    if (clickEvent != null && earlyClickCues.takeSaid(clickEvent.getEventTime())) {
+      // Said by sayClickStateEarly(), whose speech may have ended, so the queue cannot drop it.
+      if (runnable != null) {
+        runnable.run(SpeechController.STATUS_NOT_SPOKEN);
+      }
+      return;
+    }
+    boolean cuesGiven = clickEvent != null && earlyClickCues.take(clickEvent.getEventTime());
+
     // Compose earcons.
     SpeakOptions speakOptions = null;
-    int earcon = eventFeedback.earcon();
+    int earcon = cuesGiven ? -1 : eventFeedback.earcon();
     if (earcon != -1) {
       if (speakOptions == null) {
         speakOptions = SpeakOptions.create();
@@ -566,7 +620,7 @@ public class Compositor {
     }
 
     // Compose haptics.
-    int haptic = eventFeedback.haptic();
+    int haptic = cuesGiven ? -1 : eventFeedback.haptic();
     if (haptic != -1) {
       if (speakOptions == null) {
         speakOptions = SpeakOptions.create();
