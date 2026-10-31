@@ -162,6 +162,11 @@ public class SelectorController implements UserInputEventListener {
   private final LateSettingSwitch lateSettingSwitch =
       new LateSettingSwitch(handler, this::switchCurrentSetting);
 
+  /** Stops a reading control waiting to be picked from asking the app after the service stops. */
+  public void shutdown() {
+    lateSettingSwitch.cancel();
+  }
+
   /** Audial feedback announce types. */
   public enum AnnounceType {
     SILENCE,
