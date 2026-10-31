@@ -22,6 +22,7 @@
     <!-- Must match SpeechControl.PREF_ENABLED. -->
     <string name="pref_speech_control_key" translatable="false">pref_speech_control</string>
     <string name="pref_check_for_updates_key" translatable="false">pref_check_for_updates</string>
+    <string name="pref_app_info_key" translatable="false">pref_app_info</string>
     <string name="pref_auto_update_check_key" translatable="false">pref_auto_update_check</string>
     <string name="pref_show_exit_watermark_key">pref_show_exit_watermark</string>
     <string name="pref_notification_list_key">pref_notification_list</string>
@@ -402,6 +403,22 @@
     <string name="pref_shortcut_right_and_up_key">pref_shortcut_right_and_up</string>
     <string name="pref_shortcut_left_and_down_key">pref_shortcut_left_and_down</string>
     <string name="pref_shortcut_left_and_up_key">pref_shortcut_left_and_up</string>
+    <string name="pref_shortcut_up_then_hold_key" translatable="false">pref_shortcut_up_then_hold</string>
+    <string name="pref_shortcut_down_then_hold_key" translatable="false">pref_shortcut_down_then_hold</string>
+    <string name="pref_shortcut_left_then_hold_key" translatable="false">pref_shortcut_left_then_hold</string>
+    <string name="pref_shortcut_right_then_hold_key" translatable="false">pref_shortcut_right_then_hold</string>
+    <string name="pref_shortcut_up_and_down_then_hold_key" translatable="false">pref_shortcut_up_and_down_then_hold</string>
+    <string name="pref_shortcut_down_and_up_then_hold_key" translatable="false">pref_shortcut_down_and_up_then_hold</string>
+    <string name="pref_shortcut_left_and_right_then_hold_key" translatable="false">pref_shortcut_left_and_right_then_hold</string>
+    <string name="pref_shortcut_right_and_left_then_hold_key" translatable="false">pref_shortcut_right_and_left_then_hold</string>
+    <string name="pref_shortcut_up_and_left_then_hold_key" translatable="false">pref_shortcut_up_and_left_then_hold</string>
+    <string name="pref_shortcut_up_and_right_then_hold_key" translatable="false">pref_shortcut_up_and_right_then_hold</string>
+    <string name="pref_shortcut_down_and_left_then_hold_key" translatable="false">pref_shortcut_down_and_left_then_hold</string>
+    <string name="pref_shortcut_down_and_right_then_hold_key" translatable="false">pref_shortcut_down_and_right_then_hold</string>
+    <string name="pref_shortcut_left_and_up_then_hold_key" translatable="false">pref_shortcut_left_and_up_then_hold</string>
+    <string name="pref_shortcut_left_and_down_then_hold_key" translatable="false">pref_shortcut_left_and_down_then_hold</string>
+    <string name="pref_shortcut_right_and_up_then_hold_key" translatable="false">pref_shortcut_right_and_up_then_hold</string>
+    <string name="pref_shortcut_right_and_down_then_hold_key" translatable="false">pref_shortcut_right_and_down_then_hold</string>
 
     <string name="pref_shortcut_1finger_2tap_key">pref_shortcut_one_finger_double_tap</string>
     <string name="pref_shortcut_1finger_2tap_hold_key">pref_shortcut_one_finger_double_tap_and_hold</string>
@@ -632,6 +649,22 @@
       <item>@string/pref_shortcut_right_and_up_key</item>
       <item>@string/pref_shortcut_left_and_down_key</item>
       <item>@string/pref_shortcut_left_and_up_key</item>
+      <item>@string/pref_shortcut_up_then_hold_key</item>
+      <item>@string/pref_shortcut_down_then_hold_key</item>
+      <item>@string/pref_shortcut_left_then_hold_key</item>
+      <item>@string/pref_shortcut_right_then_hold_key</item>
+      <item>@string/pref_shortcut_up_and_down_then_hold_key</item>
+      <item>@string/pref_shortcut_down_and_up_then_hold_key</item>
+      <item>@string/pref_shortcut_left_and_right_then_hold_key</item>
+      <item>@string/pref_shortcut_right_and_left_then_hold_key</item>
+      <item>@string/pref_shortcut_up_and_left_then_hold_key</item>
+      <item>@string/pref_shortcut_up_and_right_then_hold_key</item>
+      <item>@string/pref_shortcut_down_and_left_then_hold_key</item>
+      <item>@string/pref_shortcut_down_and_right_then_hold_key</item>
+      <item>@string/pref_shortcut_left_and_up_then_hold_key</item>
+      <item>@string/pref_shortcut_left_and_down_then_hold_key</item>
+      <item>@string/pref_shortcut_right_and_up_then_hold_key</item>
+      <item>@string/pref_shortcut_right_and_down_then_hold_key</item>
 
       <item>@string/pref_shortcut_2finger_1tap_key</item>
       <item>@string/pref_shortcut_2finger_2tap_key</item>
@@ -1437,6 +1470,23 @@
       <item>MAPPER_GESTURE_SWIPE_UP_AND_DOWN</item>
       <item>MAPPER_GESTURE_SWIPE_UP_AND_LEFT</item>
       <item>MAPPER_GESTURE_SWIPE_UP_AND_RIGHT</item>
+      <!-- Swipes that end with the finger resting on the screen. -->
+      <item>MAPPER_GESTURE_SWIPE_UP_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_DOWN_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_LEFT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_RIGHT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD</item>
+      <item>MAPPER_GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD</item>
       <!--> Two-finger taps. -->
       <item>MAPPER_GESTURE_2_FINGER_SINGLE_TAP</item>
       <item>MAPPER_GESTURE_2_FINGER_SINGLE_TAP_AND_HOLD</item>
@@ -1719,6 +1769,22 @@
     <string name="pref_shortcut_down_and_left_default">@string/shortcut_value_back</string>
     <string name="pref_shortcut_down_and_right_default">@string/shortcut_value_talkback_breakout</string>
     <string name="pref_shortcut_right_and_down_default">@string/shortcut_value_notifications</string>
+    <string name="pref_shortcut_up_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_down_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_left_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_right_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_up_and_down_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_down_and_up_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_left_and_right_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_right_and_left_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_up_and_left_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_up_and_right_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_down_and_left_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_down_and_right_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_left_and_up_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_left_and_down_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_right_and_up_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
+    <string name="pref_shortcut_right_and_down_then_hold_default" translatable="false">@string/shortcut_value_unassigned</string>
     <string name="pref_shortcut_right_and_up_default">@string/shortcut_value_voice_commands</string>
     <string name="pref_shortcut_left_and_down_default">@string/shortcut_value_screen_search</string>
     <string name="pref_shortcut_left_and_up_default">@string/shortcut_value_overview</string>

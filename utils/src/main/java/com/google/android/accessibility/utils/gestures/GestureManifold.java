@@ -55,6 +55,23 @@ public class GestureManifold implements GestureMatcher.StateChangeListener {
   public static final int GESTURE_2_FINGER_ROTATE_COUNTERCLOCKWISE = -10;
   // Android has no gestures beyond triple taps, so Backtalk's own detection adds this one.
   public static final int GESTURE_3_FINGER_QUADRUPLE_TAP = -11;
+  // One-finger swipes that end with the finger resting on the screen instead of lifting.
+  public static final int GESTURE_SWIPE_UP_THEN_HOLD = -12;
+  public static final int GESTURE_SWIPE_DOWN_THEN_HOLD = -13;
+  public static final int GESTURE_SWIPE_LEFT_THEN_HOLD = -14;
+  public static final int GESTURE_SWIPE_RIGHT_THEN_HOLD = -15;
+  public static final int GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD = -16;
+  public static final int GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD = -17;
+  public static final int GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD = -18;
+  public static final int GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD = -19;
+  public static final int GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD = -20;
+  public static final int GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD = -21;
+  public static final int GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD = -22;
+  public static final int GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD = -23;
+  public static final int GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD = -24;
+  public static final int GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD = -25;
+  public static final int GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD = -26;
+  public static final int GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD = -27;
 
   // Match the value of GESTURE_ID_2FINGER_1TAP_HOLD in TalkBack.
   public static final int GESTURE_2_FINGER_SINGLE_TAP_AND_HOLD = 63;
@@ -95,6 +112,11 @@ public class GestureManifold implements GestureMatcher.StateChangeListener {
     }
 
     default boolean enableSplitTapAndHold() {
+      return false;
+    }
+
+    /** Returns whether a swipe-and-hold gesture has an action, so that it is worth matching. */
+    default boolean isSwipeAndHoldAssigned(int gestureId) {
       return false;
     }
   }

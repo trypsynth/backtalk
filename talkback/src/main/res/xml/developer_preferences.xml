@@ -5,6 +5,10 @@
       android:key="@string/pref_developer_version_code_key"
       android:title="@string/title_pref_version_code"
       android:selectable="false"/>
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
+      android:key="@string/pref_app_info_key"
+      android:title="@string/title_pref_open_app_info"
+      android:persistent="false"/>
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_diagnosis_mode_default"
       android:key="@string/pref_diagnosis_mode_key"

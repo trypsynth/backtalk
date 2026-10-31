@@ -33,6 +33,10 @@ android {
         targetSdk = 36
         testInstrumentationRunner = 'android.test.InstrumentationTestRunner'
         multiDexEnabled = true
+        // The app's resources override the libraries', so this renames the screen reader too.
+        if (project.hasProperty('testBuild')) {
+            resValue "string", "talkback_title", "Backtalk Test"
+        }
     }
     buildTypes {
         // The published builds are debug builds, signed with the debug key. Android runs a

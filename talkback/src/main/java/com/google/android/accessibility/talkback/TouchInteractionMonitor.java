@@ -71,6 +71,7 @@ import com.google.android.accessibility.talkback.actor.DirectClick;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
 import com.google.android.accessibility.talkback.focusmanagement.FocusProcessorForTapAndTouchExploration;
+import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
 import com.google.android.accessibility.talkback.gesture.TwoFingerRotationTracker;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.AccessibilityServiceCompatUtils;
@@ -145,7 +146,23 @@ public class TouchInteractionMonitor
           GESTURE_SWIPE_DOWN_AND_RIGHT,
           GESTURE_SWIPE_UP_AND_DOWN,
           GESTURE_SWIPE_UP_AND_LEFT,
-          GESTURE_SWIPE_UP_AND_RIGHT);
+          GESTURE_SWIPE_UP_AND_RIGHT,
+          GestureManifold.GESTURE_SWIPE_UP_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_DOWN_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_LEFT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_RIGHT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_UP_AND_DOWN_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_DOWN_AND_UP_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_LEFT_AND_RIGHT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_RIGHT_AND_LEFT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_UP_AND_LEFT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_UP_AND_RIGHT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_DOWN_AND_LEFT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_DOWN_AND_RIGHT_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_LEFT_AND_UP_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_LEFT_AND_DOWN_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_RIGHT_AND_UP_THEN_HOLD,
+          GestureManifold.GESTURE_SWIPE_RIGHT_AND_DOWN_THEN_HOLD);
 
   private boolean stateInActive = true;
   private int state;
@@ -382,6 +399,13 @@ public class TouchInteractionMonitor
               @Override
               public boolean enableSplitTapAndHold() {
                 return FeatureFlagReader.enableSplitTapAndHold(service);
+              }
+
+              @Override
+              public boolean isSwipeAndHoldAssigned(int gestureId) {
+                // On a lift-to-type keyboard, a slide that stops on a key types it when the finger
+                // lifts, as without hold gestures, rather than holding.
+                return !isLiftToType && isGestureAssigned(gestureId);
               }
             },
             logger,
@@ -1320,6 +1344,14 @@ public class TouchInteractionMonitor
       earlySwipe = 0;
       mainHandler.post(service::undoSwipeEarly);
     }
+  }
+
+  private boolean isGestureAssigned(int gestureId) {
+    @Nullable GestureShortcutMapping mapping = service.getGestureShortcutMapping();
+    return mapping != null
+        && !context
+            .getString(R.string.shortcut_value_unassigned)
+            .equals(mapping.getActionKeyFromGestureId(gestureId));
   }
 
   public void setMultiFingerGesturesEnabled(boolean mode) {
