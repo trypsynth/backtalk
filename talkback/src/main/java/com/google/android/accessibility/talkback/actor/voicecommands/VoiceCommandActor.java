@@ -66,7 +66,7 @@ public class VoiceCommandActor implements SpeechRecognizerRequester {
   public boolean onResult(String command, boolean isPartialResult) {
     LogUtils.v(
         TAG, "handleSpeechCommand with command: \"%s\", isPartial:%b", command, isPartialResult);
-    return voiceCommandProcessor.handleSpeechCommand(command.toLowerCase(), isPartialResult);
+    return voiceCommandProcessor.handleSpeechCommand(command, isPartialResult);
   }
 
   @Override
@@ -147,6 +147,11 @@ public class VoiceCommandActor implements SpeechRecognizerRequester {
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
     voiceCommandDialog = new VoiceCommandDialog(talkbackContext, pipeline);
+  }
+
+  public void setClickControlsEnabled(boolean enabled) {
+    voiceCommandProcessor.setClickControlsEnabled(enabled);
+    speechRecognizerPerformer.requireFinalResults(VoiceClickActions.class, enabled);
   }
 
   /**

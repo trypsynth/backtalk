@@ -402,6 +402,16 @@ The **Vertical navigation** reading control, which you can turn on in **Reading 
 
 When you turn on **Controls** > **Touch and activation** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.
 
+## Voice commands
+
+### Confirm a visible control by name
+
+Turn on **Controls** > **Click controls by voice** in Backtalk settings to use this feature. It is off by default and is available on phones. In **Voice commands**, say the full name of a visible app button or clickable item, such as **Save changes**. Backtalk moves focus to it and asks whether to activate it. Every click through this feature requires confirmation. Choose **Activate** in the dialog, or start another voice command and say **confirm**. Choose **Cancel** or say **cancel** to leave the control alone. A request expires after 30 seconds.
+
+Built-in commands always take priority over item names, so **Home**, **Back**, and **TalkBack settings** keep their existing meaning. Names must match the complete text or accessibility description; matching ignores case, extra spaces, and trailing punctuation. Labels inside clickable rows are supported. Hidden, disabled, off-screen, covered, or ambiguously named items are left alone. Only application windows are searched: keyboards, System UI, accessibility overlays, and Backtalk's own windows are excluded. Excluded windows still block items underneath them.
+
+After confirmation, Backtalk searches the screen again and checks that the same uniquely named control is still visible before focusing and clicking it. If the target has disappeared, changed, or become ambiguous, it speaks the usual unrecognized-command message. It never falls back to clicking the previous focus. Naming and confirming controls requires a final result from the speech recognizer; an unfinished phrase cannot activate a control after a recognition error or timeout. A different command, turning the setting off, or stopping Backtalk cancels the pending action. With the setting off, the usual voice commands and recognition timing are preserved.
+
 ## Backtalk menu
 
 ### Shorter menu by default

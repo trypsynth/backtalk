@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Switch in Backtalk settings, under Controls, for focusing and confirming a visible app control by its spoken name. [CHAR LIMIT=60] -->
+    <string name="title_pref_voice_click_controls">Click controls by voice</string>
+    <!-- Summary of the named-control voice switch. Each activation requires confirmation. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_voice_click_controls">In Voice commands, say a visible app control\'s full name, then confirm before it is activated.</string>
+    <!-- Title of a confirmation dialog shown after a visible app control has been named. The argument is that control's accessible label. [CHAR LIMIT=NONE] -->
+    <string name="voice_control_confirm_title">Activate “<xliff:g id="label" example="Send">%1$s</xliff:g>”?</string>
+    <!-- Message of the named-control confirmation dialog. Arguments are the localized confirmation and cancellation voice commands. The user can alternatively use the dialog buttons. [CHAR LIMIT=NONE] -->
+    <string name="voice_control_confirm_message">Choose Activate to continue, or Cancel to leave this item alone. You can also start another voice command and say “<xliff:g id="confirm" example="confirm">%1$s</xliff:g>” or “<xliff:g id="cancel" example="cancel">%2$s</xliff:g>”. This request expires after 30 seconds.</string>
+    <!-- Positive button in a dialog confirming activation of a named app control. [CHAR LIMIT=20] -->
+    <string name="voice_control_activate">Activate</string>
+    <!-- Exact spoken command accepting the pending named-control confirmation; also inserted into its instructions. [CHAR LIMIT=30] -->
+    <string name="voice_control_confirm_command">confirm</string>
+    <!-- Exact spoken command declining the pending named-control confirmation; also inserted into its instructions. [CHAR LIMIT=30] -->
+    <string name="voice_control_cancel_command">cancel</string>
+</resources>
