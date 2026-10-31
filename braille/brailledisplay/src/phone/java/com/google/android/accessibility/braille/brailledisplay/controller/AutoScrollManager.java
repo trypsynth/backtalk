@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.icu.text.NumberFormat;
 import android.os.Handler;
+import androidx.core.os.HandlerCompat;
 import com.google.android.accessibility.braille.brailledisplay.BrailleDisplayLog;
 import com.google.android.accessibility.braille.brailledisplay.R;
 import com.google.android.accessibility.braille.brailledisplay.controller.BdController.BehaviorDisplayer;
@@ -114,7 +115,7 @@ public class AutoScrollManager {
 
   /** checks if the auto scroll is active. */
   public boolean isActive() {
-    return handler.hasCallbacks(runnable);
+    return HandlerCompat.hasCallbacks(handler, runnable);
   }
 
   /** Increases auto scroll duration. */
