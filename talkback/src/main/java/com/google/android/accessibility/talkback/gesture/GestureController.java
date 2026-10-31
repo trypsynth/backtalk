@@ -867,10 +867,6 @@ public class GestureController {
         || disabledGestures.contains(gestureId);
   }
 
-  public @Nullable String getActionKey(int gestureId) {
-    return gestureShortcutMapping.getActionKeyFromGestureId(gestureId);
-  }
-
   private boolean gestureHandledByTraining(int gestureId, boolean isFingerprintGesture) {
     // TalkBack can ignore the gesture, which is handled by OnGestureListener.onCaptureGesture(), if
     // captured gesture list exists and the current window is training.

@@ -33,12 +33,13 @@ object EarlySwipePolicy {
     context: Context,
     gestureId: Int,
     gestures: GestureController,
+    shortcuts: GestureShortcutMapping,
     granularity: CursorGranularity,
   ): Boolean =
     !gestures.isCapturedOrDisabled(gestureId) &&
       !Scripts.takesGesture(gestureId) &&
       isUndoable(
-        gestures.getActionKey(gestureId),
+        shortcuts.getActionKeyFromGestureId(gestureId),
         context.getString(R.string.shortcut_value_next),
         context.getString(R.string.shortcut_value_previous),
         granularity,

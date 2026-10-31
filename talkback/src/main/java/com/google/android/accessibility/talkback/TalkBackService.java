@@ -1627,6 +1627,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             this,
             gestureId,
             gestureController,
+            gestureShortcutMapping,
             pipeline.getActorState().getDirectionNavigation().getCurrentGranularity());
   }
 

@@ -3357,7 +3357,7 @@ public class FocusProcessorForLogicalNavigation {
         TraversalStrategyUtils.searchFocus(
             localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
     if (nodeToFocus == null) {
-      if ((pivotRefreshed || (!spatial && focusBeforeScroll.refresh()))
+      if ((spatial ? pivotRefreshed : focusBeforeScroll.refresh())
           && AccessibilityNodeInfoUtils.isVisible(focusBeforeScroll)) {
         Rect newRect = getBoundsAfterScroll(focusBeforeScroll);
         // The list is still moving, and what the search read may be from before it moved. Scrolling
