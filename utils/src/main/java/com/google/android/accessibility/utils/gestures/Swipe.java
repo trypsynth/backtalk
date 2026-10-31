@@ -47,8 +47,6 @@ class Swipe extends GestureMatcher {
   public static final int RIGHT = 1;
   public static final int UP = 2;
   public static final int DOWN = 3;
-  /** How long the finger rests at the end of a swipe before a swipe-and-hold completes. */
-  public static final int HOLD_TIMEOUT_MS = 250;
   // This is the calculated movement threshold used track if the user is still
   // moving their finger.
   private final float gestureDetectionThresholdPixels;
@@ -266,7 +264,7 @@ class Swipe extends GestureMatcher {
     holdCheckY = y;
     cancelPendingTransitions();
     if (strokeMatches(strokeBuffer)) {
-      completeAfter(HOLD_TIMEOUT_MS, eventId, event);
+      completeAfter(GestureConfiguration.getSwipeHoldTimeoutMs(), eventId, event);
     }
   }
 

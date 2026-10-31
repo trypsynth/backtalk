@@ -90,6 +90,7 @@
     <string name="pref_typing_confirmation_key" translatable="false">pref_typing_confirmation</string>
     <string name="pref_typing_long_press_duration_key" translatable="false">pref_typing_long_press_duration</string>
     <string name="pref_multi_tap_timeout_key" translatable="false">pref_multi_tap_timeout</string>
+    <string name="pref_swipe_hold_timeout_key" translatable="false">pref_swipe_hold_timeout</string>
     <string name="pref_typing_tap_and_hold_duration_key" translatable="false">pref_type_and_hold_duration</string>
     <string name="pref_typing_focus_time_out_key" translatable="false">pref_typing_focus_time_out_key</string>
     <string name="pref_typing_focus_time_out_first_update_key" translatable="false">pref_typing_focus_time_out_first_update_key</string>
@@ -1018,6 +1019,26 @@
     </string-array>
 
     <string name="pref_multi_tap_timeout_default" translatable="false">250</string>
+
+    <string-array name="pref_swipe_hold_timeout_entries">
+      <item>@string/value_swipe_hold_timeout_75ms</item>
+      <item>@string/value_multi_tap_timeout_100ms</item>
+      <item>@string/value_swipe_hold_timeout_125ms</item>
+      <item>@string/value_multi_tap_timeout_150ms</item>
+      <item>@string/value_multi_tap_timeout_200ms</item>
+      <item>@string/value_multi_tap_timeout_250ms</item>
+    </string-array>
+
+    <string-array name="pref_swipe_hold_timeout_values">
+      <item>75</item>
+      <item>100</item>
+      <item>125</item>
+      <item>150</item>
+      <item>200</item>
+      <item>250</item>
+    </string-array>
+
+    <string name="pref_swipe_hold_timeout_default" translatable="false">250</string>
 
     <string-array name="pref_actions_sound_timing_entries">
       <item>@string/value_actions_sound_timing_focus</item>

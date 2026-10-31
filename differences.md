@@ -340,7 +340,9 @@ Each one-finger swipe has a second version that ends with your finger resting on
 
 In gesture settings, these gestures are at the end of the one-finger gestures, the back-and-forth gestures, and the angle gestures, such as **Swipe right and hold** or **Swipe left then up and hold**. None of them has an action by default. Until you assign one, that swipe works as before, even if you pause before lifting your finger.
 
-Swipe and hold gestures require Android 13 or later and **Handle gestures in Backtalk** turned on.
+To make these gestures respond faster, shorten the rest to as little as 0.075 seconds in **Controls** > **Touch and activation** > **Reduce delay** > **Hold time after a swipe**. With a shorter time, a swipe where you pause briefly before lifting your finger is more likely to count as swipe and hold.
+
+Swipe and hold gestures and their hold time setting require Android 13 or later and **Handle gestures in Backtalk** turned on. They aren't available on watches.
 
 ### Lift to activate
 
@@ -368,7 +370,7 @@ When a window opens, or you go back, TalkBack moves focus into it: back to the i
 
 By default, Backtalk recognizes gestures itself instead of leaving this to Android, which makes the rotor, swipe and hold gestures, and the quadruple-tap with three fingers possible. TalkBack leaves this off.
 
-To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor, swipe and hold gestures, and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** is hidden.
+To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor, swipe and hold gestures, and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** and **Hold time after a swipe** are hidden.
 
 While another accessibility service that explores by touch is on, such as another screen reader or a screen reader's helper service, Backtalk leaves gestures to Android, as if this setting were off. Android has one gesture mode that all services share, so when both services handle touches, double tap and double-tap and hold can stop working. When the other service turns off, Backtalk recognizes gestures itself again.
 

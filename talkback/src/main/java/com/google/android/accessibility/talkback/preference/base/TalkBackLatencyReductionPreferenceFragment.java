@@ -255,6 +255,12 @@ public class TalkBackLatencyReductionPreferenceFragment extends TalkbackBaseFrag
         multiTapTimeoutPreference.setValue(
             context.getResources().getString(R.string.pref_multi_tap_timeout_default));
       }
+      ListPreference swipeHoldTimeoutPreference =
+          findPreference(getString(R.string.pref_swipe_hold_timeout_key));
+      if (swipeHoldTimeoutPreference != null) {
+        swipeHoldTimeoutPreference.setValue(
+            context.getResources().getString(R.string.pref_swipe_hold_timeout_default));
+      }
       TwoStatePreference singleTapPreference =
           findPreference(getString(R.string.pref_single_tap_key));
       if (singleTapPreference != null) {

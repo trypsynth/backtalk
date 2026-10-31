@@ -69,4 +69,12 @@
         android:key="@string/pref_multi_tap_timeout_key"
         android:summary="%s"
         android:title="@string/title_pref_multi_tap_timeout" />
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteListPreference
+        android:defaultValue="@string/pref_swipe_hold_timeout_default"
+        android:dialogTitle="@string/title_pref_swipe_hold_timeout"
+        android:entries="@array/pref_swipe_hold_timeout_entries"
+        android:entryValues="@array/pref_swipe_hold_timeout_values"
+        android:key="@string/pref_swipe_hold_timeout_key"
+        android:summary="%s"
+        android:title="@string/title_pref_swipe_hold_timeout" />
 </PreferenceScreen>

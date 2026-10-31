@@ -22,6 +22,7 @@ import android.os.SystemClock
 import android.view.MotionEvent
 import com.google.android.accessibility.utils.gestures.GestureManifold.GestureConfigProvider
 import java.util.concurrent.TimeUnit
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -64,6 +65,11 @@ class SwipeAndHoldTest {
     event.recycle()
   }
 
+  @After
+  fun restoreHoldTime() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS)
+  }
+
   private fun waitMs(ms: Long) = ShadowLooper.idleMainLooper(ms, TimeUnit.MILLISECONDS)
 
   private fun move(matchers: List<Swipe>, dxCm: Float, dyCm: Float) {
@@ -80,10 +86,34 @@ class SwipeAndHoldTest {
     val matchers = listOf(swipe(HOLD_RIGHT, true, Swipe.RIGHT))
     send(matchers, MotionEvent.ACTION_DOWN)
     move(matchers, 2f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS - 1L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 1L)
     assertTrue(completed.isEmpty())
     waitMs(2)
     assertEquals(listOf(HOLD_RIGHT), completed)
+  }
+
+  @Test
+  fun shorterHoldTime_completesSooner() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(100)
+    val matchers = listOf(swipe(HOLD_RIGHT, true, Swipe.RIGHT))
+    send(matchers, MotionEvent.ACTION_DOWN)
+    move(matchers, 2f, 0f)
+    waitMs(99)
+    assertTrue(completed.isEmpty())
+    waitMs(2)
+    assertEquals(listOf(HOLD_RIGHT), completed)
+  }
+
+  @Test
+  fun shorterHoldTime_stillLetsAQuickSwipeLift() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(100)
+    val matchers =
+      listOf(swipe(GESTURE_SWIPE_RIGHT, false, Swipe.RIGHT), swipe(HOLD_RIGHT, true, Swipe.RIGHT))
+    send(matchers, MotionEvent.ACTION_DOWN)
+    move(matchers, 2f, 0f)
+    waitMs(50)
+    send(matchers, MotionEvent.ACTION_UP)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), completed)
   }
 
   @Test
@@ -92,7 +122,7 @@ class SwipeAndHoldTest {
       listOf(swipe(GESTURE_SWIPE_RIGHT, false, Swipe.RIGHT), swipe(HOLD_RIGHT, true, Swipe.RIGHT))
     send(matchers, MotionEvent.ACTION_DOWN)
     move(matchers, 2f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS - 50L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     send(matchers, MotionEvent.ACTION_UP)
     assertEquals(listOf(GESTURE_SWIPE_RIGHT), completed)
   }
@@ -102,9 +132,9 @@ class SwipeAndHoldTest {
     val matchers = listOf(swipe(HOLD_RIGHT, true, Swipe.RIGHT))
     send(matchers, MotionEvent.ACTION_DOWN)
     move(matchers, 2f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS - 50L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     move(matchers, 1f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS - 50L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     assertTrue(completed.isEmpty())
     waitMs(60)
     assertEquals(listOf(HOLD_RIGHT), completed)
@@ -117,7 +147,7 @@ class SwipeAndHoldTest {
     send(matchers, MotionEvent.ACTION_DOWN)
     move(matchers, -2f, 0f)
     move(matchers, 0f, -2f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS + 1L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS + 1L)
     assertEquals(listOf(HOLD_LEFT_UP), completed)
   }
 
@@ -127,7 +157,7 @@ class SwipeAndHoldTest {
     send(matchers, MotionEvent.ACTION_DOWN)
     move(matchers, 2f, 0f)
     move(matchers, -2f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS * 2L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS * 2L)
     assertTrue(completed.isEmpty())
   }
 
@@ -138,7 +168,7 @@ class SwipeAndHoldTest {
     send(listOf(hold), MotionEvent.ACTION_DOWN)
     assertEquals(GestureMatcher.STATE_GESTURE_CANCELED, hold.state)
     move(listOf(hold), 2f, 0f)
-    waitMs(Swipe.HOLD_TIMEOUT_MS * 2L)
+    waitMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS * 2L)
     assertFalse(completed.contains(HOLD_RIGHT))
   }
 

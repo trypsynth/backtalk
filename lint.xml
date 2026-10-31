@@ -58,6 +58,9 @@
         <ignore regexp="value_multi_tap_timeout_150ms" />
         <ignore regexp="value_multi_tap_timeout_200ms" />
         <ignore regexp="value_multi_tap_timeout_250ms" />
+        <ignore regexp="title_pref_swipe_hold_timeout" />
+        <ignore regexp="value_swipe_hold_timeout_75ms" />
+        <ignore regexp="value_swipe_hold_timeout_125ms" />
         <ignore regexp="item_detail_name" />
         <ignore regexp="item_detail_type" />
         <ignore regexp="item_detail_state" />

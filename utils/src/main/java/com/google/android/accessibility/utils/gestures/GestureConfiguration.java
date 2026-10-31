@@ -31,7 +31,11 @@ public final class GestureConfiguration {
   private static final int MULTI_TAP_COMPLETION_MARGIN_MS =
       ViewConfiguration.getDoubleTapTimeout() - DOUBLE_TAP_TIMEOUT_MS;
 
+  /** How long the finger rests at the end of a swipe before a swipe-and-hold completes. */
+  public static final int DEFAULT_SWIPE_HOLD_TIMEOUT_MS = 250;
+
   private static volatile int multiTapTimeoutMs = DOUBLE_TAP_TIMEOUT_MS;
+  private static volatile int swipeHoldTimeoutMs = DEFAULT_SWIPE_HOLD_TIMEOUT_MS;
 
   private GestureConfiguration() {}
 
@@ -61,5 +65,14 @@ public final class GestureConfiguration {
 
   public static void setMultiTapTimeoutMs(int timeoutMs) {
     multiTapTimeoutMs = timeoutMs;
+  }
+
+  /** Returns the user-set time the finger rests after a swipe for a swipe-and-hold to complete. */
+  public static int getSwipeHoldTimeoutMs() {
+    return swipeHoldTimeoutMs;
+  }
+
+  public static void setSwipeHoldTimeoutMs(int timeoutMs) {
+    swipeHoldTimeoutMs = timeoutMs;
   }
 }
