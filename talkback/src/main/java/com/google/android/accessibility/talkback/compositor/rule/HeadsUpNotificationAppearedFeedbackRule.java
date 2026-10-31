@@ -16,7 +16,7 @@
 package com.google.android.accessibility.talkback.compositor.rule;
 
 import static com.google.android.accessibility.talkback.compositor.Compositor.EVENT_HEADS_UP_NOTIFICATION_APPEARED;
-import static com.google.android.accessibility.utils.output.SpeechController.QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH;
+import static com.google.android.accessibility.utils.output.SpeechController.QUEUE_MODE_INTERRUPT;
 
 import android.content.Context;
 import com.google.android.accessibility.talkback.R;
@@ -78,7 +78,9 @@ public final class HeadsUpNotificationAppearedFeedbackRule {
           // EventTypeNotificationStateChangedFeedbackRule.
           return EventFeedback.builder()
               .setTtsOutput(Optional.of(ttsOutput))
-              .setQueueMode(QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH)
+              // A user gesture must be able to replace a heads-up announcement instead of
+              // waiting for the notification to finish speaking.
+              .setQueueMode(QUEUE_MODE_INTERRUPT)
               .setTtsAddToHistory(true)
               .setForceFeedbackEvenIfAudioPlaybackActive(true)
               .setForceFeedbackEvenIfMicrophoneActive(true)

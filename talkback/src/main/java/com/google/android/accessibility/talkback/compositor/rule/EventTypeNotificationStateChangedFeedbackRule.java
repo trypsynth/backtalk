@@ -16,7 +16,7 @@
 package com.google.android.accessibility.talkback.compositor.rule;
 
 import static com.google.android.accessibility.talkback.compositor.Compositor.EVENT_TYPE_NOTIFICATION_STATE_CHANGED;
-import static com.google.android.accessibility.utils.output.SpeechController.QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH;
+import static com.google.android.accessibility.utils.output.SpeechController.QUEUE_MODE_INTERRUPT;
 
 import android.app.Notification;
 import android.content.Context;
@@ -115,7 +115,9 @@ public final class EventTypeNotificationStateChangedFeedbackRule {
                       .equals(context.getString(R.string.notification_category_call));
           return EventFeedback.builder()
               .setTtsOutput(Optional.of(ttsOutput))
-              .setQueueMode(QUEUE_MODE_UNINTERRUPTIBLE_BY_NEW_SPEECH)
+              // A user gesture must be able to replace a notification announcement instead of
+              // waiting for the notification to finish speaking.
+              .setQueueMode(QUEUE_MODE_INTERRUPT)
               .setTtsAddToHistory(true)
               .setForceFeedbackEvenIfAudioPlaybackActive(isToastOrCall)
               .setForceFeedbackEvenIfMicrophoneActive(isToastOrCall)
