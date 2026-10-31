@@ -149,9 +149,9 @@ public class VoiceCommandActor implements SpeechRecognizerRequester {
     voiceCommandDialog = new VoiceCommandDialog(talkbackContext, pipeline);
   }
 
-  public void setDeviceActionsEnabled(boolean enabled) {
-    voiceCommandProcessor.setDeviceActionsEnabled(enabled);
-    speechRecognizerPerformer.setPartialResultFastFeedback(!enabled);
+  public void setOpenAppsEnabled(boolean enabled) {
+    voiceCommandProcessor.setOpenAppsEnabled(enabled);
+    speechRecognizerPerformer.requireFinalResults(VoiceAppLauncher.class, enabled);
   }
 
   /**

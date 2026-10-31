@@ -402,15 +402,15 @@ The **Vertical navigation** reading control, which you can turn on in **Reading 
 
 When you turn on **Controls** > **Touch and activation** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.
 
+## Voice commands
+
+### Open an app by name
+
+Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
+
+With the switch on, Backtalk waits for the completed utterance before opening an app. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
+
 ## Backtalk menu
-
-### Open apps and click items by voice
-
-Turn on **Controls** > **Open apps and click by voice** in Backtalk settings to use these commands. This switch is off by default. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity, allowing small speech recognition errors. If no app qualifies, or two apps tie for the closest match, it speaks the existing message for unrecognized commands.
-
-You can also say the full name of a visible button or clickable item, such as **Save**, without saying "click". Backtalk moves accessibility focus to it and clicks it. Matching ignores case, extra spaces, and trailing speech punctuation; item names are not fuzzy-matched. Labels inside a clickable item and accessibility descriptions of icon buttons are supported. Hidden, off-screen, and disabled items, and items covered by another window, are excluded. Backtalk does not scroll to find an item or click the previously focused item when a name is missing. Duplicate visible names are left unclicked.
-
-With the switch on, Backtalk waits for the completed utterance before acting. An **Open** request takes priority over other commands; otherwise a matching visible item takes priority, followed by the existing voice commands. Unrecognized requests use the existing spoken error message. Turning the switch off cancels pending actions and restores the usual voice commands and recognition timing.
 
 ### Shorter menu by default
 

@@ -141,8 +141,8 @@ public class VoiceCommandProcessor {
   private SelectorController selectorController;
   private ActorState actorState;
   private final TalkBackAnalytics analytics;
-  private VoiceCommandActions deviceActions;
-  private boolean deviceActionsEnabled;
+  private VoiceAppLauncher appLauncher;
+  private boolean openAppsEnabled;
 
   private boolean echoNotRecognizedTextEnabled;
 
@@ -265,25 +265,25 @@ public class VoiceCommandProcessor {
 
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
-    if (deviceActions != null) {
-      deviceActions.shutdown();
+    if (appLauncher != null) {
+      appLauncher.shutdown();
     }
-    deviceActions = new VoiceCommandActions(service, pipeline);
+    appLauncher = new VoiceAppLauncher(service);
   }
 
   public void shutdown() {
-    if (deviceActions != null) {
-      deviceActions.shutdown();
+    if (appLauncher != null) {
+      appLauncher.shutdown();
     }
   }
 
-  public void setDeviceActionsEnabled(boolean enabled) {
-    if (deviceActionsEnabled == enabled) {
+  public void setOpenAppsEnabled(boolean enabled) {
+    if (openAppsEnabled == enabled) {
       return;
     }
-    deviceActionsEnabled = enabled;
-    if (deviceActions != null) {
-      deviceActions.cancel();
+    openAppsEnabled = enabled;
+    if (appLauncher != null) {
+      appLauncher.cancel();
     }
   }
 
@@ -324,26 +324,27 @@ public class VoiceCommandProcessor {
         });
   }
 
-  /** Waits for final recognition when app launching and named clicks are enabled. */
+  /** Waits for final recognition when opening apps by voice is enabled. */
   @CanIgnoreReturnValue
   public boolean handleSpeechCommand(String command, boolean isPartialResult) {
-    if (!deviceActionsEnabled) {
-      return handleBuiltInCommand(command, isPartialResult);
-    }
-    if (TextUtils.isEmpty(command) || isPartialResult) {
+    if (TextUtils.isEmpty(command) || (openAppsEnabled && isPartialResult)) {
       return false;
     }
-    deviceActions.handle(
-        command,
-        result -> {
-          switch (result) {
-            case RECOGNIZED -> analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
-            case UNRECOGNIZED -> speakUnrecognizedCommand(command, false);
-            case TRY_BUILT_IN -> handleBuiltInCommand(command, false);
-          }
-        });
-    // The final utterance has been accepted; stop recognition while the lookup finishes.
-    return true;
+    if (openAppsEnabled) {
+      appLauncher.cancel();
+      if (appLauncher.handle(
+          command,
+          launched -> {
+            if (launched) {
+              analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+            } else {
+              speakUnrecognizedCommand(command, false);
+            }
+          })) {
+        return true;
+      }
+    }
+    return handleBuiltInCommand(command, isPartialResult);
   }
 
   private boolean handleBuiltInCommand(String command, boolean isPartialResult) {

@@ -218,6 +218,7 @@ public class TalkBackPreferenceFilter {
     CUSTOMIZE_CONTEXT_MENU(R.string.pref_category_manage_context_menu_key, HIDDEN_ON_TV),
     CUSTOMIZE_SELECTOR_MENU(R.string.pref_category_manage_selector_menu_key, HIDDEN_ON_TV),
     // TalkBack/Reading Menu
+    OPEN_APPS_BY_VOICE(R.string.pref_voice_open_apps_key, HIDDEN_ON_WATCH | HIDDEN_ON_TV),
     CUSTOMIZE_TALKBACK_MENU_VOICE_COMMAND_CONTROLS(
         R.string.pref_show_context_menu_voice_commands_setting_key, HIDDEN_ON_WATCH | HIDDEN_ON_XR),
     CUSTOMIZE_TALKBACK_MENU_SCREEN_SEARCH(

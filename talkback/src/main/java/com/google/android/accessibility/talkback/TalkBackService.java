@@ -3570,12 +3570,12 @@ public class TalkBackService extends AccessibilityServiceCompat
             this,
             R.string.pref_echo_recognized_text_speech_key,
             R.bool.pref_echo_recognized_text_default));
-    voiceCommandActor.setDeviceActionsEnabled(
+    voiceCommandActor.setOpenAppsEnabled(
         SharedPreferencesUtils.getBooleanPref(
             prefs,
             res,
-            R.string.pref_voice_command_device_actions_key,
-            R.bool.pref_voice_command_device_actions_default));
+            R.string.pref_voice_open_apps_key,
+            R.bool.pref_voice_open_apps_default));
 
     // Reload speech preferences.
     pipeline.setOverlayEnabled(

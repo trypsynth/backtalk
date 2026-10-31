@@ -71,10 +71,10 @@
         android:key="@string/pref_gemini_settings_key"
         android:title="@string/title_pref_gemini_settings" />
     <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
-        android:defaultValue="@bool/pref_voice_command_device_actions_default"
-        android:key="@string/pref_voice_command_device_actions_key"
-        android:summary="@string/summary_pref_voice_command_device_actions"
-        android:title="@string/title_pref_voice_command_device_actions" />
+        android:defaultValue="@bool/pref_voice_open_apps_default"
+        android:key="@string/pref_voice_open_apps_key"
+        android:summary="@string/summary_pref_voice_open_apps"
+        android:title="@string/title_pref_voice_open_apps" />
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
   <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
       android:key="@string/pref_category_typing_key"

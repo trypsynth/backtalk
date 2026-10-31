@@ -48,7 +48,9 @@ import com.google.android.accessibility.utils.SettingsUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -89,7 +91,8 @@ public class SpeechRecognizerPerformer {
   public @Nullable SpeechRecognizer speechRecognizer;
   private boolean isListening = false;
   private boolean sessionActive = false;
-  private boolean partialResultFastFeedback;
+  private final boolean partialResultFastFeedback;
+  private final Set<Object> finalResultRequesters = new HashSet<>();
   private String cachedResult = "";
 
   private @Nullable Intent recognizerIntent;
@@ -179,7 +182,7 @@ public class SpeechRecognizerPerformer {
           } else if (error == ERROR_SPEECH_TIMEOUT) {
             // Nothing heard.
           } else {
-            if (partialResultFastFeedback
+            if (usesFastPartialResults()
                 && HandlerCompat.hasCallbacks(
                     executeCommandDelayHandler, speechRecognitionDelayedSender)) {
               LogUtils.v(
@@ -238,7 +241,7 @@ public class SpeechRecognizerPerformer {
   // This is used only when partialResultFastFeedback is false.
   // The return value @true implies the application acknowledges the recognized speech.
   private boolean feedbackPendingResult() {
-    if (partialResultFastFeedback || TextUtils.isEmpty(cachedResult)) {
+    if (usesFastPartialResults() || TextUtils.isEmpty(cachedResult)) {
       return false;
     }
     // When the cachedResult has a pending (partial-result) speech, call-back with the
@@ -280,16 +283,25 @@ public class SpeechRecognizerPerformer {
     this.speechRecognizerRequester = speechRecognizerRequester;
   }
 
-  /** Applies a recognition policy change without carrying an unfinished command across it. */
-  public void setPartialResultFastFeedback(boolean enabled) {
-    if (partialResultFastFeedback == enabled) {
+  /** Keeps completed-speech requirements independent when several voice features are enabled. */
+  public void requireFinalResults(Object requester, boolean required) {
+    boolean wasFast = usesFastPartialResults();
+    if (required) {
+      finalResultRequesters.add(requester);
+    } else {
+      finalResultRequesters.remove(requester);
+    }
+    if (wasFast == usesFastPartialResults()) {
       return;
     }
     stopListening();
     stopListeningDelayHandler.removeMessages();
     reset();
     cachedResult = "";
-    partialResultFastFeedback = enabled;
+  }
+
+  private boolean usesFastPartialResults() {
+    return partialResultFastFeedback && finalResultRequesters.isEmpty();
   }
 
   public void doListening() {
@@ -428,7 +440,7 @@ public class SpeechRecognizerPerformer {
         isPartialResult ? partialSpeechFeedbackDelayMs : FINAL_SPEECH_COMMAND_PROCESS_DELAY_MS;
     cachedResult = "";
     if (!TextUtils.isEmpty(speech)) {
-      if (partialResultFastFeedback || !isPartialResult) {
+      if (usesFastPartialResults() || !isPartialResult) {
         speechRecognitionDelayedSender =
             new SpeechRecognitionDelayedSender(this).setPartial(isPartialResult).setSpeech(speech);
         executeCommandDelayHandler.postDelayed(speechRecognitionDelayedSender, commandDelayMs);
