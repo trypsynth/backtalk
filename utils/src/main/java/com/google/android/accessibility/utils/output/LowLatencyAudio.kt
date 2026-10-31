@@ -453,9 +453,6 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
     }
   }
 
-  private fun streamWithId(id: String): SpeechStream? =
-    synchronized(lock) { streams.firstOrNull { it.id == id } }
-
   /** The frames held speech has waiting, while held. */
   private fun heldFrames(): Long = streams.sumOf { it.pendingFrames() }
 
@@ -1039,10 +1036,6 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
       val players = synchronized(instances) { instances.values.toList() }
       for (player in players) player.stopStreams()
     }
-
-    /** The speech stream [id] of any player made so far, if it hasn't finished. */
-    @JvmStatic
-    fun findStream(id: String): SpeechStream? = players().firstNotNullOfOrNull { it.streamWithId(id) }
 
     /**
      * Shuts down every player, releasing their tracks, for when the setting is turned off or the
