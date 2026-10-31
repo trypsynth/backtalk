@@ -408,7 +408,7 @@ When you turn on **Controls** > **Touch and activation** > **Volume keys adjust 
 
 Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
 
-With the switch on, Backtalk waits for the completed utterance before opening an app. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
+With the switch on, Backtalk waits for a final result from the speech recognizer before opening an app. A recognition error or timeout does not launch an app from an unfinished phrase. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
 
 ## Backtalk menu
 

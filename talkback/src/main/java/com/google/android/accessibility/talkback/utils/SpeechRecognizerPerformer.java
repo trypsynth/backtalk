@@ -238,10 +238,12 @@ public class SpeechRecognizerPerformer {
         }
       };
 
-  // This is used only when partialResultFastFeedback is false.
+  // A cached partial can be used only when no requester requires a final result.
   // The return value @true implies the application acknowledges the recognized speech.
   private boolean feedbackPendingResult() {
-    if (usesFastPartialResults() || TextUtils.isEmpty(cachedResult)) {
+    if (!finalResultRequesters.isEmpty()
+        || usesFastPartialResults()
+        || TextUtils.isEmpty(cachedResult)) {
       return false;
     }
     // When the cachedResult has a pending (partial-result) speech, call-back with the
@@ -285,13 +287,13 @@ public class SpeechRecognizerPerformer {
 
   /** Keeps completed-speech requirements independent when several voice features are enabled. */
   public void requireFinalResults(Object requester, boolean required) {
-    boolean wasFast = usesFastPartialResults();
+    boolean requiredBefore = !finalResultRequesters.isEmpty();
     if (required) {
       finalResultRequesters.add(requester);
     } else {
       finalResultRequesters.remove(requester);
     }
-    if (wasFast == usesFastPartialResults()) {
+    if (requiredBefore == !finalResultRequesters.isEmpty()) {
       return;
     }
     stopListening();

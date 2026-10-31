@@ -305,7 +305,7 @@ class VoiceAppLauncherTest {
 
   @Test
   @Config(sdk = [26, 34])
-  fun partialOnlyEnginesFinishAtTimeoutAndChangingThePolicyCancelsPendingSpeech() {
+  fun errorsTimeoutsAndPolicyChangesDiscardUnfinishedAppCommands() {
     val recognized = mutableListOf<String>()
     val recognizer = SpeechRecognizerPerformer(service, 10000, true)
     recognizer.setListener { command, _ ->
@@ -313,8 +313,8 @@ class VoiceAppLauncherTest {
       true
     }
     recognizer.requireFinalResults("apps", true)
-    fun partial() =
-      recognizer.speechRecognitionListener.onPartialResults(
+    fun partial(target: SpeechRecognizerPerformer = recognizer) =
+      target.speechRecognitionListener.onPartialResults(
         Bundle().apply {
           putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, arrayListOf("Open Camera"))
         }
@@ -325,6 +325,20 @@ class VoiceAppLauncherTest {
     assertTrue(recognized.isEmpty())
     recognizer.requireFinalResults("apps", true)
     partial()
+    shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
+    assertTrue(recognized.isEmpty())
+    partial()
+    recognizer.speechRecognitionListener.onError(SpeechRecognizer.ERROR_NO_MATCH)
+    shadowOf(Looper.getMainLooper()).idle()
+    assertTrue(recognized.isEmpty())
+
+    // The existing fallback for partial-only engines is preserved without a final-result request.
+    val slowRecognizer = SpeechRecognizerPerformer(service, 10000, false)
+    slowRecognizer.setListener { command, _ ->
+      recognized.add(command)
+      true
+    }
+    partial(slowRecognizer)
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
     assertEquals(listOf("Open Camera"), recognized)
   }
