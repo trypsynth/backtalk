@@ -74,12 +74,17 @@ class TouchInteractionMonitorTest {
     val threads = mutableSetOf<Thread>()
     var swipesCanStartEarly = false
     val earlySwipes = mutableListOf<Int>()
+    val earlySwipesFinished = mutableListOf<Int>()
     var earlySwipesUndone = 0
 
     override fun canStartSwipeEarly(gestureId: Int) = swipesCanStartEarly
 
     override fun startSwipeEarly(gestureId: Int, displayId: Int) {
       earlySwipes.add(gestureId)
+    }
+
+    override fun finishSwipeEarly(gestureEvent: AccessibilityGestureEvent) {
+      earlySwipesFinished.add(gestureEvent.gestureId)
     }
 
     override fun undoSwipeEarly() {
@@ -332,6 +337,7 @@ class TouchInteractionMonitorTest {
 
     assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
     assertEquals(listOf<Int>(), service.gestures)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipesFinished)
     assertEquals(0, service.earlySwipesUndone)
   }
 

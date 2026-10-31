@@ -1610,6 +1610,7 @@ public class TalkBackService extends AccessibilityServiceCompat
   // Where accessibility focus was before the swipe that was performed before its finger lifted.
   private @Nullable AccessibilityNodeInfoCompat earlySwipePivot;
   private @Nullable DirectionNavigationActor earlySwipeNavigation;
+  private boolean earlySwipeHandled;
 
   /**
    * Whether a swipe that has just started can be performed before its finger lifts: only one that
@@ -1632,7 +1633,17 @@ public class TalkBackService extends AccessibilityServiceCompat
   void startSwipeEarly(int gestureId, int displayId) {
     earlySwipePivot =
         accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
-    handleOnGestureById(displayId, gestureId);
+    earlySwipeHandled = handleOnGestureById(displayId, gestureId);
+  }
+
+  /** Called when the finger lifts and the swipe performed early turns out to be the gesture. */
+  void finishSwipeEarly(AccessibilityGestureEvent gestureEvent) {
+    earlySwipePivot = null;
+    if (earlySwipeHandled) {
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(EVENT_ID_UNTRACKED, Feedback.saveGesture(gestureEvent));
+    }
   }
 
   void undoSwipeEarly() {

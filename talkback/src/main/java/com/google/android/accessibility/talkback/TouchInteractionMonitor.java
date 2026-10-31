@@ -1088,6 +1088,7 @@ public class TouchInteractionMonitor
     if (earlySwipe != 0 && gestureEvent.getGestureId() == earlySwipe) {
       // Already performed, when the finger had gone far enough.
       earlySwipe = 0;
+      mainHandler.post(() -> service.finishSwipeEarly(gestureEvent));
       clear();
       clearGestureDetectorOnNextDown = true;
       return;
