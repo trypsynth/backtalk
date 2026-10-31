@@ -24,6 +24,7 @@
 #include "third_party/brltty/Headers/prologue.h"  // NOLINT Must include first
 
 #include "libbrltty.h"
+#include "idle_keepalive.h"
 #include <stdlib.h>
 #include <string.h>
 #include "third_party/brltty/Programs/core.h"
@@ -40,6 +41,7 @@
 #include "third_party/brltty/Programs/defaults.h"
 #include "third_party/brltty/Headers/prefs.h"
 #include "third_party/brltty/Headers/queue.h"
+#include "third_party/brltty/Headers/timing.h"
 #include "third_party/brltty/Programs/brl.h"
 #include "third_party/brltty/Programs/cmd_queue.h"
 #include "third_party/brltty/Headers/parse.h"
@@ -76,6 +78,14 @@ static char** driverParameters = NULL;
  */
 static Queue *commandQueue = NULL;
 
+static IdleKeepalive idleKeepalive;
+
+static int64_t monotonicMillis(void) {
+  TimeValue now;
+  getMonotonicTime(&now);
+  return (int64_t)now.seconds * 1000 + now.nanoseconds / 1000000;
+}
+
 static const PreferenceSettings prefSettings = {
              .autoreleaseTime = DEFAULT_AUTORELEASE_TIME,
              .autorepeatInterval = 30, // 30 centiseconds = 300 ms
@@ -109,6 +119,7 @@ int
 brltty_initialize (const char* driverCode, const char* brailleDevice,
                    const char* tablesDir) {
   int ret = 0;
+  memset(&idleKeepalive, 0, sizeof(idleKeepalive));
   systemLogLevel = LOG_DEBUG;
   forgetDevices();
   setPreferences(&prefSettings);
@@ -178,6 +189,11 @@ brltty_initialize (const char* driverCode, const char* brailleDevice,
 
   logMessage(LOG_NOTICE, "Successfully initialized braille driver "
              "%s on device %s", driverCode, brailleDevice);
+  // Focus over classic Bluetooth can enter a slow sniff mode between pans.
+  // Use the driver's normal acknowledged write path, never replay raw packets.
+  idleKeepalive.enabled = !strcmp(driverCode, "fs") &&
+      !strncmp(brailleDevice, "bluetooth:", 10) &&
+      canRefreshBrailleDisplay(&brailleDisplay);
   ret = 1;
   goto out;
 
@@ -198,6 +214,7 @@ out:
 
 int
 brltty_destroy(void) {
+  memset(&idleKeepalive, 0, sizeof(idleKeepalive));
   if (braille == NULL) {
     // braille might has been null because starting failed.
     logMessage(LOG_ERR, "Double destruction of braille driver");
@@ -239,7 +256,25 @@ brltty_readCommand(int *readDelayMillis) {
     *readDelayMillis = prefs.autorepeatInterval * 5;
   }
 
-  return brltty_popCommand();
+  int command = brltty_popCommand();
+  int64_t now = monotonicMillis();
+  if (command != EOF && command != BRL_CMD_NOOP && command != BRL_CMD_RESTARTBRL) {
+    idleKeepaliveInput(&idleKeepalive, now);
+  }
+  int delay = idleKeepaliveDelay(&idleKeepalive, now);
+  if (delay == 0) {
+    if (!refreshBrailleDisplay(&brailleDisplay)) {
+      idleKeepalive.active = 0;
+      logMessage(LOG_WARNING, "Focus Bluetooth keepalive failed");
+    } else {
+      idleKeepalive.lastWrite = monotonicMillis();
+    }
+    delay = idleKeepaliveDelay(&idleKeepalive, monotonicMillis());
+  }
+  if (delay > 0 && (*readDelayMillis <= 0 || delay < *readDelayMillis)) {
+    *readDelayMillis = delay;
+  }
+  return command;
 }
 
 typedef struct {
