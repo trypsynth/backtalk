@@ -32,6 +32,8 @@ To find the next item in a list, TalkBack also built the reading order of the wh
 
 In a test on a Realme phone, three in four swipes reused the reading order, and the longest pause during swiping went from about 450 ms to about 150 ms.
 
+On a web page, the reading order never has the next item, because the browser moves through the page itself. TalkBack still built the whole screen's order before asking the browser, on every swipe. Backtalk asks the browser first, and builds the order only when the browser has nothing more, such as at the end of the page.
+
 ### Time between one-finger taps
 
 TalkBack always waits 0.25 seconds for another tap before it decides that a tap gesture is finished. In Backtalk, you can set this wait for one-finger taps in **Controls** > **Touch and activation** > **Reduce delay** > **Time between one-finger taps**, down to 0.1 seconds. A shorter time makes one-finger multi-tap gestures respond faster, but a slow double tap can then count as two single taps.

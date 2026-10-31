@@ -380,10 +380,10 @@ public class FocusProcessorForLogicalNavigation {
             /* requireEditable= */ false,
             /* isCurrent= */ Filter.node(TraversalTreeCache::holds));
 
-    // The focus monitor can return Android's cached copy of a node that was just removed, so check
-    // with the app that the pivot is still there. Skip that round trip when the saved reading order
-    // holds the pivot: nothing that could remove a node has happened since it was saved.
-    if (pivot != null && !TraversalTreeCache.holds(pivot) && !pivot.refresh()) {
+    // FocusFinder already validates accessibility focus unless the traversal cache holds it.
+    // Validate the input-focus fallback here; do not repeat the same remote refresh for a11y focus.
+    if (pivot != null && !pivot.isAccessibilityFocused()
+        && !TraversalTreeCache.holds(pivot) && !pivot.refresh()) {
       pivot = null;
     }
 
@@ -1194,7 +1194,39 @@ public class FocusProcessorForLogicalNavigation {
       boolean ignoreDescendantsOfPivot,
       NavigationAction navigationAction,
       EventId eventId) {
+    return navigateToDefaultOrMacroGranularityTarget(
+        pivot, ignoreDescendantsOfPivot, navigationAction, eventId, false);
+  }
+
+  private boolean navigateToDefaultOrMacroGranularityTarget(
+      @NonNull AccessibilityNodeInfoCompat pivot,
+      boolean ignoreDescendantsOfPivot,
+      NavigationAction navigationAction,
+      EventId eventId,
+      boolean webNavigationAttempted) {
     int searchDirection = navigationAction.searchDirection;
+
+    // A web action chooses its own next item. The native order excludes the document's children,
+    // so a pivot inside it cannot reuse that order and would rebuild it on every swipe. Ask the
+    // document first, and read the native window only if the action needs to leave the document.
+    // Keep container entry/exit, spatial navigation and leaving micro granularity on their old path.
+    if (!webNavigationAttempted
+        && !ignoreDescendantsOfPivot
+        && navigationAction.actionType == NavigationAction.DIRECTIONAL_NAVIGATION
+        && navigationAction.targetType == NavigationTarget.TARGET_DEFAULT
+        && (navigationAction.originalNavigationGranularity == null
+            || navigationAction.originalNavigationGranularity == CursorGranularity.DEFAULT)
+        && TraversalStrategyUtils.isLogicalDirection(searchDirection)
+        && WebInterfaceUtils.supportsWebActions(pivot)
+        && Role.getRole(pivot) != Role.ROLE_WEB_VIEW) {
+      TraversalTreeCache.rememberPivot(pivot);
+      webNavigationAttempted = true;
+      if (navigateToHtmlTarget(pivot, navigationAction, eventId)) {
+        reachEdge = false;
+        return true;
+      }
+    }
+
     int logicalDirection =
         TraversalStrategyUtils.getLogicalDirection(
             searchDirection, WindowUtils.isScreenLayoutRTL(service));
@@ -1257,7 +1289,7 @@ public class FocusProcessorForLogicalNavigation {
         revealingOffscreen = true;
         try {
           return navigateToDefaultOrMacroGranularityTarget(
-              pivot, ignoreDescendantsOfPivot, navigationAction, eventId);
+              pivot, ignoreDescendantsOfPivot, navigationAction, eventId, webNavigationAttempted);
         } finally {
           revealingOffscreen = false;
         }
@@ -1302,11 +1334,14 @@ public class FocusProcessorForLogicalNavigation {
     // assuming that a WebView container is positioned between native elements:
     // - Forward: Native elements -> WebView container -> web elements -> native elements.
     // - Backward: Native elements -> web elements -> WebView container -> native elements.
-    // Note: the design assumes there is only one WebView and multiple WebView should be a corner
-    // case which is out of the scope.
+    // Keep the existing native/WebView container stop policy at document boundaries.
     if (WebInterfaceUtils.supportsWebActions(pivot)) {
       navigationResult =
-          findTargetFromWebElement(pivot, navigationAction, nodeFilter, traversalStrategy, eventId);
+          webNavigationAttempted
+              ? findTargetOutsideWebElement(
+                  pivot, navigationAction, nodeFilter, traversalStrategy, eventId)
+              : findTargetFromWebElement(
+                  pivot, navigationAction, nodeFilter, traversalStrategy, eventId);
     } else if (navigationAction.targetType == TARGET_CONTAINER) {
       navigationResult = NavigationResult.create(findContainerTarget(pivot, navigationAction));
     } else {
@@ -1445,7 +1480,7 @@ public class FocusProcessorForLogicalNavigation {
           // again with a new tree.
           TraversalTreeCache.clear("focus failed");
           return navigateToDefaultOrMacroGranularityTarget(
-              pivot, ignoreDescendantsOfPivot, navigationAction, eventId);
+              pivot, ignoreDescendantsOfPivot, navigationAction, eventId, webNavigationAttempted);
         }
         return focused;
       }
@@ -1736,10 +1771,23 @@ public class FocusProcessorForLogicalNavigation {
     if (navigateToHtmlTarget(webPivot, navigationAction, eventId)) {
       return NavigationResult.create(NavigationResult.Type.WEB_ELEMENT);
     }
-    // Navigate out of WebView with normal navigation
+    return findTargetOutsideWebElement(
+        webPivot, navigationAction, nodeFilter, traversalStrategy, eventId);
+  }
+
+  /** Leaves the container after a rejected HTML action, without sending it twice. */
+  private NavigationResult findTargetOutsideWebElement(
+      AccessibilityNodeInfoCompat webPivot,
+      NavigationAction navigationAction,
+      Filter<AccessibilityNodeInfoCompat> nodeFilter,
+      TraversalStrategy traversalStrategy,
+      EventId eventId) {
     AccessibilityNodeInfoCompat webContainer = webPivot;
     if (Role.getRole(webPivot) != Role.ROLE_WEB_VIEW) {
       webContainer = WebInterfaceUtils.ascendToWebView(webPivot);
+    }
+    if (webContainer == null) {
+      return NavigationResult.create(NavigationResult.Type.EMPTY);
     }
     AccessibilityNodeInfoCompat target =
         TraversalStrategyUtils.searchFocus(
