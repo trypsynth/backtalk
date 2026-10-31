@@ -1541,6 +1541,7 @@ public class FailoverTextToSpeech {
       CharSequence text, int queueMode, Bundle bundle, @Nullable String utteranceId) {
     @Nullable LowLatencyAudio player = lowLatencyPlayer();
     if (player == null || utteranceId == null || TextUtils.isEmpty(text)) {
+      engineMaySpeak = true;
       return tts.speak(text, queueMode, bundle, utteranceId);
     }
     // Short speech comes from a second connection, which makes its audio without waiting for it to
@@ -1824,6 +1825,8 @@ public class FailoverTextToSpeech {
     engineQuietSince = 0;
     unfinishedUtterances.clear();
     boolean speaking = !lowLatencyStreams.isEmpty();
+    // Nothing would play what it goes on making.
+    PreparedAudio.shutdown();
     LowLatencyAudio.shutdownAll();
     if (speaking && tts != null) {
       try {
@@ -1898,6 +1901,10 @@ public class FailoverTextToSpeech {
           mHandler.post(
               () -> {
                 LowLatencyAudio.@Nullable SpeechStream stream = lowLatencyStreams.get(id);
+                if (stream == null) {
+                  // Speech from the second connection has a stream that is not in that map.
+                  stream = LowLatencyAudio.findStream(id);
+                }
                 speakAgainWithoutLowLatency(id, stream, /* engineAtFault= */ true);
               });
         }
@@ -2022,7 +2029,7 @@ public class FailoverTextToSpeech {
     ttsFailures = Math.max(ttsFailures, MAX_TTS_FAILURES - 1);
     attemptTtsFailover(ttsEngine);
     if (hungUtteranceId != null && !lowLatency) {
-      utteranceProgressCallback.onError(hungUtteranceId);
+      utteranceProgressCallback.onError(reportedId(hungUtteranceId, /* finished= */ true));
     }
     // A hung engine never sends the final chunk's callback, so stale chunks must not persist.
     speechChunks.clear();
@@ -2033,6 +2040,8 @@ public class FailoverTextToSpeech {
     if (ttsEngine != null) {
       enginesWithoutFileAudio.add(ttsEngine);
     }
+    // Nothing would play what it goes on making.
+    PreparedAudio.shutdown();
     // Logged at error level, so that it shows at the default log level: speech slows down from
     // here on, and the reason is needed to tell why.
     LogUtils.e(TAG, "Low-latency playback off for %s: %s", ttsEngine, reason);
@@ -2077,7 +2086,11 @@ public class FailoverTextToSpeech {
           if (onlyThis) {
             tts.stop();
           }
-          tts.speak(request.first, QUEUE_ADD, request.second, RESPOKEN_ID_PREFIX + utteranceId);
+          String respokenId = RESPOKEN_ID_PREFIX + utteranceId;
+          engineMaySpeak = true;
+          // The second connection has no hang check, so an engine it found hung is caught here.
+          watchForEngineHang(QUEUE_ADD, respokenId);
+          tts.speak(request.first, QUEUE_ADD, request.second, respokenId);
         });
   }
 

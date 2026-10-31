@@ -88,8 +88,13 @@ public class EventFilter {
   private final Runnable prepareAfterSettling = this::prepareAfterSettling;
   private @Nullable Consumer<AccessibilityNodeInfoCompat> orderBuilder;
   private long lastFocusMoveTime;
+  // How many times the screen has settled since focus moved.
+  private int settlesSinceFocusMove;
   private static final long SETTLE_MS = 120;
   private static final long PREPARE_AGAIN_FOR_MS = 3000;
+  // Reading the order takes up to a few hundred ms on the main thread, so a screen that keeps
+  // changing is not read over and over.
+  private static final int MAX_SETTLES = 3;
 
   /**
    * How long after focus moves the announcements of the next and previous nodes are prepared: after
@@ -158,10 +163,19 @@ public class EventFilter {
 
   private void prepareAfterSettling() {
     AccessibilityNodeInfoCompat pivot = lastFocusedNode;
-    if (pivot == null || orderBuilder == null || fingerDown.getAsBoolean()) {
+    if (pivot == null
+        || orderBuilder == null
+        || fingerDown.getAsBoolean()
+        || settlesSinceFocusMove >= MAX_SETTLES) {
       return;
     }
-    orderBuilder.accept(pivot);
+    settlesSinceFocusMove++;
+    try {
+      orderBuilder.accept(pivot);
+    } catch (RuntimeException e) {
+      LogUtils.e(TAG, "Cannot read the reading order: %s", e);
+      return;
+    }
     prepareSwipeTargets();
   }
 
@@ -508,6 +522,7 @@ public class EventFilter {
   private void onFocusMoved(AccessibilityNodeInfoCompat node) {
     lastFocusedNode = node;
     lastFocusMoveTime = SystemClock.uptimeMillis();
+    settlesSinceFocusMove = 0;
     handler.removeCallbacks(prepareSwipeTargets);
     if (targetPredictor != null) {
       handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);

@@ -23,6 +23,8 @@ import android.os.HandlerThread
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
+import android.text.Spanned
+import android.text.style.TtsSpan
 import com.google.android.accessibility.utils.output.FailoverTextToSpeech.SpeechParam
 import java.io.File
 
@@ -32,7 +34,9 @@ import java.io.File
  * say, which the swipe then plays without waiting for the engine.
  *
  * Audio is only reused for the same text, voice, rate and pitch. Whatever is not ready is made when
- * it's asked for. Android writes the audio to a file as well, so this gives it /dev/null.
+ * it's asked for. Android writes the audio to a file as well, so this gives it /dev/null. Text that
+ * tells the engine how to say it, with a TtsSpan, is left to the main connection, as the text here
+ * is plain.
  */
 object PreparedAudio {
   /** The longest text spoken this way. Its audio is made at once and has to fit in a stream. */
@@ -78,14 +82,17 @@ object PreparedAudio {
       handler.post { connect(appContext, engine) }
       return false
     }
-    return text.length <= MAX_TEXT
+    return canMake(text)
   }
+
+  private fun canMake(text: CharSequence): Boolean =
+    text.length <= MAX_TEXT &&
+      !(text is Spanned && text.getSpans(0, text.length, TtsSpan::class.java).isNotEmpty())
 
   private fun connect(context: Context, engine: String) {
     if (clientEngine == engine) return
-    client?.shutdown()
-    readyEngine = null
-    clientVoice = null
+    // Engines can give their voices the same names, and the voice last used is the old engine's.
+    disconnect()
     clientEngine = engine
     client =
       TextToSpeech(
@@ -99,7 +106,7 @@ object PreparedAudio {
   /** Makes speech for [text] with the voice and settings of the last speech. */
   @JvmStatic
   fun prepare(text: CharSequence) {
-    if (text.length > MAX_TEXT) return
+    if (!canMake(text)) return
     val string = text.toString()
     handler.post {
       val voice: Voice
@@ -139,10 +146,14 @@ object PreparedAudio {
         playHandler.post { play(audio, stream) }
         return
       }
-      val item = making.values.firstOrNull { it.key == key && it.started && it.stream == null }
+      // Audio past the size limit is not kept, so an item that passed it can't be played whole.
+      val item =
+        making.values.firstOrNull {
+          it.key == key && it.started && it.stream == null && it.size <= MAX_BYTES_OF_ONE
+        }
       if (item != null) {
         stream.begin(item.rate, item.encoding, item.channels)
-        for (chunk in item.chunks) stream.write(chunk)
+        replay(item.chunks, item.ranges, stream)
         item.stream = stream
         return
       }
@@ -154,44 +165,54 @@ object PreparedAudio {
   /** Stops what is being made, so that the engine is free for speech that's wanted now. */
   @JvmStatic
   fun stopMaking() {
+    // Forgotten at once rather than on the handler's thread, or speech that follows could join an
+    // item that is then dropped, and wait for audio that never comes.
+    val wasMaking = synchronized(lock) { making.isNotEmpty().also { making.clear() } }
     handler.post {
-      synchronized(lock) {
-        if (making.isEmpty()) return@post
-        making.clear()
-      }
-      client?.stop()
+      if (wasMaking || synchronized(lock) { making.isNotEmpty() }) client?.stop()
     }
   }
 
   /** Disconnects from the engine and forgets all speech. */
   @JvmStatic
   fun shutdown() {
-    handler.post {
-      client?.shutdown()
-      client = null
-      clientEngine = null
-      clientVoice = null
-      readyEngine = null
-      synchronized(lock) {
-        kept.clear()
-        making.clear()
-        lastVoice = null
-        lastParams = null
-      }
+    handler.post { disconnect() }
+  }
+
+  private fun disconnect() {
+    client?.shutdown()
+    client = null
+    clientEngine = null
+    clientVoice = null
+    readyEngine = null
+    synchronized(lock) {
+      kept.clear()
+      making.clear()
+      lastVoice = null
+      lastParams = null
     }
   }
 
   private fun play(audio: PreparedAudioCache.Audio, stream: LowLatencyAudio.SpeechStream) {
     stream.begin(audio.rate, audio.encoding, audio.channels)
+    replay(audio.chunks, audio.ranges, stream)
+    stream.end()
+  }
+
+  /** Gives [stream] audio made already, with its word ranges in their places among the chunks. */
+  private fun replay(
+    chunks: List<ByteArray>,
+    ranges: List<IntArray>,
+    stream: LowLatencyAudio.SpeechStream,
+  ) {
     var range = 0
-    audio.chunks.forEachIndexed { index, chunk ->
-      while (range < audio.ranges.size && audio.ranges[range][0] <= index) {
-        val (_, start, end, frame) = audio.ranges[range++]
+    for (index in 0..chunks.size) {
+      while (range < ranges.size && ranges[range][0] <= index) {
+        val (_, start, end, frame) = ranges[range++]
         stream.range(start, end, frame)
       }
-      stream.write(chunk)
+      if (index < chunks.size) stream.write(chunks[index])
     }
-    stream.end()
   }
 
   private fun keyFor(text: String, voice: Voice, params: Bundle): String =
@@ -209,7 +230,12 @@ object PreparedAudio {
       return
     }
     if (voice != clientVoice) {
-      tts.voice = voice
+      // Audio in another voice would be kept as this voice's.
+      if (tts.setVoice(voice) != TextToSpeech.SUCCESS) {
+        clientVoice = null
+        stream?.fail()
+        return
+      }
       clientVoice = voice
     }
     val id = "prepared${nextId++}"
