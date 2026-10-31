@@ -437,4 +437,6 @@
   <string name="voice_commands_found">Found %1$s</string>
   <!-- Spoken when the find voice command finds no matching control; %1$s is what the user asked for. [CHAR_LIMIT=NONE] -->
   <string name="voice_commands_element_not_found">Could not find %1$s on screen</string>
+  <!-- Shown in a script's list of triggers for a voice command; %1$s is the phrase to say. [CHAR_LIMIT=NONE] -->
+  <string name="script_binding_voice">Voice: "%1$s"</string>
 </resources>

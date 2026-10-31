@@ -171,6 +171,8 @@ sealed class CommandBinding(val key: String) {
 
   data object ReadingControl : CommandBinding("control")
 
+  class Voice(val phrase: String) : CommandBinding(ScriptInput.voiceBinding(phrase))
+
   companion object {
     fun fromKey(key: String): CommandBinding? =
       when {
@@ -183,6 +185,8 @@ sealed class CommandBinding(val key: String) {
             ?.let(::Gesture)
         key.startsWith(ScriptInput.KEYS_BINDING) ->
           ScriptInput.keysFromId(key.removePrefix(ScriptInput.KEYS_BINDING))?.let(::KeyCombo)
+        key.startsWith(ScriptInput.VOICE_BINDING) ->
+          CommandBinding.Voice(key.removePrefix(ScriptInput.VOICE_BINDING))
         else -> null
       }
   }
@@ -195,6 +199,7 @@ data class ScriptCommand(
   val keys: List<ScriptInput.Keys>,
   val menu: Boolean,
   val control: Boolean,
+  val voice: List<String> = emptyList(),
 ) {
   fun isDefault(binding: CommandBinding): Boolean = bindings.any { it.key == binding.key }
 
@@ -202,6 +207,7 @@ data class ScriptCommand(
     get() =
       gestures.map { CommandBinding.Gesture(it) } +
         keys.map { CommandBinding.KeyCombo(it) } +
+        voice.map { CommandBinding.Voice(it) } +
         listOfNotNull(
           CommandBinding.MenuItem.takeIf { menu },
           CommandBinding.ReadingControl.takeIf { control },

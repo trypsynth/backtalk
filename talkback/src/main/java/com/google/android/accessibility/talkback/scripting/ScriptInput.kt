@@ -147,10 +147,13 @@ object ScriptInput {
 
   const val GESTURE_BINDING = "gesture/"
   const val KEYS_BINDING = "keys/"
+  const val VOICE_BINDING = "voice/"
 
   fun gestureBinding(name: String): String = GESTURE_BINDING + name
 
   fun keysBinding(keys: Keys): String = KEYS_BINDING + keys.id
+
+  fun voiceBinding(phrase: String): String = VOICE_BINDING + phrase.trim().lowercase()
 
   val gestureNames: List<String> = (gestures.keys + fingerprintGestures.keys).toList()
 
