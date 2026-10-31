@@ -89,7 +89,7 @@ public class SpeechRecognizerPerformer {
   public @Nullable SpeechRecognizer speechRecognizer;
   private boolean isListening = false;
   private boolean sessionActive = false;
-  private final boolean partialResultFastFeedback;
+  private boolean partialResultFastFeedback;
   private String cachedResult = "";
 
   private @Nullable Intent recognizerIntent;
@@ -278,6 +278,18 @@ public class SpeechRecognizerPerformer {
    */
   public void setListener(SpeechRecognizerRequester speechRecognizerRequester) {
     this.speechRecognizerRequester = speechRecognizerRequester;
+  }
+
+  /** Applies a recognition policy change without carrying an unfinished command across it. */
+  public void setPartialResultFastFeedback(boolean enabled) {
+    if (partialResultFastFeedback == enabled) {
+      return;
+    }
+    stopListening();
+    stopListeningDelayHandler.removeMessages();
+    reset();
+    cachedResult = "";
+    partialResultFastFeedback = enabled;
   }
 
   public void doListening() {

@@ -124,6 +124,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 // TODO: Refactoring this class as a feedback-mapper class
@@ -141,6 +142,8 @@ public class VoiceCommandProcessor {
   private ActorState actorState;
   private final TalkBackAnalytics analytics;
   private final CallVoiceCommands callVoiceCommands;
+  private VoiceCommandActions deviceActions;
+  private boolean deviceActionsEnabled;
 
   private boolean echoNotRecognizedTextEnabled;
 
@@ -265,6 +268,26 @@ public class VoiceCommandProcessor {
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
     this.callVoiceCommands.setPipeline(pipeline);
+    if (deviceActions != null) {
+      deviceActions.shutdown();
+    }
+    deviceActions = new VoiceCommandActions(service, pipeline);
+  }
+
+  public void shutdown() {
+    if (deviceActions != null) {
+      deviceActions.shutdown();
+    }
+  }
+
+  public void setDeviceActionsEnabled(boolean enabled) {
+    if (deviceActionsEnabled == enabled) {
+      return;
+    }
+    deviceActionsEnabled = enabled;
+    if (deviceActions != null) {
+      deviceActions.cancel();
+    }
   }
 
   public void setActorState(ActorState actorState) {
@@ -304,12 +327,33 @@ public class VoiceCommandProcessor {
         });
   }
 
-  /* Returns true if the recognized string is one of the voice commands. */
+  /** Waits for final recognition when app launching and named clicks are enabled. */
   @CanIgnoreReturnValue
   public boolean handleSpeechCommand(String command, boolean isPartialResult) {
+    if (!deviceActionsEnabled) {
+      return handleBuiltInCommand(command, isPartialResult);
+    }
+    if (TextUtils.isEmpty(command) || isPartialResult) {
+      return false;
+    }
+    deviceActions.handle(
+        command,
+        result -> {
+          switch (result) {
+            case RECOGNIZED -> analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+            case UNRECOGNIZED -> speakUnrecognizedCommand(command, false);
+            case TRY_BUILT_IN -> handleBuiltInCommand(command, false);
+          }
+        });
+    // The final utterance has been accepted; stop recognition while the lookup finishes.
+    return true;
+  }
+
+  private boolean handleBuiltInCommand(String command, boolean isPartialResult) {
     if (TextUtils.isEmpty(command)) {
       return false;
     }
+    command = command.toLowerCase(Locale.getDefault());
     LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
     EventId eventId = EVENT_ID_UNTRACKED;
 
@@ -827,6 +871,10 @@ public class VoiceCommandProcessor {
       return true;
     }
 
+    return speakUnrecognizedCommand(command, isPartialResult);
+  }
+
+  private boolean speakUnrecognizedCommand(String command, boolean isPartialResult) {
     if (echoNotRecognizedTextEnabled) {
       speakDelayed(
           service.getString(R.string.voice_commands_echo_feedback_not_recognized, command));
