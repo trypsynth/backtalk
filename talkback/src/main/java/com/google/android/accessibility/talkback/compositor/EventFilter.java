@@ -484,8 +484,13 @@ public class EventFilter {
    */
   private void prepareSwipeTargets() {
     @Nullable AccessibilityNodeInfoCompat pivot = lastFocusedNode;
-    if (pivot == null || targetPredictor == null || fingerDown.getAsBoolean()) {
-      // A swipe may be starting, and must not wait for this.
+    if (pivot == null || targetPredictor == null) {
+      return;
+    }
+    if (fingerDown.getAsBoolean()) {
+      // A swipe may be starting, and must not wait for this. A swipe that moved focus before its
+      // finger lifted is still going, so try again rather than leave the next swipe unprepared.
+      handler.postDelayed(prepareSwipeTargets, PREPARE_DELAY_MS);
       return;
     }
     for (int direction : SWIPE_DIRECTIONS) {

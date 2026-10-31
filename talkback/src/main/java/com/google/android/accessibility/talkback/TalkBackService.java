@@ -1606,10 +1606,9 @@ public class TalkBackService extends AccessibilityServiceCompat
     return false;
   }
 
-  private static final String PREF_SWIPE_BEFORE_LIFT_KEY = "pref_swipe_before_lift";
-
   // Where accessibility focus was before the swipe that was performed before its finger lifted.
   private @Nullable AccessibilityNodeInfoCompat earlySwipePivot;
+  private @Nullable DirectionNavigationActor earlySwipeNavigation;
 
   /**
    * Whether a swipe that has just started can be performed before its finger lifts: only one that
@@ -1619,7 +1618,8 @@ public class TalkBackService extends AccessibilityServiceCompat
   boolean canStartSwipeEarly(int gestureId) {
     return isServiceActive()
         && !PauseController.isPaused()
-        && prefs.getBoolean(PREF_SWIPE_BEFORE_LIFT_KEY, true)
+        && getBooleanPref(
+            R.string.pref_swipe_before_lift_key, R.bool.pref_swipe_before_lift_default)
         && (menuManager == null || !menuManager.isMenuShowing())
         && gestureController.onlyMovesToAdjacentItem(gestureId);
   }
@@ -1632,7 +1632,16 @@ public class TalkBackService extends AccessibilityServiceCompat
 
   void undoSwipeEarly() {
     interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
-    if (earlySwipePivot != null && earlySwipePivot.refresh()) {
+    if (earlySwipeNavigation != null) {
+      // A scroll the swipe started must not move focus on when it ends.
+      earlySwipeNavigation.cancelAutoScrollFocus();
+    }
+    if (earlySwipePivot == null) {
+      // Nothing had focus before the swipe.
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(EVENT_ID_UNTRACKED, Feedback.focus(Feedback.Focus.Action.CLEAR));
+    } else if (earlySwipePivot.refresh()) {
       pipeline
           .getFeedbackReturner()
           .returnFeedback(
@@ -2341,6 +2350,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             universalSearchActor.state,
             compositor.getTextComposer());
     directionNavigationActorStateReader = directionNavigationActor.state;
+    earlySwipeNavigation = directionNavigationActor;
     userInterface.registerListener(directionNavigationActor);
     TextEditActor editor =
         new TextEditActor(

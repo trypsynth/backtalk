@@ -388,6 +388,39 @@ class TouchInteractionMonitorTest {
   }
 
   @Test
+  fun earlySwipeWhoseLiftWentMissingDoesNotSwallowTheNextSwipe() {
+    service.swipesCanStartEarly = true
+    swipeRightWithoutLifting()
+    stateChangeAt(STATE_CLEAR, 100)
+    stateChangeAt(STATE_TOUCH_INTERACTING, 200)
+    touchAt(ACTION_DOWN, 40f, 200f, 200)
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 40f + 40f * step, 200f, 200 + 15L * step)
+    }
+    touchAt(ACTION_UP, 280f, 200f, 300)
+    runUntil(650)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT, GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(1, service.earlySwipesUndone)
+  }
+
+  @Test
+  fun earlySwipeUndoneByTouchExplorationIsNotPerformedEarlyAgain() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    touchAt(ACTION_MOVE, 80f, 200f, 15)
+    stateChangeAt(STATE_TOUCH_EXPLORING, 20)
+    for (step in 1..4) {
+      touchAt(ACTION_MOVE, 80f + 40f * step, 200f, 20 + 15L * step)
+    }
+    runUntil(100)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(1, service.earlySwipesUndone)
+  }
+
+  @Test
   fun earlySwipeIsUndoneWhenTheTouchBecomesTouchExploration() {
     service.swipesCanStartEarly = true
     swipeRightWithoutLifting()

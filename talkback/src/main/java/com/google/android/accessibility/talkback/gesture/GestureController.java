@@ -870,6 +870,7 @@ public class GestureController {
     CursorGranularity granularity = actorState.getDirectionNavigation().getCurrentGranularity();
     if (captureGestureIdToAnnouncements.containsKey(gestureId)
         || disabledGestures.contains(gestureId)
+        || Scripts.takesGesture(gestureId)
         || granularity.isMicroGranularity()
         || granularity == CursorGranularity.ROW_COLUMN) {
       return false;

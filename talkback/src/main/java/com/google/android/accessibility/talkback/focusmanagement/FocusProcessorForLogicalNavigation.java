@@ -3029,6 +3029,12 @@ public class FocusProcessorForLogicalNavigation {
     }
   }
 
+  /** Stops an auto-scroll in progress from moving focus when it ends. */
+  public void cancelAutoScrollFocus() {
+    scrollCallback = null;
+    cancelSettleLook();
+  }
+
   /** Determines feedback for auto-scroll failure after directional-navigation action. */
   public void onAutoScrollFailed(@NonNull AccessibilityNodeInfoCompat scrolledNode) {
     if (scrollCallback != null) {

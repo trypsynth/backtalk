@@ -46,6 +46,9 @@ interface ScriptHost {
 
   fun onGesture(name: String, fallback: Runnable): Boolean
 
+  /** Whether [onGesture] would run a script's command for the gesture now. */
+  fun takesGesture(name: String): Boolean = false
+
   fun onKeys(
     modifiers: Int,
     keyCode: Int,
@@ -210,6 +213,13 @@ object Scripts {
   @JvmStatic
   fun onGesture(gestureId: Int, fallback: Runnable): Boolean =
     offerGesture(ScriptInput.gestureName(gestureId), fallback)
+
+  /** Whether the gesture would go to a script, without giving it to one. */
+  @JvmStatic
+  fun takesGesture(gestureId: Int): Boolean {
+    val name = ScriptInput.gestureName(gestureId) ?: return false
+    return capture != null || host?.takesGesture(name) == true
+  }
 
   @JvmStatic
   fun onFingerprintGesture(gestureId: Int, fallback: Runnable): Boolean =
