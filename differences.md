@@ -432,6 +432,19 @@ To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**.
 
 Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
 
+### System controls
+
+Backtalk adds voice commands for settings that Android lets apps change:
+*   **Do Not Disturb**: Say "turn on Do Not Disturb" or "turn on DND" to silence notifications, and "turn off DND" to restore them. If notification policy access has not been granted yet, Backtalk asks for permission and opens the setting.
+*   **System settings**: Say "open settings" or "settings" to open the Android system Settings app.
+*   **Backtalk settings**: Say "open Backtalk settings" or "Backtalk settings" to open screen reader preferences directly.
+*   **Device status and battery**: Say "battery" to hear the battery level and charging state, or "status" to hear the time, network, and device status.
+*   **Volume**: Say "volume up", "volume down", "mute", or "unmute".
+
+### Finding controls on screen
+
+Say "find [name]", "focus [name]", "search for [name]", or "locate [name]" (for example, "find play button", "focus search", "locate cancel") to search the screen and move accessibility focus directly to the matching control.
+
 ## Screen and brightness
 
 ### Brightness reading control
