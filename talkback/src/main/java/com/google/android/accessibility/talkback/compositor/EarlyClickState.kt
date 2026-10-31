@@ -56,9 +56,10 @@ class EarlyClickState(private val speaker: Speaker) {
   fun before(target: AccessibilityNodeInfoCompat): Before? {
     @Suppress("DEPRECATION") // obtain(): copy, so that refreshing it leaves the caller's node alone.
     val copy = AccessibilityNodeInfoCompat.obtain(target)
-    val items = ArrayList<Item>(target.childCount + 1)
+    val childrenToRead = minOf(target.childCount, MAX_CHILDREN_READ)
+    val items = ArrayList<Item>(childrenToRead + 1)
     items += Item(copy, NodeState.of(target))
-    for (i in 0 until target.childCount) {
+    for (i in 0 until childrenToRead) {
       val child = target.getChild(i) ?: continue
       val state = NodeState.of(child)
       // Only children with a state, so that a click on an item with many children reads few.
@@ -122,5 +123,11 @@ class EarlyClickState(private val speaker: Speaker) {
           collapsible = AccessibilityNodeInfoUtils.isCollapsible(node),
         )
     }
+  }
+
+  private companion object {
+    // Each child can wait for the app before the click. A state further on is said as before, from
+    // the app's own event.
+    const val MAX_CHILDREN_READ = 8
   }
 }

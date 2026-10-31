@@ -16,6 +16,7 @@
 
 package com.google.android.accessibility.talkback.compositor
 
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import com.google.android.accessibility.talkback.compositor.EarlyClickState.NodeState
@@ -27,6 +28,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -50,6 +52,24 @@ class EarlyClickStateTest {
   @Test
   fun aPlainButtonHasNoState() {
     assertNull(earlyClickState.before(node()))
+  }
+
+  @Test
+  fun onlyTheFirstChildrenAreReadBeforeAClick() {
+    val raw = AccessibilityNodeInfo.obtain()
+    fun addChild(checkable: Boolean) {
+      val child = AccessibilityNodeInfo.obtain()
+      child.isCheckable = checkable
+      shadowOf(raw).addChild(child)
+    }
+    addChild(checkable = true)
+    repeat(20) { addChild(checkable = false) }
+    addChild(checkable = true)
+
+    val items = earlyClickState.before(AccessibilityNodeInfoCompat.wrap(raw))?.items
+
+    // The item itself and its first child, not the switch past the limit.
+    assertEquals(2, items?.size)
   }
 
   @Test
