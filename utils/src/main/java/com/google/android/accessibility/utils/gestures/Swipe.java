@@ -49,6 +49,7 @@ class Swipe extends GestureMatcher {
   public static final int DOWN = 3;
   /** How long the finger rests at the end of a swipe before a swipe-and-hold completes. */
   public static final int HOLD_TIMEOUT_MS = 250;
+  private static final long NOT_RESTING = -1;
   // This is the calculated movement threshold used track if the user is still
   // moving their finger.
   private final float gestureDetectionThresholdPixels;
@@ -83,9 +84,10 @@ class Swipe extends GestureMatcher {
   // Whether this matches the swipe followed by a rest of the finger, instead of the swipe and lift.
   private final boolean completesOnHold;
   private final GestureConfigProvider configProvider;
-  // Where the finger was when this last checked whether a swipe-and-hold can complete.
+  // Where and when the finger last moved beyond the touch slop after a matching stroke.
   private float holdCheckX;
   private float holdCheckY;
+  private long restStartTime;
 
   Swipe(
       Context context,
@@ -166,6 +168,7 @@ class Swipe extends GestureMatcher {
     previousGestureY = Float.NaN;
     holdCheckX = Float.NaN;
     holdCheckY = Float.NaN;
+    restStartTime = NOT_RESTING;
     strokeBuffer.clear();
     super.clear();
   }
@@ -235,7 +238,7 @@ class Swipe extends GestureMatcher {
         return;
     } else if (getState() == STATE_GESTURE_STARTED
         && (timeDelta > maxContinueThreshold)
-        && !isWaitingForHold()) {
+        && !isRestingAfterMatchingStroke()) {
       cancelGesture(event);
       return;
     }
@@ -247,33 +250,44 @@ class Swipe extends GestureMatcher {
       strokeBuffer.add(new PointF(x, y));
     }
     if (completesOnHold && getState() == STATE_GESTURE_STARTED) {
-      waitForHold(eventId, event);
+      trackRest(event);
     }
   }
 
-  private boolean isWaitingForHold() {
-    return completesOnHold && delayedTransition.isPending();
+  private boolean isRestingAfterMatchingStroke() {
+    return completesOnHold && restStartTime != NOT_RESTING;
   }
 
-  // Moving beyond the touch slop starts the wait for the rest again.
-  private void waitForHold(EventId eventId, MotionEvent event) {
+  // Moving beyond the touch slop starts the rest again.
+  private void trackRest(MotionEvent event) {
     float x = event.getX();
     float y = event.getY();
-    if (isWaitingForHold() && Math.hypot(x - holdCheckX, y - holdCheckY) < touchSlop) {
+    if (isRestingAfterMatchingStroke()
+        && Math.hypot(x - holdCheckX, y - holdCheckY) < touchSlop) {
       return;
     }
     holdCheckX = x;
     holdCheckY = y;
-    cancelPendingTransitions();
-    if (strokeMatches(strokeBuffer)) {
-      completeAfter(HOLD_TIMEOUT_MS, eventId, event);
-    }
+    restStartTime = strokeMatches(strokeBuffer) ? event.getEventTime() : NOT_RESTING;
+  }
+
+  private boolean restedLongEnough(MotionEvent up) {
+    return isRestingAfterMatchingStroke()
+        && Math.hypot(up.getX() - holdCheckX, up.getY() - holdCheckY) < touchSlop
+        && up.getEventTime() - restStartTime >= HOLD_TIMEOUT_MS;
   }
 
   @Override
   protected void onUp(EventId eventId, MotionEvent event) {
-    if (completesOnHold && getState() != STATE_CLEAR) {
-      cancelGesture(event);
+    if (completesOnHold) {
+      if (getState() == STATE_GESTURE_STARTED && restedLongEnough(event)) {
+        gestureMotionEventLog(VERBOSE, "Completed.");
+        completeGesture(eventId, event);
+      } else if (getState() == STATE_CLEAR) {
+        clear();
+      } else {
+        cancelGesture(event);
+      }
       return;
     }
     switch (getState()) {

@@ -336,7 +336,7 @@ The rotor requires Android 13 or later and **Handle gestures in Backtalk** turne
 
 ### Swipe and hold
 
-Each one-finger swipe has a second version that ends with your finger resting on the screen: swipe, then keep your finger still for at least 0.25 seconds. This doubles the number of one-finger gestures. For example, swipe right and lift to move to the next item, or swipe right and hold to do another action. With angle and back-and-forth swipes, make the whole swipe first, such as left then up, and then hold. The action happens while your finger is still on the screen.
+Each one-finger swipe has a second version that ends with your finger resting on the screen: swipe, keep your finger still for at least 0.25 seconds, and then lift it. This doubles the number of one-finger gestures. For example, swipe right and lift at once to move to the next item, or swipe right, hold, and lift to do another action. With angle and back-and-forth swipes, make the whole swipe first, such as left then up, and then hold. The action happens when you lift your finger, so a pause where a swipe turns, such as between right and left, doesn't count as a hold.
 
 In gesture settings, these gestures are at the end of the one-finger gestures, the back-and-forth gestures, and the angle gestures, such as **Swipe right and hold** or **Swipe left then up and hold**. None of them has an action by default. Until you assign one, that swipe works as before, even if you pause before lifting your finger.
 
