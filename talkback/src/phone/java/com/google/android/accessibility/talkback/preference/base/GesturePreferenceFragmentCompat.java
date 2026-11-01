@@ -39,6 +39,7 @@ import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceScreen;
 import com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory;
 import com.google.android.accessibility.material.preference.AccessibilitySuiteRadioButtonPreference;
+import com.google.android.accessibility.talkback.gesture.AppGestures;
 import com.google.android.accessibility.talkback.preference.base.GestureListPreference.ActionItem;
 import com.google.android.accessibility.utils.PreferenceSettingsUtils;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
@@ -77,7 +78,11 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
           }
 
           SharedPreferences prefs = SharedPreferencesUtils.getSharedPreferences(getContext());
-          prefs.edit().putString(preferenceKey, item.value).apply();
+          if (AppGestures.SAME_AS_OTHER_APPS.equals(item.value)) {
+            prefs.edit().remove(preferenceKey).apply();
+          } else {
+            prefs.edit().putString(preferenceKey, item.value).apply();
+          }
           popBackStack();
           return true;
         }
@@ -93,11 +98,20 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
   }
 
   public static Bundle createBundleForFragmentArguments(GestureListPreference preference) {
+    return createBundleForFragmentArguments(
+        preference.getKey(),
+        preference.getTitle(),
+        preference.getCurrentValue(),
+        preference.getActionItems());
+  }
+
+  public static Bundle createBundleForFragmentArguments(
+      String key, CharSequence title, String initialValue, Parcelable[] actionItems) {
     Bundle bundle = new Bundle();
-    bundle.putString(ARG_PREFERENCE_ROOT, preference.getKey());
-    bundle.putCharSequence(GESTURE_TITLE, preference.getTitle());
-    bundle.putString(GESTURE_INITIAL_VALUE, preference.getCurrentValue());
-    bundle.putParcelableArray(GESTURE_ACTION_ITEMS, preference.getActionItems());
+    bundle.putString(ARG_PREFERENCE_ROOT, key);
+    bundle.putCharSequence(GESTURE_TITLE, title);
+    bundle.putString(GESTURE_INITIAL_VALUE, initialValue);
+    bundle.putParcelableArray(GESTURE_ACTION_ITEMS, actionItems);
     return bundle;
   }
 

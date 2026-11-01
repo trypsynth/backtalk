@@ -543,6 +543,14 @@ public final class GestureListPreference extends AccessibilitySuiteDialogPrefere
             resources.getString(R.string.shortcut_value_toggle_scripts),
             TYPE_ACTION_ITEM));
 
+    if (!FormFactorUtils.isAndroidWear()) {
+      builder.add(
+          new ActionItem(
+              resources.getString(R.string.shortcut_app_gestures),
+              resources.getString(R.string.shortcut_value_app_gestures),
+              TYPE_ACTION_ITEM));
+    }
+
     if (FeatureFlagReader.enableAnnounceCurrentTimeAndDate(getContext())) {
       builder.add(
           new ActionItem(

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="title_pref_app_gestures">Gesty w aplikacjach</string>
+    <string name="summary_pref_app_gestures">Gesty, które w jednej aplikacji robią co innego</string>
+    <string name="shortcut_app_gestures">Przypisz gesty do aplikacji</string>
+    <string name="summary_app_gestures_menu">Nadaj gestom inne czynności w aplikacji, w której jesteś</string>
+    <string name="title_app_gestures_for">Przypisz gesty do aplikacji <xliff:g id="app" example="Chrome">%1$s</xliff:g></string>
+    <string name="title_app_gestures_screen">Gesty w aplikacji <xliff:g id="app" example="Chrome">%1$s</xliff:g></string>
+    <string name="app_gestures_unavailable">Na tym ekranie nie można przypisać gestów</string>
+    <string name="app_gestures_same_as_other_apps">Tak jak w innych aplikacjach: <xliff:g id="action" example="Następny element">%1$s</xliff:g></string>
+    <string name="app_gestures_remove">Używaj tych samych gestów co w innych aplikacjach</string>
+    <string name="app_gestures_removed">Usunięto gesty tej aplikacji</string>
+    <string name="app_gestures_none">Żadna aplikacja nie ma własnych gestów. Aby je ustawić, przypisz czynność Przypisz gesty do aplikacji do gestu albo dodaj ją do menu Backtalka i użyj jej w aplikacji.</string>
+</resources>
