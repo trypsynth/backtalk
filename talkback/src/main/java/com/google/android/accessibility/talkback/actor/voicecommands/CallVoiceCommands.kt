@@ -55,6 +55,9 @@ class CallVoiceCommands(private val context: Context) {
   private val handler = Handler(Looper.getMainLooper())
   private var pipeline: Pipeline.FeedbackReturner? = null
   private var pending: Pending? = null
+
+  /** Bumped by every new call command, so a slow contact lookup can tell it is out of date. */
+  private var lookupId = 0
   private val expirePending = Runnable { pending = null }
 
   fun setPipeline(pipeline: Pipeline.FeedbackReturner?) {
@@ -63,15 +66,19 @@ class CallVoiceCommands(private val context: Context) {
 
   /** Returns true when [normalized] was a call request, or the answer to one. */
   fun handleCommand(normalized: String, isPartialResult: Boolean): Boolean {
+    val waiting = pending
     // Only a final result counts: a partial "call mo" must not dial, or read a half-heard "yes".
-    if (isPartialResult) return false
+    // While a question is open its answer is the only thing we want, so partials are swallowed.
+    if (isPartialResult) return waiting != null
 
-    pending?.let {
-      answer(it, normalized)
-      return true
+    if (waiting != null) {
+      // Anything that is not an answer is an ordinary command, so it falls through.
+      return answer(waiting, normalized)
     }
 
-    when (val command = CallCommandParser.parse(normalized) ?: return false) {
+    val parsed = CallCommandParser.parse(normalized) ?: return false
+    lookupId++ // A command that follows makes any contact lookup still running out of date.
+    when (val command = parsed) {
       is CallCommand.Dial -> dial(command)
       CallCommand.Answer -> answerCall()
       CallCommand.Decline -> endCall(R.string.voice_commands_call_declining)
@@ -94,9 +101,17 @@ class CallVoiceCommands(private val context: Context) {
       return
     }
     // A big address book takes a moment; keep the main thread free.
+    val id = lookupId
     Thread {
-        val matches = CallContactMatcher.match(command.target, readContacts())
-        handler.post { onContactsMatched(command, matches) }
+        val contacts = readContacts()
+        handler.post {
+          if (id != lookupId) return@post // The user has moved on.
+          if (contacts == null) {
+            speak(context.getString(R.string.voice_commands_call_failed), false)
+          } else {
+            onContactsMatched(command, CallContactMatcher.match(command.target, contacts))
+          }
+        }
       }
       .start()
   }
@@ -113,7 +128,6 @@ class CallVoiceCommands(private val context: Context) {
             context.getString(R.string.voice_commands_call_choose_item, i + 1, c.name)
           }
         pending = Pending.Choose(matches, command.speaker)
-        startExpiry()
         speak(
           context.getString(
             R.string.voice_commands_call_choose, matches.size, command.target, list),
@@ -122,32 +136,37 @@ class CallVoiceCommands(private val context: Context) {
     }
   }
 
-  private fun answer(waiting: Pending, normalized: String) {
+  /** Returns true when [normalized] answered the question; false leaves it to other commands. */
+  private fun answer(waiting: Pending, normalized: String): Boolean {
     handler.removeCallbacks(expirePending)
     pending = null
     when (waiting) {
       is Pending.Confirm -> {
-        if (CallCommandParser.isYes(normalized)) {
-          place(waiting)
-        } else {
-          speak(context.getString(R.string.voice_commands_call_cancelled), false)
+        when {
+          CallCommandParser.isYes(normalized) -> place(waiting)
+          CallCommandParser.isNo(normalized) ->
+            speak(context.getString(R.string.voice_commands_call_cancelled), false)
+          else -> return false
         }
       }
       is Pending.Choose -> {
         val choice = CallCommandParser.parseChoice(normalized, waiting.options.size)
-        if (choice == null) {
-          speak(context.getString(R.string.voice_commands_call_cancelled), false)
-        } else {
-          val contact = waiting.options[choice - 1]
-          confirm(Pending.Confirm(contact.name, contact.number, waiting.speaker))
+        when {
+          choice != null -> {
+            val contact = waiting.options[choice - 1]
+            confirm(Pending.Confirm(contact.name, contact.number, waiting.speaker))
+          }
+          CallCommandParser.isNo(normalized) ->
+            speak(context.getString(R.string.voice_commands_call_cancelled), false)
+          else -> return false
         }
       }
     }
+    return true
   }
 
   private fun confirm(request: Pending.Confirm) {
     pending = request
-    startExpiry()
     speak(
       context.getString(
         if (request.speaker) R.string.voice_commands_call_confirm_speaker
@@ -158,6 +177,10 @@ class CallVoiceCommands(private val context: Context) {
 
   private fun place(request: Pending.Confirm) {
     val telecom = context.getSystemService(TelecomManager::class.java)
+    if (telecom == null) {
+      speak(context.getString(R.string.voice_commands_call_failed), false)
+      return
+    }
     val extras = Bundle()
     if (request.speaker) {
       extras.putBoolean(TelecomManager.EXTRA_START_CALL_WITH_SPEAKERPHONE, true)
@@ -168,6 +191,9 @@ class CallVoiceCommands(private val context: Context) {
     } catch (e: SecurityException) {
       LogUtils.e(TAG, "Could not place call: %s", e)
       speak(context.getString(R.string.voice_commands_call_failed), false)
+    } catch (e: IllegalStateException) {
+      LogUtils.e(TAG, "Could not place call: %s", e)
+      speak(context.getString(R.string.voice_commands_call_failed), false)
     }
   }
 
@@ -176,10 +202,18 @@ class CallVoiceCommands(private val context: Context) {
   private fun answerCall() {
     if (!requirePermissions(listOf(Manifest.permission.ANSWER_PHONE_CALLS))) return
     val telecom = context.getSystemService(TelecomManager::class.java)
+    if (telecom == null) {
+      speak(context.getString(R.string.voice_commands_call_failed), false)
+      return
+    }
     try {
-      speak(context.getString(R.string.voice_commands_call_answering), false)
+      // Android does not say whether a call was ringing, so this can only report that we tried.
       telecom.acceptRingingCall()
+      speak(context.getString(R.string.voice_commands_call_answering), false)
     } catch (e: SecurityException) {
+      LogUtils.e(TAG, "Could not answer call: %s", e)
+      speak(context.getString(R.string.voice_commands_call_failed), false)
+    } catch (e: IllegalStateException) {
       LogUtils.e(TAG, "Could not answer call: %s", e)
       speak(context.getString(R.string.voice_commands_call_failed), false)
     }
@@ -193,11 +227,18 @@ class CallVoiceCommands(private val context: Context) {
     }
     if (!requirePermissions(listOf(Manifest.permission.ANSWER_PHONE_CALLS))) return
     val telecom = context.getSystemService(TelecomManager::class.java)
+    if (telecom == null) {
+      speak(context.getString(R.string.voice_commands_call_failed), false)
+      return
+    }
     try {
       @Suppress("DEPRECATION") val ended = telecom.endCall()
       speak(
         context.getString(if (ended) announcement else R.string.voice_commands_call_no_call), false)
     } catch (e: SecurityException) {
+      LogUtils.e(TAG, "Could not end call: %s", e)
+      speak(context.getString(R.string.voice_commands_call_failed), false)
+    } catch (e: IllegalStateException) {
       LogUtils.e(TAG, "Could not end call: %s", e)
       speak(context.getString(R.string.voice_commands_call_failed), false)
     }
@@ -210,12 +251,18 @@ class CallVoiceCommands(private val context: Context) {
    * user can answer "say yes to confirm" without another gesture.
    */
   private fun speak(text: CharSequence, thenListen: Boolean) {
-    val returner = pipeline ?: return
+    val returner = pipeline
+    if (returner == null) {
+      if (thenListen) startExpiry(PENDING_TIMEOUT_MS)
+      return
+    }
     val speakOptions =
       SpeakOptions.create().apply {
         setFlags(FeedbackItem.FLAG_NO_HISTORY or FeedbackItem.FLAG_FORCE_FEEDBACK_ALL)
         if (thenListen) {
           setCompletedAction {
+            // The answer window opens now that the question has been read out.
+            startExpiry(PENDING_TIMEOUT_MS)
             handler.postDelayed(
               {
                 returner.returnFeedback(
@@ -226,6 +273,8 @@ class CallVoiceCommands(private val context: Context) {
           }
         }
       }
+    // Until the speech ends, hold the question open for however long it takes to read.
+    if (thenListen) startExpiry(SPEECH_TIMEOUT_MS)
     returner.returnFeedback(
       EVENT_ID_UNTRACKED,
       Feedback.speech(text, speakOptions).setDelayMs(RECOGNITION_SPEECH_DELAY_MS))
@@ -246,8 +295,8 @@ class CallVoiceCommands(private val context: Context) {
     return false
   }
 
-  /** Every phone number in the address book, each person's preferred number first. */
-  private fun readContacts(): List<CallContact> {
+  /** Every phone number in the address book, each person's preferred number first, or null. */
+  private fun readContacts(): List<CallContact>? {
     val columns = arrayOf(Phone.CONTACT_ID, Phone.DISPLAY_NAME, Phone.NUMBER)
     val contacts = mutableListOf<CallContact>()
     try {
@@ -260,15 +309,16 @@ class CallVoiceCommands(private val context: Context) {
             contacts.add(CallContact(cursor.getLong(0), name, number))
           }
         }
-    } catch (e: SecurityException) {
+    } catch (e: RuntimeException) {
       LogUtils.e(TAG, "Could not read contacts: %s", e)
+      return null
     }
     return contacts
   }
 
-  private fun startExpiry() {
+  private fun startExpiry(timeoutMs: Long) {
     handler.removeCallbacks(expirePending)
-    handler.postDelayed(expirePending, PENDING_TIMEOUT_MS)
+    handler.postDelayed(expirePending, timeoutMs)
   }
 
   /** "9876" becomes "9 8 7 6", so a speech engine reads the digits one by one. */
@@ -276,7 +326,11 @@ class CallVoiceCommands(private val context: Context) {
 
   companion object {
     private const val TAG = "CallVoiceCommands"
+    /** How long the user has to answer once the question has been read out. */
     private const val PENDING_TIMEOUT_MS = 20_000L
+
+    /** Upper bound for reading the question out, before the answer window starts. */
+    private const val SPEECH_TIMEOUT_MS = 60_000L
 
     /** Lets the speech recognizer finish its last session before a new one starts. */
     private const val LISTEN_AGAIN_DELAY_MS = 400L

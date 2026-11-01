@@ -114,4 +114,20 @@ class CallCommandParserTest {
     assertNull(CallCommandParser.parseChoice("0", 3))
     assertNull(CallCommandParser.parseChoice("banana", 3))
   }
+
+  @Test
+  fun acceptsNaturalConfirmations() {
+    assertTrue(CallCommandParser.isYes("yes please"))
+    assertTrue(CallCommandParser.isYes("yes call her"))
+    assertTrue(CallCommandParser.isNo("no"))
+    assertTrue(CallCommandParser.isNo("no please"))
+    assertFalse(CallCommandParser.isNo("go home"))
+    assertEquals(2, CallCommandParser.parseChoice("number 2 please", 3))
+  }
+
+  @Test
+  fun ordinaryWordsAreNotANumber() {
+    assertNull(CallCommandParser.toPhoneNumber("oh oh oh"))
+    assertNull(CallCommandParser.toPhoneNumber("to for ate"))
+  }
 }

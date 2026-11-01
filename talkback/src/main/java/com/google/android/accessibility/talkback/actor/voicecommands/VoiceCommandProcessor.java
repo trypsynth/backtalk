@@ -316,7 +316,9 @@ public class VoiceCommandProcessor {
     // Calls, and the answers to their questions ("say yes to confirm")
     if (callVoiceCommands.handleCommand(
         VoiceCommandFuzzyMatcher.normalize(command), isPartialResult)) {
-      analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+      if (!isPartialResult) {
+        analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+      }
       return true;
     }
 

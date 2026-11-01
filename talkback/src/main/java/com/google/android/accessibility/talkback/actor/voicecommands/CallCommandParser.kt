@@ -41,6 +41,14 @@ object CallCommandParser {
 
   private val YES = setOf("yes", "yeah", "yep", "yup", "sure", "ok", "okay", "confirm", "do it", "go ahead", "correct", "call")
 
+  /** Words that start a confirmation, so "yes please" and "yes call her" also count. */
+  private val YES_STARTS = setOf("yes", "yeah", "yep", "yup", "sure", "ok", "okay", "confirm")
+  private val YES_FILLER = setOf("please", "call", "her", "him", "them", "now", "it", "go", "ahead")
+  private val NO = setOf("no", "nope", "cancel", "never mind", "nevermind", "dont", "do not")
+
+  /** Words a speech engine often hears for a digit; they are also ordinary words. */
+  private val AMBIGUOUS_DIGIT_WORDS = setOf("oh", "o", "to", "too", "for", "ate")
+
   private val DIGIT_WORDS =
     mapOf(
       "zero" to '0', "oh" to '0', "o" to '0', "one" to '1', "two" to '2', "to" to '2', "too" to '2',
@@ -84,15 +92,29 @@ object CallCommandParser {
         else -> return null
       }
     }
+    // "oh oh oh" or "to for ate" are more likely a name than a number.
+    if (tokens.all { it in AMBIGUOUS_DIGIT_WORDS }) return null
     return number.toString().takeIf { it.count { c -> c.isDigit() } >= 3 }
   }
 
-  @JvmStatic fun isYes(normalized: String): Boolean = normalized in YES
+  @JvmStatic
+  fun isYes(normalized: String): Boolean {
+    val text = withoutPlease(normalized)
+    if (text in YES) return true
+    val words = text.split(' ')
+    return words.first() in YES_STARTS && words.drop(1).all { it in YES_FILLER }
+  }
+
+  /** True for an explicit refusal; anything else that is not a yes is left for other commands. */
+  @JvmStatic fun isNo(normalized: String): Boolean = withoutPlease(normalized) in NO
+
+  private fun withoutPlease(text: String): String = text.removeSuffix(" please").trim()
 
   /** Which of the [count] offered options the user picked, counting from 1, or null. */
   @JvmStatic
   fun parseChoice(normalized: String, count: Int): Int? {
-    val word = normalized.removePrefix("number ").removePrefix("option ").trim()
+    val word =
+      withoutPlease(normalized).removePrefix("number ").removePrefix("option ").trim()
     val number = word.toIntOrNull() ?: CHOICE_WORDS[word] ?: return null
     return number.takeIf { it in 1..count }
   }
