@@ -194,7 +194,7 @@ static void rejection_tracker(JSContext *ctx, JSValueConst promise, JSValueConst
       (Rejection){JS_DupValue(ctx, promise), JS_DupValue(ctx, reason)};
 }
 
-static int interrupt_handler(JSRuntime *rt, void *opaque) {
+static int interrupt_handler(JSContext *ctx, void *opaque) {
   Engine *e = opaque;
   e->interrupted = e->deadline_ns != 0 && now_ns() > e->deadline_ns;
   return e->interrupted;
