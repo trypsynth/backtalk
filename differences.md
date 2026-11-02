@@ -662,6 +662,8 @@ Like NVDA's app modules and global plugins, scripts change how Backtalk works in
 
 To install a script, go to **Apps** > **Scripts** and choose **Import script**. You can also share a script file, or a link to one such as a script's page on GitHub, to Backtalk, or open a script file with it, and choose **Install Backtalk script**. Backtalk lists what the script asks to do before it installs or updates it. **Add the example script** adds a small script to start from.
 
+**Script sources** on the Scripts screen lists repositories of scripts to browse and install from. It starts with the [backtalk-scripts](https://github.com/trypsynth/backtalk-scripts) repository, and nothing is installed until you choose a script. If you remove it, it stays removed.
+
 Each script has a page with an on and off switch, a switch for each permission and for each gesture, key, menu item and reading control it adds, its settings on their own screen, its log, and **Remove**. While a script runs, its gestures and keys come before Backtalk's.
 
 Scripts never change Backtalk's own screens, so the Scripts screen always works. **Turn off all scripts** on that screen stops every script at once, and so does the **Turn all scripts on or off** action, which you can assign to a gesture that scripts can't take over. Scripts don't run while the screen is off or Backtalk is paused, and Backtalk only starts the script engine once a script is turned on.
