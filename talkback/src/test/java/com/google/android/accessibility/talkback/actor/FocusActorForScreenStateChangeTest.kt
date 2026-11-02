@@ -19,6 +19,7 @@ package com.google.android.accessibility.talkback.actor
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
 import android.os.SystemClock
+import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
@@ -56,7 +57,8 @@ import org.robolectric.shadows.ShadowAccessibilityWindowInfo
  * waits for the window's app, which is busy drawing the new screen.
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34], shadows = [FocusActorForScreenStateChangeTest.RootsShadow::class])
+@Config(sdk = [34], shadows = [FocusActorForScreenStateChangeTest.RootsShadow::class,
+  com.google.android.accessibility.talkback.focusmanagement.record.FocusPathQueriesNodeInfoShadow::class])
 class FocusActorForScreenStateChangeTest {
 
   class TestService : AccessibilityService() {
@@ -173,7 +175,7 @@ class FocusActorForScreenStateChangeTest {
   private fun screen(active: AccessibilityWindowInfo) =
     ScreenState(windows, active, SystemClock.uptimeMillis())
 
-  private fun root() = AccessibilityNodeInfo().apply { packageName = APP_PACKAGE }
+  private fun root() = AccessibilityNodeInfo.obtain(View(service)).apply { packageName = APP_PACKAGE }
 
   private fun window(id: Int, type: Int, root: AccessibilityNodeInfo): AccessibilityWindowInfo {
     val window = AccessibilityWindowInfo()
@@ -192,7 +194,7 @@ class FocusActorForScreenStateChangeTest {
     window: AccessibilityWindowInfo,
     root: AccessibilityNodeInfo,
   ): AccessibilityNodeInfoCompat {
-    val node = AccessibilityNodeInfo()
+    val node = AccessibilityNodeInfo.obtain(View(service))
     node.packageName = APP_PACKAGE
     node.className = "android.widget.Button"
     node.text = "Play"

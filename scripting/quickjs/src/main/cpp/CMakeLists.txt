@@ -21,8 +21,8 @@ include(FetchContent)
 # copyright lines changed.
 FetchContent_Declare(
   quickjs
-  URL https://github.com/quickjs-ng/quickjs/archive/refs/tags/v0.17.0.tar.gz
-  URL_HASH SHA256=559bc4c420475e55c7ab4510adbc562f55d7524d75e8e89d79ce4bb02f5687d9
+  URL https://github.com/quickjs-ng/quickjs/archive/refs/tags/v0.18.0.tar.gz
+  URL_HASH SHA256=28bcd89aa3683fd2a946537e5ce3f11cc46b5cbf3383c7561aaef3df5ff9f1dd
 )
 set(QJS_ENABLE_INSTALL OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(quickjs)

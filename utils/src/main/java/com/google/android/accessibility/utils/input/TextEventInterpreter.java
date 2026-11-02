@@ -261,6 +261,8 @@ public class TextEventInterpreter {
           if (!sourceEqualsLastNode(event)) {
             mHistory.setLastFromIndex(source.getTextSelectionStart());
             mHistory.setLastToIndex(source.getTextSelectionEnd());
+            mHistory.setLastText(
+                event.getSource(), source.isShowingHintText() ? "" : source.getText());
             setHistoryLastNode(event);
           }
         }
@@ -269,6 +271,9 @@ public class TextEventInterpreter {
       default -> {
         return null;
       }
+    }
+    if (eventType != AccessibilityEvent.TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY) {
+      mHistory.setLastText(event.getSource(), getFieldText(event));
     }
 
     switch (interpretation.getEvent()) {
@@ -523,6 +528,11 @@ public class TextEventInterpreter {
         interpretation.setEvent(TextEventInterpretation.SET_TEXT_BY_ACTION);
         interpretation.setReason("Set text action ongoing.");
         return interpretation;
+      } else if (isSelectionBeforeTextChange(event, text)) {
+        mHistory.setLastFromIndex(fromIndex);
+        mHistory.setLastToIndex(toIndex);
+        mHistory.setSelectionBeforeTextChange(event);
+        return interpretation.setInvalid("Selection event came before its text change event.");
       } else if (fromIndex == 0
           && toIndex == 0
           && previousCursorPos == 0
@@ -1059,6 +1069,43 @@ public class TextEventInterpreter {
         && index + 1 < text.length()
         && Character.isLetterOrDigit(text.charAt(index - 1))
         && Character.isLetterOrDigit(text.charAt(index + 1));
+  }
+
+  /**
+   * Returns the text of the field an event is from. An empty field reports its hint as its text,
+   * so its text is empty when a selection event counts no characters, or a text change leaves none.
+   */
+  private static CharSequence getFieldText(AccessibilityEvent event) {
+    boolean empty =
+        switch (event.getEventType()) {
+          case AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED ->
+              event.getItemCount() == 0 && !event.isPassword();
+          case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED ->
+              event.getBeforeText() != null
+                  && event.getBeforeText().length()
+                          - event.getRemovedCount()
+                          + event.getAddedCount()
+                      == 0;
+          default -> false;
+        };
+    return empty ? "" : getEventText(event);
+  }
+
+  /**
+   * Returns whether a selection event is for an edit whose text change event hasn't arrived yet.
+   * Compose text fields send the two in that order. The text differs from the last text event of
+   * the field, and the cursor moved by the change in length.
+   */
+  private boolean isSelectionBeforeTextChange(AccessibilityEvent event, CharSequence text) {
+    if (event.isPassword() || event.getFromIndex() != event.getToIndex()) {
+      return false;
+    }
+    @Nullable CharSequence lastText = mHistory.getLastText(event.getSource());
+    int lastToIndex = mHistory.getLastToIndex();
+    return lastText != null
+        && lastToIndex != NO_INDEX
+        && !TextUtils.equals(lastText, text.toString())
+        && event.getToIndex() - lastToIndex == text.length() - lastText.length();
   }
 
   // Visible for testing only.

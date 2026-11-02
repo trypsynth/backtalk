@@ -18,6 +18,7 @@ package com.google.android.accessibility.talkback.focusmanagement.record;
 
 import android.text.TextUtils;
 import androidx.annotation.VisibleForTesting;
+import androidx.collection.LruCache;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.CollectionItemInfoCompat;
 import com.google.android.accessibility.utils.AccessibilityNode;
@@ -48,6 +49,15 @@ public class NodeDescription {
   static final CharSequence OUT_OF_RANGE = "OUT_OF_RANGE";
 
   static final int MAX_TEXT_COLLECT_NODES = 5;
+
+  // A position hint only. Verify the child before using it, because a parent can reorder its
+  // children without changing its identity or child count. No node or old text is retained.
+  private static final LruCache<Integer, Integer> recentChildIndices = new LruCache<>(128);
+
+  @VisibleForTesting
+  static void clearChildIndexHints() {
+    recentChildIndices.evictAll();
+  }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Member data
@@ -110,7 +120,49 @@ public class NodeDescription {
     this.nextSiblingText = original.nextSiblingText;
   }
 
+  /** Captures original identity and content, without querying children for recovery context. */
+  static NodeDescription identitySnapshot(AccessibilityNodeInfoCompat node, boolean isPathEnd) {
+    return new NodeDescription(node, isPathEnd, true);
+  }
+
+  private NodeDescription(AccessibilityNodeInfoCompat node, boolean isPathEnd, boolean identityOnly) {
+    this.savedNode = AccessibilityNode.takeOwnership(node);
+    this.nodeInfoHashCode = node.hashCode();
+    this.text = getText(this.savedNode, isPathEnd);
+    this.className = node.getClassName();
+    this.viewIdResourceName = node.getViewIdResourceName();
+    CollectionItemInfoCompat itemInfo = node.getCollectionItemInfo();
+    this.rowIndex = itemInfo == null ? UNDEFINED_INDEX : itemInfo.getRowIndex();
+    this.columnIndex = itemInfo == null ? UNDEFINED_INDEX : itemInfo.getColumnIndex();
+    this.rawIndexInParent = UNDEFINED_INDEX;
+    this.previousSiblingText = null;
+    this.nextSiblingText = null;
+  }
+
+  /** Completes context using the ancestors captured when focus moved, not a new live parent walk. */
+  NodeDescription(NodeDescription original, @Nullable AccessibilityNode parent, boolean isPathEnd) {
+    this.savedNode = original.savedNode;
+    this.nodeInfoHashCode = original.nodeInfoHashCode;
+    this.text = original.text;
+    this.className = original.className;
+    this.viewIdResourceName = original.viewIdResourceName;
+    this.rowIndex = original.rowIndex;
+    this.columnIndex = original.columnIndex;
+    this.rawIndexInParent = getRawIndexInParent(this.savedNode, parent);
+    this.previousSiblingText = rawIndexInParent == UNDEFINED_INDEX ? null
+        : getChildText(parent, rawIndexInParent - 1, isPathEnd);
+    this.nextSiblingText = rawIndexInParent == UNDEFINED_INDEX ? null
+        : getChildText(parent, rawIndexInParent + 1, isPathEnd);
+  }
+
   public NodeDescription(@NonNull AccessibilityNodeInfoCompat node, boolean isPathEnd) {
+    this(node, isPathEnd, AccessibilityNode.takeOwnership(FocusPathNodeQueries.parent(node)));
+  }
+
+  NodeDescription(
+      @NonNull AccessibilityNodeInfoCompat node,
+      boolean isPathEnd,
+      @Nullable AccessibilityNode knownParent) {
     this.savedNode = AccessibilityNode.takeOwnership(node);
     this.nodeInfoHashCode = node.hashCode();
     this.text = getText(this.savedNode, isPathEnd);
@@ -123,7 +175,7 @@ public class NodeDescription {
     this.columnIndex = itemInfo == null ? UNDEFINED_INDEX : itemInfo.getColumnIndex();
 
     // Get data from node's position within parent-node.
-    @Nullable AccessibilityNode parent = this.savedNode.getParent();
+    @Nullable AccessibilityNode parent = knownParent;
     this.rawIndexInParent = getRawIndexInParent(this.savedNode, parent);
     if (rawIndexInParent == UNDEFINED_INDEX) {
       this.previousSiblingText = null;
@@ -132,6 +184,7 @@ public class NodeDescription {
       this.previousSiblingText = getChildText(parent, rawIndexInParent - 1, isPathEnd);
       this.nextSiblingText = getChildText(parent, rawIndexInParent + 1, isPathEnd);
     }
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +256,7 @@ public class NodeDescription {
     if ((parent == null) || (childIndex < 0) || (parent.getChildCount() <= childIndex)) {
       return OUT_OF_RANGE;
     }
-    @Nullable AccessibilityNode child = parent.getChild(childIndex);
+    @Nullable AccessibilityNode child = FocusPathNodeQueries.child(parent, childIndex);
     return (child == null) ? null : getText(child, isPathEnd);
   }
 
@@ -225,6 +278,7 @@ public class NodeDescription {
     } else {
       return node.getText();
     }
+
   }
 
   /** Node-callback that collects first {@code MAX_TEXT_COLLECT_NODES} subtree texts. */
@@ -292,13 +346,28 @@ public class NodeDescription {
       }
     }
 
+    int parentKey = parent.hashCode();
+    Integer hint = recentChildIndices.get(parentKey);
+    if (hint != null) {
+      // Consecutive focus paths usually share ancestors, or move to a neighbouring sibling.
+      for (int offset = 0; offset < 3; offset++) {
+        int candidate = hint + (offset == 0 ? 0 : offset == 1 ? 1 : -1);
+        if (candidate >= 0 && candidate < parent.getChildCount()
+            && node.equals(FocusPathNodeQueries.child(parent, candidate))) {
+          recentChildIndices.put(parentKey, candidate);
+          return candidate;
+        }
+      }
+    }
     for (int i = 0; i < parent.getChildCount(); i++) {
-      AccessibilityNode child = parent.getChild(i);
+      AccessibilityNode child = FocusPathNodeQueries.child(parent, i);
       if (node.equals(child)) {
+        recentChildIndices.put(parentKey, i);
         return i;
       }
     }
     return UNDEFINED_INDEX;
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////

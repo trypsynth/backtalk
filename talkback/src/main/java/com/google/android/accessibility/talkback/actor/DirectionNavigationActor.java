@@ -258,6 +258,11 @@ public class DirectionNavigationActor implements UserInputEventListener {
         scrolledNodeCompat, eventId, scrollDeltaX, scrollDeltaY);
   }
 
+  /** Stops a directional-navigation auto-scroll in progress from moving focus when it ends. */
+  public void cancelAutoScrollFocus() {
+    focusProcessorForLogicalNavigation.cancelAutoScrollFocus();
+  }
+
   /** Determines actions after directional-navigation fails to auto-scroll. */
   public void onAutoScrollFailed(@NonNull AccessibilityNodeInfoCompat scrolledNodeCompat) {
     focusProcessorForLogicalNavigation.onAutoScrollFailed(scrolledNodeCompat);

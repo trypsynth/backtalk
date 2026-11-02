@@ -21,7 +21,7 @@
         android:name="com.google.android.clockwork.home.licenses"
         android:value="true" />
 
-    <application>
+    <application android:icon="@drawable/icon">
         <!-- TalkBack Wear QR code page -->
         <activity
             android:name="com.google.android.accessibility.talkback.preference.base.WearQrCodeActivity"

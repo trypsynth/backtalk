@@ -19,6 +19,10 @@ A theme comes as a theme file, which is a ZIP file. There are several ways to in
 *   **From a link.** In **Sound themes**, under **Install a theme**, choose **From a link**, and
     enter or paste a link. It can be a link to a theme file, or to a GitHub repository, such as
     `https://github.com/someone/my-theme`. Links must start with https.
+*   **From a source.** On phones, in **Sound themes**, under **Install a theme**, choose
+    **From a source**. The list starts with the
+    [backtalk-themes](https://github.com/trypsynth/backtalk-themes) repository, and you can add
+    others.
 
 Before installing, Backtalk says who made the theme, what it has, and anything in it that it could
 not use. Choose **Install and use** to switch to it at once, or **Install** to keep using the theme

@@ -8619,17 +8619,6 @@
 
     <issue
         id="NewApi"
-        message="Call requires API level 29 (current min is 26): `android.os.Handler#hasCallbacks`"
-        errorLine1="    return handler.hasCallbacks(runnable);"
-        errorLine2="                   ~~~~~~~~~~~~">
-        <location
-            file="src/phone/java/com/google/android/accessibility/braille/brailledisplay/controller/AutoScrollManager.java"
-            line="117"
-            column="20"/>
-    </issue>
-
-    <issue
-        id="NewApi"
         message="Call requires API level 30 (current min is 26): `android.content.Context#getDisplay`"
         errorLine1="            (getContext().getDisplay().getHeight()"
         errorLine2="                          ~~~~~~~~~~">
@@ -9880,39 +9869,6 @@
             file="src/main/java/com/google/android/accessibility/utils/gestures/SecondFingerMultiTap.java"
             line="172"
             column="5"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 29 (current min is 26): `android.os.Handler#hasCallbacks`"
-        errorLine1="                &amp;&amp; executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {"
-        errorLine2="                                              ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/google/android/accessibility/talkback/utils/SpeechRecognizerPerformer.java"
-            line="182"
-            column="47"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 29 (current min is 26): `android.os.Handler#hasCallbacks`"
-        errorLine1="    if (executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {"
-        errorLine2="                                   ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/google/android/accessibility/talkback/utils/SpeechRecognizerPerformer.java"
-            line="244"
-            column="36"/>
-    </issue>
-
-    <issue
-        id="NewApi"
-        message="Call requires API level 29 (current min is 26): `android.os.Handler#hasCallbacks`"
-        errorLine1="    if (executeCommandDelayHandler.hasCallbacks(speechRecognitionDelayedSender)) {"
-        errorLine2="                                   ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/google/android/accessibility/talkback/utils/SpeechRecognizerPerformer.java"
-            line="317"
-            column="36"/>
     </issue>
 
     <issue

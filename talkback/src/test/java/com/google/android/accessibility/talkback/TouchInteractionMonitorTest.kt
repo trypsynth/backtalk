@@ -72,6 +72,24 @@ class TouchInteractionMonitorTest {
   class RecordingService : TalkBackService() {
     val gestures = mutableListOf<Int>()
     val threads = mutableSetOf<Thread>()
+    var swipesCanStartEarly = false
+    val earlySwipes = mutableListOf<Int>()
+    val earlySwipesFinished = mutableListOf<Int>()
+    var earlySwipesUndone = 0
+
+    override fun canStartSwipeEarly(gestureId: Int) = swipesCanStartEarly
+
+    override fun startSwipeEarly(gestureId: Int, displayId: Int) {
+      earlySwipes.add(gestureId)
+    }
+
+    override fun finishSwipeEarly(gestureEvent: AccessibilityGestureEvent) {
+      earlySwipesFinished.add(gestureEvent.gestureId)
+    }
+
+    override fun undoSwipeEarly() {
+      earlySwipesUndone++
+    }
 
     override fun onGesture(accessibilityGestureEvent: AccessibilityGestureEvent): Boolean {
       threads.add(Thread.currentThread())
@@ -297,6 +315,149 @@ class TouchInteractionMonitorTest {
     assertEquals(listOf<Thread>(), reporter.requests)
     assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.gestures)
     assertEquals(setOf(mainThread), service.threads)
+  }
+
+  private fun swipeRightWithoutLifting() {
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 40f + 40f * step, 200f, 15L * step)
+    }
+  }
+
+  @Test
+  fun swipeThatCanStartEarlyIsPerformedOnceBeforeItsFingerLifts() {
+    service.swipesCanStartEarly = true
+    swipeRightWithoutLifting()
+    runUntil(95)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+
+    touchAt(ACTION_UP, 280f, 200f, 100)
+    runUntil(450)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(listOf<Int>(), service.gestures)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipesFinished)
+    assertEquals(0, service.earlySwipesUndone)
+  }
+
+  @Test
+  fun quickSwipeIsPerformedEarlyBeforeItGoesTheSwipeStartDistance() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    touchAt(ACTION_MOVE, 80f, 200f, 15)
+    runUntil(20)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+  }
+
+  @Test
+  fun slowerSwipeIsPerformedEarlyOnlyAtTheSwipeStartDistance() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    for (step in 1..5) {
+      touchAt(ACTION_MOVE, 40f + 8f * step, 200f, 25L * step)
+    }
+    runUntil(130)
+    assertEquals(listOf<Int>(), service.earlySwipes)
+
+    touchAt(ACTION_MOVE, 120f, 200f, 140)
+    runUntil(145)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+  }
+
+  @Test
+  fun swipeThatCannotStartEarlyIsPerformedWhenItsFingerLifts() {
+    swipeRightWithoutLifting()
+    touchAt(ACTION_UP, 280f, 200f, 100)
+    runUntil(450)
+
+    assertEquals(listOf<Int>(), service.earlySwipes)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.gestures)
+  }
+
+  @Test
+  fun earlySwipeThatTurnsIntoAnAngleIsUndoneAndTheAngleIsPerformed() {
+    service.swipesCanStartEarly = true
+    swipeRightWithoutLifting()
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 280f, 200f + 40f * step, 90L + 15 * step)
+    }
+    touchAt(ACTION_UP, 280f, 440f, 190)
+    runUntil(450)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(1, service.earlySwipesUndone)
+    assertEquals(listOf(AccessibilityService.GESTURE_SWIPE_RIGHT_AND_DOWN), service.gestures)
+  }
+
+  @Test
+  fun earlySwipeWhoseLiftWentMissingDoesNotSwallowTheNextSwipe() {
+    service.swipesCanStartEarly = true
+    swipeRightWithoutLifting()
+    stateChangeAt(STATE_CLEAR, 100)
+    stateChangeAt(STATE_TOUCH_INTERACTING, 200)
+    touchAt(ACTION_DOWN, 40f, 200f, 200)
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 40f + 40f * step, 200f, 200 + 15L * step)
+    }
+    touchAt(ACTION_UP, 280f, 200f, 300)
+    runUntil(650)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT, GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(1, service.earlySwipesUndone)
+  }
+
+  @Test
+  fun earlySwipeUndoneByTouchExplorationIsNotPerformedEarlyAgain() {
+    service.swipesCanStartEarly = true
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    touchAt(ACTION_MOVE, 80f, 200f, 15)
+    stateChangeAt(STATE_TOUCH_EXPLORING, 20)
+    for (step in 1..4) {
+      touchAt(ACTION_MOVE, 80f + 40f * step, 200f, 20 + 15L * step)
+    }
+    runUntil(100)
+
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.earlySwipes)
+    assertEquals(1, service.earlySwipesUndone)
+  }
+
+  @Test
+  fun earlySwipeIsUndoneWhenTheTouchBecomesTouchExploration() {
+    service.swipesCanStartEarly = true
+    swipeRightWithoutLifting()
+    stateChangeAt(STATE_TOUCH_EXPLORING, 100)
+    runUntil(450)
+
+    assertEquals(1, service.earlySwipesUndone)
+  }
+
+  @Test
+  fun swipeThatStartsSlowlyIsAGestureRatherThanTouchExploration() {
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, 40f, 200f, 0)
+    // The finger creeps right, short of the swipe distance, until just before the touch exploration
+    // delay ends (#351).
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, 40f + 4f * step, 200f, 24L * step)
+    }
+    runUntil(145)
+    // The move that crosses the swipe distance happens before the delay ends, but Android passes it
+    // on only after the delay has ended.
+    val crossing = MotionEvent.obtain(downTime, start + 148, ACTION_MOVE, 140f, 200f, 0)
+    main.postAtTime(
+      { callController("onMotionEvent", MotionEvent::class.java, crossing) },
+      start + 156,
+    )
+    touchAt(ACTION_UP, 160f, 200f, 170)
+    runUntil(400)
+
+    assertEquals(listOf<Thread>(), reporter.requests)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), service.gestures)
   }
 
   @Test

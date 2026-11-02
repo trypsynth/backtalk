@@ -28,6 +28,8 @@
     <string name="update_downloading">正在下载更新</string>
     <!-- Toast shown when the update cannot be downloaded or installed. [CHAR LIMIT=NONE] -->
     <string name="update_install_failed">无法安装更新</string>
+    <!-- Toast shown on a watch when the update cannot be downloaded over Wi-Fi, for example because the Wi-Fi connection dropped. [CHAR LIMIT=NONE] -->
+    <string name="update_wifi_download_failed">无法通过 Wi-Fi 下载更新</string>
     <!-- Toast shown when the user cancels the install. [CHAR LIMIT=NONE] -->
     <string name="update_install_canceled">更新已取消</string>
     <!-- Toast shown with the settings screen where the user allows Backtalk to install apps. [CHAR LIMIT=NONE] -->

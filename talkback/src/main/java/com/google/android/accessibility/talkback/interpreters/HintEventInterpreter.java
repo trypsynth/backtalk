@@ -35,10 +35,12 @@ import com.google.android.accessibility.utils.AccessibilityEventListener;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.FormFactorUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
+import com.google.android.accessibility.utils.SpellChecker;
 import com.google.android.accessibility.utils.input.TextEventInterpretation;
 import com.google.android.accessibility.utils.input.TextEventInterpretation.TextEvent;
 import com.google.android.accessibility.utils.input.TextEventInterpreter;
 import com.google.android.accessibility.utils.input.TextEventInterpreter.InterpretationConsumer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /** Filters events that cause hints. */
 public class HintEventInterpreter implements AccessibilityEventListener, InterpretationConsumer {
@@ -156,25 +158,49 @@ public class HintEventInterpreter implements AccessibilityEventListener, Interpr
     @TextEvent int event = textEventInterpretation.getEvent();
     if (event == SELECTION_MOVE_CURSOR_NO_SELECTION
         || (event == TEXT_ADD && node.getTextSelectionStart() == node.getTextSelectionEnd())) {
-      // Don't actively perform spell check to avoid the increase of latency for typing.
-      boolean performSpellCheck = event != TEXT_ADD;
       // Suggestion span may not be ready when receiving a TYPE_VIEW_TEXT_CHANGED event,
       // so spelling suggestion can’t extract in TextEventInterpreter.
       int currentCursorPosition = actorState.getEditState().getCurrentCursorPosition();
-      boolean noSpellingSuggestion =
-          currentCursorPosition == NO_POSITION
-              ? AccessibilityNodeInfoUtils.getSpellingSuggestions(context, node, performSpellCheck)
-                  .isEmpty()
-              : AccessibilityNodeInfoUtils.getSpellingSuggestions(
-                      context, node, currentCursorPosition, performSpellCheck)
-                  .isEmpty();
-      if (noSpellingSuggestion) {
-        return;
+      if (event == TEXT_ADD) {
+        // Don't actively perform spell check to avoid the increase of latency for typing.
+        sendSpellingSuggestionHint(interpretation.eventId, node, currentCursorPosition, false);
+      } else if (!AccessibilityNodeInfoUtils.hasNoSuggestionsNeed(node.getInputType())
+          && node.getTextSelectionStart() == node.getTextSelectionEnd()) {
+        // The spell checker can take 500 ms or more to answer, or not answer at all. Only fields
+        // that getSpellingSuggestions would check are sent to it.
+        SpellChecker.checkInBackground(
+            context,
+            node.getText(),
+            () ->
+                sendSpellingSuggestionHint(
+                    interpretation.eventId, node, currentCursorPosition, true));
       }
-
-      // Sends a hint for spelling suggestion.
-      pipelineInterpretationReceiver.input(
-          interpretation.eventId, new Interpretation.ID(Value.SPELLING_SUGGESTION_HINT));
     }
+  }
+
+  private void sendSpellingSuggestionHint(
+      @Nullable EventId eventId,
+      AccessibilityNodeInfoCompat node,
+      int cursorPosition,
+      boolean activeSpellCheck) {
+    // The answer can come after focus has left the field, and then the hint is for nothing.
+    if (activeSpellCheck
+        && !(node.refresh() && (node.isAccessibilityFocused() || node.isFocused()))) {
+      return;
+    }
+    boolean noSpellingSuggestion =
+        cursorPosition == NO_POSITION
+            ? AccessibilityNodeInfoUtils.getSpellingSuggestions(context, node, activeSpellCheck)
+                .isEmpty()
+            : AccessibilityNodeInfoUtils.getSpellingSuggestions(
+                    context, node, cursorPosition, activeSpellCheck)
+                .isEmpty();
+    if (noSpellingSuggestion) {
+      return;
+    }
+
+    // Sends a hint for spelling suggestion.
+    pipelineInterpretationReceiver.input(
+        eventId, new Interpretation.ID(Value.SPELLING_SUGGESTION_HINT));
   }
 }

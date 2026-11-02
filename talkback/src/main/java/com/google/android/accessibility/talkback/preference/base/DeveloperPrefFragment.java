@@ -89,6 +89,7 @@ public class DeveloperPrefFragment extends TalkbackBaseFragment {
     prefs = SharedPreferencesUtils.getSharedPreferences(context);
 
     initVersionInfo();
+    AppInfoPreference.setUp(this);
 
     // Remove preferences for features that are not supported by device.
     checkTelevision();

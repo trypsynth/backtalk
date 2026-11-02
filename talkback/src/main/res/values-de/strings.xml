@@ -1446,4 +1446,7 @@ Verwende in deiner Antwort kein Markdown.</string>
   <string name="summary_pref_scripts">Passt das Verhalten von Backtalk in Apps an</string>
   <string name="title_pref_speech_control">Andere Apps sprechen lassen</string>
   <string name="title_pref_category_more">Mehr</string>
+  <string name="template_battery_level">Akku <xliff:g id="battery_level" example="73">%1$s</xliff:g> Prozent</string>
+  <string name="template_battery_level_unknown">Akkustand unbekannt</string>
+  <string name="value_charger_connected">Ladegerät angeschlossen</string>
 </resources>

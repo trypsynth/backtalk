@@ -40,6 +40,26 @@
         android:key="@string/pref_shortcut_right_key"
         android:summary="%s"
         android:title="@string/title_pref_shortcut_right"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_up_then_hold_default"
+        android:key="@string/pref_shortcut_up_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_up_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_down_then_hold_default"
+        android:key="@string/pref_shortcut_down_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_down_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_left_then_hold_default"
+        android:key="@string/pref_shortcut_left_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_left_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_right_then_hold_default"
+        android:key="@string/pref_shortcut_right_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_right_then_hold"/>
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 
   <!-- One finger back & forth gestures -->
@@ -67,6 +87,26 @@
         android:key="@string/pref_shortcut_right_and_left_key"
         android:summary="%s"
         android:title="@string/title_pref_shortcut_right_and_left"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_up_and_down_then_hold_default"
+        android:key="@string/pref_shortcut_up_and_down_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_up_and_down_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_down_and_up_then_hold_default"
+        android:key="@string/pref_shortcut_down_and_up_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_down_and_up_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_left_and_right_then_hold_default"
+        android:key="@string/pref_shortcut_left_and_right_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_left_and_right_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_right_and_left_then_hold_default"
+        android:key="@string/pref_shortcut_right_and_left_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_right_and_left_then_hold"/>
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 
   <!-- One finger angle gestures -->
@@ -114,6 +154,46 @@
         android:key="@string/pref_shortcut_right_and_down_key"
         android:summary="%s"
         android:title="@string/title_pref_shortcut_right_and_down"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_up_and_left_then_hold_default"
+        android:key="@string/pref_shortcut_up_and_left_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_up_and_left_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_up_and_right_then_hold_default"
+        android:key="@string/pref_shortcut_up_and_right_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_up_and_right_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_down_and_left_then_hold_default"
+        android:key="@string/pref_shortcut_down_and_left_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_down_and_left_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_down_and_right_then_hold_default"
+        android:key="@string/pref_shortcut_down_and_right_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_down_and_right_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_left_and_up_then_hold_default"
+        android:key="@string/pref_shortcut_left_and_up_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_left_and_up_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_left_and_down_then_hold_default"
+        android:key="@string/pref_shortcut_left_and_down_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_left_and_down_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_right_and_up_then_hold_default"
+        android:key="@string/pref_shortcut_right_and_up_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_right_and_up_then_hold"/>
+    <com.google.android.accessibility.talkback.preference.base.GestureListPreference
+        android:defaultValue="@string/pref_shortcut_right_and_down_then_hold_default"
+        android:key="@string/pref_shortcut_right_and_down_then_hold_key"
+        android:summary="%s"
+        android:title="@string/title_pref_shortcut_right_and_down_then_hold"/>
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 
   <!-- Two finger gestures -->

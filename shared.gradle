@@ -3,8 +3,12 @@
 // Kotlin 2 compiles Compose through this compiler plugin instead of composeOptions.
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
+// With -PtestBuild, the app is fyi.quin.backtalk.test, named Backtalk Test, so that a build under
+// test installs next to the usual one, with its own key and settings.
+def testBuild = project.hasProperty('testBuild')
+
 ext {
-    talkbackApplicationId = "fyi.quin.backtalk"
+    talkbackApplicationId = testBuild ? "fyi.quin.backtalk.test" : "fyi.quin.backtalk"
 }
 
 android {
