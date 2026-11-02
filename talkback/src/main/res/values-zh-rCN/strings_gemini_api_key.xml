@@ -25,7 +25,7 @@
     <!-- Title of the setting, and its dialog, for an AI service other than Gemini that Describe image and Describe screen use. [CHAR LIMIT=50] -->
     <string name="title_pref_ai_service">其他 AI 服务</string>
     <!-- Summary of the Other AI service setting when one is set up. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_ai_service_set">描述图片和描述屏幕内容使用 <xliff:g id="model" example="google/gemma-3-27b-it">%1$s</xliff:g></string>
+    <string name="summary_pref_ai_service_set">使用 <xliff:g id="model" example="google/gemma-3-27b-it">%1$s</xliff:g> 描述图片和描述屏幕内容</string>
     <!-- Summary of the Other AI service setting when none is set up. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_ai_service_not_set">未设置。当前使用 Gemini</string>
     <!-- Message of the dialog that sets up another AI service. [CHAR LIMIT=NONE] -->
