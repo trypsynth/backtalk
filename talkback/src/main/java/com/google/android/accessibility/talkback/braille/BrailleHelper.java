@@ -351,7 +351,7 @@ public final class BrailleHelper implements ScreenReaderActionPerformer {
         return performGranularityFocusAction(SEARCH_FOCUS_BACKWARD, LINE, inputMode);
       }
       case CLICK_CURRENT -> {
-        if (SelectorController.getCurrentSetting(accessibilityService).equals(ACTIONS)) {
+        if (selectorController.getCurrentSettingForClick().equals(ACTIONS)) {
           selectorController.activateCurrentAction(Performance.EVENT_ID_UNTRACKED);
           return true;
         }
@@ -366,7 +366,7 @@ public final class BrailleHelper implements ScreenReaderActionPerformer {
         if (args[0] instanceof AccessibilityNodeInfoCompat) {
           AccessibilityNodeInfoCompat node = (AccessibilityNodeInfoCompat) args[0];
           if (node.isAccessibilityFocused()
-              && SelectorController.getCurrentSetting(accessibilityService).equals(ACTIONS)) {
+              && selectorController.getCurrentSettingForClick().equals(ACTIONS)) {
             selectorController.activateCurrentAction(Performance.EVENT_ID_UNTRACKED);
             return true;
           }

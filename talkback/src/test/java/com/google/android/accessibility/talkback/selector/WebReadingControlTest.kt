@@ -272,9 +272,7 @@ class WebReadingControlTest {
     fixture.controller.touchInteractionState(true)
     fixture.assertSelected(Setting.MEDIA_CONTROLS)
 
-    fixture.controller.applyWaitingSetting()
-
-    fixture.assertSelected(Setting.ACTIONS)
+    assertEquals(Setting.ACTIONS, fixture.controller.getCurrentSettingForClick())
   }
 
   private class ControllerFixture(preserve: Boolean) {
