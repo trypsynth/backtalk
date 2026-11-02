@@ -279,6 +279,8 @@ To turn off one sound or one vibration and keep the rest, go to **Sound and vibr
 
 A sound theme is a set of sounds and vibrations that replace Backtalk's own, with its own control sounds and 3D audio settings. You can install as many themes as you like, from a file or a link, and switch between them in **Sound and vibration** > **Sound themes**. A link to a GitHub repository that contains a theme also works, and you can open or share a theme file, or a link to one, with Backtalk from another app. On Wear OS watches, you can install themes only from a link.
 
+On phones, **From a source** under **Install a theme** lists repositories of themes to browse and install from. It starts with the [backtalk-themes](https://github.com/trypsynth/backtalk-themes) repository, and nothing is installed until you choose a theme. If you remove it, it stays removed.
+
 To replace single sounds with your own, open **Sounds** under the theme that you're using. To share your sounds, save the theme as a file. For more information about installing, using, and making themes, see [Sound themes](themes.md).
 
 ### Control sounds and vibrations

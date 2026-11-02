@@ -42,8 +42,21 @@ class ScriptSourcesListTest {
   }
 
   @Test
-  fun soundThemeSourcesStartEmpty() {
+  fun soundThemeSourcesStartWithBacktalkThemes() {
+    assertEquals(
+      listOf("https://github.com/trypsynth/backtalk-themes"),
+      addresses(SourceKind.SOUND_THEMES),
+    )
+  }
+
+  @Test
+  fun aRemovedThemeSourceStaysRemovedAndLeavesScriptSourcesAlone() {
+    val themes = ScriptSource.parse("github.com/trypsynth/backtalk-themes")!!
+
+    ScriptSources.remove(context, themes, SourceKind.SOUND_THEMES)
+
     assertEquals(emptyList<String>(), addresses(SourceKind.SOUND_THEMES))
+    assertEquals(listOf(default.address), addresses())
   }
 
   @Test
