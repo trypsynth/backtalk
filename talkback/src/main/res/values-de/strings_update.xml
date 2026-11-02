@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the setting that checks GitHub for a newer development build of Backtalk. [CHAR LIMIT=40] -->
+    <string name="title_pref_check_for_updates">Auf Updates prüfen</string>
+    <!-- Summary of the check for updates setting, with the build number of the running app. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_check_for_updates">Build <xliff:g id="build" example="96">%1$d</xliff:g></string>
+    <!-- Title of the switch that turns daily update checks on or off. [CHAR LIMIT=40] -->
+    <string name="title_pref_auto_update_check">Automatisch auf Updates prüfen</string>
+    <!-- Summary of the automatic update check switch. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_auto_update_check">Einmal täglich prüfen und eine Benachrichtigung zeigen, wenn ein neuer Build verfügbar ist</string>
+
+    <!-- Title of the notification that says a new build is available. [CHAR LIMIT=NONE] -->
+    <string name="update_notification_title">Backtalk Update verfügbar</string>
+    <!-- Text of the update notification when it has no list of changes. [CHAR LIMIT=NONE] -->
+    <string name="update_notification_text">Build <xliff:g id="build" example="97">%1$d</xliff:g>. Zum Installieren tippen.</string>
+    <!-- Title of the dialog that offers to install a new build. [CHAR LIMIT=NONE] -->
+    <string name="update_dialog_title">Backtalk Build <xliff:g id="build" example="97">%1$d</xliff:g> ist verfügbar</string>
+    <!-- Button in the update dialog that downloads and installs the new build. [CHAR LIMIT=20] -->
+    <string name="update_dialog_install">Installieren</string>
+
+    <!-- Toast shown when a manual update check starts. [CHAR LIMIT=NONE] -->
+    <string name="update_checking">Prüfe auf Updates</string>
+    <!-- Toast shown when a manual update check finds no newer build. [CHAR LIMIT=NONE] -->
+    <string name="update_up_to_date">Backtalk ist Auf dem neuesten Stand</string>
+    <!-- Toast shown when an update check fails. [CHAR LIMIT=NONE] -->
+    <string name="update_check_failed">Konnte nicht auf Updates prüfen</string>
+    <!-- Toast shown when the update download starts. [CHAR LIMIT=NONE] -->
+    <string name="update_downloading">Lade Update herunter</string>
+    <!-- Toast shown when the update cannot be downloaded or installed. [CHAR LIMIT=NONE] -->
+    <string name="update_install_failed">Konnte das Update nicht installieren</string>
+    <!-- Toast shown on a watch when the update cannot be downloaded over Wi-Fi, for example because the Wi-Fi connection dropped. [CHAR LIMIT=NONE] -->
+    <string name="update_wifi_download_failed">Konnte das Update nicht über WLAN herunterladen</string>
+    <!-- Toast shown when the user cancels the install. [CHAR LIMIT=NONE] -->
+    <string name="update_install_canceled">Update abgebrochen</string>
+    <!-- Toast shown with the settings screen where the user allows Backtalk to install apps. [CHAR LIMIT=NONE] -->
+    <string name="update_allow_install">Erlaube Backtalk das Installieren von Apps, versuche dann nochmals das Update</string>
+</resources>
