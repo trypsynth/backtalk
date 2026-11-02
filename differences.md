@@ -24,7 +24,7 @@ When you double-tap a switch, most apps change it before they finish the click. 
 
 When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first.
 
-As a key is typed, the keyboard also reports that your finger left the key. TalkBack asked the keyboard about each of these reports and then ignored the answer. Backtalk doesn't ask. On an emulator, typing in Android's Settings search with Gboard, these two changes together took the median time from lifting your finger to the start of speech from about 92 ms to about 71 ms, and the median time to the key's vibration from about 192 ms to about 165 ms.
+As a key is typed, the keyboard also reports that your finger left the key. TalkBack asked the keyboard about each of these reports and then ignored the answer. Backtalk doesn't ask. On an emulator, typing in Android's Settings search with Gboard, these two changes together took the median time from lifting your finger to the start of speech from about 109 ms to about 89 ms, and the median time to the key's vibration from about 46 ms to about 13 ms.
 
 ### Next swipe prepared in advance
 
