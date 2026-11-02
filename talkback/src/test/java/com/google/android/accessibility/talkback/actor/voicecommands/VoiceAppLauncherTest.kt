@@ -1,7 +1,9 @@
 /* Copyright 2026 Backtalk contributors. Licensed under the Apache License, Version 2.0. */
 package com.google.android.accessibility.talkback.actor.voicecommands
 
+import android.Manifest
 import android.accessibilityservice.AccessibilityService
+import android.app.Application
 import android.app.UiModeManager
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
@@ -243,6 +245,51 @@ class VoiceAppLauncherTest {
     processor.setOpenAppsEnabled(false)
     finish()
     assertNull(shadowOf(service).nextStartedActivity)
+  }
+
+  @Test
+  @Config(sdk = [26, 34])
+  fun appCommandsDismissCallQuestionsAndCallCommandsCancelPendingAppLaunches() {
+    val talkback = Robolectric.buildService(TalkBackService::class.java).get()
+    FormFactorUtils.initialize(talkback)
+    shadowOf(talkback.applicationContext as Application)
+      .grantPermissions(Manifest.permission.CALL_PHONE)
+    val feedback = mutableListOf<Feedback>()
+    val processor = VoiceCommandProcessor(talkback, null, null, object : TalkBackAnalytics {})
+    processor.setPipeline {
+      feedback.add(it)
+      true
+    }
+    ReflectionHelpers.getField<VoiceAppLauncher>(processor, "appLauncher").shutdown()
+    ReflectionHelpers.setField(processor, "appLauncher", launcher)
+    processor.setEchoRecognizedTextEnabled(true)
+    processor.setOpenAppsEnabled(true)
+    app("Camera")
+
+    fun lastSpeech() = feedback.last().failovers().single().speech()!!.text().toString()
+    val callQuestion = talkback.getString(R.string.voice_commands_call_confirm, "1 2 3 4 5")
+    assertTrue(processor.handleSpeechCommand("Call 12345", false))
+    assertEquals(callQuestion, lastSpeech())
+    feedback.clear()
+    processor.handleSpeechCommand("Open Camera", false)
+    finish()
+    assertEquals("example.app", shadowOf(service).nextStartedActivity.component?.packageName)
+    processor.handleSpeechCommand("yes", false)
+    finish()
+    assertEquals(
+      talkback.getString(R.string.voice_commands_echo_feedback_not_recognized, "yes"),
+      lastSpeech(),
+    )
+
+    feedback.clear()
+    processor.handleSpeechCommand("Open Camera", false)
+    worker.runAll()
+    processor.handleSpeechCommand("Call 12345", false)
+    finish()
+    assertNull(shadowOf(service).nextStartedActivity)
+    assertEquals(callQuestion, lastSpeech())
+    processor.handleSpeechCommand("no", false)
+    finish()
   }
 
   @Test

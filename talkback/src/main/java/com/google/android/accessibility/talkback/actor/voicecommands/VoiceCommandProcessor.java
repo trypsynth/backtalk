@@ -335,6 +335,19 @@ public class VoiceCommandProcessor {
     }
     if (openAppsEnabled) {
       appLauncher.cancel();
+    }
+
+    // Calls, and the answers to their questions ("say yes to confirm"). Let an app command
+    // clear a pending call question before it is handled by the app launcher.
+    if (callVoiceCommands.handleCommand(
+        VoiceCommandFuzzyMatcher.normalize(command), isPartialResult)) {
+      if (!isPartialResult) {
+        analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+      }
+      return true;
+    }
+
+    if (openAppsEnabled) {
       if (appLauncher.handle(
           command,
           launched -> {
@@ -357,15 +370,6 @@ public class VoiceCommandProcessor {
     command = command.toLowerCase(Locale.getDefault());
     LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
     EventId eventId = EVENT_ID_UNTRACKED;
-
-    // Calls, and the answers to their questions ("say yes to confirm")
-    if (callVoiceCommands.handleCommand(
-        VoiceCommandFuzzyMatcher.normalize(command), isPartialResult)) {
-      if (!isPartialResult) {
-        analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
-      }
-      return true;
-    }
 
     // Gemini voice command
     // command format: Gemini
