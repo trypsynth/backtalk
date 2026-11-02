@@ -1385,6 +1385,14 @@ public class SelectorController implements UserInputEventListener {
         };
   }
 
+  /**
+   * Picks the reading control that a touch left waiting, so a double tap started within the delay
+   * uses the control for the item it activates.
+   */
+  public void applyWaitingSetting() {
+    lateSettingSwitch.runNow();
+  }
+
   @Override
   public void touchInteractionState(boolean active) {
     touchActive = active;

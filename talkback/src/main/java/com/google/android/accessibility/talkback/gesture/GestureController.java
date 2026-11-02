@@ -503,6 +503,7 @@ public class GestureController {
         || action.equals(service.getString(R.string.shortcut_value_perform_click_action))) {
       // For customized gesture(s) which perform the "Activate"/click action, they are regarded
       // the same behavior as the native "Double-Tap" gesture.
+      selectorController.applyWaitingSetting();
       if (SelectorController.getCurrentSetting(service).equals(Setting.ACTIONS)) {
         selectorController.activateCurrentAction(eventId);
       } else if (SelectorController.getCurrentSetting(service).equals(Setting.MEDIA_CONTROLS)) {
