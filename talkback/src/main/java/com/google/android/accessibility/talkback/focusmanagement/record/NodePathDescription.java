@@ -75,22 +75,45 @@ public final class NodePathDescription {
   public static @NonNull NodePathDescription obtain(AccessibilityNodeInfoCompat node) {
     final NodePathDescription nodePath = new NodePathDescription();
 
-    AccessibilityNodeInfoUtils.getSelfOrMatchingAncestor(
-        node,
-        new Filter<AccessibilityNodeInfoCompat>() {
-          @Override
-          public boolean accept(AccessibilityNodeInfoCompat node) {
-            boolean isPathEnd = (nodePath.nodeDescriptions.isEmpty());
-            nodePath.nodeDescriptions.add(new NodeDescription(node, isPathEnd));
-            // Always return false to iterate until the root node.
-            return false;
-          }
-        });
+    HashSet<AccessibilityNodeInfoCompat> visited = new HashSet<>();
+    AccessibilityNodeInfoCompat current = node;
+    while (current != null && visited.add(current)) {
+      AccessibilityNodeInfoCompat parent = FocusPathNodeQueries.parent(current);
+      nodePath.nodeDescriptions.add(
+          new NodeDescription(
+              current,
+              nodePath.nodeDescriptions.isEmpty(),
+              AccessibilityNode.takeOwnership(parent)));
+      current = parent;
+    }
     return nodePath;
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
   // Methods for finding a node matching an old tree-path
+
+  static NodePathDescription captureIdentities(AccessibilityNodeInfoCompat node) {
+      NodePathDescription path = new NodePathDescription();
+      HashSet<AccessibilityNodeInfoCompat> visited = new HashSet<>();
+      AccessibilityNodeInfoCompat current = node;
+      while (current != null && visited.add(current)) {
+        path.nodeDescriptions.add(
+            NodeDescription.identitySnapshot(current, path.nodeDescriptions.isEmpty()));
+        current = FocusPathNodeQueries.parent(current);
+      }
+      return path;
+  }
+
+  NodePathDescription enrich() {
+      NodePathDescription completed = new NodePathDescription();
+      for (int i = 0; i < nodeDescriptions.size(); i++) {
+        AccessibilityNode parent = i + 1 < nodeDescriptions.size()
+            ? nodeDescriptions.get(i + 1).savedNode : null;
+        completed.nodeDescriptions.add(new NodeDescription(nodeDescriptions.get(i), parent, i == 0));
+      }
+      return completed;
+  }
 
   /** Finds node matching identity-path, or next node after, in traversal order. */
   public @Nullable AccessibilityNodeInfoCompat findNodeToRefocus(
