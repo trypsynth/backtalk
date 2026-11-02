@@ -20,6 +20,8 @@ The emoji names are from the [Unicode CLDR](https://cldr.unicode.org/) and the U
 
 Scripts run in [QuickJS-NG](https://github.com/quickjs-ng/quickjs), copyright Fabrice Bellard, Charlie Gordon, Ben Noordhuis and Saúl Ibarra Corretgé, used under the MIT License, which is in `scripting/quickjs/src/main/assets/quickjs/LICENSE`. The build downloads its source, pinned by version and checksum in `scripting/quickjs/src/main/cpp/CMakeLists.txt`.
 
+3D audio uses the MIT Media Lab KEMAR measurements, by Bill Gardner and Keith Martin, packed into `utils/src/main/res/raw/hrtf_kemar.bin`.
+
 ## Contributing
 
 Before you open a pull request, please read [Contributing to Backtalk](CONTRIBUTING.md).
@@ -104,6 +106,8 @@ Android only installs an update that is signed with the same key as the installe
 ## Run
 
 After you install Backtalk, go to **Settings > Accessibility**. Backtalk is listed as **Backtalk** and is off by default. Turn off Google's TalkBack first, then turn on Backtalk.
+
+On Android 13 and later, Android may refuse to turn it on and say that this is a restricted setting, because the APK didn't come from an app store. To allow it, try to turn on Backtalk once, then go to **Settings > Apps > Backtalk**, open **More options**, and choose **Allow restricted settings**. Then turn on Backtalk again. The names of these items can differ between phones.
 
 ## Android TV
 

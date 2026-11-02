@@ -175,6 +175,9 @@ public class TalkBackPreferenceFilter {
     // Taps are timed by Backtalk's own gesture detection, so without it this does nothing.
     MULTI_TAP_TIMEOUT(
         R.string.pref_multi_tap_timeout_key, HIDDEN_ON_TV | SHOW_IF_SERVICE_GESTURE_DETECTION),
+    SWIPE_HOLD_TIMEOUT(
+        R.string.pref_swipe_hold_timeout_key,
+        HIDDEN_ON_TV | HIDDEN_ON_WATCH | SHOW_IF_SERVICE_GESTURE_DETECTION),
     PRIVACY_POLICY(R.string.pref_policy_key, HIDDEN_SETUP),
     TERMS_OF_SERVICE(R.string.pref_show_tos_key, HIDDEN_SETUP),
     // Help & Tutorial.

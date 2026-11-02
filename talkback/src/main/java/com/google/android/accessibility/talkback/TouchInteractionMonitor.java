@@ -56,6 +56,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
@@ -172,9 +173,22 @@ public class TouchInteractionMonitor
   private final ReceivedPointerTracker receivedPointerTracker;
   private int draggingPointerId = INVALID_POINTER_ID;
   private final TalkBackService service;
+  // How far and how soon, at the speed a swipe has to start at, the finger has to move for a swipe
+  // to be performed ahead of the 1 cm at which the swipe starts.
+  private static final float EARLY_SWIPE_MM = 5;
+  private static final long EARLY_SWIPE_MAX_MS = 75;
+
   private final Handler mainHandler;
   private final GestureManifold gestureDetector;
   private boolean gestureStarted = false;
+  // The swipe already performed in this touch, before its finger lifted, or 0. The touch has to end
+  // as that swipe, or the swipe is undone.
+  private int earlySwipe = 0;
+  // The one-finger swipe that the finger is moving the way of, and where it came down, to perform
+  // the swipe once the finger has moved quickly enough for EARLY_SWIPE_MM.
+  private int earlySwipeCandidate = 0;
+  private float downX;
+  private float downY;
   // Whether a gesture was performed while fingers were still down, such as a double tap and hold,
   // so that the rest of the touch follows the circle menu instead of being a gesture. The offset
   // keeps the followed point from jumping when one of the fingers lifts.
@@ -208,6 +222,7 @@ public class TouchInteractionMonitor
   private final int passthroughTotalSlop;
   // The calculated edge height for the top and bottom edges.
   private final float edgeSwipeHeightPixels;
+  private final float earlySwipePixels;
   // The time we take to determine what the user is doing.
   // We reduce it by 50 ms in order that touch exploration start doesn't arrive in the framework
   // after the finger has been lifted.
@@ -427,6 +442,7 @@ public class TouchInteractionMonitor
 
     LogUtils.v(LOG_TAG, "Non IME Touch focus time out value:%d", touchFocusUserIntentTimeout);
     updateMultiTapTimeout(prefs);
+    updateSwipeHoldTimeout(prefs);
     requestTouchExplorationDelayed = new RequestTouchExplorationDelayed(determineUserIntentTimeout);
     swipeStartWindowMs =
         (int)
@@ -443,6 +459,8 @@ public class TouchInteractionMonitor
             + SWIPE_START_MARGIN_MS;
     DisplayMetrics metrics = context.getResources().getDisplayMetrics();
     edgeSwipeHeightPixels = metrics.ydpi / GestureUtils.CM_PER_INCH * EDGE_SWIPE_HEIGHT_CM;
+    earlySwipePixels =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, EARLY_SWIPE_MM, metrics);
 
     LogUtils.v(LOG_TAG, "Touch Slop: %s", touchSlop);
     previousState = STATE_CLEAR;
@@ -497,6 +515,15 @@ public class TouchInteractionMonitor
             R.string.pref_multi_tap_timeout_default));
   }
 
+  private void updateSwipeHoldTimeout(SharedPreferences prefs) {
+    GestureConfiguration.setSwipeHoldTimeoutMs(
+        SharedPreferencesUtils.getIntFromStringPref(
+            prefs,
+            context.getResources(),
+            R.string.pref_swipe_hold_timeout_key,
+            R.string.pref_swipe_hold_timeout_default));
+  }
+
   private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener =
       (prefs, key) -> {
         if (context.getString(R.string.pref_typing_focus_time_out_key).equals(key)) {
@@ -517,6 +544,8 @@ public class TouchInteractionMonitor
                   - 50;
         } else if (context.getString(R.string.pref_multi_tap_timeout_key).equals(key)) {
           updateMultiTapTimeout(prefs);
+        } else if (context.getString(R.string.pref_swipe_hold_timeout_key).equals(key)) {
+          updateSwipeHoldTimeout(prefs);
         } else if (context.getString(R.string.pref_typing_confirmation_key).equals(key)) {
           typingMethod =
               SharedPreferencesUtils.getIntFromStringPref(
@@ -583,6 +612,26 @@ public class TouchInteractionMonitor
         eventId = Performance.getInstance().onGestureEventReceived(displayId, event);
       }
       gestureDetector.onMotionEvent(eventId, event);
+    }
+    int action = event.getActionMasked();
+    if (action == MotionEvent.ACTION_DOWN) {
+      // The lift of the touch before can go missing, so that touch can't still be taken to end as
+      // its swipe, which would swallow the same swipe in this one.
+      abandonEarlySwipe();
+      earlySwipeCandidate = 0;
+      downX = event.getX();
+      downY = event.getY();
+    } else if (action == MotionEvent.ACTION_MOVE
+        && earlySwipeCandidate != 0
+        && earlySwipe == 0
+        && event.getEventTime() - event.getDownTime() <= EARLY_SWIPE_MAX_MS
+        && Math.hypot(event.getX() - downX, event.getY() - downY) >= earlySwipePixels) {
+      performSwipeEarly(earlySwipeCandidate);
+    }
+    if (action == MotionEvent.ACTION_UP
+        || action == MotionEvent.ACTION_CANCEL
+        || action == ACTION_POINTER_DOWN) {
+      abandonEarlySwipe();
     }
     if (!gestureStarted) {
       switch (state) {
@@ -748,6 +797,9 @@ public class TouchInteractionMonitor
       }
     }
 
+    if (state == STATE_TOUCH_EXPLORING || state == STATE_DRAGGING || state == STATE_DELEGATING) {
+      abandonEarlySwipe();
+    }
     previousState = this.state;
     this.state = state;
     requestTouchExplorationDelayed.cancel();
@@ -1045,6 +1097,15 @@ public class TouchInteractionMonitor
         "TalkBack gesture id:%s detected",
         AccessibilityServiceCompatUtils.gestureIdToString(gestureEvent.getGestureId()));
     keepMonitorTouchExplore = false;
+    if (earlySwipe != 0 && gestureEvent.getGestureId() == earlySwipe) {
+      // Already performed, when the finger had gone far enough.
+      earlySwipe = 0;
+      mainHandler.post(() -> service.finishSwipeEarly(gestureEvent));
+      clear();
+      clearGestureDetectorOnNextDown = true;
+      return;
+    }
+    abandonEarlySwipe();
     // As the state is controlled in controller, it could be switched to CLEAR by its internal
     // handling. We have to honor the gesture detection in CLEAR state unless the previous state is
     // dragging or delegating.
@@ -1228,6 +1289,9 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureCancelled(int gestureId) {
+    if (gestureId == earlySwipeCandidate) {
+      earlySwipeCandidate = 0;
+    }
     if (touchExploreGate.remove(gestureId)) {
       if (keepMonitorTouchExplore
           && touchExploreGate.isEmpty()
@@ -1241,6 +1305,9 @@ public class TouchInteractionMonitor
 
   @Override
   public void onGestureProcessing(int gestureId) {
+    if (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT) {
+      earlySwipeCandidate = gestureId;
+    }
     if (gestureId >= GESTURE_SWIPE_UP && gestureId <= GESTURE_SWIPE_DOWN_AND_RIGHT) {
       // A one-finger swipe moving its way: touch exploration waits until the swipe either starts
       // or runs out of time to, so that a swipe that starts slowly isn't explored.
@@ -1269,6 +1336,27 @@ public class TouchInteractionMonitor
     // TYPE_GESTURE_DETECTION_END when using TalkBack gesture detection. So the module has to
     // manually notify the service that gesture detection has been started.
     service.onGestureDetectionStarted();
+    if (earlySwipe == 0 && (gestureId == GESTURE_SWIPE_RIGHT || gestureId == GESTURE_SWIPE_LEFT)) {
+      performSwipeEarly(gestureId);
+    }
+  }
+
+  private void performSwipeEarly(int gestureId) {
+    earlySwipeCandidate = 0;
+    // Once the touch is something else, the swipe waits for the lift: it could be performed early
+    // again after being undone, and nothing would undo it until the finger lifts.
+    if (state == STATE_TOUCH_INTERACTING && service.canStartSwipeEarly(gestureId)) {
+      earlySwipe = gestureId;
+      mainHandler.post(() -> service.startSwipeEarly(gestureId, displayId));
+    }
+  }
+
+  /** Undoes the swipe performed early, as the touch has turned out to be something else. */
+  private void abandonEarlySwipe() {
+    if (earlySwipe != 0) {
+      earlySwipe = 0;
+      mainHandler.post(service::undoSwipeEarly);
+    }
   }
 
   private boolean isGestureAssigned(int gestureId) {

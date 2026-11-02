@@ -2542,6 +2542,12 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="value_multi_tap_timeout_200ms">0.2 seconds</string>
     <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
     <string name="value_multi_tap_timeout_250ms">0.25 seconds (default)</string>
+    <!-- Title for how long the finger must rest on the screen after a one-finger swipe for a swipe and hold gesture to count. [CHAR LIMIT=NONE]-->
+    <string name="title_pref_swipe_hold_timeout">Hold time after a swipe</string>
+    <!-- Label for the hold time after a swipe. [CHAR LIMIT=NONE]-->
+    <string name="value_swipe_hold_timeout_75ms">0.075 seconds</string>
+    <!-- Label for the hold time after a swipe. [CHAR LIMIT=NONE]-->
+    <string name="value_swipe_hold_timeout_125ms">0.125 seconds</string>
     <!-- Title for how far 2 fingers must turn on the screen to move the rotor by one reading control. [CHAR LIMIT=NONE]-->
     <string name="title_pref_rotor_step_degrees">Rotor turn per step</string>
     <!-- Label for rotor turn per step. [CHAR LIMIT=NONE]-->
@@ -2567,6 +2573,11 @@ Description: Explain that the feature is enabled for all images. [CHAR_LIMIT=NON
     <string name="title_pref_low_latency_audio">Low-latency audio</string>
     <!-- Reduce delays: summary of the low-latency audio switch. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_low_latency_audio">Play Backtalk\'s sounds and speech through the phone\'s fastest audio path, so you hear them sooner. Turn it off if speech or sounds break up or sound wrong.</string>
+
+    <!-- Reduce delays: switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=50] -->
+    <string name="title_pref_swipe_before_lift">Move before you lift your finger</string>
+    <!-- Reduce delays: summary of the switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_swipe_before_lift">Move to the next or previous item as soon as your finger starts a swipe, rather than when it lifts. If the swipe turns into another gesture, such as right then down, you may briefly hear the next item before Backtalk moves back.</string>
 
     <!-- Label for touch explore time out. [CHAR LIMIT=NONE]-->
     <string name="value_touch_explore_time_out_150ms">0.15 seconds</string>
@@ -4380,6 +4391,10 @@ Do not use any markdown in your response."</string>
       Description: This preference controlling whether automatically enters the table navigation. [CHAR_LIMIT=NONE]
     -->
   <string name="pref_auto_enter_table_navigation_title">Switch to table navigation in tables</string>
+  <!-- Title of the navigation setting that keeps the selected reading control in web content. [CHAR_LIMIT=NONE] -->
+  <string name="title_pref_preserve_web_reading_control">Keep selected reading control on web pages</string>
+  <!-- Explains that automatic Actions selection is suppressed during web reading. [CHAR_LIMIT=NONE] -->
+  <string name="summary_pref_preserve_web_reading_control">Stay on your selected reading control while navigating web content. You can still choose Actions manually.</string>
 
   <!-- The title of menu item to provide text formatting information from a text. [CHAR_LIMIT=60] -->
   <string name="title_text_formatting_menu">Describe text formatting</string>

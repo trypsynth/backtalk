@@ -12,6 +12,14 @@ When you swiped to an item, TalkBack waited for the app to confirm the new focus
 
 This doesn't apply when focus moves to another window, when the screen changes, or during continuous reading. Keys on the keyboard, sliders, progress bars, pages in a pager, and web content still wait for the app.
 
+### Click sound and vibration at once
+
+When you double-tap, the app reports the click, and TalkBack then waited 150 ms before it played the click sound and vibration, so that it could read the item's new state, such as "on" or "off". Backtalk plays the sound and vibration as soon as the click is reported, and waits only to say the new state. On an emulator, the median time from lifting your finger to the click vibration went from about 215 ms to about 67 ms.
+
+### New state said as soon as you double-tap
+
+When you double-tap a switch, most apps change it before they finish the click. Backtalk reads the switch again right then and says its new state, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 152 ms to about 82 ms. The switches in Android's **Wi-Fi** settings and in the Clock app's alarms are said early in the same way. Apps that change the state later still have it said when they report it, as before.
+
 ### Typed letters said sooner
 
 When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first.
@@ -23,6 +31,14 @@ As a key is typed, the keyboard also reports that your finger left the key. Talk
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.
 
 Backtalk doesn't prepare anything for the first swipe on a screen or after the screen changes, and it discards prepared speech after 5 seconds.
+
+### Moving before you lift your finger
+
+TalkBack moves to the next item only when your finger lifts at the end of a swipe, so the slower you swipe, the longer you wait. When you turn on **Controls** > **Touch and activation** > **Reduce delay** > **Move before you lift your finger**, Backtalk moves as soon as your finger has clearly started a swipe: after 5 mm if the finger is moving quickly, and otherwise after 1 cm. On an emulator in Google News, with simulated swipes that took 300 ms and moved at a steady speed, the first sound came about 59 ms after the finger touched the screen, compared with about 305 ms without this setting. With swipes that took 120 ms, it came after about 26 ms rather than about 121 ms.
+
+If the swipe turns into something else, such as right then down, or a second finger lands, Backtalk moves back and does what the gesture asks. You may briefly hear the next item when this happens. If moving there scrolled the list, the list doesn't scroll back on its own.
+
+This applies only when the swipe moves to the next or previous item, and not when you move by character, word, line or table row, or in a tutorial. The setting is off by default. It requires Android 13 or later and **Handle gestures in Backtalk** turned on. For more information, see [Gestures recognized by Backtalk](#gestures-recognized-by-backtalk).
 
 ### Items that a swipe scrolls into view
 
@@ -277,6 +293,8 @@ To turn off one sound or one vibration and keep the rest, go to **Sound and vibr
 
 A sound theme is a set of sounds and vibrations that replace Backtalk's own, with its own control sounds and 3D audio settings. You can install as many themes as you like, from a file or a link, and switch between them in **Sound and vibration** > **Sound themes**. A link to a GitHub repository that contains a theme also works, and you can open or share a theme file, or a link to one, with Backtalk from another app. On Wear OS watches, you can install themes only from a link.
 
+On phones, **From a source** under **Install a theme** lists repositories of themes to browse and install from. It starts with the [backtalk-themes](https://github.com/trypsynth/backtalk-themes) repository, and nothing is installed until you choose a theme. If you remove it, it stays removed.
+
 To replace single sounds with your own, open **Sounds** under the theme that you're using. To share your sounds, save the theme as a file. For more information about installing, using, and making themes, see [Sound themes](themes.md).
 
 ### Control sounds and vibrations
@@ -342,11 +360,13 @@ The rotor requires Android 13 or later and **Handle gestures in Backtalk** turne
 
 ### Swipe and hold
 
-Each one-finger swipe has a second version that ends with your finger resting on the screen: swipe, then keep your finger still for at least 0.25 seconds. This doubles the number of one-finger gestures. For example, swipe right and lift to move to the next item, or swipe right and hold to do another action. With angle and back-and-forth swipes, make the whole swipe first, such as left then up, and then hold. The action happens while your finger is still on the screen.
+Each one-finger swipe has a second version that ends with your finger resting on the screen: swipe, keep your finger still for at least 0.25 seconds, and then lift it. This doubles the number of one-finger gestures. For example, swipe right and lift at once to move to the next item, or swipe right, hold, and lift to do another action. With angle and back-and-forth swipes, make the whole swipe first, such as left then up, and then hold. The action happens when you lift your finger, so a pause where a swipe turns, such as between right and left, doesn't count as a hold.
 
 In gesture settings, these gestures are at the end of the one-finger gestures, the back-and-forth gestures, and the angle gestures, such as **Swipe right and hold** or **Swipe left then up and hold**. None of them has an action by default. Until you assign one, that swipe works as before, even if you pause before lifting your finger.
 
-Swipe and hold gestures require Android 13 or later and **Handle gestures in Backtalk** turned on.
+To make these gestures respond faster, shorten the rest to as little as 0.075 seconds in **Controls** > **Touch and activation** > **Reduce delay** > **Hold time after a swipe**. With a shorter time, a swipe where you pause briefly before lifting your finger is more likely to count as swipe and hold.
+
+Swipe and hold gestures and their hold time setting require Android 13 or later and **Handle gestures in Backtalk** turned on. They aren't available on watches.
 
 ### Lift to activate
 
@@ -374,11 +394,15 @@ When a window opens, or you go back, TalkBack moves focus into it: back to the i
 
 By default, Backtalk recognizes gestures itself instead of leaving this to Android, which makes the rotor, swipe and hold gestures, and the quadruple-tap with three fingers possible. TalkBack leaves this off.
 
-To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor, swipe and hold gestures, and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** is hidden.
+To let Android recognize gestures again, turn off **Advanced settings** > **Developer settings** > **Handle gestures in Backtalk**, and then turn Backtalk off and on again. When this setting is off, the rotor, swipe and hold gestures, and the quadruple-tap with three fingers don't work, and **Time between one-finger taps** and **Hold time after a swipe** are hidden.
 
 While another accessibility service that explores by touch is on, such as another screen reader or a screen reader's helper service, Backtalk leaves gestures to Android, as if this setting were off. Android has one gesture mode that all services share, so when both services handle touches, double tap and double-tap and hold can stop working. When the other service turns off, Backtalk recognizes gestures itself again.
 
 ## Navigation
+
+### Preserve the selected web reading control
+
+When **Controls** > **Navigation** > **Keep selected reading control on web pages** is on, Backtalk keeps the web reading control you selected, such as **Headings** or **Links**, while you move through page content. It does not automatically switch to **Actions**; you can still choose **Actions** manually. The switch is off by default.
 
 ### Returning to a screen
 
@@ -431,6 +455,12 @@ The Backtalk menu can show as a circle in the middle of the screen, as it did in
 If you open the menu with a gesture that ends with your fingers still on the screen, such as a double-tap and hold, you can slide those fingers out to an item and lift them to select it. The place where your fingers were counts as the middle of the circle.
 
 To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**. It's off by default.
+
+## Voice commands
+
+### Calls
+
+Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
 
 ## Screen and brightness
 
@@ -653,6 +683,8 @@ Like NVDA's app modules and global plugins, scripts change how Backtalk works in
 *   Use the internet and the clipboard, show dialogs, and keep its own data and settings.
 
 To install a script, go to **Apps** > **Scripts** and choose **Import script**. You can also share a script file, or a link to one such as a script's page on GitHub, to Backtalk, or open a script file with it, and choose **Install Backtalk script**. Backtalk lists what the script asks to do before it installs or updates it. **Add the example script** adds a small script to start from.
+
+**Script sources** on the Scripts screen lists repositories of scripts to browse and install from. It starts with the [backtalk-scripts](https://github.com/trypsynth/backtalk-scripts) repository, and nothing is installed until you choose a script. If you remove it, it stays removed.
 
 Each script has a page with an on and off switch, a switch for each permission and for each gesture, key, menu item and reading control it adds, its settings on their own screen, its log, and **Remove**. While a script runs, its gestures and keys come before Backtalk's.
 

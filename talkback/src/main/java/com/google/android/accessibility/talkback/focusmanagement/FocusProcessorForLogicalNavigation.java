@@ -2860,6 +2860,11 @@ public class FocusProcessorForLogicalNavigation {
     }
   }
 
+  /** Stops an auto-scroll in progress from moving focus when it ends. */
+  public void cancelAutoScrollFocus() {
+    scrollCallback = null;
+  }
+
   /** Determines feedback for auto-scroll failure after directional-navigation action. */
   public void onAutoScrollFailed(@NonNull AccessibilityNodeInfoCompat scrolledNode) {
     if (scrollCallback != null) {
@@ -3193,16 +3198,11 @@ public class FocusProcessorForLogicalNavigation {
         return;
       }
     } else {
-      // Try to find the next focusable node based on current focus.
+      // RecyclerView may recycle focusBeforeScroll after it leaves the viewport. Do not search
+      // from that stale node: searching from it can skip the first newly visible item.
       nodeToFocus =
-          TraversalStrategyUtils.searchFocus(
-              localTraversalStrategy, focusBeforeScroll, sourceAction.searchDirection, nodeFilter);
-      // Fallback solution: Use the first/last item under scrollable node as the target.
-      if (nodeToFocus == null) {
-        nodeToFocus =
-            TraversalStrategyUtils.findFirstFocusInNodeTree(
-                localTraversalStrategy, scrolledNode, sourceAction.searchDirection, nodeFilter);
-      }
+          findFocusAfterInvalidPivot(
+              localTraversalStrategy, scrolledNode, sourceAction.searchDirection, nodeFilter);
 
       if (nodeToFocus == null) {
         // Since there is no visible/valid accessibility focus on screen, we play safe and don't
@@ -3231,6 +3231,17 @@ public class FocusProcessorForLogicalNavigation {
     }
 
     setAccessibilityFocusInternal(nodeToFocus, navigationAction, eventId);
+  }
+
+  /** Finds the first valid target after the previous focus node was recycled during scrolling. */
+  @VisibleForTesting
+  static @Nullable AccessibilityNodeInfoCompat findFocusAfterInvalidPivot(
+      TraversalStrategy traversalStrategy,
+      AccessibilityNodeInfoCompat scrolledNode,
+      @SearchDirection int searchDirection,
+      Filter<AccessibilityNodeInfoCompat> nodeFilter) {
+    return TraversalStrategyUtils.findFirstFocusInNodeTree(
+        traversalStrategy, scrolledNode, searchDirection, nodeFilter);
   }
 
   @VisibleForTesting

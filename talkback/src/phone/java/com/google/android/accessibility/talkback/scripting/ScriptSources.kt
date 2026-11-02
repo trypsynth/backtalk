@@ -57,13 +57,26 @@ object ScriptSources {
   private const val MAX_LISTING_BYTES = 8 * 1024 * 1024
   private const val MAX_PAGES = 5
   private const val MAX_SCRIPTS = 200
+  private const val DEFAULT_SCRIPT_SOURCE = "github.com/trypsynth/backtalk-scripts"
+  private const val DEFAULT_SOUND_THEME_SOURCE = "github.com/trypsynth/backtalk-themes"
+
+  /** The sources of [kind] until the list is first saved, so a source removed stays removed. */
+  private fun defaults(kind: SourceKind): List<ScriptSource> =
+    listOfNotNull(
+      ScriptSource.parse(
+        when (kind) {
+          SourceKind.SCRIPTS -> DEFAULT_SCRIPT_SOURCE
+          SourceKind.SOUND_THEMES -> DEFAULT_SOUND_THEME_SOURCE
+        }
+      )
+    )
 
   @Synchronized
   fun all(context: Context, kind: SourceKind = SourceKind.SCRIPTS): List<ScriptSource> {
     val saved =
       context
         .getSharedPreferences(kind.prefs, Context.MODE_PRIVATE)
-        .getString(KEY_SOURCES, null) ?: return emptyList()
+        .getString(KEY_SOURCES, null) ?: return defaults(kind)
     return try {
       val array = JSONArray(saved)
       (0 until array.length()).mapNotNull { ScriptSource.parse(array.optString(it)) }

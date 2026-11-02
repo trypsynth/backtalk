@@ -3,6 +3,7 @@ package com.google.android.accessibility.talkback.actor;
 import android.os.SystemClock;
 import android.view.accessibility.AccessibilityNodeInfo;
 import com.google.android.accessibility.talkback.Feedback.NodeAction;
+import com.google.android.accessibility.talkback.compositor.EarlyClickState;
 import com.google.android.accessibility.talkback.compositor.PreparedFocusSpeech;
 import com.google.android.accessibility.talkback.focusmanagement.TraversalTreeCache;
 import com.google.android.accessibility.utils.AccessibilityNode;
@@ -18,6 +19,11 @@ public class NodeActionPerformer {
   private static final String TAG = "NodeActionPerformer";
 
   private @Nullable NodeActionRecord actionRecord = null;
+  private final @Nullable EarlyClickState earlyClickState;
+
+  public NodeActionPerformer(@Nullable EarlyClickState earlyClickState) {
+    this.earlyClickState = earlyClickState;
+  }
 
   /** Creates node-action-record. */
   public static class NodeActionRecord {
@@ -60,8 +66,15 @@ public class NodeActionPerformer {
     if (nodeActionTarget != null) {
       TraversalTreeCache.onNodeAction(nodeAction.actionId());
       PreparedFocusSpeech.onNodeAction(nodeAction.actionId());
+      EarlyClickState.@Nullable Before stateBefore =
+          (earlyClickState != null && nodeAction.actionId() == AccessibilityNodeInfo.ACTION_CLICK)
+              ? earlyClickState.before(nodeActionTarget.getCompat())
+              : null;
       long time = SystemClock.uptimeMillis();
       success = nodeActionTarget.performAction(nodeAction.actionId(), nodeAction.args(), eventId);
+      if (success && stateBefore != null) {
+        earlyClickState.after(stateBefore, eventId);
+      }
       Performance.getInstance()
           .onAccessibilityActionPerformed(
               eventId, nodeAction.actionId(), time, success, nodeActionTarget);

@@ -13,7 +13,7 @@ A script is one of these:
 
 To install a script, go to **Apps** > **Scripts** in Backtalk settings and choose **Import script**. Backtalk lists what the script asks to do before it installs it. Importing a file with the id of a script that's already installed updates that script and keeps its data and settings; Backtalk always asks first, and says so if the author changed.
 
-To find scripts, choose **Script sources** on the Scripts screen and **Add source**. A source is the address of a repository, or of a branch or folder in one, on GitHub, GitLab, Codeberg, Gitea (gitea.com) or Bitbucket:
+To find scripts, choose **Script sources** on the Scripts screen. The list starts with the [backtalk-scripts](https://github.com/trypsynth/backtalk-scripts) repository. To add another, choose **Add source**. A source is the address of a repository, or of a branch or folder in one, on GitHub, GitLab, Codeberg, Gitea (gitea.com) or Bitbucket:
 
 *   `github.com/owner/repository` or `github.com/owner/repository/tree/main/scripts`
 *   `gitlab.com/group/repository` or `gitlab.com/group/subgroup/repository/-/tree/main/scripts`
