@@ -185,6 +185,7 @@ import com.google.android.accessibility.talkback.focusmanagement.interpreter.Scr
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.TouchExplorationInterpreter;
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
+import com.google.android.accessibility.talkback.gesture.EarlySwipePolicy;
 import com.google.android.accessibility.talkback.gesture.GestureController;
 import com.google.android.accessibility.talkback.gesture.GestureHistory;
 import com.google.android.accessibility.talkback.gesture.GestureShortcutMapping;
@@ -1605,6 +1606,79 @@ public class TalkBackService extends AccessibilityServiceCompat
     return false;
   }
 
+  // Where accessibility focus was before the swipe that was performed before its finger lifted.
+  private @Nullable AccessibilityNodeInfoCompat earlySwipePivot;
+  private @Nullable DirectionNavigationActor earlySwipeNavigation;
+  private boolean earlySwipeHandled;
+
+  /**
+   * Whether a swipe that has just started can be performed before its finger lifts: only one that
+   * moves to the next or previous item, whose effect can be undone if the finger goes on to draw
+   * another gesture.
+   */
+  boolean canStartSwipeEarly(int gestureId) {
+    return isServiceActive()
+        && !PauseController.isPaused()
+        && getBooleanPref(
+            R.string.pref_swipe_before_lift_key, R.bool.pref_swipe_before_lift_default)
+        && (menuManager == null || !menuManager.isMenuShowing())
+        && EarlySwipePolicy.onlyMovesToAdjacentItem(
+            this,
+            gestureId,
+            gestureController,
+            gestureShortcutMapping,
+            pipeline.getActorState().getDirectionNavigation().getCurrentGranularity());
+  }
+
+  void startSwipeEarly(int gestureId, int displayId) {
+    earlySwipePivot =
+        accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
+    earlySwipeHandled = handleOnGestureById(displayId, gestureId);
+  }
+
+  /** Called when the finger lifts and the swipe performed early turns out to be the gesture. */
+  void finishSwipeEarly(AccessibilityGestureEvent gestureEvent) {
+    earlySwipePivot = null;
+    if (earlySwipeHandled) {
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(EVENT_ID_UNTRACKED, Feedback.saveGesture(gestureEvent));
+    }
+  }
+
+  void undoSwipeEarly() {
+    interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
+    AccessibilityNodeInfoCompat movedTo =
+        accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ false);
+    if (earlySwipeNavigation != null) {
+      // A scroll the swipe started must not move focus on when it ends.
+      earlySwipeNavigation.cancelAutoScrollFocus();
+    }
+    if (earlySwipePivot == null) {
+      // Nothing had focus before the swipe.
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(EVENT_ID_UNTRACKED, Feedback.focus(Feedback.Focus.Action.CLEAR));
+    } else if (earlySwipePivot.refresh()) {
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(
+              EVENT_ID_UNTRACKED,
+              Feedback.focus(
+                  earlySwipePivot,
+                  new FocusActionInfo.Builder()
+                      .setSourceAction(FocusActionInfo.FOCUS_SYNCHRONIZATION)
+                      .setForceMuteFeedback(true)
+                      .build()));
+    }
+    // A swipe and hold is performed straight after this, before the app's focus event updates
+    // Android's copy of where focus is, and would otherwise move on from the item undone.
+    if (movedTo != null && BuildVersionUtils.isAtLeastT()) {
+      clearCachedSubtree(movedTo.unwrap());
+    }
+    earlySwipePivot = null;
+  }
+
   private void provisionTouchExplore(boolean enabled) {
     requestTouchExploration(enabled);
   }
@@ -2299,6 +2373,7 @@ public class TalkBackService extends AccessibilityServiceCompat
             universalSearchActor.state,
             compositor.getTextComposer());
     directionNavigationActorStateReader = directionNavigationActor.state;
+    earlySwipeNavigation = directionNavigationActor;
     userInterface.registerListener(directionNavigationActor);
     TextEditActor editor =
         new TextEditActor(

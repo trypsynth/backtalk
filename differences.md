@@ -26,6 +26,14 @@ While you listen to an item, Backtalk works out what a swipe forward or back wou
 
 Backtalk doesn't prepare anything for the first swipe on a screen or after the screen changes, and it discards prepared speech after 5 seconds.
 
+### Moving before you lift your finger
+
+TalkBack moves to the next item only when your finger lifts at the end of a swipe, so the slower you swipe, the longer you wait. When you turn on **Controls** > **Touch and activation** > **Reduce delay** > **Move before you lift your finger**, Backtalk moves as soon as your finger has clearly started a swipe: after 5 mm if the finger is moving quickly, and otherwise after 1 cm. On an emulator in Google News, with simulated swipes that took 300 ms and moved at a steady speed, the first sound came about 59 ms after the finger touched the screen, compared with about 305 ms without this setting. With swipes that took 120 ms, it came after about 26 ms rather than about 121 ms.
+
+If the swipe turns into something else, such as right then down, or a second finger lands, Backtalk moves back and does what the gesture asks. You may briefly hear the next item when this happens. If moving there scrolled the list, the list doesn't scroll back on its own.
+
+This applies only when the swipe moves to the next or previous item, and not when you move by character, word, line or table row, or in a tutorial. The setting is off by default. It requires Android 13 or later and **Handle gestures in Backtalk** turned on. For more information, see [Gestures recognized by Backtalk](#gestures-recognized-by-backtalk).
+
 ### Items that a swipe scrolls into view
 
 When a swipe moves to a list item that is only partly on screen, the list scrolls it into view. By default, Backtalk then waits for the app to confirm the new focus, as TalkBack does, so these swipes don't get the faster speech above. Speaking straight away would come before the list had scrolled, when the item's text can still be off screen, and only its place in the list, such as "20 of 80", would be said.
