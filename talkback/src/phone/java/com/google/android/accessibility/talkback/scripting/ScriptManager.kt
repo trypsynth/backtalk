@@ -167,6 +167,9 @@ class ScriptManager(
     !activation.inBacktalk &&
       bindings.gestures[name]?.also { runCommand(it, "gesture", fallback = fallback) } != null
 
+  override fun takesGesture(name: String): Boolean =
+    !activation.inBacktalk && bindings.gestures[name] != null
+
   override fun onKeys(
     modifiers: Int,
     keyCode: Int,
