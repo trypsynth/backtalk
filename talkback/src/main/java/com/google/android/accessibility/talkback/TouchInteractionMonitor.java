@@ -215,6 +215,7 @@ public class TouchInteractionMonitor
   private boolean clearGestureDetectorOnNextDown = false;
   // Recognizes two fingers turning around each other. A recognized rotation owns the whole touch.
   private final TwoFingerRotationTracker rotationTracker;
+  private final EdgeGestureTracker edgeGestures;
   // Whether double tap and double tap and hold will be dispatched to the service or handled in
   // the framework.
   private boolean serviceHandlesDoubleTap = false;
@@ -420,6 +421,15 @@ public class TouchInteractionMonitor
     passthroughTotalSlop = passthroughSlopMultiplier * touchSlop;
     rotationTracker =
         new TwoFingerRotationTracker(passthroughTotalSlop, touchSlop, this::onRotationStep);
+    edgeGestures =
+        new EdgeGestureTracker(
+            service,
+            prefs,
+            mainHandler,
+            () ->
+                dispatchGestureToMainThread(
+                    new AccessibilityGestureEvent(
+                        GESTURE_DOUBLE_TAP, displayId, new ArrayList<MotionEvent>())));
     sharedPreferences = prefs;
     typingFocusTimeout = FeatureFlagReader.typingFocusTimeout(service);
     touchFocusTimeout = FeatureFlagReader.touchFocusTimeout(service);
@@ -500,6 +510,7 @@ public class TouchInteractionMonitor
 
   public void stop() {
     stateInActive = false;
+    edgeGestures.stop();
     context.unregisterComponentCallbacks(this);
     if (typingFocusTimeout || touchFocusTimeout) {
       sharedPreferences.unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
@@ -579,6 +590,9 @@ public class TouchInteractionMonitor
       }
     } else {
       LogUtils.e(LOG_TAG, "Event is null.");
+      return;
+    }
+    if (edgeGestures.onMotionEvent(event)) {
       return;
     }
     if (followingHeldTouch) {
@@ -1137,6 +1151,11 @@ public class TouchInteractionMonitor
     // Log isDefaultDisplay/gestureId/onGestureDetectedTime. The targetGestureTimeout is the current
     // time minus lastMotionEventTransmissionLatency
     Performance.getInstance().onGestureRecognized(eventId, gestureId);
+    if (edgeGestures.onGesture(gestureId, serviceHandlesDoubleTap)) {
+      clear();
+      clearGestureDetectorOnNextDown = true;
+      return;
+    }
     if (gestureId == AccessibilityService.GESTURE_DOUBLE_TAP) {
       if (serviceHandlesDoubleTap) {
         dispatchGestureToMainThreadAndClear(gestureEvent);

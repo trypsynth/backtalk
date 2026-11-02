@@ -1679,6 +1679,26 @@ public class TalkBackService extends AccessibilityServiceCompat
     earlySwipePivot = null;
   }
 
+  boolean canPerformEdgeAction() {
+    return isServiceActive()
+        && !PauseController.isPaused()
+        && (menuManager == null || !menuManager.isMenuShowing());
+  }
+
+  void performEdgeAction(String action) {
+    if (!canPerformEdgeAction()) {
+      return;
+    }
+    if (screenOnSpeechSuppression != null) {
+      screenOnSpeechSuppression.onUserInteraction();
+    }
+    if (screenFocusRestorer != null) {
+      screenFocusRestorer.onUserInteraction();
+    }
+    getFeedbackController().playAuditory(R.raw.gesture_end, EVENT_ID_UNTRACKED);
+    gestureController.performAction(action, EVENT_ID_UNTRACKED);
+  }
+
   private void provisionTouchExplore(boolean enabled) {
     requestTouchExploration(enabled);
   }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the category in gesture settings for gestures that start on the left or right edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_category_edge_gestures">Edge gestures</string>
+    <!-- Title of the switch that turns edge gestures on. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_gestures">Edge gestures</string>
+    <!-- Summary of the switch that turns edge gestures on. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_edge_gestures">Give one-finger swipes up and down and triple taps that start on the left or right edge actions of their own. Requires Handle gestures in Backtalk.</string>
+    <!-- Title of the slider that sets how wide the left and right edges of the screen are. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_width">Edge width</string>
+    <!-- The width of the screen edges, in centimeters, such as "1.25 cm". [CHAR LIMIT=20] -->
+    <string name="template_edge_width_cm"><xliff:g id="width" example="1.25">%1$s</xliff:g> cm</string>
+    <!-- Title of the screen with the actions of the left edge. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_left">Left edge</string>
+    <!-- Title of the screen with the actions of the right edge. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_right">Right edge</string>
+    <!-- Title of the category of gestures on one edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_category_edge_gesture_actions">Gestures on this edge</string>
+    <!-- Title of the setting for a one-finger triple tap on an edge of the screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_edge_triple_tap">Triple-tap</string>
+</resources>
