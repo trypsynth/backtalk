@@ -19,6 +19,7 @@ package com.google.android.accessibility.talkback.actor;
 import static androidx.core.view.accessibility.AccessibilityNodeInfoCompat.FOCUS_INPUT;
 import static androidx.core.view.accessibility.AccessibilityWindowInfoCompat.TYPE_INPUT_METHOD;
 import static com.google.android.accessibility.utils.AccessibilityWindowInfoUtils.WINDOW_ID_NONE;
+import static com.google.android.accessibility.utils.traversal.TraversalStrategy.SEARCH_FOCUS_BACKWARD;
 import static com.google.android.accessibility.utils.traversal.TraversalStrategy.SEARCH_FOCUS_FORWARD;
 
 import android.accessibilityservice.AccessibilityService;
@@ -236,11 +237,14 @@ public class FocusActorForScreenStateChange {
         // tree.
         || (!WebInterfaceUtils.isWebContainer(nodeToRestoreFocus)
             && !isInWindow(nodeToRestoreFocus, windowId, root))) {
+      int searchDirection = getRecoverySearchDirection(lastFocusAction);
       LogUtils.w(
           TAG,
-          "Saved focus is invalid; falling back to the first focusable node: "
+          "Saved focus is invalid; recovering in direction "
+              + TraversalStrategyUtils.directionToString(searchDirection)
+              + ": "
               + nodeToRestoreFocus);
-      nodeToRestoreFocus = findFirstFocusableNode(root);
+      nodeToRestoreFocus = findFirstFocusableNode(root, searchDirection);
       if (nodeToRestoreFocus == null) {
         return false;
       }
@@ -277,21 +281,37 @@ public class FocusActorForScreenStateChange {
     return success;
   }
 
-  /** Finds the first visible node that can receive accessibility focus in the current root. */
+  /**
+   * Returns the direction to recover in after the saved focus node is gone. The last navigation
+   * direction is the best available hint; without one, forward is the safe default.
+   */
+  private static int getRecoverySearchDirection(@NonNull FocusActionRecord lastFocusAction) {
+    if (lastFocusAction.getExtraInfo().navigationAction != null
+        && lastFocusAction.getExtraInfo().navigationAction.searchDirection
+            == SEARCH_FOCUS_BACKWARD) {
+      return SEARCH_FOCUS_BACKWARD;
+    }
+    return SEARCH_FOCUS_FORWARD;
+  }
+
+  /**
+   * Finds the first visible node that can receive accessibility focus in the current root, in the
+   * given direction: the first node when moving forward, the last node when moving backward.
+   */
   private @Nullable AccessibilityNodeInfoCompat findFirstFocusableNode(
-      @NonNull AccessibilityNodeInfoCompat root) {
+      @NonNull AccessibilityNodeInfoCompat root, int searchDirection) {
     TraversalStrategy traversalStrategy =
         TraversalStrategyUtils.getTraversalStrategy(
             root,
             focusFinder,
             OrderedTraversalStrategyConfig.builder()
-                .setSearchDirection(SEARCH_FOCUS_FORWARD)
+                .setSearchDirection(searchDirection)
                 .setMakeFabFirst(makeFabFirst)
                 .build());
     return TraversalStrategyUtils.findFirstFocusInNodeTree(
         traversalStrategy,
         root,
-        SEARCH_FOCUS_FORWARD,
+        searchDirection,
         AccessibilityNodeInfoUtils.FILTER_SHOULD_FOCUS);
   }
 
