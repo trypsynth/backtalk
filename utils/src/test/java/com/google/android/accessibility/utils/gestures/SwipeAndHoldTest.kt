@@ -25,6 +25,7 @@ import android.view.MotionEvent
 import com.google.android.accessibility.utils.gestures.GestureManifold.GestureConfigProvider
 import com.google.common.collect.ImmutableList
 import java.util.concurrent.TimeUnit
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -79,6 +80,11 @@ class SwipeAndHoldTest {
     event.recycle()
   }
 
+  @After
+  fun restoreHoldTime() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS)
+  }
+
   private fun waitMs(ms: Long) = ShadowLooper.idleMainLooper(ms, TimeUnit.MILLISECONDS)
 
   private fun move(dxCm: Float, dyCm: Float) {
@@ -99,7 +105,7 @@ class SwipeAndHoldTest {
   fun swipeRightThenRestThenLift_isRightHold() {
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS.toLong())
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS.toLong())
     send(MotionEvent.ACTION_UP)
     assertEquals(listOf(HOLD_RIGHT), completed)
   }
@@ -108,15 +114,35 @@ class SwipeAndHoldTest {
   fun swipeRightThenRest_doesNothingUntilTheLift() {
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS * 4L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS * 4L)
     assertTrue(completed.isEmpty())
+  }
+
+  @Test
+  fun shorterHoldTime_countsAtTheLiftSooner() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(100)
+    send(MotionEvent.ACTION_DOWN)
+    move(2f, 0f)
+    rest(100)
+    send(MotionEvent.ACTION_UP)
+    assertEquals(listOf(HOLD_RIGHT), completed)
+  }
+
+  @Test
+  fun shorterHoldTime_stillLetsAQuickSwipeLift() {
+    GestureConfiguration.setSwipeHoldTimeoutMs(100)
+    send(MotionEvent.ACTION_DOWN)
+    move(2f, 0f)
+    rest(50)
+    send(MotionEvent.ACTION_UP)
+    assertEquals(listOf(GESTURE_SWIPE_RIGHT), completed)
   }
 
   @Test
   fun swipeRightThenLiftBeforeTheHold_isAnOrdinarySwipe() {
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS - 50L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     send(MotionEvent.ACTION_UP)
     assertEquals(listOf(GESTURE_SWIPE_RIGHT), completed)
   }
@@ -125,7 +151,7 @@ class SwipeAndHoldTest {
   fun rightThenPauseThenLeft_isRightAndLeft() {
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS + 50L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS + 50L)
     move(-2f, 0f)
     send(MotionEvent.ACTION_UP)
     assertEquals(listOf(GESTURE_SWIPE_RIGHT_AND_LEFT), completed)
@@ -135,9 +161,9 @@ class SwipeAndHoldTest {
   fun movingAgain_startsTheRestAgain() {
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS - 50L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     move(1f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS - 50L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS - 50L)
     send(MotionEvent.ACTION_UP)
     assertEquals(listOf(GESTURE_SWIPE_RIGHT), completed)
   }
@@ -147,7 +173,7 @@ class SwipeAndHoldTest {
     send(MotionEvent.ACTION_DOWN)
     move(-2f, 0f)
     move(0f, -2f)
-    rest(Swipe.HOLD_TIMEOUT_MS + 1L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS + 1L)
     send(MotionEvent.ACTION_UP)
     assertEquals(listOf(HOLD_LEFT_UP), completed)
   }
@@ -157,7 +183,7 @@ class SwipeAndHoldTest {
     assigned = false
     send(MotionEvent.ACTION_DOWN)
     move(2f, 0f)
-    rest(Swipe.HOLD_TIMEOUT_MS * 2L)
+    rest(GestureConfiguration.DEFAULT_SWIPE_HOLD_TIMEOUT_MS * 2L)
     send(MotionEvent.ACTION_UP)
     assertFalse(completed.contains(HOLD_RIGHT))
   }

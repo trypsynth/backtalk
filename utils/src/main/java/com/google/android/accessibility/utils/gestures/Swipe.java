@@ -47,8 +47,6 @@ class Swipe extends GestureMatcher {
   public static final int RIGHT = 1;
   public static final int UP = 2;
   public static final int DOWN = 3;
-  /** How long the finger rests at the end of a swipe before a swipe-and-hold completes. */
-  public static final int HOLD_TIMEOUT_MS = 250;
   private static final long NOT_RESTING = -1;
   // This is the calculated movement threshold used track if the user is still
   // moving their finger.
@@ -274,7 +272,7 @@ class Swipe extends GestureMatcher {
   private boolean restedLongEnough(MotionEvent up) {
     return isRestingAfterMatchingStroke()
         && Math.hypot(up.getX() - holdCheckX, up.getY() - holdCheckY) < touchSlop
-        && up.getEventTime() - restStartTime >= HOLD_TIMEOUT_MS;
+        && up.getEventTime() - restStartTime >= GestureConfiguration.getSwipeHoldTimeoutMs();
   }
 
   @Override
