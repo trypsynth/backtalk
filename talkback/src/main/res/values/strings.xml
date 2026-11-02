@@ -4380,6 +4380,10 @@ Do not use any markdown in your response."</string>
       Description: This preference controlling whether automatically enters the table navigation. [CHAR_LIMIT=NONE]
     -->
   <string name="pref_auto_enter_table_navigation_title">Switch to table navigation in tables</string>
+  <!-- Title of the navigation setting that keeps the selected reading control in web content. [CHAR_LIMIT=NONE] -->
+  <string name="title_pref_preserve_web_reading_control">Keep selected reading control on web pages</string>
+  <!-- Explains that automatic Actions selection is suppressed during web reading. [CHAR_LIMIT=NONE] -->
+  <string name="summary_pref_preserve_web_reading_control">Stay on your selected reading control while navigating web content. You can still choose Actions manually.</string>
 
   <!-- The title of menu item to provide text formatting information from a text. [CHAR_LIMIT=60] -->
   <string name="title_text_formatting_menu">Describe text formatting</string>
