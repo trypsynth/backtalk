@@ -432,6 +432,10 @@ To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**.
 
 Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
 
+### Natural phrasing
+
+Voice commands ignore the polite words before or after a command, so "please go home", "can you go home" and "go home please" all work. A command of eight letters or more also works with one wrong letter, for when the speech recognizer slips, such as "scroll dow" for "scroll down". Short commands such as "back" and "home" must be said exactly, and a command that is only part of a longer sentence isn't a match. Text that you dictate after a command, such as what to type, is passed on as you said it.
+
 ## Screen and brightness
 
 ### Brightness reading control

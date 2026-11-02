@@ -895,7 +895,7 @@ public class VoiceCommandProcessor {
 
   private @Nullable String equals(String command, List<String> stringList) {
     for (int i = 0; i < stringList.size(); i++) {
-      if (command.equals(stringList.get(i).toLowerCase())) {
+      if (VoiceCommandFuzzyMatcher.sameCommand(command, stringList.get(i).toLowerCase())) {
         return command;
       }
     }
@@ -903,11 +903,13 @@ public class VoiceCommandProcessor {
   }
 
   private boolean equals(String command, int stringResId) {
-    return command.equals(service.getString(stringResId).toLowerCase());
+    return VoiceCommandFuzzyMatcher.sameCommand(
+        command, service.getString(stringResId).toLowerCase());
   }
 
   private boolean startsWith(String command, int stringResId) {
-    return command.startsWith(service.getString(stringResId).toLowerCase());
+    return VoiceCommandFuzzyMatcher.startsWithCommand(
+        command, service.getString(stringResId).toLowerCase());
   }
 
   private int startsWith(String command, int[] stringResIdArray) {
@@ -915,7 +917,7 @@ public class VoiceCommandProcessor {
       return -1;
     }
     for (int i = 0; i < stringResIdArray.length; i++) {
-      if (command.startsWith(service.getString(stringResIdArray[i]).toLowerCase())) {
+      if (startsWith(command, stringResIdArray[i])) {
         return stringResIdArray[i];
       }
     }
@@ -927,7 +929,7 @@ public class VoiceCommandProcessor {
       return -1;
     }
     for (int i = 0; i < stringResIdArray.length; i++) {
-      if (command.equals(service.getString(stringResIdArray[i]).toLowerCase())) {
+      if (equals(command, stringResIdArray[i])) {
         return stringResIdArray[i];
       }
     }
@@ -936,8 +938,8 @@ public class VoiceCommandProcessor {
 
   /* Returns the tail of command-string after the stringResId prefix. */
   private CharSequence remainder(String command, int stringResId) {
-    CharSequence prefix = service.getString(stringResId).toLowerCase();
-    return command.substring(prefix.length());
+    String prefix = service.getString(stringResId).toLowerCase();
+    return VoiceCommandFuzzyMatcher.remainderAfter(command, prefix);
   }
 
   private @Nullable AccessibilityNodeInfoCompat getEditTextFocus() {

@@ -185,4 +185,52 @@ object VoiceCommandFuzzyMatcher {
     }
     return null
   }
+
+  /**
+   * Removes the polite words that a spoken command can start or end with, such as "please",
+   * "can you" and "hey Backtalk". Punctuation and the rest of the words are left alone, so text
+   * that comes after a command, such as what to type, stays as it was said.
+   */
+  @JvmStatic
+  fun stripFiller(spoken: String): String {
+    var text = spoken.trim()
+    while (true) {
+      val next = POLITE_PREFIX_REGEX.replace(text, "").trim()
+      if (next == text) break
+      text = next
+    }
+    return text.removeSuffix(" please").trim()
+  }
+
+  /**
+   * Whether [spoken] is the built-in command [phrase], ignoring polite words. A long phrase also
+   * allows one wrong letter, for a slip by the speech recognizer. Short phrases such as "back"
+   * must match exactly, as one letter can make a different word. Having the words of a command
+   * somewhere in a longer sentence is not a match.
+   */
+  @JvmStatic
+  fun sameCommand(spoken: String, phrase: String): Boolean {
+    val text = stripFiller(spoken)
+    if (text == phrase) return true
+    if (phrase.length < MIN_LENGTH_FOR_SLIP || kotlin.math.abs(text.length - phrase.length) > 1) {
+      return false
+    }
+    return levenshteinDistance(text, phrase) <= 1
+  }
+
+  /** Whether [spoken] starts with the command [phrase], ignoring polite words before it. */
+  @JvmStatic
+  fun startsWithCommand(spoken: String, phrase: String): Boolean =
+    stripFiller(spoken).startsWith(phrase)
+
+  /** What [spoken] says after the command [phrase], as it was said. */
+  @JvmStatic
+  fun remainderAfter(spoken: String, phrase: String): String {
+    val text = stripFiller(spoken)
+    if (text.startsWith(phrase)) return text.substring(phrase.length)
+    return spoken.substring(minOf(phrase.length, spoken.length))
+  }
+
+  /** A phrase this long or longer allows one wrong letter. */
+  const val MIN_LENGTH_FOR_SLIP = 8
 }
