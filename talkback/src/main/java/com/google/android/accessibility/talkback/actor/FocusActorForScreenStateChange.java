@@ -236,8 +236,27 @@ public class FocusActorForScreenStateChange {
         // tree.
         || (!WebInterfaceUtils.isWebContainer(nodeToRestoreFocus)
             && !isInWindow(nodeToRestoreFocus, windowId, root))) {
-      LogUtils.e(TAG, "Do not restore focus from the invalid node " + nodeToRestoreFocus);
-      return false;
+      LogUtils.w(
+          TAG,
+          "Saved focus is invalid; falling back to the first focusable node: "
+              + nodeToRestoreFocus);
+      nodeToRestoreFocus = findFirstFocusableNode(root);
+      if (nodeToRestoreFocus == null) {
+        return false;
+      }
+      FocusActionInfo fallbackFocusActionInfo =
+          FOCUS_ACTION_INFO_FIRST_FOCUSABLE_NODE_BUILDER
+              .setForceMuteFeedback(
+                  FocusActorHelper.shouldMuteFeedbackForFocusedNode(
+                      nodeToRestoreFocus, screenState))
+              .build();
+      boolean success =
+          pipeline.returnFeedback(
+              eventId, Feedback.focus(nodeToRestoreFocus, fallbackFocusActionInfo));
+      if (screenState.isInterpretFirstTimeWhenWakeUp() && success) {
+        screenState.consumeInterpretFirstTimeWhenWakeUp();
+      }
+      return success;
     }
     boolean success =
         // TODO: Remove workaround solution. Adds setForceRefocus(true) to forces
@@ -256,6 +275,24 @@ public class FocusActorForScreenStateChange {
     }
 
     return success;
+  }
+
+  /** Finds the first visible node that can receive accessibility focus in the current root. */
+  private @Nullable AccessibilityNodeInfoCompat findFirstFocusableNode(
+      @NonNull AccessibilityNodeInfoCompat root) {
+    TraversalStrategy traversalStrategy =
+        TraversalStrategyUtils.getTraversalStrategy(
+            root,
+            focusFinder,
+            OrderedTraversalStrategyConfig.builder()
+                .setSearchDirection(SEARCH_FOCUS_FORWARD)
+                .setMakeFabFirst(makeFabFirst)
+                .build());
+    return TraversalStrategyUtils.findFirstFocusInNodeTree(
+        traversalStrategy,
+        root,
+        SEARCH_FOCUS_FORWARD,
+        AccessibilityNodeInfoUtils.FILTER_SHOULD_FOCUS);
   }
 
   /**
