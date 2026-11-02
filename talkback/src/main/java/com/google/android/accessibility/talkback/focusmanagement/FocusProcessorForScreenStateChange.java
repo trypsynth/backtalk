@@ -32,6 +32,7 @@ import com.google.android.accessibility.talkback.focusmanagement.record.Accessib
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo;
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionRecord;
 import com.google.android.accessibility.talkback.interpreters.AccessibilityFocusInterpreter;
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.input.WindowEventInterpreter;
@@ -74,8 +75,10 @@ public class FocusProcessorForScreenStateChange {
     focusNewWindows = focus;
   }
 
+  // While a silenced call rings, focus isn't placed, so that the caller on the call screen isn't
+  // spoken.
   public static boolean focusesNewWindows() {
-    return focusNewWindows;
+    return focusNewWindows && !IncomingCallSilence.isSilenced();
   }
 
   public FocusProcessorForScreenStateChange(AccessibilityFocusMonitor accessibilityFocusMonitor) {

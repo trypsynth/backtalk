@@ -98,7 +98,7 @@
   <string name="title_pref_speak_volume_changes">Odczytuj zmiany głośności</string>
   <string name="summary_pref_speak_volume_changes">Podawaj nowy poziom po naciśnięciu przycisków głośności</string>
   <string name="title_pref_speak_notifications">Odczytuj powiadomienia</string>
-  <string name="summary_pref_speak_notifications">Odczytuj nowe powiadomienia, gdy się pojawią. Informacje o połączeniach przychodzących są zawsze odczytywane.</string>
+  <string name="summary_pref_speak_notifications">Odczytuj nowe powiadomienia, gdy się pojawią.</string>
   <string name="talkback_exit_watermark_text_no_menu_gesture">Backtalk jest włączony. Aby go wyłączyć, przytrzymaj 2 palce na ekranie przez 5 sekund. Aby ukryć ten komunikat, w ustawieniach zaawansowanych Backtalka wyłącz opcję pokazywania instrukcji jego wyłączania.</string>
   <string name="title_pref_audio_output_device">Urządzenie odtwarzające</string>
   <string name="dialog_title_audio_output_device">Wybierz, gdzie odtwarzać dźwięk Backtalka</string>

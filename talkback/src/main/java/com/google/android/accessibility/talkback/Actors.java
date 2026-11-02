@@ -25,6 +25,7 @@ import static com.google.android.accessibility.talkback.Feedback.AdjustVolume.Ac
 import static com.google.android.accessibility.talkback.Feedback.SpeechRate.Action.INCREASE_RATE;
 import static com.google.android.accessibility.talkback.contextmenu.ListMenuManager.MenuId.CONTEXT;
 import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED;
+import static com.google.android.accessibility.utils.output.SpeechController.STATUS_INTERRUPTED;
 import static com.google.android.accessibility.utils.output.SpeechController.UTTERANCE_GROUP_CONTENT_HINTS;
 import static com.google.android.accessibility.utils.preference.PreferencesActivity.FRAGMENT_NAME;
 import static com.google.android.accessibility.utils.traversal.TraversalStrategy.SEARCH_FOCUS_FORWARD;
@@ -112,6 +113,7 @@ import com.google.android.accessibility.talkback.focusmanagement.record.FocusAct
 import com.google.android.accessibility.talkback.focusmanagement.AccessibilityFocusMonitor;
 import com.google.android.accessibility.talkback.focusmanagement.action.NavigationAction;
 import com.google.android.accessibility.talkback.labeling.TalkBackLabelManager;
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence;
 import com.google.android.accessibility.talkback.preference.base.AutomaticDescriptionsFragment;
 import com.google.android.accessibility.talkback.training.TutorialInitiator;
 import com.google.android.accessibility.utils.AccessibilityNode;
@@ -353,11 +355,24 @@ class Actors {
 
     // Speech
     @Nullable Speech speech = part.speech();
+    // Checked once for the part, as it asks the system whether a call rings. The user's own input
+    // ends the silence before its feedback gets here.
+    boolean silencedByCall =
+        ((speech != null && speech.action() == Speech.Action.SPEAK && speech.text() != null)
+                || part.sound() != null
+                || part.vibration() != null)
+            && isSilencedByCall();
     if (speech != null && speech.action() != null) {
       var unused = false;
       switch (speech.action()) {
         case SPEAK -> {
-          if ((speech.hint() != null)
+          if (silencedByCall) {
+            // Whoever waits for the speech, such as the volume monitor before it lets go of the
+            // volume keys, is told it was cut off. Its hint isn't left for the next utterance.
+            if (speech.options() != null && speech.options().mCompletedAction != null) {
+              speech.options().mCompletedAction.run(STATUS_INTERRUPTED);
+            }
+          } else if ((speech.hint() != null)
               && (speech.hintSpeakOptions() != null)
               && (speech.hintSpeakOptions().mCompletedAction != null)) {
             speaker.addUtteranceCompleteAction(
@@ -365,7 +380,7 @@ class Actors {
                 UTTERANCE_GROUP_CONTENT_HINTS,
                 speech.hintSpeakOptions().mCompletedAction);
           }
-          if (speech.text() != null) {
+          if (speech.text() != null && !silencedByCall) {
             speaker.speak(speech.text(), eventId, speech.options());
           }
         }
@@ -415,7 +430,7 @@ class Actors {
 
     // Sound effects
     @Nullable Sound sound = part.sound();
-    if (sound != null) {
+    if (sound != null && !silencedByCall) {
       soundAndVibration.playAuditory(
           sound.resourceId(),
           sound.rate(),
@@ -427,7 +442,7 @@ class Actors {
 
     // Vibration
     @Nullable Vibration vibration = part.vibration();
-    if (vibration != null) {
+    if (vibration != null && !silencedByCall) {
       soundAndVibration.playHaptic(vibration.resourceId(), eventId);
     }
 
@@ -1017,6 +1032,20 @@ class Actors {
     speaker.setMute(true);
     soundAndVibration.shutdown();
     geminiActor.onUnbind();
+  }
+
+  /**
+   * Whether feedback is dropped because a silenced call rings. The first time for a call, feedback
+   * that already plays stops too.
+   */
+  private boolean isSilencedByCall() {
+    if (!IncomingCallSilence.isSilenced()) {
+      return false;
+    }
+    if (IncomingCallSilence.takeInterrupt()) {
+      interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
+    }
+    return true;
   }
 
   public void interruptAllFeedback(boolean stopTtsSpeechCompletely) {

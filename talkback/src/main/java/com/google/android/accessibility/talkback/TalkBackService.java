@@ -223,6 +223,7 @@ import com.google.android.accessibility.talkback.menurules.NodeMenuRuleProcessor
 import com.google.android.accessibility.talkback.monitor.BatteryMonitor;
 import com.google.android.accessibility.talkback.monitor.CallStateMonitor;
 import com.google.android.accessibility.talkback.monitor.DeviceConfigurationMonitor;
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence;
 import com.google.android.accessibility.talkback.monitor.InputMethodMonitor;
 import com.google.android.accessibility.talkback.monitor.KeyboardLockMonitor;
 import com.google.android.accessibility.talkback.monitor.ProximitySensorMonitor;
@@ -1166,6 +1167,13 @@ public class TalkBackService extends AccessibilityServiceCompat
         || eventType == AccessibilityEvent.TYPE_TOUCH_INTERACTION_END) {
       RecentUserInput.mark();
     }
+    IncomingCallSilence.onAccessibilityEvent(event);
+    // Stops what was being said when the call notification arrives, even if the call gives no
+    // feedback of its own, such as while Speak notifications is off.
+    if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED
+        && IncomingCallSilence.takeInterrupt()) {
+      interruptAllFeedback(/* stopTtsSpeechCompletely= */ false);
+    }
     if (eventType == AccessibilityEvent.TYPE_TOUCH_INTERACTION_START
         && gestureController != null) {
       gestureController.onUserInputStarted();
@@ -1401,6 +1409,7 @@ public class TalkBackService extends AccessibilityServiceCompat
   protected boolean onKeyEventInternal(KeyEvent keyEvent) {
     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
       RecentUserInput.mark();
+      IncomingCallSilence.onKeyDown(keyEvent);
       if (gestureController != null) {
         gestureController.onUserInputStarted();
       }
@@ -2306,6 +2315,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     batteryMonitor = new BatteryMonitor(this);
     statusReader = new StatusReader(this, batteryMonitor);
     callStateMonitor = new CallStateMonitor(this);
+    IncomingCallSilence.init(this);
     inputMethodMonitor = new InputMethodMonitor(this);
     audioPlaybackMonitor = new AudioPlaybackMonitor(this);
     @NonNull TouchMonitor touchMonitor = new TouchMonitor();
@@ -3601,6 +3611,9 @@ public class TalkBackService extends AccessibilityServiceCompat
     globalVariables.setSpeakNotifications(
         getBooleanPref(
             R.string.pref_speak_notifications_key, R.bool.pref_speak_notifications_default));
+    IncomingCallSilence.setSpeakIncomingCalls(
+        getBooleanPref(
+            R.string.pref_speak_incoming_calls_key, R.bool.pref_speak_incoming_calls_default));
 
     final boolean useSingleTap =
         getBooleanPref(R.string.pref_single_tap_key, R.bool.pref_single_tap_default);

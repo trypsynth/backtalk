@@ -155,6 +155,12 @@
       android:title="@string/title_pref_speak_notifications" />
 
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+      android:defaultValue="@bool/pref_speak_incoming_calls_default"
+      android:key="@string/pref_speak_incoming_calls_key"
+      android:summary="@string/summary_pref_speak_incoming_calls"
+      android:title="@string/title_pref_speak_incoming_calls" />
+
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_speak_volume_changes_default"
       android:key="@string/pref_speak_volume_changes_key"
       android:summary="@string/summary_pref_speak_volume_changes"

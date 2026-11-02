@@ -68,6 +68,7 @@ import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.SystemActionPerformer;
 import com.google.android.accessibility.talkback.contextmenu.ListMenuManager;
 import com.google.android.accessibility.talkback.keyboard.KeyComboManager;
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence;
 import com.google.android.accessibility.talkback.selector.SelectorController;
 import com.google.android.accessibility.talkback.selector.SelectorController.AnnounceType;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils.SpellingSuggestion;
@@ -104,6 +105,7 @@ public final class BrailleHelper implements ScreenReaderActionPerformer {
   @Override
   public boolean performAction(ScreenReaderAction action, int inputMode, Object... args) {
     RecentUserInput.mark();
+    IncomingCallSilence.onUserInput();
     // Talkback interrupts speech when touch starts.  We also interrupts speech when performing
     // screen reader actions.
     feedbackReturner.returnFeedback(
