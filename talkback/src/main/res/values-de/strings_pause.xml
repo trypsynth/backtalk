@@ -3,7 +3,7 @@
     <!-- Name of the action that pauses Backtalk, in the Backtalk menu, the gesture action list and the menu settings. [CHAR LIMIT=40] -->
     <string name="title_pause_backtalk">Backtalk pausieren</string>
     <!-- Summary of the Backtalk menu setting that shows the Pause Backtalk item. [CHAR LIMIT=NONE] -->
-    <string name="summary_pause_backtalk">Schaltet Sprache, Gesten und Tippen und Entdecken aus, bis du Backtalk wieder fortsetzt.</string>
+    <string name="summary_pause_backtalk">Schaltet Sprache, Gesten und Tippen und Entdecken aus, bis du Backtalk fortsetzt.</string>
     <!-- Keyboard shortcut that pauses Backtalk, or resumes it when it is paused. [CHAR LIMIT=40] -->
     <string name="keycombo_menu_global_pause_backtalk">Backtalk pausieren oder fortsetzen</string>
 
@@ -15,31 +15,31 @@
     <!-- Title of the notification shown while Backtalk is paused. [CHAR LIMIT=NONE] -->
     <string name="notification_title_backtalk_paused">Backtalk ist pausiert</string>
     <!-- Text of the notification shown while Backtalk is paused. Tapping it resumes Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="notification_message_backtalk_paused">Zum fortsetzen tippen</string>
+    <string name="notification_message_backtalk_paused">Zum Fortsetzen tippen</string>
     <!-- Name of the notification channel for the notification shown while Backtalk is paused, in the app's notification settings. [CHAR LIMIT=40] -->
-    <string name="notification_channel_backtalk_paused">Backtalk pauisert</string>
+    <string name="notification_channel_backtalk_paused">Backtalk pausiert</string>
 
     <!-- Title of the dialog that asks before pausing Backtalk. [CHAR LIMIT=NONE] -->
     <string name="dialog_title_pause_backtalk">Backtalk pausieren?</string>
     <!-- Button in the dialog that pauses Backtalk. [CHAR LIMIT=20] -->
     <string name="dialog_button_pause_backtalk">Pausieren</string>
     <!-- Message of the dialog that asks before pausing Backtalk. [CHAR LIMIT=NONE] -->
-    <string name="dialog_message_pause_backtalk">Während backtalk pausiert ist, spricht es nicht respektive reagiert auf Gesten und der Bildschirm funktioniert so, als wäre kein Screen Reader aktiv.</string>
+    <string name="dialog_message_pause_backtalk">Während Backtalk pausiert ist, spricht es nicht und reagiert nicht auf Gesten. Der Bildschirm funktioniert so, als wäre kein Screenreader aktiv.</string>
     <!-- How to resume Backtalk when it resumes at the lock screen. [CHAR LIMIT=NONE] -->
-    <string name="message_resume_keyguard">zum Fortsetzen die Backtalk ist pausiert Benachrichtigung antippen, Leisertaste dreimal schnell drücken oder den Bildschirm sperren und das Telefon aufwecken, sodass der sperrbildschirm erscheint.</string>
+    <string name="message_resume_keyguard">Zum Fortsetzen die Benachrichtigung „Backtalk ist pausiert“ antippen, die Leisertaste dreimal schnell drücken oder das Telefon sperren und wieder aufwecken, sodass der Sperrbildschirm erscheint.</string>
     <!-- How to resume Backtalk when it resumes when the screen turns on. [CHAR LIMIT=NONE] -->
-    <string name="message_resume_screen_on">Zum Fortsetzen die Backtalk ist Pausiert Benachrichtigung antippen, Leisertaste dreimal schnell drücken oder den Bildschirm aus- und wieder einschalten.</string>
+    <string name="message_resume_screen_on">Zum Fortsetzen die Benachrichtigung „Backtalk ist pausiert“ antippen, die Leisertaste dreimal schnell drücken oder den Bildschirm aus- und wieder einschalten.</string>
     <!-- How to resume Backtalk when it only resumes from the notification or a shortcut. [CHAR LIMIT=NONE] -->
-    <string name="message_resume_manual">Zum Fortsetzen die Backtalk ist Pausiert Benachrichtigung antippen oder Leisertaste dreimal schnell drücken.</string>
+    <string name="message_resume_manual">Zum Fortsetzen die Benachrichtigung „Backtalk ist pausiert“ antippen oder die Leisertaste dreimal schnell drücken.</string>
     <!-- Added to the pause dialog when a keyboard shortcut is set for pausing and resuming Backtalk. [CHAR LIMIT=NONE] -->
     <string name="message_resume_key_combo">Du kannst auch <xliff:g id="key_combo" example="Alt + P">%1$s</xliff:g> drücken.</string>
 
     <!-- Title of the setting for when Backtalk resumes after a pause. [CHAR LIMIT=NONE] -->
     <string name="title_pref_resume_backtalk">Backtalk fortsetzen</string>
     <!-- Setting value: Backtalk resumes when the lock screen shows. [CHAR LIMIT=NONE] -->
-    <string name="value_resume_keyguard">Wenn der Bildschirm angezeigt wird</string>
+    <string name="value_resume_keyguard">Wenn der Sperrbildschirm angezeigt wird</string>
     <!-- Setting value: Backtalk resumes when the screen turns on. [CHAR LIMIT=NONE] -->
     <string name="value_resume_screen_on">Wenn der Bildschirm eingeschaltet wird</string>
     <!-- Setting value: Backtalk resumes only from the notification or a shortcut. [CHAR LIMIT=NONE] -->
-    <string name="value_resume_manual">Nur über die Benachrichtigung oder ein Tastenkürzel</string>
+    <string name="value_resume_manual">Nur über die Benachrichtigung oder eine Tastenkombination</string>
 </resources>
