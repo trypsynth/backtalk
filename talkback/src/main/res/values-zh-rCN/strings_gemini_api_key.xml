@@ -53,7 +53,7 @@
     <!-- Spoken when the other AI service answers with an HTTP error and its explanation, which may be in English. [CHAR LIMIT=NONE] -->
     <string name="ai_service_error_with_details">AI 服务无法回答，错误码 <xliff:g id="http_status" example="404">%1$d</xliff:g>：<xliff:g id="details" example="The model does not exist.">%2$s</xliff:g></string>
     <!-- Summary of the Gemini API key setting while another AI service is set up. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_gemini_api_key_other_service">设置其他 AI 服务时不使用</string>
+    <string name="summary_pref_gemini_api_key_other_service">已设置其他 AI 服务时不使用</string>
     <!-- Title of the setting, and of its dialog, for the Gemini model that Describe image and Describe screen use. [CHAR LIMIT=40] -->
     <string name="title_pref_gemini_model">Gemini 模型</string>
     <!-- Message in the dialog where the user enters a Gemini model name. The model built into the app is filled in. [CHAR LIMIT=NONE] -->
