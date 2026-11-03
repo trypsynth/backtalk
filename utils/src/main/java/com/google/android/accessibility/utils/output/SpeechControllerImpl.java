@@ -2191,6 +2191,9 @@ public class SpeechControllerImpl implements SpeechController {
       }
     }
 
+    // Punctuation and locale processing are complete. Keep the stored fragment unchanged.
+    text = iterator.prepareSpeechText(text);
+
     final String logText = (text == null) ? null : String.format("\"%s\"", text.toString());
     LogUtils.v(
         TAG,
@@ -2552,9 +2555,12 @@ public class SpeechControllerImpl implements SpeechController {
 
   private void onFragmentRangeStarted(String utteranceId, int start, int end) {
     int offset = 0;
-    if (currentFragmentIterator != null) {
-      currentFragmentIterator.onFragmentRangeStarted(utteranceId, start, end);
-      offset = currentFragmentIterator.getFeedbackItemOffset();
+    FeedbackFragmentsIterator iterator = currentFragmentIterator;
+    if (iterator != null) {
+      start = iterator.sourceOffset(start);
+      end = iterator.sourceOffset(end);
+      iterator.onFragmentRangeStarted(utteranceId, start, end);
+      offset = iterator.getFeedbackItemOffset();
     }
     final int utteranceIndex = SpeechControllerImpl.parseUtteranceId(utteranceId);
     onUtteranceRangeStarted(utteranceIndex, start + offset, end + offset);

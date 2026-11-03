@@ -1379,11 +1379,21 @@ public class FailoverTextToSpeech {
             if (isReady()) {
               attemptSetLanguage(speakRequest.locale);
               // The queued request's own id: the completing id names the cached speech.
-              ttsSpeak(
-                  speakRequest.text,
-                  speakRequest.queueMode,
-                  speakRequest.bundle,
-                  speakRequest.utteranceId());
+              if (NumbersAsDigits.isPreparedText(speakRequest.text)) {
+                // Prepared speech needs the same length/span handling after cache playback.
+                speakInChunks(
+                    speakRequest.text,
+                    speakRequest.queueMode,
+                    speakRequest.bundle,
+                    speakRequest.utteranceId(),
+                    speakRequest.locale);
+              } else {
+                ttsSpeak(
+                    speakRequest.text,
+                    speakRequest.queueMode,
+                    speakRequest.bundle,
+                    speakRequest.utteranceId());
+              }
             }
           });
     }
@@ -1492,8 +1502,11 @@ public class FailoverTextToSpeech {
    */
   private int speakInChunks(
       CharSequence text, int queueMode, Bundle bundle, String utteranceId, Locale locale) {
+    // A speech-only expansion can exceed the limit checked before feedback processing.
+    // Even with phrase splitting off, never submit an oversized request to the engine.
     List<Integer> starts =
-        utteranceId == null || !speaksInPhrases()
+        utteranceId == null
+                || (!speaksInPhrases() && text.length() < TextToSpeech.getMaxSpeechInputLength())
             ? Collections.singletonList(0)
             : SpeechChunker.chunkStarts(text, locale == null ? Locale.getDefault() : locale);
     if (starts.size() <= 1) {
@@ -1509,7 +1522,11 @@ public class FailoverTextToSpeech {
       String chunkId = utteranceId + CHUNK_ID_SEPARATOR + i;
       speechChunks.put(chunkId, new SpeechChunk(utteranceId, start, i == 0, last));
       int result =
-          ttsSpeak(text.subSequence(start, end), i == 0 ? queueMode : QUEUE_ADD, bundle, chunkId);
+          ttsSpeak(
+              NumbersAsDigits.subSequenceForSpeech(text, start, end),
+              i == 0 ? queueMode : QUEUE_ADD,
+              bundle,
+              chunkId);
       if (result != TextToSpeech.SUCCESS) {
         speechChunks.remove(chunkId);
         if (i == 0) {

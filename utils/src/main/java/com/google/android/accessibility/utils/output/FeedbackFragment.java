@@ -234,9 +234,11 @@ public class FeedbackFragment {
   }
 
   /** Update {@link #mText} and {@link #startIndexInFeedbackItem} by {@link #fragmentStartIndex}. */
-  void updateContentByFragmentStartIndex() {
+  void updateContentByFragmentStartIndex(boolean preparedSpeech) {
     if (fragmentStartIndex < mText.length()) {
-      CharSequence remainingSequence = mText.subSequence(fragmentStartIndex, mText.length());
+      CharSequence remainingSequence =
+          NumbersAsDigits.subSequenceForSpeech(
+              mText, fragmentStartIndex, mText.length(), preparedSpeech);
       mText = remainingSequence;
       startIndexInFeedbackItem += fragmentStartIndex;
       fragmentStartIndex = 0;

@@ -307,6 +307,7 @@ import com.google.android.accessibility.utils.output.EmojiSpeech;
 import com.google.android.accessibility.utils.output.FailoverTextToSpeech;
 import com.google.android.accessibility.utils.output.FeedbackController;
 import com.google.android.accessibility.utils.output.FeedbackProcessingUtils;
+import com.google.android.accessibility.utils.output.NumbersAsDigits;
 import com.google.android.accessibility.utils.output.ScrollActionRecord;
 import com.google.android.accessibility.utils.output.SelectionStateReader;
 import com.google.android.accessibility.utils.output.SpeechController;
@@ -3585,6 +3586,10 @@ public class TalkBackService extends AccessibilityServiceCompat
                 res,
                 R.string.pref_punctuation_verbosity,
                 R.string.pref_punctuation_verbosity_default)));
+    NumbersAsDigits.setEnabled(
+        getBooleanPref(
+            R.string.pref_speak_numbers_as_digits_key,
+            R.bool.pref_speak_numbers_as_digits_default));
     EmojiSpeech.setMode(
         this,
         SharedPreferencesUtils.getStringPref(

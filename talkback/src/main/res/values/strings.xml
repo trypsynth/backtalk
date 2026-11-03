@@ -4494,4 +4494,8 @@ Do not use any markdown in your response."</string>
   <string name="title_pref_restore_focus_on_back">Restore focus when going back</string>
   <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
   <string name="summary_pref_restore_focus_on_back">Return to the last focused item when going back to a screen.</string>
+  <!-- Switch in Verbosity settings. Reads adjacent digits separately instead of as a whole number. [CHAR LIMIT=60] -->
+  <string name="title_pref_speak_numbers_as_digits">Speak numbers as digits</string>
+  <!-- Summary of the optional number-reading switch in Verbosity settings. [CHAR LIMIT=150] -->
+  <string name="summary_pref_speak_numbers_as_digits">Read consecutive digits individually, including leading zeros</string>
 </resources>

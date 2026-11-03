@@ -2148,4 +2148,6 @@
   <item type="id" name="voice_profile_menu" />
   <string name="pref_restore_focus_on_back_key">pref_restore_focus_on_back</string>
   <string name="pref_scroll_to_restore_previous_focus_key">pref_scroll_to_restore_previous_focus</string>
+    <string name="pref_speak_numbers_as_digits_key" translatable="false">pref_speak_numbers_as_digits</string>
+    <bool name="pref_speak_numbers_as_digits_default">false</bool>
 </resources>
