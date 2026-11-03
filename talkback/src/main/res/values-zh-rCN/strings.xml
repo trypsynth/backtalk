@@ -149,7 +149,7 @@
   <!-- Shown in Backtalk's notification list when there are no notifications. [CHAR_LIMIT=NONE] -->
   <string name="notification_list_empty">无通知</string>
   <!-- Shown in Backtalk's notification list when Backtalk does not have notification access. [CHAR_LIMIT=NONE] -->
-  <string name="notification_list_no_access">通知使用权已关闭</string>
+  <string name="notification_list_no_access">通知使用权未开启</string>
   <!-- Button that opens the system setting for Backtalk's notification access. [CHAR_LIMIT=NONE] -->
   <string name="notification_list_grant_access">开启通知使用权</string>
   <!-- Button in Backtalk's notification list that opens the system's quick settings. [CHAR_LIMIT=NONE] -->
@@ -172,6 +172,10 @@
   <string name="notification_list_previous">上一曲</string>
   <!-- Action on a media notification in Backtalk's notification list that skips to the next item. [CHAR_LIMIT=NONE] -->
   <string name="notification_list_next">下一曲</string>
+  <!-- Number of notifications in a group in Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+  <plurals name="notification_list_group_count">
+    <item quantity="other">%d 条通知</item>
+  </plurals>
   <string name="talkback_exit_watermark_text">TalkBack 已开启。双指按住屏幕 5 秒即可将其关闭。如要停止显示此消息，请用 3 根手指点按以打开 TalkBack 菜单。</string>
   <string name="talkback_exit_watermark_hint_text">显示一条表明 TalkBack 已开启的横幅。若要关闭 TalkBack，请用 2 根手指按住屏幕 5 秒。若要移除此横幅，请前往 TalkBack 设置。</string>
   <string name="reset_gesture_settings_title">重置手势设置</string>
@@ -1574,7 +1578,7 @@
   <!-- Title of an Advanced Settings switch. Allows scrolling to the remembered item when returning to a screen. [CHAR LIMIT=NONE] -->
   <string name="title_pref_scroll_to_restore_previous_focus">滚动以恢复先前的焦点</string>
   <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
-  <string name="summary_pref_scroll_to_restore_previous_focus">返回时滚动到最后聚焦的项。</string>
+  <string name="summary_pref_scroll_to_restore_previous_focus">返回上一界面时，滚动到最后聚焦的项。</string>
   <!-- Title of the phone Advanced Settings switch. Opt in to remembering an accessibility element when using Back. [CHAR LIMIT=NONE] -->
   <string name="title_pref_restore_focus_on_back">返回时恢复焦点</string>
   <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
@@ -1824,7 +1828,7 @@
     <!-- Switch below the screen-on time and status choices; suppresses extra automatic lock-screen speech. [CHAR LIMIT=NONE] -->
     <string name="title_pref_suppress_extra_screen_on_speech">仅朗读以上项目</string>
     <!-- Summary for limiting automatic lock-screen wake speech to the time and status choices above this switch. [CHAR LIMIT=NONE] -->
-    <string name="summary_pref_suppress_extra_screen_on_speech">锁屏界面亮起时，仅朗读所选项。</string>
+    <string name="summary_pref_suppress_extra_screen_on_speech">锁屏界面亮起时，仅朗读以上开启的项。</string>
 
     <!-- Switch to say the ringer mode. [CHAR LIMIT=NONE] -->
     <string name="title_pref_announce_ringer_mode">铃声模式</string>
