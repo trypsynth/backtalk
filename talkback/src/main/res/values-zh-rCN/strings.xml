@@ -9,6 +9,10 @@
   <string name="language_options">语言</string>
   <string name="spoken_language">使用的语言</string>
   <string name="actions">操作</string>
+  <!-- Summary of a settings category heading whose settings are hidden until it is activated. [CHAR LIMIT=30] -->
+  <string name="category_collapsed">已收起</string>
+  <!-- Summary of a settings category heading whose settings are shown. [CHAR LIMIT=30] -->
+  <string name="category_expanded">已展开</string>
   <string name="system_actions">系统操作</string>
   <string name="talkback_preferences_subtitle">版本 %1$s</string>
   <string name="label_manager_summary_title">管理自定义标签</string>
@@ -90,6 +94,10 @@
   <string name="reset_latency_settings_title">重置所有延迟时间设置</string>
   <string name="title_pref_single_tap">点按一次即可激活</string>
   <string name="summary_pref_single_tap">只需点按一次聚焦的项目即可将其激活，这种导航方式比点按两次更快。</string>
+  <!-- Preference for direct click. When enabled, activating the focused item (double-tap, the activation key or a braille display) touches the item on the screen, as a finger would, instead of asking the app to activate it. Some app buttons only react to a real touch. [CHAR LIMIT=NONE]-->
+  <string name="title_pref_direct_click">直接点击</string>
+  <!-- Summary sub-text for direct click. When enabled, activating the focused item touches the item on the screen, as a finger would, instead of asking the app to activate it. Text fields and sliders are still activated the usual way, because a touch would put the cursor or set the value where it lands. [CHAR LIMIT=NONE]-->
+  <string name="summary_pref_direct_click">双击会像手指一样直接按在屏幕上焦点项所在的位置，而非请求应用执行激活。这有助于处理那些不响应双击动作的按钮。编辑框和滑块仍按常规方式激活。</string>
   <string name="pref_verbosity_title">详细程度</string>
   <string name="pref_punctuation_title">读出标点和符号</string>
   <string name="title_pref_category_manage_focus_indicator">更改焦点指示器</string>
@@ -122,6 +130,52 @@
   <string name="title_pref_advanced_settings">高级设置</string>
   <string name="title_pref_show_exit_watermark">显示 TalkBack 关闭说明</string>
   <string name="summary_pref_show_exit_watermark">当 TalkBack 处于开启状态时，系统会显示一条消息，帮助您快速关闭该功能</string>
+  <!-- Title of the switch that makes the Notifications action open Backtalk's own list of notifications instead of the system's notification shade. [CHAR_LIMIT=NONE] -->
+  <string name="title_pref_notification_list">使用 Backtalk 通知列表</string>
+  <!-- Title of the screen that chooses which parts of a notification Backtalk's notification list speaks, and their order. [CHAR_LIMIT=NONE] -->
+  <string name="title_pref_notification_parts">通知详情</string>
+  <!-- A part of a notification that Backtalk's notification list can speak: its title. [CHAR_LIMIT=NONE] -->
+  <string name="notification_part_title">标题</string>
+  <!-- A part of a notification that Backtalk's notification list can speak: its text. [CHAR_LIMIT=NONE] -->
+  <string name="notification_part_text">正文</string>
+  <!-- A part of a notification that Backtalk's notification list can speak: the name of the app that posted it. [CHAR_LIMIT=NONE] -->
+  <string name="notification_part_app">应用名称</string>
+  <!-- A part of a notification that Backtalk's notification list can speak: when it was posted. [CHAR_LIMIT=NONE] -->
+  <string name="notification_part_time">时间</string>
+  <!-- A part of a media notification that Backtalk's notification list can speak: whether its media is playing or paused. [CHAR_LIMIT=NONE] -->
+  <string name="notification_part_playback">播放或暂停</string>
+  <!-- Title of Backtalk's own list of notifications. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_title">通知</string>
+  <!-- Shown in Backtalk's notification list when there are no notifications. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_empty">无通知</string>
+  <!-- Shown in Backtalk's notification list when Backtalk does not have notification access. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_no_access">通知使用权未开启</string>
+  <!-- Button that opens the system setting for Backtalk's notification access. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_grant_access">开启通知使用权</string>
+  <!-- Button in Backtalk's notification list that opens the system's quick settings. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_quick_settings">快捷设置</string>
+  <!-- Accessibility action that removes a notification from Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_dismiss">关闭</string>
+  <!-- Button in Backtalk's notification list that removes every notification that can be removed. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_clear_all">清空</string>
+  <!-- Button that sends a reply typed in Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_send">发送</string>
+  <!-- State of a media notification in Backtalk's notification list whose media is playing. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_playing">播放中</string>
+  <!-- State of a media notification in Backtalk's notification list whose media is paused. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_paused">已暂停</string>
+  <!-- Action on a media notification in Backtalk's notification list that starts playback. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_play">播放</string>
+  <!-- Action on a media notification in Backtalk's notification list that pauses playback. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_pause">暂停</string>
+  <!-- Action on a media notification in Backtalk's notification list that skips to the previous item. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_previous">上一曲</string>
+  <!-- Action on a media notification in Backtalk's notification list that skips to the next item. [CHAR_LIMIT=NONE] -->
+  <string name="notification_list_next">下一曲</string>
+  <!-- Number of notifications in a group in Backtalk's notification list. [CHAR_LIMIT=NONE] -->
+  <plurals name="notification_list_group_count">
+    <item quantity="other">%d 条通知</item>
+  </plurals>
   <string name="talkback_exit_watermark_text">TalkBack 已开启。双指按住屏幕 5 秒即可将其关闭。如要停止显示此消息，请用 3 根手指点按以打开 TalkBack 菜单。</string>
   <string name="talkback_exit_watermark_hint_text">显示一条表明 TalkBack 已开启的横幅。若要关闭 TalkBack，请用 2 根手指按住屏幕 5 秒。若要移除此横幅，请前往 TalkBack 设置。</string>
   <string name="reset_gesture_settings_title">重置手势设置</string>
@@ -228,6 +282,8 @@
   <string name="keycombo_menu_other_custom_actions">显示操作</string>
   <string name="keycombo_menu_other_language_options">显示已安装的语言</string>
   <string name="keycombo_menu_other_copy_last_spoken_phrase">复制最后说出的词组</string>
+  <!-- Keyboard key combination assignment for adding the last spoken phrase to the text on the clipboard. [CHAR LIMIT=60] -->
+  <string name="keycombo_menu_other_append_last_spoken_phrase">追加最后说出的词组到剪贴板</string>
   <string name="keycombo_menu_other_open_tts_settings">打开文字转语音设置</string>
   <string name="keycombo_menu_other_open_talkback_settings">开启 TalkBack 设置</string>
   <string name="keycombo_menu_other_report_issue">发送反馈</string>
@@ -439,6 +495,8 @@
   <string name="shortcut_home">主屏幕</string>
   <string name="shortcut_overview">概览</string>
   <string name="shortcut_notifications">通知</string>
+  <!-- Label for the shortcut that opens the system's notification shade, even when the Notifications shortcut opens Backtalk's own notification list. [CHAR_LIMIT=40] -->
+  <string name="shortcut_system_notifications">系统通知栏</string>
   <string name="shortcut_quick_settings">快捷设置</string>
   <string name="shortcut_show_custom_actions">显示自定义操作</string>
   <string name="shortcut_talkback_breakout">打开 TalkBack 菜单</string>
@@ -475,6 +533,16 @@
   <string name="shortcut_media_control">播放或暂停媒体</string>
   <string name="shortcut_voice_input">开始或结束语音输入</string>
   <string name="shortcut_media_control_or_voice_input">播放或暂停媒体，开始或结束语音输入</string>
+  <!-- Gesture action that stops what is playing in the app playing media. [CHAR_LIMIT=60] -->
+  <string name="shortcut_media_stop">停止媒体</string>
+  <!-- Gesture action that skips to the previous track in the app playing media. [CHAR_LIMIT=60] -->
+  <string name="shortcut_media_previous">上一曲</string>
+  <!-- Gesture action that skips to the next track in the app playing media. [CHAR_LIMIT=60] -->
+  <string name="shortcut_media_next">下一曲</string>
+  <!-- Gesture action that rewinds what is playing in the app playing media. [CHAR_LIMIT=60] -->
+  <string name="shortcut_media_rewind">快退</string>
+  <!-- Gesture action that fast-forwards what is playing in the app playing media. [CHAR_LIMIT=60] -->
+  <string name="shortcut_media_fast_forward">快进</string>
   <string name="shortcut_increase_volume">调高音量</string>
   <string name="shortcut_decrease_volume">调低音量</string>
   <string name="shortcut_all_apps">所有应用</string>
@@ -531,6 +599,12 @@
   <string name="title_granularity">导航</string>
   <string name="title_read_from_top">从顶部开始朗读</string>
   <string name="title_copy_last_spoken_phrase">复制最后说出的词组</string>
+  <!-- Backtalk menu item and gesture action that adds the last phrase Backtalk said to the text it copied, on a new line, so that several phrases can be copied together. [CHAR LIMIT=NONE] -->
+  <string name="title_append_last_spoken_phrase">追加最后说出的词组到剪贴板</string>
+  <!-- Edit options menu item that deletes all the text in the focused text field. [CHAR LIMIT=40] -->
+  <string name="title_edittext_clear">清空</string>
+  <!-- Spoken when the text in a text field could not be cleared. [CHAR LIMIT=NONE] -->
+  <string name="cannot_clear_feedback">无法清空</string>
   <string name="title_spell_last_spoken_phrase">拼写最后说出的词组</string>
   <string name="title_repeat_last_spoken_phrase">重复最后说出的词组</string>
   <string name="title_custom_action">操作</string>
@@ -559,6 +633,8 @@
   <string name="summary_granularity">按字符、字词或行等单位朗读</string>
   <string name="summary_read_from_top">从顶部开始，朗读屏幕上的所有项</string>
   <string name="summary_read_from_current">从聚焦的项开始，朗读屏幕上的所有项。</string>
+  <!-- Summary of the setting that shows Add last spoken phrase to clipboard in the Backtalk menu. [CHAR LIMIT=NONE] -->
+  <string name="summary_append_last_spoken_phrase">将 Backtalk 最后说出的词组另起一行追加到你复制的文本中，即可将多个词组一起复制</string>
   <string name="summary_copy_last_spoken_phrase">将 TalkBack 最后朗读的词组复制到剪贴板，以便您粘贴相应文字</string>
   <string name="summary_spell_last_spoken_phrase">逐字拼写 TalkBack 最后朗读的词组</string>
   <string name="summary_repeat_last_spoken_phrase">再听一遍 TalkBack 最后朗读的词组</string>
@@ -574,6 +650,8 @@
   <string name="not_editable">无法修改</string>
   <string name="not_selectable">无法选择</string>
   <string name="summary_actions">执行操作</string>
+  <!-- Summary for the navigation options menu or quick menu containing media controls. [CHAR_LIMIT=190] -->
+  <string name="summary_media_controls">控制媒体播放</string>
   <string name="summary_spell_check">在拼写建议和语法建议之间跳转</string>
   <string name="summary_characters">每次朗读一个字符</string>
   <string name="summary_words">每次朗读一个字词</string>
@@ -618,6 +696,8 @@
   <string name="summary_audio_ducking">当 TalkBack 朗读内容时，调低正在播放的其他音频的音量</string>
   <string name="summary_support_scroll_seq">向前或向后滚动</string>
   <string name="summary_support_change_a11y_volume">调高或调低无障碍功能音量</string>
+  <!-- Summary for the quick menu containing media volume change. [CHAR_LIMIT=70] -->
+  <string name="summary_support_change_media_volume">增减媒体音量</string>
   <string name="summary_support_change_touch_explore_latency">延长或缩短输入焦点延迟时间</string>
   <string name="summary_support_change_touch_focus_latency">延长或缩短焦点延迟时间</string>
   <string name="summary_screen_overview">使用操作按钮总结屏幕上的内容</string>
@@ -648,6 +728,38 @@
   <string name="title_pref_shortcut_right_and_up">先向右再向上滑动</string>
   <string name="title_pref_shortcut_left_and_down">先向左再向下滑动</string>
   <string name="title_pref_shortcut_left_and_up">先向左再向上滑动</string>
+  <!-- Label for the preference that assigns an action to the "swipe up, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_up_then_hold">上滑后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe down, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_down_then_hold">下滑后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe left, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_left_then_hold">左滑后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe right, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_right_then_hold">右滑后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe up then down, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_up_and_down_then_hold">先上再下滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe down then up, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_down_and_up_then_hold">先下再上滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe left then right, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_left_and_right_then_hold">先左再右滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe right then left, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_right_and_left_then_hold">先右再左滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe up then left, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_up_and_left_then_hold">先上再左滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe up then right, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_up_and_right_then_hold">先上再右滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe down then left, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_down_and_left_then_hold">先下再左滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe down then right, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_down_and_right_then_hold">先下再右滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe left then up, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_left_and_up_then_hold">先左再上滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe left then down, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_left_and_down_then_hold">先左再下滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe right then up, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_right_and_up_then_hold">先右再上滑动后停留</string>
+  <!-- Label for the preference that assigns an action to the "swipe right then down, then keep the finger on the screen" gesture. [CHAR_LIMIT=50] -->
+  <string name="title_pref_shortcut_right_and_down_then_hold">先右再下滑动后停留</string>
   <string name="title_pref_shortcut_2finger_1tap">双指点按</string>
   <string name="title_pref_shortcut_2finger_1tap_xr">用 1 根手指点按触控板</string>
   <string name="title_pref_shortcut_2finger_2tap">双指点按两次</string>
@@ -828,6 +940,11 @@
   <string name="title_pref_selector_audio_focus">降低其他应用音量</string>
   <string name="title_pref_support_scroll_seq">滚动</string>
   <string name="title_pref_a11y_volume">无障碍功能音量</string>
+  <!--
+    Source: Title for the preference that allows user to change Media volume.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+  -->
+  <string name="title_pref_media_volume">媒体音量</string>
   <string name="title_pref_touch_explore_latency">输入焦点延迟</string>
   <string name="title_pref_touch_focus_latency">焦点延迟</string>
   <string name="message_pref_touch_focus_latency">焦点延迟时间越短，TalkBack 在您触摸屏幕后进行播报的速度就越快</string>
@@ -843,6 +960,23 @@
   <string name="hint_no_grammar_suggestion">未提供任何语法建议。</string>
   <string name="title_pref_selector_adjustable_widget_number_picker">调整值</string>
   <string name="title_pref_selector_actions">操作</string>
+  <!--
+    Source: Title for the preference that allows user to control media playback.
+    Description: The user can check or not check this. [CHAR LIMIT=30]
+  -->
+  <string name="title_pref_media_controls">媒体控制</string>
+  <!-- Action in the Media controls reading control that skips to the previous item. [CHAR_LIMIT=30] -->
+  <string name="media_action_previous">上一曲</string>
+  <!-- Action in the Media controls reading control that rewinds the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_rewind">快退</string>
+  <!-- Action in the Media controls reading control that plays or pauses the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_play_pause">播放、暂停</string>
+  <!-- Action in the Media controls reading control that stops the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_stop">停止</string>
+  <!-- Action in the Media controls reading control that fast-forwards the current item. [CHAR_LIMIT=30] -->
+  <string name="media_action_fast_forward">快进</string>
+  <!-- Action in the Media controls reading control that skips to the next item. [CHAR_LIMIT=30] -->
+  <string name="media_action_next">下一曲</string>
   <string name="title_pref_cache_keyboard_keys">更快地播报键盘按键</string>
   <string name="title_pref_sound_and_vibration">提示音和振动</string>
   <string name="title_pref_sound">声音</string>
@@ -1395,6 +1529,10 @@
   <string name="shortcut_column_right">下一列</string>
   <string name="table_navigation_not_supported">不支持表格导航</string>
   <string name="pref_auto_enter_table_navigation_title">进入表格时自动切换到表格导航朗读控件</string>
+  <!-- Title of the navigation setting that keeps the selected reading control in web content. [CHAR_LIMIT=NONE] -->
+  <string name="title_pref_preserve_web_reading_control">在网页上保持所选的朗读控件</string>
+  <!-- Explains that automatic Actions selection is suppressed during web reading. [CHAR_LIMIT=NONE] -->
+  <string name="summary_pref_preserve_web_reading_control">浏览网页内容时保持使用你所选的朗读控件。你仍可手动选择操作。</string>
   <string name="title_text_formatting_menu">描述文字格式</string>
   <string name="summary_text_formatting_menu">读出不同的文字格式，例如粗体、斜体、下划线等</string>
   <string name="title_text_formatting_inline">读出文字格式信息</string>
@@ -1437,6 +1575,14 @@
   <string name="close_string">关闭</string>
   <string name="talkback_label">TalkBack</string>
   <string name="notifictions_in_lock_screen_notification_content">如需在屏幕处于关闭状态时听到通知，请在 TalkBack 详细程度设置中开启“屏幕处于关闭状态时读出通知”</string>
+  <!-- Title of an Advanced Settings switch. Allows scrolling to the remembered item when returning to a screen. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_scroll_to_restore_previous_focus">滚动以恢复先前的焦点</string>
+  <!-- Summary of the Advanced Settings switch. Visible items are restored even when this switch is off. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_scroll_to_restore_previous_focus">返回上一界面时，滚动到最后聚焦的项。</string>
+  <!-- Title of the phone Advanced Settings switch. Opt in to remembering an accessibility element when using Back. [CHAR LIMIT=NONE] -->
+  <string name="title_pref_restore_focus_on_back">返回时恢复焦点</string>
+  <!-- Summary of the phone Advanced Settings switch. Back means returning to the previous app screen or browser page. [CHAR LIMIT=NONE] -->
+  <string name="summary_pref_restore_focus_on_back">返回上一界面时，回到最后聚焦的项。</string>
 
 
 
@@ -1451,6 +1597,10 @@
       Description: Distinguishes the system settings from TalkBack's own speech settings. [CHAR LIMIT=NONE]
     -->
     <string name="title_pref_system_tts_settings">系统文字转语音设置</string>
+    <!-- Title of the reading control that moves to the item below or above, leaving out the other items of the same row. [CHAR LIMIT=40] -->
+    <string name="title_selector_vertical_navigation">垂直导航</string>
+    <!-- Summary of the Vertical navigation reading control in the reading controls settings. [CHAR LIMIT=NONE] -->
+    <string name="summary_selector_vertical_navigation">移动到下方或上方的项，越过该行的其余项。</string>
 
     <!-- Title for the "switch TTS engine" reading control selector item. [CHAR LIMIT=NONE] -->
     <string name="title_selector_switch_tts_engine">语音引擎</string>
@@ -1460,6 +1610,8 @@
 
     <!-- Title for the reading control that switches between voice profiles. [CHAR LIMIT=NONE] -->
     <string name="title_selector_voice_profile">语音配置</string>
+    <!-- Summary for the reading control that switches between voice profiles. [CHAR LIMIT=70] -->
+    <string name="summary_selector_voice_profile">在已保存的语音配置文件之间切换</string>
 
     <!--
       Title for the screen of voice profiles: sets of speech settings, each with its own speech
@@ -1673,6 +1825,10 @@
 
     <!-- Switch to say the time when the screen turns on. [CHAR LIMIT=NONE] -->
     <string name="title_pref_announce_time">时间</string>
+    <!-- Switch below the screen-on time and status choices; suppresses extra automatic lock-screen speech. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_suppress_extra_screen_on_speech">仅朗读以上项目</string>
+    <!-- Summary for limiting automatic lock-screen wake speech to the time and status choices above this switch. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_suppress_extra_screen_on_speech">锁屏界面亮起时，仅朗读以上开启的项。</string>
 
     <!-- Switch to say the ringer mode. [CHAR LIMIT=NONE] -->
     <string name="title_pref_announce_ringer_mode">铃声模式</string>
@@ -1899,6 +2055,8 @@
       Description: Title of the audio output device setting. [CHAR LIMIT=35]
     -->
     <string name="title_pref_audio_output_device">音频输出设备</string>
+    <!-- Summary for the reading control that changes the audio output device. [CHAR LIMIT=70] -->
+    <string name="summary_selector_audio_output_device">更改 Backtalk 的语音输出位置，例如手机扬声器或耳机</string>
 
     <!--
       Source: Dialog title when choosing the audio output device.
@@ -2009,6 +2167,12 @@
 
     <!-- Label for multi-tap timeout. [CHAR LIMIT=NONE]-->
     <string name="value_multi_tap_timeout_250ms">0.25 秒（默认）</string>
+    <!-- Title for how long the finger must rest on the screen after a one-finger swipe for a swipe and hold gesture to count. [CHAR LIMIT=NONE]-->
+    <string name="title_pref_swipe_hold_timeout">滑动后停留时长</string>
+    <!-- Label for the hold time after a swipe. [CHAR LIMIT=NONE]-->
+    <string name="value_swipe_hold_timeout_75ms">0.075 秒</string>
+    <!-- Label for the hold time after a swipe. [CHAR LIMIT=NONE]-->
+    <string name="value_swipe_hold_timeout_125ms">0.125 秒</string>
 
     <!-- Title for how far 2 fingers must turn on the screen to move the rotor by one reading control. [CHAR LIMIT=NONE]-->
     <string name="title_pref_rotor_step_degrees">转子每步角度</string>
@@ -2033,6 +2197,10 @@
 
     <!-- Reduce delays: summary of the low-latency audio switch. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_low_latency_audio">通过手机最快的音频通路播放 Backtalk 的声音和语音，让你更快听到。如果语音或声音出现断裂或异常，请关闭此选项。</string>
+    <!-- Reduce delays: switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=50] -->
+    <string name="title_pref_swipe_before_lift">抬起手指前移动焦点</string>
+    <!-- Reduce delays: summary of the switch that moves to the next item as soon as a swipe starts. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_swipe_before_lift">在手指开始滑动时，而非抬起时，即移动到下一项或上一项。如果滑动动作转变为先右再下之类的其他手势，在 Backtalk 回到原项之前，你可能会短暂听到下一项。</string>
 
     <!-- Label for the default focus delay, 0.2 seconds. [CHAR LIMIT=NONE]-->
     <string name="value_focus_delay_200ms_default">0.2 秒（默认）</string>
@@ -2063,6 +2231,12 @@
 
     <!-- Summary of the wrap around setting. [CHAR LIMIT=NONE]-->
     <string name="summary_pref_wrap_around">滑过最后一项回到第一项，滑过第一项到末项。关闭时改为在末尾播放提示音。</string>
+    <!-- Title of the switch that makes touching the screen stop speech. When off, speech goes on until touch focuses an item. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_touch_stops_speech">触屏时停止朗读</string>
+    <!-- Title of the switch that removes Links and Controls from the reading controls when the focused item is not in web content. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_selector_links_controls_web_only">仅网页内容中的链接和控件</string>
+    <!-- Summary for the setting that limits Links and Controls to web content. [CHAR LIMIT=70] -->
+    <string name="summary_selector_links_controls_web_only">将链接和控件导航设置限制为仅适用于网页内容</string>
 
     <!-- Title of the switch that moves accessibility focus into a window when it opens or comes back, such as when an app opens or you go back. [CHAR LIMIT=NONE] -->
     <string name="title_pref_focus_new_windows">把焦点移到新窗口</string>
