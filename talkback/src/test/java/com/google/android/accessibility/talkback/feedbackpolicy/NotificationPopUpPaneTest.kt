@@ -17,6 +17,7 @@
 package com.google.android.accessibility.talkback.feedbackpolicy
 
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import com.google.android.accessibility.talkback.feedbackpolicy.NotificationPopUpPane.PaneWindow
 import com.google.android.accessibility.utils.input.WindowEventInterpreter
 import org.junit.Assert.assertFalse
@@ -29,15 +30,19 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class NotificationPopUpPaneTest {
-  private val popUp = PaneWindow(SYSTEM_UI, isActive = false, showsNotification = { true })
+  private val popUp = PaneWindow(SYSTEM_UI, isActiveOrFocused = false, showsNotification = { true })
 
-  private fun paneAppeared(windowId: Int = SHADE, mainWindowsChanged: Boolean = false) =
-    WindowEventInterpreter.EventInterpretation().apply {
-      setEventType(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
-      setContentChangeTypes(AccessibilityEvent.CONTENT_CHANGE_TYPE_PANE_APPEARED)
-      setMainWindowsChanged(mainWindowsChanged)
-      eventSourceWindow.setId(windowId)
-    }
+  private fun paneAppeared(
+    windowId: Int = SHADE,
+    mainWindowsChanged: Boolean = false,
+    sourcePackage: String? = null,
+  ) = WindowEventInterpreter.EventInterpretation().apply {
+    setEventType(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+    setContentChangeTypes(AccessibilityEvent.CONTENT_CHANGE_TYPE_PANE_APPEARED)
+    setMainWindowsChanged(mainWindowsChanged)
+    eventSourceWindow.setId(windowId)
+    sourcePackage?.let { setSourceNode(AccessibilityNodeInfo().apply { packageName = it }) }
+  }
 
   private fun isPopUp(
     interpretation: WindowEventInterpreter.EventInterpretation,
@@ -49,25 +54,27 @@ class NotificationPopUpPaneTest {
   @Test
   fun notificationPoppingUpIsQuiet() {
     assertTrue(isPopUp(paneAppeared(), popUp))
+    assertTrue(isPopUp(paneAppeared(sourcePackage = SYSTEM_UI), popUp))
   }
 
   @Test
   fun openingTheShadeIsSpoken() {
     assertFalse(isPopUp(paneAppeared(mainWindowsChanged = true), popUp))
-    assertFalse(isPopUp(paneAppeared(), PaneWindow(SYSTEM_UI, isActive = true) { true }))
+    assertFalse(isPopUp(paneAppeared(), PaneWindow(SYSTEM_UI, isActiveOrFocused = true) { true }))
   }
 
   @Test
   fun systemUiPaneWithoutNotificationIsSpoken() {
-    assertFalse(isPopUp(paneAppeared(), PaneWindow(SYSTEM_UI, isActive = false) { false }))
+    assertFalse(isPopUp(paneAppeared(), PaneWindow(SYSTEM_UI, isActiveOrFocused = false) { false }))
   }
 
   @Test
   fun otherAppsAndUnknownWindowsAreSpoken() {
-    assertFalse(isPopUp(paneAppeared(), PaneWindow("example.app", isActive = false) { true }))
-    assertFalse(isPopUp(paneAppeared(), PaneWindow(null, isActive = false) { true }))
+    assertFalse(isPopUp(paneAppeared(), PaneWindow("example.app", isActiveOrFocused = false) { true }))
+    assertFalse(isPopUp(paneAppeared(), PaneWindow(null, isActiveOrFocused = false) { true }))
     assertFalse(isPopUp(paneAppeared(), window = null))
     assertFalse(isPopUp(paneAppeared(windowId = OTHER), popUp))
+    assertFalse(isPopUp(paneAppeared(sourcePackage = "example.app"), popUp))
   }
 
   @Test

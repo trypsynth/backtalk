@@ -19,7 +19,8 @@ package com.google.android.accessibility.talkback.feedbackpolicy
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
 import com.google.android.accessibility.talkback.monitor.ScreenOnSpeechSuppression
-import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils.WINDOW_ID_NONE
+import com.google.android.accessibility.utils.AccessibilityServiceCompatUtils
+import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils
 import com.google.android.accessibility.utils.input.WindowEventInterpreter
 
 /**
@@ -33,7 +34,7 @@ object NotificationPopUpPane {
   /** What the check needs to know about the window that a pane appeared in. */
   internal class PaneWindow(
     val packageName: String?,
-    val isActive: Boolean,
+    val isActiveOrFocused: Boolean,
     val showsNotification: () -> Boolean,
   )
 
@@ -57,16 +58,18 @@ object NotificationPopUpPane {
       interpretation.mainWindowsChanged) {
       return false
     }
-    val windowId = interpretation.eventSourceWindow.id
-    if (windowId == WINDOW_ID_NONE) return false
-    val paneWindow = window(windowId) ?: return false
-    return !paneWindow.isActive && paneWindow.packageName in systemUiPackages &&
+    // The event's own source names its package without asking the app, so other apps' panes are
+    // let through before any window lookup.
+    val sourcePackage = interpretation.sourceNode?.packageName?.toString()
+    if (sourcePackage != null && sourcePackage !in systemUiPackages) return false
+    val paneWindow = window(interpretation.eventSourceWindow.id) ?: return false
+    return !paneWindow.isActiveOrFocused && paneWindow.packageName in systemUiPackages &&
       paneWindow.showsNotification()
   }
 
   private fun paneWindow(service: AccessibilityService, windowId: Int): PaneWindow? {
-    val window = service.windows.firstOrNull { it.id == windowId } ?: return null
-    val root = window.root ?: return null
+    val window = AccessibilityServiceCompatUtils.getWindowInfo(service, windowId) ?: return null
+    val root = AccessibilityWindowInfoUtils.getRoot(window) ?: return null
     val packageName = root.packageName?.toString()
     return PaneWindow(packageName, window.isActive || window.isFocused) {
       root.findAccessibilityNodeInfosByViewId("$packageName:$NOTIFICATION_ROW_ID").isNotEmpty()
