@@ -225,6 +225,33 @@ With **Controls** > **Touch and activation** > **Stop speech when touching the s
 
 When you turn speech off with its gesture or keyboard shortcut, TalkBack also dropped the sounds and vibrations that go with each item, so moving focus or activating an item gave no feedback at all. Backtalk still plays them, so you can tell that focus moved while speech is off.
 
+### Speak numbers as digits
+
+In **Verbosity**, **Speak numbers as digits** reads consecutive digits separately,
+including leading zeros. For example, `000123` is spoken as `0 0 0 1 2 3`.
+It is off by default. It changes only the text sent for speech; the app's text and
+accessibility navigation stay unchanged. Existing spaces and punctuation characters are kept.
+Commas, periods, plus and minus signs, currency symbols and letters immediately
+next to a digit are separated too: `$1,500.00` is sent for speech as
+`$ 1 , 5 0 0 . 0 0`, and `R7` as `R 7`. This applies to letter/digit boundaries
+in other text too, such as `A12B` becoming `A 1 2 B`. Other punctuation is left
+unchanged. Punctuation is still spoken according to the existing punctuation
+setting and speech engine.
+
+On an Oppo CPH2197 running Android 13 with Vocalizer Tessa, turning this option
+off kept the usual number pronunciation, and turning it on read consecutive
+digits individually.
+Delimiters were not reliably announced with Vocalizer's own **Process punctuation**
+setting off. Turning on **Process punctuation** and selecting **Most** allowed
+commas, periods and other punctuation to be announced. Tessa called the minus
+character "dash". These are findings from that synthesizer and device; other
+speech engines may pronounce the digits and punctuation differently.
+
+When new speech is generated for digit-spaced text, app-provided spoken wording
+that crosses a speech chunk or resume boundary falls back to the visible text for
+that portion. This avoids repeating the complete replacement. Complete spoken
+replacements and other text formatting are preserved.
+
 ## Notifications
 
 ### Samsung watch notification content

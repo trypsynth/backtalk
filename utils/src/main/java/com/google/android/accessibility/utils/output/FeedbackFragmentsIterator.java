@@ -41,6 +41,25 @@ class FeedbackFragmentsIterator {
   // was paused and resumed, rather than a new one.
   private boolean nextIsContinuation = false;
 
+  @Nullable private volatile NumbersAsDigits.Result numberSpeech;
+  private boolean preparedContinuation;
+
+  /** Prepares only the outgoing copy; the fragment retains original text for resume and history. */
+  @Nullable
+  CharSequence prepareSpeechText(@Nullable CharSequence text) {
+    NumbersAsDigits.Result speech = NumbersAsDigits.process(text);
+    numberSpeech = speech;
+    if (speech != null) {
+      return speech.text;
+    }
+    return preparedContinuation && text != null ? NumbersAsDigits.protect(text) : text;
+  }
+
+  int sourceOffset(int speechOffset) {
+    NumbersAsDigits.Result speech = numberSpeech;
+    return speech == null ? speechOffset : speech.sourceOffset(speechOffset);
+  }
+
   public FeedbackFragmentsIterator(
       @NonNull Iterator<FeedbackFragment> currentFragmentIterator, String feedBackItemUtteranceId) {
     this.currentFragmentIterator = currentFragmentIterator;
@@ -56,8 +75,10 @@ class FeedbackFragmentsIterator {
     nextIsContinuation = feedbackFragment != null;
     if (feedbackFragment != null) {
       // Has pending Fragment.
-      feedbackFragment.updateContentByFragmentStartIndex();
+      preparedContinuation |= numberSpeech != null;
+      feedbackFragment.updateContentByFragmentStartIndex(preparedContinuation);
     } else if (currentFragmentIterator.hasNext()) {
+      preparedContinuation = false;
       feedbackFragment = currentFragmentIterator.next();
       currentFeedbackFragment.set(feedbackFragment);
     }
@@ -146,6 +167,8 @@ class FeedbackFragmentsIterator {
     FeedbackFragmentsIterator clone =
         new FeedbackFragmentsIterator(list.iterator(), feedBackItemUtteranceId);
     clone.currentFeedbackFragment.set(currentFeedbackFragment.get());
+    clone.numberSpeech = numberSpeech;
+    clone.preparedContinuation = preparedContinuation;
 
     currentFragmentIterator = ((ArrayList<FeedbackFragment>) list.clone()).iterator();
 

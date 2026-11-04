@@ -6,6 +6,8 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="title_pref_speak_numbers_as_digits" />
+        <ignore regexp="summary_pref_speak_numbers_as_digits" />
         <ignore regexp="voice_commands_help_call" />
         <ignore regexp="voice_commands_help_call_description" />
         <ignore regexp="voice_commands_help_call_control" />
