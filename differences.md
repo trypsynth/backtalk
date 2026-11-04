@@ -362,6 +362,14 @@ To make these gestures respond faster, shorten the rest to as little as 0.075 se
 
 Swipe and hold gestures and their hold time setting require Android 13 or later and **Handle gestures in Backtalk** turned on. They aren't available on watches.
 
+### Gestures for one app
+
+Any gesture can do something else in one app than in the others. For example, swipe right can move to the next item everywhere and read from the top in your e-book reader. To set this, assign **Set gestures for this app** to a gesture, or turn on **Set gestures for this app** in **Customize menus** > **Backtalk menu**. Then, in the app, use the gesture, or open the Backtalk menu and choose the last item, **Set gestures for** followed by the app's name. Both are off by default.
+
+This opens a list of all gestures for that app. Each one says **Same as in other apps** and the action it has everywhere, until you choose another action for it. To go back to the usual action, choose **Same as in other apps** at the top of its list. **Use the same gestures as in other apps** does this for every gesture in the app at once. **Gesture settings** > **Gestures for apps** lists the apps that have gestures of their own.
+
+The app is the one with the item you're on, so while you're on the keyboard, the app's gestures don't apply. Backtalk's own screens always use the usual gestures, so that you can always reach its settings. Fingerprint gestures and gesture sets aren't set per app. Gestures for one app aren't available on watches.
+
 ### Lift to activate
 
 Backtalk can activate the item under your finger when you lift your finger after exploring by touch, as TalkBack already does for keys on the keyboard. In **Controls** > **Touch and activation** > **Lift to activate**, choose **Only on navigation bar** to use it for the Back, Home, and Overview buttons only, or **Entire screen** to use it everywhere. It's **Disabled** by default. With **Only on navigation bar**, a single tap presses the button, and Backtalk says which one, such as "Back" or "Home". To stop this, turn off **Controls** > **Touch and activation** > **Speak navigation bar buttons**.
