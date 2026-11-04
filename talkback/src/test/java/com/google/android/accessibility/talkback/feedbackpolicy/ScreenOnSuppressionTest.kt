@@ -479,4 +479,34 @@ class ScreenOnSuppressionTest {
     suppression.onDisplayStateChanged(true)
     assertTrue(suppression.isSuppressing())
   }
+
+  @Test
+  fun fingerprintSensorLocationIsMutedOnTheLockScreenOnlyWhenTurnedOff() {
+    val message = "The fingerprint sensor is centered in the lower part of the screen."
+    val prefs = SharedPreferencesUtils.getSharedPreferences(service)
+    val suppression = ScreenOnSpeechSuppression(
+      prefs, initiallyScreenOn = true, systemUiPackages = uiPackages, isLocked = { locked },
+      isFingerprintLocation = { it.equals(message, ignoreCase = true) },
+    )
+    fun event(text: String, type: Int = AccessibilityEvent.TYPE_ANNOUNCEMENT,
+      packageName: String = "com.android.systemui") =
+      rawEvent(type, packageName).apply { this.text.add(text) }
+
+    // On by default, so the message keeps being spoken.
+    assertFalse(suppression.shouldSuppressEvent(event(message)))
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION, false)
+      .commit()
+    // Muted every time it repeats, with no wake window or interaction involved.
+    repeat(3) { assertTrue(suppression.shouldSuppressEvent(event(message))) }
+    suppression.onUserInteraction()
+    assertTrue(suppression.shouldSuppressEvent(event(message)))
+    // Other fingerprint messages, other apps, and touched labels still speak.
+    assertFalse(suppression.shouldSuppressEvent(event("Fingerprint not recognized")))
+    assertFalse(suppression.shouldSuppressEvent(event(message, packageName = "example.app")))
+    assertFalse(suppression.shouldSuppressEvent(
+      event(message, AccessibilityEvent.TYPE_VIEW_HOVER_ENTER)))
+    // Once unlocked, System UI's message speaks again.
+    locked = false
+    assertFalse(suppression.shouldSuppressEvent(event(message)))
+  }
 }
