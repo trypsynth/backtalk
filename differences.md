@@ -362,6 +362,14 @@ To make these gestures respond faster, shorten the rest to as little as 0.075 se
 
 Swipe and hold gestures and their hold time setting require Android 13 or later and **Handle gestures in Backtalk** turned on. They aren't available on watches.
 
+### Edge gestures
+
+The left and right edges of the screen can each give **Swipe up**, **Swipe down**, and **Triple-tap** with one finger an action of their own. To set them up, go to gesture settings, turn on **Edge gestures**, and open **Left edge** or **Right edge**. Each edge is a strip 1 cm wide. To change that, move the **Edge width** slider, from 0.5 cm to 2 cm in steps of 0.25 cm.
+
+An edge action replaces the gesture's usual action only when the gesture starts on that edge. A gesture without an action on the edge does what it does anywhere else, and so does every gesture that starts on the keyboard, so typing isn't affected. Swipe and hold gestures keep their usual actions on the edges. While an edge has a triple tap, a double tap on that edge waits for the time allowed between taps before it activates the item, in case a third tap follows. Exploring by touch works on the edges as before.
+
+Edge gestures require Android 13 or later and **Handle gestures in Backtalk** turned on. They are off by default, and they aren't available on watches.
+
 ### Lift to activate
 
 Backtalk can activate the item under your finger when you lift your finger after exploring by touch, as TalkBack already does for keys on the keyboard. In **Controls** > **Touch and activation** > **Lift to activate**, choose **Only on navigation bar** to use it for the Back, Home, and Overview buttons only, or **Entire screen** to use it everywhere. It's **Disabled** by default. With **Only on navigation bar**, a single tap presses the button, and Backtalk says which one, such as "Back" or "Home". To stop this, turn off **Controls** > **Touch and activation** > **Speak navigation bar buttons**.

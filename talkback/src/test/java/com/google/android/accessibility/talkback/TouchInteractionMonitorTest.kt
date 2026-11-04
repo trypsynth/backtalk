@@ -20,6 +20,7 @@ import android.accessibilityservice.AccessibilityGestureEvent
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityService.GESTURE_DOUBLE_TAP
 import android.accessibilityservice.AccessibilityService.GESTURE_SWIPE_RIGHT
+import android.accessibilityservice.AccessibilityService.GESTURE_SWIPE_UP
 import android.accessibilityservice.AccessibilityService.GestureResultCallback
 import android.accessibilityservice.GestureDescription
 import android.accessibilityservice.TouchInteractionController
@@ -28,6 +29,7 @@ import android.accessibilityservice.TouchInteractionController.STATE_DELEGATING
 import android.accessibilityservice.TouchInteractionController.STATE_TOUCH_EXPLORING
 import android.accessibilityservice.TouchInteractionController.STATE_TOUCH_INTERACTING
 import android.graphics.Point
+import android.graphics.Rect
 import android.hardware.display.DisplayManager
 import android.os.Handler
 import android.os.Looper
@@ -41,9 +43,14 @@ import android.view.MotionEvent.ACTION_MOVE
 import android.view.MotionEvent.ACTION_UP
 import android.view.ViewConfiguration
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.google.android.accessibility.talkback.actor.DirectClick
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics
+import com.google.android.accessibility.talkback.gesture.Edge
+import com.google.android.accessibility.talkback.gesture.EdgeGesture
+import com.google.android.accessibility.talkback.gesture.EdgeGestureSettings
+import com.google.android.accessibility.utils.FormFactorUtils
 import com.google.android.accessibility.utils.SharedPreferencesUtils
 import java.time.Duration
 import org.junit.After
@@ -100,6 +107,17 @@ class TouchInteractionMonitorTest {
     override fun onGestureDetectionStarted() {
       threads.add(Thread.currentThread())
     }
+
+    val edgeActions = mutableListOf<String>()
+    var windowsOnScreen = listOf<AccessibilityWindowInfo>()
+
+    override fun getWindows(): List<AccessibilityWindowInfo> = windowsOnScreen
+
+    override fun canPerformEdgeAction() = true
+
+    override fun performEdgeAction(action: String) {
+      edgeActions.add(action)
+    }
   }
 
   /** Records the threads that ask the controller for touch exploration. */
@@ -133,6 +151,7 @@ class TouchInteractionMonitorTest {
       setBoolean(null, false)
     }
     service = Robolectric.buildService(RecordingService::class.java).get()
+    FormFactorUtils.initialize(service)
     controller =
       TouchInteractionController::class
         .java
@@ -615,5 +634,133 @@ class TouchInteractionMonitorTest {
     assertTrue(TouchInteractionMonitor.isFingerDown())
     assertFalse(monitor.isReadyForDirectClick())
     assertEquals(listOf<GestureDescription>(), pressGestures)
+  }
+
+  private fun useEdgeGesture(edge: Edge, gesture: EdgeGesture, action: String) {
+    SharedPreferencesUtils.getSharedPreferences(service)
+      .edit()
+      .putBoolean(EdgeGestureSettings.PREF_ENABLED, true)
+      .putString(EdgeGestureSettings.gestureKey(edge, gesture), action)
+      .commit()
+  }
+
+  private fun swipeUpAt(x: Float) {
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    touchAt(ACTION_DOWN, x, 400f, 0)
+    for (step in 1..6) {
+      touchAt(ACTION_MOVE, x, 400f - 40f * step, 15L * step)
+    }
+    touchAt(ACTION_UP, x, 160f, 100)
+  }
+
+  private fun tapAt(x: Float, y: Float, timeMs: Long) {
+    touchAt(ACTION_DOWN, x, y, timeMs)
+    touchAt(ACTION_UP, x, y, timeMs + 50)
+  }
+
+  @Test
+  fun swipeUpFromAnEdgePerformsTheEdgeActionInsteadOfTheGesture() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    useEdgeGesture(Edge.RIGHT, EdgeGesture.SWIPE_UP, "right up")
+    swipeUpAt(EDGE_X)
+    runUntil(450)
+
+    assertEquals(listOf("left up"), service.edgeActions)
+    assertEquals(listOf<Int>(), service.gestures)
+  }
+
+  @Test
+  fun swipeUpFromTheRightEdgePerformsTheRightEdgeAction() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    useEdgeGesture(Edge.RIGHT, EdgeGesture.SWIPE_UP, "right up")
+    swipeUpAt(screenWidth() - EDGE_X)
+    runUntil(450)
+
+    assertEquals(listOf("right up"), service.edgeActions)
+  }
+
+  @Test
+  fun swipeUpAwayFromTheEdgesIsTheUsualGesture() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    swipeUpAt(screenWidth() / 2)
+    runUntil(450)
+
+    assertEquals(listOf<String>(), service.edgeActions)
+    assertEquals(listOf(GESTURE_SWIPE_UP), service.gestures)
+  }
+
+  @Test
+  fun swipeUpFromAnEdgeIsTheUsualGestureWhileEdgeGesturesAreOff() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    SharedPreferencesUtils.getSharedPreferences(service)
+      .edit()
+      .putBoolean(EdgeGestureSettings.PREF_ENABLED, false)
+      .commit()
+    swipeUpAt(EDGE_X)
+    runUntil(450)
+
+    assertEquals(listOf<String>(), service.edgeActions)
+    assertEquals(listOf(GESTURE_SWIPE_UP), service.gestures)
+  }
+
+  @Test
+  fun swipeUpFromTheKeyboardOnAnEdgeIsTheUsualGesture() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    service.windowsOnScreen =
+      listOf(
+        AccessibilityWindowInfo.obtain().apply {
+          shadowOf(this).setType(AccessibilityWindowInfo.TYPE_INPUT_METHOD)
+          shadowOf(this).setBoundsInScreen(Rect(0, 300, screenWidth().toInt(), 470))
+        }
+      )
+    swipeUpAt(EDGE_X)
+    runUntil(450)
+
+    assertEquals(listOf<String>(), service.edgeActions)
+    assertEquals(listOf(GESTURE_SWIPE_UP), service.gestures)
+  }
+
+  @Test
+  fun tripleTapOnAnEdgePerformsTheEdgeActionInsteadOfADoubleTap() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.TRIPLE_TAP, "triple")
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    tapAt(EDGE_X, 200f, 0)
+    tapAt(EDGE_X, 200f, 150)
+    tapAt(EDGE_X, 200f, 300)
+    runUntil(1000)
+
+    assertEquals(listOf("triple"), service.edgeActions)
+    assertEquals(listOf<Int>(), service.gestures)
+  }
+
+  @Test
+  fun doubleTapOnAnEdgeWithATripleTapGoesAheadOnceNoThirdTapCame() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.TRIPLE_TAP, "triple")
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    tapAt(EDGE_X, 200f, 0)
+    tapAt(EDGE_X, 200f, 150)
+    runUntil(210)
+    assertEquals(listOf<Int>(), service.gestures)
+    runUntil(1000)
+
+    assertEquals(listOf<String>(), service.edgeActions)
+    assertEquals(listOf(GESTURE_DOUBLE_TAP), service.gestures)
+  }
+
+  @Test
+  fun doubleTapOnAnEdgeWithoutATripleTapDoesNotWait() {
+    useEdgeGesture(Edge.LEFT, EdgeGesture.SWIPE_UP, "left up")
+    stateChangeAt(STATE_TOUCH_INTERACTING, 0)
+    tapAt(EDGE_X, 200f, 0)
+    tapAt(EDGE_X, 200f, 150)
+    runUntil(210)
+
+    assertEquals(listOf(GESTURE_DOUBLE_TAP), service.gestures)
+  }
+
+  private fun screenWidth() = service.resources.displayMetrics.widthPixels.toFloat()
+
+  private companion object {
+    const val EDGE_X = 5f
   }
 }
