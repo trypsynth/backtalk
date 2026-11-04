@@ -13,6 +13,8 @@
     <string name="pref_proximity_key">pref_proximity</string>
     <!-- Must match ScreenAnnouncementSettings.SUPPRESS_EXTRA_SCREEN_ON_SPEECH. -->
     <string name="pref_screen_on_suppress_extra_speech_key" translatable="false">pref_screen_on_suppress_extra_speech</string>
+    <!-- Must match ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION. -->
+    <string name="pref_lock_screen_fingerprint_location_key" translatable="false">pref_lock_screen_fingerprint_location</string>
     <!-- Must match SpeakerphoneSettings.PREF_ENABLED. -->
     <string name="pref_speakerphone_away_from_ear_key">pref_speakerphone_away_from_ear</string>
     <!-- Must match VibrationWatchGestureSettings.PREF_RESERVED. -->

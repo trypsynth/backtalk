@@ -509,4 +509,17 @@ class ScreenOnSuppressionTest {
     locked = false
     assertFalse(suppression.shouldSuppressEvent(event(message)))
   }
+
+  @Test
+  fun fingerprintSensorLocationMatchesDespiteLineBreaksAndCase() {
+    assertEquals(
+      ScreenOnSpeechSuppression.normalizeMessage("The sensor is here.\nYou'll hear feedback."),
+      ScreenOnSpeechSuppression.normalizeMessage("  the sensor is here.  You'll hear FEEDBACK. "),
+    )
+    // French puts a no-break space before some punctuation.
+    assertEquals(
+      ScreenOnSpeechSuppression.normalizeMessage("Le capteur est ici : touchez-le."),
+      ScreenOnSpeechSuppression.normalizeMessage("Le capteur est ici : touchez-le."),
+    )
+  }
 }

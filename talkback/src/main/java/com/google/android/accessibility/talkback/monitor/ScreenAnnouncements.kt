@@ -21,9 +21,8 @@ import com.google.android.accessibility.talkback.status.StatusItem
 
 /**
  * What Backtalk says when the screen turns off or on, on the lock screen, and when the phone is
- * unlocked. The time
- * when the screen turns on keeps its own older setting, which the Backtalk menu and gestures also
- * change. The keys are also in res/xml/screen_announcement_preferences.xml.
+ * unlocked. The time when the screen turns on keeps its own older setting, which the Backtalk menu
+ * and gestures also change. The keys are also in res/xml/screen_announcement_preferences.xml.
  */
 object ScreenAnnouncementSettings {
   const val SAY_SCREEN_OFF = "pref_screen_off_say_screen_off"

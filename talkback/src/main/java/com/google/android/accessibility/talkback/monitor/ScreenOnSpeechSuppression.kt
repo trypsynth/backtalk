@@ -180,11 +180,12 @@ class ScreenOnSpeechSuppression(
    * so other fingerprint messages and touched labels still speak.
    */
   private fun isMutedFingerprintLocation(event: AccessibilityEvent): Boolean {
-    if (event.eventType != AccessibilityEvent.TYPE_ANNOUNCEMENT) return false
+    if (isWear || event.eventType != AccessibilityEvent.TYPE_ANNOUNCEMENT) return false
     if (event.packageName?.toString() !in systemUiPackages) return false
     if (ScreenAnnouncementSettings.isOn(prefs,
-        ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION) || !isLocked()) return false
-    val text = event.text.joinToString(" ").trim()
+        ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION)) return false
+    if (!isLocked()) return false
+    val text = normalizeMessage(event.text.joinToString(" "))
     return text.isNotEmpty() && isFingerprintLocation(text)
   }
 
@@ -236,6 +237,13 @@ class ScreenOnSpeechSuppression(
     internal val FINGERPRINT_LOCATION_STRINGS =
       listOf(0, 90, 180, 270).map { "kg_in_display_fingerprint_sensor_${it}_help_instructions" }
 
+    // Also no-break and other Unicode spaces, which some languages put in the message.
+    private val WHITESPACE = Regex("[\\s\\p{Z}]+")
+
+    /** The same message can differ in line breaks and spacing between the string and the event. */
+    internal fun normalizeMessage(text: String): String =
+      text.replace(WHITESPACE, " ").trim().lowercase()
+
     /**
      * Reads the message from System UI in the current language, so no text is hard-coded. They
      * are read again when the language changes. A missing string just leaves the message spoken.
@@ -258,12 +266,12 @@ class ScreenOnSpeechSuppression(
               }
               for (name in FINGERPRINT_LOCATION_STRINGS) {
                 val id = res.getIdentifier(name, "string", pkg)
-                if (id != 0) add(res.getString(id).trim().lowercase())
+                if (id != 0) add(normalizeMessage(res.getString(id)))
               }
             }
           }
         }
-        text.lowercase() in messages
+        text in messages
       }
     }
 
