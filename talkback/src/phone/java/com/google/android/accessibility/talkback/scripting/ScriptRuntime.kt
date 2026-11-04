@@ -57,6 +57,9 @@ class ScriptRuntime(
   var commands: Set<String> = emptySet()
     private set
 
+  var voicePatterns: Set<String> = emptySet()
+    private set
+
   private val addedRules = LinkedHashMap<Int, ScriptRule>()
   private var nextRule = 1
 
@@ -186,6 +189,7 @@ class ScriptRuntime(
     on("hooks") {
       hooks = it.optJSONArray("names").strings().toSet()
       commands = it.optJSONArray("commands").strings().toSet()
+      voicePatterns = it.optJSONArray("voicePatterns").strings().toSet()
       manager.onHooksChanged()
     }
     on("manifest") { JSONObject(script.manifest.json) }
@@ -417,12 +421,14 @@ class ScriptRuntime(
         ?: apiError("The manifest declares no command $commandId")
     val gesture = args.optString("gesture")
     val keys = args.optString("keys")
+    val voice = args.optString("voice")
     val binding =
       when {
         ScriptInput.isGesture(gesture) -> CommandBinding.Gesture(gesture)
         gesture.isNotEmpty() -> apiError("Unknown gesture $gesture")
         keys.isNotEmpty() -> CommandBinding.KeyCombo(asApiError { ScriptInput.parseKeys(keys) })
-        else -> apiError("A binding needs gesture or keys")
+        voice.isNotEmpty() -> CommandBinding.Voice(voice)
+        else -> apiError("A binding needs gesture, keys or voice")
       }
     return command to binding
   }
