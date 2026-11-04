@@ -17,6 +17,7 @@ import com.google.android.accessibility.talkback.focusmanagement.interpreter.Scr
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenStateMonitor
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo
+import com.google.android.accessibility.talkback.focusmanagement.record.FocusPathQueriesNodeInfoShadow
 import com.google.android.accessibility.talkback.monitor.InputMethodMonitor
 import com.google.android.accessibility.utils.FormFactorUtils
 import com.google.android.accessibility.utils.traversal.TraversalStrategy
@@ -32,7 +33,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.util.ReflectionHelpers
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk=[35])
+@Config(sdk=[35],shadows=[FocusPathQueriesNodeInfoShadow::class])
 class DelayedManualScrollFocusTest {
   private lateinit var service: TalkBackService
   private lateinit var history: AccessibilityFocusActionHistory
@@ -50,6 +51,7 @@ class DelayedManualScrollFocusTest {
       addAction(ACTION_NEXT_HTML_ELEMENT)
     }
     override fun getParent(): AccessibilityNodeInfoCompat? = parentNode
+    override fun getParent(strategy:Int): AccessibilityNodeInfoCompat? = parentNode
   }
 
   @Before fun setup() {

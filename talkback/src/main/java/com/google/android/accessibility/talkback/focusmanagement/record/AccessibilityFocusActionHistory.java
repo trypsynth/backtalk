@@ -98,6 +98,11 @@ public final class AccessibilityFocusActionHistory {
       return AccessibilityFocusActionHistory.this.getLastFocusNodePathDescription();
     }
 
+    public @Nullable NodePathDescription getLastFocusAncestorIdentityPath() {
+      FocusActionRecord record = getLastFocusActionRecord();
+      return record == null ? null : record.getAncestorIdentityPath();
+    }
+
     public boolean lastAccessibilityFocusedNodeEquals(AccessibilityNodeInfoCompat targetNode) {
       return AccessibilityFocusActionHistory.this.lastAccessibilityFocusedNodeEquals(targetNode);
     }
@@ -328,6 +333,7 @@ public final class AccessibilityFocusActionHistory {
       }
     }
     return result;
+
   }
 
   private void tryMatchingPendingFocusAction(
