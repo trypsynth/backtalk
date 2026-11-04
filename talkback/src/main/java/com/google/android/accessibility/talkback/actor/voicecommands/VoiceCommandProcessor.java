@@ -92,6 +92,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.monitor.BatteryMonitor;
+import com.google.android.accessibility.talkback.status.StatusReader;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Interpretation;
@@ -141,6 +143,7 @@ public class VoiceCommandProcessor {
   private ActorState actorState;
   private final TalkBackAnalytics analytics;
   private final CallVoiceCommands callVoiceCommands;
+  private final SystemVoiceCommands systemVoiceCommands;
 
   private boolean echoNotRecognizedTextEnabled;
 
@@ -157,7 +160,11 @@ public class VoiceCommandProcessor {
   };
 
   private static final int[] talkbackSettingCommandResArray = {
-    R.string.voice_commands_talkback_settings, R.string.voice_commands_talkback_setting
+    R.string.voice_commands_backtalk_settings,
+    R.string.voice_commands_backtalk_setting,
+    R.string.voice_commands_open_backtalk_settings,
+    R.string.voice_commands_talkback_settings,
+    R.string.voice_commands_talkback_setting
   };
 
   private static final int[] finishSelectCommandResArray = {
@@ -260,11 +267,21 @@ public class VoiceCommandProcessor {
     this.selectorController = selectorController;
     this.analytics = analytics;
     this.callVoiceCommands = new CallVoiceCommands(service);
+    this.systemVoiceCommands = new SystemVoiceCommands(service, null, null, null);
   }
 
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
     this.callVoiceCommands.setPipeline(pipeline);
+    this.systemVoiceCommands.setPipeline(pipeline);
+  }
+
+  public void setBatteryMonitor(BatteryMonitor batteryMonitor) {
+    this.systemVoiceCommands.setBatteryMonitor(batteryMonitor);
+  }
+
+  public void setStatusReader(StatusReader statusReader) {
+    this.systemVoiceCommands.setStatusReader(statusReader);
   }
 
   public void setActorState(ActorState actorState) {
@@ -319,6 +336,12 @@ public class VoiceCommandProcessor {
       if (!isPartialResult) {
         analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
       }
+      return true;
+    }
+
+    // Check system voice commands (dnd, status, volume, settings, find on screen)
+    if (systemVoiceCommands.handleCommand(command, isPartialResult)) {
+      analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
       return true;
     }
 
