@@ -2026,7 +2026,7 @@
       Source: Summary subtext for the speak notifications setting.
       Description: Explains that new notifications are read aloud when they arrive. [CHAR LIMIT=NONE]
     -->
-    <string name="summary_pref_speak_notifications">新通知到达时朗读。来电始终朗读。</string>
+    <string name="summary_pref_speak_notifications">新通知到达时朗读。</string>
 
     <!-- The text of the Backtalk-on banner when no 3-finger tap opens the Backtalk menu. [CHAR_LIMIT=NONE]-->
     <string name="talkback_exit_watermark_text_no_menu_gesture">Backtalk 已开启。用两根手指按住屏幕 5 秒可关闭。要停止显示此消息，请关闭 Backtalk 设置 > 高级设置 > 显示关闭 Backtalk 的说明。</string>

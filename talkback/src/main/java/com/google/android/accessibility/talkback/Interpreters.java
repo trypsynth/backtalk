@@ -36,6 +36,7 @@ import com.google.android.accessibility.talkback.interpreters.ScrollPositionInte
 import com.google.android.accessibility.talkback.interpreters.StateChangeEventInterpreter;
 import com.google.android.accessibility.talkback.interpreters.SubtreeChangeEventInterpreter;
 import com.google.android.accessibility.talkback.interpreters.UiChangeEventInterpreter;
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence;
 import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.input.HeadsUpNotificationEventInterpreter;
 import com.google.android.accessibility.utils.input.NonmodalAlertEventInterpreter;
@@ -143,6 +144,7 @@ public class Interpreters {
                     interpretation.eventId,
                     interpretation.event,
                     new Interpretation.NonmodalAlertChange(interpretation.notificationGuess));
+            IncomingCallSilence.onHeadsUpChanged(interpretation.isHeadsUpAppearance);
             if (interpretation.isHeadsUpAppearance) {
               pipelineInterpretations
                   .get()

@@ -233,7 +233,11 @@ On Samsung watches, Backtalk reads the app and title, then the message content, 
 
 ### Speak notifications setting
 
-To stop Backtalk from reading new notifications when they arrive, turn off **Verbosity** > **Speak notifications**. Backtalk still reads incoming calls, and you can still read notifications in the notification shade. The setting is on by default.
+To stop Backtalk from reading new notifications when they arrive, turn off **Verbosity** > **Speak notifications**. You can still read notifications in the notification shade. The setting is on by default.
+
+### Speak incoming calls setting
+
+To stop Backtalk from saying who is calling, turn off **Verbosity** > **Speak incoming calls**. While a call rings, Backtalk then gives no feedback at all, whether the phone is locked or not: no speech, sounds or vibrations. That includes the call notification, the time as the screen turns on, the call screen's name, the caller, anything else the call screen sends, such as Samsung's "Incoming call", and notifications from other apps, such as a text message that arrives while the call rings. Anything Backtalk was saying when the call started ringing stops. Once you touch the screen, press a key on a keyboard, or use a braille display, Backtalk speaks as usual until the next call, so you can find **Answer** and **Decline**. The volume and power keys don't count, so you can silence the ringer without hearing the call. Calls from apps such as WhatsApp are silenced too. A ringtone you play yourself, such as when you choose one in the ringtone picker, doesn't count as a call. On the lock screen, an app call on vibrate counts as ringing until its missed call notification arrives, you act, or a minute passes, unless the **Notification list** has notification access, which lets Backtalk see when the call notification goes. The setting is on by default.
 
 ### Toasts in Do Not Disturb
 

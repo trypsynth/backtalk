@@ -663,7 +663,17 @@
       Source: Summary subtext for the speak notifications setting.
       Description: Explains that new notifications are read aloud when they arrive. [CHAR LIMIT=NONE]
     -->
-    <string name="summary_pref_speak_notifications">Read new notifications aloud when they arrive. Incoming calls are always read.</string>
+    <string name="summary_pref_speak_notifications">Read new notifications aloud when they arrive.</string>
+    <!--
+      Source: Preference for speaking incoming phone calls.
+      Description: The user can turn this off to stop Backtalk from reading an incoming call aloud when it arrives. [CHAR LIMIT=NONE]
+    -->
+    <string name="title_pref_speak_incoming_calls">Speak incoming calls</string>
+    <!--
+      Source: Summary subtext for the speak incoming calls setting.
+      Description: Explains that the caller is read aloud when a call arrives, and that the call screen can still be explored by touch when this is off. [CHAR LIMIT=NONE]
+    -->
+    <string name="summary_pref_speak_incoming_calls">Say who is calling when a call comes in. When this is off, you can still touch the screen to find Answer and Decline.</string>
 
     <!--
       Source: Preference for speaking window title when the focus changes due to window transition.

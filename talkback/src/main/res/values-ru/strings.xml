@@ -1546,7 +1546,7 @@
   <string name="title_pref_speak_volume_changes">Озвучивать изменения громкости</string>
   <string name="summary_pref_speak_volume_changes">Произносить новый уровень громкости после нажатия кнопок громкости</string>
   <string name="title_pref_speak_notifications">Озвучивать уведомления</string>
-  <string name="summary_pref_speak_notifications">Читать новые уведомления вслух при их получении. Входящие звонки озвучиваются всегда.</string>
+  <string name="summary_pref_speak_notifications">Читать новые уведомления вслух при их получении.</string>
   <string name="talkback_exit_watermark_text_no_menu_gesture">Backtalk включён. Чтобы отключить его, удерживайте два пальца на экране в течение пяти секунд. Чтобы скрыть это сообщение, отключите параметр «Настройки Backtalk &gt; Расширенные настройки &gt; Показывать инструкцию по отключению Backtalk».</string>
   <string name="title_pref_audio_output_device">Устройство вывода звука</string>
   <string name="dialog_title_audio_output_device">Выберите, где воспроизводить звук Backtalk</string>

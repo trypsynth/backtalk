@@ -27,6 +27,7 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.talkback.TalkBackService
+import com.google.android.accessibility.talkback.monitor.IncomingCallSilence
 import com.google.android.accessibility.utils.SharedPreferencesUtils
 
 /**
@@ -76,10 +77,20 @@ class NotificationListService : NotificationListenerService() {
 
   override fun onNotificationPosted(notification: StatusBarNotification, ranking: RankingMap?) {
     NotificationList.onPosted(notification, ranking)
+    IncomingCallSilence.onListenerNotification(
+      notification.notification,
+      removed = false,
+      packageName = notification.packageName,
+    )
   }
 
   override fun onNotificationRemoved(notification: StatusBarNotification, ranking: RankingMap?) {
     NotificationList.onRemoved(notification, ranking)
+    IncomingCallSilence.onListenerNotification(
+      notification.notification,
+      removed = true,
+      packageName = notification.packageName,
+    )
   }
 
   override fun onNotificationRankingUpdate(ranking: RankingMap?) {

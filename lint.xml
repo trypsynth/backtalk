@@ -191,6 +191,8 @@
         <ignore regexp="notification_list_next" />
         <ignore regexp="notification_list_group_count" />
         <ignore regexp="shortcut_system_notifications" />
+        <ignore regexp="title_pref_speak_incoming_calls" />
+        <ignore regexp="summary_pref_speak_incoming_calls" />
         <ignore regexp="image_qna_button_text_ai" />
         <ignore regexp="image_qna_typing_button_text_ai" />
         <ignore regexp="title_pref_suppress_extra_screen_on_speech" />
