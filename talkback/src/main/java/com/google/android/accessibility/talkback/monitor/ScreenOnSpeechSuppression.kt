@@ -45,8 +45,8 @@ import com.google.android.accessibility.utils.monitor.ScreenMonitor
  * lock-screen System UI feedback quiet for at most three seconds. Unlocking or interacting ends
  * suppression immediately. Other apps and unknown window owners always keep their normal speech.
  *
- * Separately, and at any time while the phone is locked, System UI's repeated message saying where
- * the fingerprint sensor is can be turned off.
+ * Separately, System UI's repeated lock-screen message saying where the fingerprint sensor is can
+ * be turned off.
  */
 class ScreenOnSpeechSuppression(
   private val prefs: SharedPreferences,
@@ -176,15 +176,16 @@ class ScreenOnSpeechSuppression(
   }
 
   /**
-   * System UI repeats this as an announcement on the lock screen. Only the exact message is muted,
-   * so other fingerprint messages and touched labels still speak.
+   * System UI repeats this as an announcement on the lock screen, and one it already scheduled can
+   * arrive just after unlocking. The message only ever describes the lock screen, so it is muted
+   * whether or not the phone is still locked. Only the exact message is muted, so other fingerprint
+   * messages and touched labels still speak.
    */
   private fun isMutedFingerprintLocation(event: AccessibilityEvent): Boolean {
     if (isWear || event.eventType != AccessibilityEvent.TYPE_ANNOUNCEMENT) return false
     if (event.packageName?.toString() !in systemUiPackages) return false
     if (ScreenAnnouncementSettings.isOn(prefs,
         ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION)) return false
-    if (!isLocked()) return false
     val text = normalizeMessage(event.text.joinToString(" "))
     return text.isNotEmpty() && isFingerprintLocation(text)
   }

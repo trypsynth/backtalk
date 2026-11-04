@@ -481,7 +481,7 @@ class ScreenOnSuppressionTest {
   }
 
   @Test
-  fun fingerprintSensorLocationIsMutedOnTheLockScreenOnlyWhenTurnedOff() {
+  fun fingerprintSensorLocationIsMutedOnlyWhenTurnedOff() {
     val message = "The fingerprint sensor is centered in the lower part of the screen."
     val prefs = SharedPreferencesUtils.getSharedPreferences(service)
     val suppression = ScreenOnSpeechSuppression(
@@ -505,9 +505,9 @@ class ScreenOnSuppressionTest {
     assertFalse(suppression.shouldSuppressEvent(event(message, packageName = "example.app")))
     assertFalse(suppression.shouldSuppressEvent(
       event(message, AccessibilityEvent.TYPE_VIEW_HOVER_ENTER)))
-    // Once unlocked, System UI's message speaks again.
+    // System UI can send one it already scheduled just after unlocking; that is muted too.
     locked = false
-    assertFalse(suppression.shouldSuppressEvent(event(message)))
+    assertTrue(suppression.shouldSuppressEvent(event(message)))
   }
 
   @Test
