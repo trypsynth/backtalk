@@ -47,7 +47,7 @@ class ScreenOnSpeechSuppression(
   private val prefs: SharedPreferences,
   initiallyScreenOn: Boolean,
   private val isWear: Boolean = false,
-  private val systemUiPackages: Set<String> = emptySet(),
+  internal val systemUiPackages: Set<String> = emptySet(),
   private val isLocked: () -> Boolean = { false },
   private val isCallActive: () -> Boolean = { false },
   private val activePackage: () -> CharSequence? = { null },
