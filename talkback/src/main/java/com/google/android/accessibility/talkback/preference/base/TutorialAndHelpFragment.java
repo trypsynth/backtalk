@@ -22,7 +22,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.preference.Preference;
 import com.google.android.accessibility.talkback.HelpAndFeedbackUtils;
+import com.google.android.accessibility.talkback.NotificationActivity;
 import com.google.android.accessibility.talkback.R;
+import com.google.android.accessibility.talkback.WhatsNewActivity;
 import com.google.android.accessibility.talkback.training.TutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.TvTutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.VendorConfigReader;
@@ -54,7 +56,34 @@ public class TutorialAndHelpFragment extends TalkbackBaseFragment {
 
     assignTutorialIntent();
     assignPracticeGesturesIntent();
+    assignNewFeaturesIntent();
     assignFeedbackIntentToPreference();
+  }
+
+  private void assignNewFeaturesIntent() {
+    final Preference prefNewFeatures =
+        findPreferenceByResId(R.string.pref_new_feature_in_talkback_entry_point_key);
+
+    if (prefNewFeatures == null) {
+      return;
+    }
+
+    if (FormFactorUtils.isAndroidTv() || FormFactorUtils.isAndroidXr()) {
+      return;
+    }
+
+    if (FormFactorUtils.isAndroidWear()) {
+      prefNewFeatures.setIntent(
+          NotificationActivity.createStartIntent(
+              getContext(),
+              R.string.wear_new_feature_page_title,
+              R.string.wear_new_feature_page_content,
+              Integer.MIN_VALUE,
+              R.string.wear_new_feature_page_button_content_description,
+              /* url= */ null));
+    } else {
+      prefNewFeatures.setIntent(WhatsNewActivity.createIntent(getContext()));
+    }
   }
 
   private void assignTutorialIntent() {

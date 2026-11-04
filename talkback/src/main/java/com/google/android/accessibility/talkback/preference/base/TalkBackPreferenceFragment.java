@@ -34,13 +34,11 @@ import com.google.android.accessibility.talkback.preference.PreferencesActivityU
 import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity.HatsRequesterViewModel;
 import com.google.android.accessibility.talkback.HatsSurveyRequester;
 import com.google.android.accessibility.talkback.HelpAndFeedbackUtils;
-import com.google.android.accessibility.talkback.NotificationActivity;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.TalkBackExitController;
 import com.google.android.accessibility.talkback.TalkBackService;
 import com.google.android.accessibility.talkback.actor.ImageCaptioner;
 import com.google.android.accessibility.talkback.preference.base.PreferenceActionHelper.WebPage;
-import com.google.android.accessibility.talkback.training.OnboardingInitiator;
 import com.google.android.accessibility.talkback.training.TutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.TvTutorialInitiator;
 import com.google.android.accessibility.talkback.trainingcommon.tv.VendorConfigReader;
@@ -94,8 +92,6 @@ public class TalkBackPreferenceFragment extends TalkbackBaseFragment {
     hatsSurveyRequester = Optional.ofNullable(viewModel.getHatsSurveyRequester());
     hatsSurveyRequester.ifPresent(
         listener -> listener.setOnSurveyAvailableListener(() -> updateSurveyOption()));
-
-    assignNewFeaturesIntent();
 
     // Changes title from Sound and Vibration to Sound if this device doesn't support vibration.
     if (!FeatureSupport.isVibratorSupported(context)) {
@@ -245,34 +241,6 @@ public class TalkBackPreferenceFragment extends TalkbackBaseFragment {
     if (category != null) {
       PreferenceSettingsUtils.hidePreference(context, category, preferenceKeyId);
     }
-  }
-
-  private void assignNewFeaturesIntent() {
-    final Preference prefNewFeatures =
-        findPreferenceByResId(R.string.pref_new_feature_in_talkback_entry_point_key);
-
-    if (prefNewFeatures == null) {
-      return;
-    }
-
-    if (FormFactorUtils.isAndroidTv() || FormFactorUtils.isAndroidXr()) {
-      return;
-    }
-
-    Intent newFeatureIntent;
-    if (FormFactorUtils.isAndroidWear()) {
-      newFeatureIntent =
-          NotificationActivity.createStartIntent(
-              context,
-              R.string.wear_new_feature_page_title,
-              R.string.wear_new_feature_page_content,
-              Integer.MIN_VALUE,
-              R.string.wear_new_feature_page_button_content_description,
-              /* url= */ null);
-    } else {
-      newFeatureIntent = OnboardingInitiator.createOnboardingIntentForSettings(context);
-    }
-    prefNewFeatures.setIntent(newFeatureIntent);
   }
 
   private void updateSurveyOption() {
