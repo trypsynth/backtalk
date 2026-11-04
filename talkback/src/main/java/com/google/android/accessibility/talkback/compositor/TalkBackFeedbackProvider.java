@@ -119,6 +119,11 @@ public class TalkBackFeedbackProvider implements EventFeedbackProvider {
     return eventFeedback;
   }
 
+  @Override
+  public boolean hasFeedbackRule(@Event int event) {
+    return feedbackRules.containsKey(event);
+  }
+
   /** Generates the event feedback rules for this provider. */
   private void generateEventFeedbackRules(
       @Flavor int flavor,

@@ -229,7 +229,7 @@ public class KeyComboMapper {
           result = pipeline.returnFeedback(eventId, Feedback.prevContainer(INPUT_MODE_KEYBOARD));
       // Tap
       case PERFORM_CLICK -> {
-        if (SelectorController.getCurrentSetting(accessibilityService).equals(ACTIONS)) {
+        if (selectorController.getCurrentSettingForClick().equals(ACTIONS)) {
           selectorController.activateCurrentAction(eventId);
           break;
         }
