@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="title_pref_individual_feedback">Sonidos y vibraciones individuales</string>
-  <string name="summary_pref_individual_feedback">Desactiva sonidos y vibraciones uno a uno. Para oír o notar uno, usa la acción Vista previa de su interruptor.</string>
+  <string name="summary_pref_individual_feedback">Activa o desactiva sonidos y vibraciones uno a uno. Para oír o notar uno, usa la acción Probar de su interruptor.</string>
   <string name="individual_feedback_sounds_category">Sonidos</string>
   <string name="individual_feedback_vibrations_category">Vibraciones</string>
-  <string name="individual_feedback_action_preview">Vista previa</string>
+  <string name="individual_feedback_action_preview">Probar</string>
   <string name="individual_sound_focus">Foco en un elemento</string>
   <string name="individual_sound_focus_actionable">Foco en un elemento activable</string>
   <string name="individual_sound_view_entered">Tocar una zona vacía</string>
