@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="talkback_on">TalkBack 已开启</string>
-  <string name="talkback_disabled">TalkBack 已关闭</string>
+  <string name="talkback_on">Backtalk 已开启</string>
+  <string name="talkback_disabled">Backtalk 已关闭</string>
   <string name="notification_type_beginning_of_field">字段开头</string>
   <string name="notification_type_end_of_field">字段结尾</string>
   <string name="notification_type_selection_mode_on">已开启选择模式</string>
@@ -214,7 +214,7 @@
     <string name="template_brightness_changed">亮度 <xliff:g id="percent">%1$d</xliff:g>%%。</string>
 
     <!--
-    Source: String for notifying the user that TalkBack needs permission to change brightness.
+    Source: String for notifying the user that Backtalk needs permission to change brightness.
     Description: This is spoken to the user. [CHAR_LIMIT=NONE]
   -->
     <string name="brightness_needs_permission">请允许修改系统设置以更改亮度。</string>
