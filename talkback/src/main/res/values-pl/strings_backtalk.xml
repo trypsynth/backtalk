@@ -683,4 +683,116 @@
   <string name="new_theme_exists">Temat o tej nazwie już istnieje.</string>
   <string name="new_theme_needs_name">Wpisz nazwę.</string>
   <string name="sound_theme_customisation">Dostosowywanie dźwięków</string>
+  <string name="title_selector_vertical_navigation">Nawigacja pionowa</string>
+  <string name="summary_selector_vertical_navigation">Przechodź do elementu poniżej lub powyżej, pomijając pozostałe elementy w tym samym wierszu</string>
+  <string name="summary_selector_voice_profile">Przełączaj między zapisanymi profilami głosowymi</string>
+  <string name="category_collapsed">Zwinięta</string>
+  <string name="category_expanded">Rozwinięta</string>
+  <string name="title_pref_suppress_extra_screen_on_speech">Odczytuj tylko powyższe informacje</string>
+  <string name="summary_pref_suppress_extra_screen_on_speech">Po wybudzeniu ekranu blokady odczytuj tylko wybrane informacje.</string>
+  <string name="keycombo_menu_other_append_last_spoken_phrase">Dodaj ostatnią wypowiedź do schowka</string>
+  <string name="summary_selector_audio_output_device">Wybierz wyjście mowy Backtalka, np. głośnik telefonu lub słuchawki</string>
+  <string name="shortcut_media_stop">Zatrzymaj odtwarzanie</string>
+  <string name="shortcut_media_previous">Poprzedni utwór</string>
+  <string name="shortcut_media_next">Następny utwór</string>
+  <string name="shortcut_media_rewind">Przewiń do tyłu</string>
+  <string name="shortcut_media_fast_forward">Przewiń do przodu</string>
+  <string name="title_append_last_spoken_phrase">Dodaj ostatnią wypowiedź do schowka</string>
+  <string name="title_edittext_clear">Wyczyść tekst</string>
+  <string name="cannot_clear_feedback">Nie można wyczyścić tekstu</string>
+  <string name="summary_append_last_spoken_phrase">Dodaj ostatnią wypowiedź Backtalka w nowym wierszu do skopiowanego tekstu, aby kopiować kilka wypowiedzi razem</string>
+  <string name="summary_media_controls">Steruj odtwarzaniem multimediów</string>
+  <string name="summary_support_change_media_volume">Zwiększaj lub zmniejszaj głośność multimediów</string>
+  <string name="title_pref_shortcut_up_then_hold">Przesuń w górę i przytrzymaj</string>
+  <string name="title_pref_shortcut_down_then_hold">Przesuń w dół i przytrzymaj</string>
+  <string name="title_pref_shortcut_left_then_hold">Przesuń w lewo i przytrzymaj</string>
+  <string name="title_pref_shortcut_right_then_hold">Przesuń w prawo i przytrzymaj</string>
+  <string name="title_pref_shortcut_up_and_down_then_hold">Przesuń w górę, potem w dół i przytrzymaj</string>
+  <string name="title_pref_shortcut_down_and_up_then_hold">Przesuń w dół, potem w górę i przytrzymaj</string>
+  <string name="title_pref_shortcut_left_and_right_then_hold">Przesuń w lewo, potem w prawo i przytrzymaj</string>
+  <string name="title_pref_shortcut_right_and_left_then_hold">Przesuń w prawo, potem w lewo i przytrzymaj</string>
+  <string name="title_pref_shortcut_up_and_left_then_hold">Przesuń w górę, potem w lewo i przytrzymaj</string>
+  <string name="title_pref_shortcut_up_and_right_then_hold">Przesuń w górę, potem w prawo i przytrzymaj</string>
+  <string name="title_pref_shortcut_down_and_left_then_hold">Przesuń w dół, potem w lewo i przytrzymaj</string>
+  <string name="title_pref_shortcut_down_and_right_then_hold">Przesuń w dół, potem w prawo i przytrzymaj</string>
+  <string name="title_pref_shortcut_left_and_up_then_hold">Przesuń w lewo, potem w górę i przytrzymaj</string>
+  <string name="title_pref_shortcut_left_and_down_then_hold">Przesuń w lewo, potem w dół i przytrzymaj</string>
+  <string name="title_pref_shortcut_right_and_up_then_hold">Przesuń w prawo, potem w górę i przytrzymaj</string>
+  <string name="title_pref_shortcut_right_and_down_then_hold">Przesuń w prawo, potem w dół i przytrzymaj</string>
+  <string name="title_pref_swipe_hold_timeout">Czas przytrzymania po przesunięciu</string>
+  <string name="value_swipe_hold_timeout_75ms">0,075 sekundy</string>
+  <string name="value_swipe_hold_timeout_125ms">0,125 sekundy</string>
+  <string name="title_pref_swipe_before_lift">Przechodź do elementu przed puszczeniem palca</string>
+  <string name="summary_pref_swipe_before_lift">Przechodź do następnego lub poprzedniego elementu już na początku przesunięcia palcem, zamiast po jego puszczeniu. Jeśli przesunięcie stanie się częścią innego gestu, np. w prawo, a potem w dół, możesz przez chwilę usłyszeć następny element, zanim Backtalk wróci do poprzedniego.</string>
+  <string name="title_pref_touch_stops_speech">Przerywaj mowę po dotknięciu ekranu</string>
+  <string name="title_pref_selector_links_controls_web_only">Linki i kontrolki tylko w treściach internetowych</string>
+  <string name="summary_selector_links_controls_web_only">Ogranicz ustawienia „Linki” i „Kontrolki” do treści internetowych</string>
+  <string name="title_pref_media_volume">Głośność multimediów</string>
+  <string name="title_pref_media_controls">Sterowanie multimediami</string>
+  <string name="media_action_previous">Poprzedni utwór</string>
+  <string name="media_action_rewind">Przewiń do tyłu</string>
+  <string name="media_action_play_pause">Odtwórz lub wstrzymaj</string>
+  <string name="media_action_stop">Zatrzymaj</string>
+  <string name="media_action_fast_forward">Przewiń do przodu</string>
+  <string name="media_action_next">Następny utwór</string>
+  <string name="title_pref_preserve_web_reading_control">Zachowuj wybrane ustawienie sterowania czytaniem na stronach internetowych</string>
+  <string name="summary_pref_preserve_web_reading_control">Podczas poruszania się po treściach internetowych zachowuj wybrane ustawienie sterowania czytaniem. Nadal możesz ręcznie wybrać „Czynności”.</string>
+  <string name="title_pref_scroll_to_restore_previous_focus">Przewijaj, aby przywrócić poprzedni fokus</string>
+  <string name="summary_pref_scroll_to_restore_previous_focus">Po powrocie do ekranu przewiń do elementu, który ostatnio miał fokus.</string>
+  <string name="title_pref_restore_focus_on_back">Przywracaj fokus po powrocie do poprzedniego ekranu</string>
+  <string name="summary_pref_restore_focus_on_back">Po powrocie do poprzedniego ekranu ustaw fokus na elemencie, który ostatnio go miał.</string>
+  <string name="title_pref_open_app_info">Informacje o aplikacji</string>
+  <string name="template_media_volume_change_increase">Zwiększ głośność multimediów do <xliff:g id="percent">%1$d</xliff:g> procent.</string>
+  <string name="template_media_volume_change_decrease">Zmniejsz głośność multimediów do <xliff:g id="percent">%1$d</xliff:g> procent.</string>
+  <string name="image_qna_button_text_ai">Zapytaj AI</string>
+  <string name="image_qna_typing_button_text_ai">Wpisz pytanie do AI</string>
+  <string name="title_pref_ai_service">Inna usługa AI</string>
+  <string name="summary_pref_ai_service_set">Opisy obrazów i ekranu korzystają z modelu <xliff:g id="model" example="google/gemma-3-27b-it">%1$s</xliff:g></string>
+  <string name="summary_pref_ai_service_not_set">Nie ustawiono. Używana jest usługa Gemini</string>
+  <string name="ai_service_dialog_message">Usługa z interfejsem API czatu zgodnym z OpenAI i obsługą obrazów, np. OpenRouter (https://openrouter.ai/api/v1), Groq (https://api.groq.com/openai/v1), Mistral (https://api.mistral.ai/v1), Ollama Cloud (https://ollama.com/v1) lub Claude (https://api.anthropic.com/v1). Obrazy i pytania są wysyłane do tej usługi. Aby ponownie korzystać z Gemini, usuń adres.</string>
+  <string name="ai_service_address_hint">Adres, np. https://openrouter.ai/api/v1</string>
+  <string name="ai_service_model_hint">Model</string>
+  <string name="ai_service_api_key_hint">Klucz API</string>
+  <string name="ai_service_address_invalid">Adres musi zaczynać się od https://. Niczego nie zapisano.</string>
+  <string name="dialog_message_ai_service_consent">Obrazy i zrzuty ekranu są wysyłane do usługi <xliff:g id="host" example="openrouter.ai">%1$s</xliff:g> w celu ich opisania. Trwa to kilka sekund. Obowiązują warunki korzystania i polityka prywatności tej usługi. Generatywna AI jest eksperymentalna i może popełniać błędy.</string>
+  <string name="ai_service_error_api_key">Usługa AI nie zaakceptowała klucza API. Sprawdź opcję „Inna usługa AI” w ustawieniach automatycznych opisów.</string>
+  <string name="ai_service_error_quota">Osiągnięto limit użycia usługi AI. Spróbuj ponownie później.</string>
+  <string name="ai_service_error_busy">Usługa AI jest teraz zajęta. Spróbuj ponownie za chwilę.</string>
+  <string name="ai_service_error_timeout">Usługa AI nie odpowiedziała w wyznaczonym czasie. Spróbuj ponownie.</string>
+  <string name="ai_service_error_with_code">Usługa AI nie mogła odpowiedzieć. Błąd <xliff:g id="http_status" example="404">%1$d</xliff:g>.</string>
+  <string name="ai_service_error_with_details">Usługa AI nie mogła odpowiedzieć. Błąd <xliff:g id="http_status" example="404">%1$d</xliff:g>: <xliff:g id="details" example="The model does not exist.">%2$s</xliff:g></string>
+  <string name="summary_pref_gemini_api_key_other_service">Nieużywany, gdy ustawiono inną usługę AI</string>
+  <string name="title_pref_gemini_model">Model Gemini</string>
+  <string name="gemini_model_dialog_message">Jeśli Gemini stale zgłasza, że usługa jest zajęta lub model nie istnieje, wpisz nazwę innego modelu z Google AI Studio, np. gemini-3.5-flash. Aby ponownie korzystać z modelu <xliff:g id="model" example="gemini-3.5-flash">%1$s</xliff:g>, wyczyść pole i zapisz.</string>
+  <string name="individual_sound_actions_available">Dostępne czynności</string>
+  <string name="script_needs_build">Wymaga kompilacji <xliff:g id="needed" example="400">%1$d</xliff:g> Backtalka lub nowszej. Używasz kompilacji <xliff:g id="current" example="393">%2$d</xliff:g>, więc niektóre części skryptu mogą nie działać.</string>
+  <string name="script_unsupported">Niektóre części skryptu wymagają nowszej wersji Backtalka, dlatego zostały pominięte: <xliff:g id="fields" example="liftToActivate, longPressAfter">%1$s</xliff:g></string>
+  <string name="script_min_build">Wymaga kompilacji <xliff:g id="build" example="400">%1$d</xliff:g> lub nowszej</string>
+  <string name="title_pref_sound_theme_install_source">Ze źródła</string>
+  <string name="summary_pref_sound_theme_install_source">Pliki tematów w repozytorium w serwisie GitHub, GitLab, Codeberg, Gitea lub Bitbucket.</string>
+  <string name="sound_theme_sources">Źródła tematów dźwiękowych</string>
+  <string name="sound_theme_source_empty">Brak tematów dźwiękowych w tym źródle</string>
+  <string name="sound_theme_source_failed">Nie udało się wczytać tematów dźwiękowych. <xliff:g id="reason" example="HTTP 404">%1$s</xliff:g></string>
+  <string name="sound_theme_source_remove_message">Zainstalowane z tego źródła tematy dźwiękowe nie zostaną usunięte.</string>
+  <string name="title_pref_actions_sound_timing">Dźwięk dostępnych czynności</string>
+  <string name="value_actions_sound_timing_focus">Po ustawieniu fokusu na elemencie</string>
+  <string name="value_actions_sound_timing_hint">Na początku podpowiedzi o dostępnych czynnościach</string>
+  <string name="voice_commands_help_call">Call [kontakt] lub Call [numer telefonu]</string>
+  <string name="voice_commands_help_call_description">Backtalk odczyta, do kogo zamierza zadzwonić. Powiedz „yes”, aby potwierdzić. Dodaj „on speaker”, aby włączyć tryb głośnomówiący. Jeśli pasuje kilka kontaktów, wybierz jeden, podając jego numer na liście</string>
+  <string name="voice_commands_help_call_control">Answer the call, Decline lub Hang up</string>
+  <string name="voice_commands_help_call_control_description">Możesz też powiedzieć „pick up the call”, „reject the call” lub „end call”. Przy pierwszym użyciu Backtalk poprosi o uprawnienia do telefonu i kontaktów</string>
+  <string name="voice_commands_call_confirm">Połączenie z: %1$s. Powiedz „yes”, aby potwierdzić</string>
+  <string name="voice_commands_call_confirm_speaker">Połączenie z: %1$s w trybie głośnomówiącym. Powiedz „yes”, aby potwierdzić</string>
+  <string name="voice_commands_call_calling">Łączenie z: %1$s</string>
+  <string name="voice_commands_call_cancelled">Połączenie anulowane</string>
+  <string name="voice_commands_call_contact_not_found">Nie znaleziono w kontaktach: %1$s</string>
+  <string name="voice_commands_call_choose">Liczba kontaktów pasujących do „%2$s”: %1$d. %3$s Aby wybrać, podaj numer kontaktu na liście.</string>
+  <string name="voice_commands_call_choose_item">%1$d, %2$s.</string>
+  <string name="voice_commands_call_permission_needed">Aby wykonywać i odbierać połączenia za pomocą poleceń głosowych, Backtalk potrzebuje uprawnień. Udziel ich na kolejnych ekranach, a następnie powtórz polecenie.</string>
+  <string name="voice_commands_call_answering">Odbieranie połączenia</string>
+  <string name="voice_commands_call_declining">Połączenie odrzucone</string>
+  <string name="voice_commands_call_hanging_up">Połączenie zakończone</string>
+  <string name="voice_commands_call_no_call">Nie ma połączenia do zakończenia</string>
+  <string name="voice_commands_call_needs_newer_android">Kończenie połączeń głosem wymaga Androida 9 lub nowszego</string>
+  <string name="voice_commands_call_failed">Nie udało się obsłużyć połączenia</string>
 </resources>
