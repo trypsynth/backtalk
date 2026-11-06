@@ -107,9 +107,9 @@
   <string name="title_pref_category_context_menu">自定义 Backtalk 菜单</string>
   <string name="title_pref_category_selector_menu">自定义朗读控件</string>
   <string name="title_pref_category_navigation_menu">修改导航选项</string>
-  <string name="pref_category_context_menu_summary">如需使用 TalkBack 菜单，请用三根手指点按屏幕。您也可以先向上再向右滑动，或先向下再向右滑动。</string>
+  <string name="pref_category_context_menu_summary">用三根手指点按屏幕。您也可以先向上再向右滑动，或先向下再向右滑动。</string>
   <string name="pref_category_context_menu_summary_xr">如需使用 Backtalk 菜单，请将非惯用手的手掌朝向自己，然后双指张合。</string>
-  <string name="pref_category_context_menu_summary_single_finger">如需使用 TalkBack 菜单，请先向下再向右滑动。</string>
+  <string name="pref_category_context_menu_summary_single_finger">先向下再向右滑动。</string>
   <string name="pref_category_selector_menu_summary">如需使用朗读控件，请用三根手指向左或向右滑动，或者用三根手指向上或向下滑动。</string>
   <string name="pref_category_selector_menu_summary_xr">如需在朗读控件之间循环切换，请将非惯用手的手掌朝向自己，双指张合并向右或向左移动，然后松开。</string>
   <string name="pref_category_selector_menu_summary_single_finger">如需使用朗读控件，请先向上再向下滑动。</string>
@@ -391,7 +391,7 @@
   <string name="title_pref_brailledisplay">盲文显示屏</string>
   <string name="title_pref_brailleime">盲文键盘</string>
   <string name="summary_pref_brailleime_disabled">您的设备不支持盲文键盘</string>
-  <string name="title_pref_speech_footer">您可以通过任何界面快速调节 TalkBack 的某些声音设置。\n\n无障碍功能音量：用 1 根手指按住屏幕，并按音量调高按钮或音量调低按钮。\nTalkBack 语速：用 3 根手指向上或向下滑动。当您听到“语速”时，请用 1 根手指向上或向下滑动。</string>
+  <string name="title_pref_speech_footer">如要在任何界面调节无障碍功能音量，请用 1 根手指按住屏幕，并按音量加键或音量减键。</string>
   <string name="title_pref_vibration">振动反馈</string>
   <string name="title_pref_soundback">声音反馈</string>
   <string name="title_pref_use_audio_focus">降低其他应用音量</string>
@@ -950,7 +950,7 @@
   <string name="message_pref_touch_focus_latency">焦点延迟时间越短，Backtalk 在您触摸屏幕后进行播报的速度就越快</string>
   <string name="message_pref_typing_method_prefix">如需尽可能缩短输入延迟时间，请选择“用手指按住要选择的任意键，然后松开手指”</string>
   <string name="message_pref_typing_method_postfix">您也可以随时使用分开点按功能进行输入。操作方法是：用一根手指按住要选择的任意键，然后用另一根手指点按屏幕。</string>
-  <string name="title_pref_talkback_speech_rate">TalkBack 语速</string>
+  <string name="title_pref_talkback_speech_rate">语速</string>
   <string name="title_pref_selector_adjustable_widget_slider">调整滑块</string>
   <string name="title_pref_selector_typo_granularity">校对</string>
   <string name="hint_no_typo_found">没有发现拼写错误。</string>

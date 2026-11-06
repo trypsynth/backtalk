@@ -4,7 +4,7 @@
   <string name="bd_application_name">Android 无障碍套件</string>
   <string name="bd_ime_unavailable_activity_name">Backtalk 盲文键盘不可用</string>
   <string name="bd_ime_disabled_dialog_title">开启 Backtalk 盲文键盘</string>
-  <string name="bd_ime_disabled_dialog_message">如要使用盲文显示屏进行输入，请转到输入设置以开启 TalkBack 盲文键盘</string>
+  <string name="bd_ime_disabled_dialog_message">如要使用盲文显示屏进行输入，请转到输入设置将其开启。</string>
   <string name="bd_ime_disabled_dialog_title_positive">输入设置</string>
   <string name="bd_ime_not_default_dialog_title">切换您的输入法</string>
   <string name="bd_ime_not_default_dialog_message">如要继续输入，请将 Backtalk 盲文键盘设为输入法</string>
