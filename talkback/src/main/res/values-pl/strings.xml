@@ -5,7 +5,7 @@
   <string name="talkback_service_summary">Używaj czytnika ekranu do odsłuchiwania odczytywanych na głos opisów elementów</string>
   <string name="talkback_preferences_title">Ustawienia Backtalka</string>
   <string name="talkback_settings_screen_title_breadcrumb">Ustawienia</string>
-  <string name="tts_preferences_title">Zamiana tekstu na mowę</string>
+  <string name="tts_preferences_title">Mowa</string>
   <string name="language_options">Języki</string>
   <string name="spoken_language">Język wypowiedzi</string>
   <string name="actions">Czynności</string>
@@ -56,7 +56,7 @@
   <string name="pref_speak_container_element_positions_title">Odczytuj informacje w kontenerach</string>
   <string name="pref_speak_time_title">Wypowiadaj godzinę</string>
   <string name="pref_speak_time_summary">Po włączeniu ekranu</string>
-  <string name="summary_speak_container_element_positions">Dotyczy m.in. informacji dostępnych po wybraniu lub opuszczeniu list, siatek i innych kontenerów</string>
+  <string name="summary_speak_container_element_positions">Podawaj pozycję i liczbę elementów, np. „3 z 30”. Informuj o wchodzeniu do list, siatek i innych kontenerów oraz wychodzeniu z nich, a także o wierszach i kolumnach tabel.</string>
   <string name="confirm_the_typing_focus_delay_reduction_dialog_title">Przełączyć się na wpisywanie po puszczeniu?</string>
   <string name="message_of_typing_focus_delay_reduction_confirm_dialog">Jeśli opóźnienie zaznaczenia podczas pisania zostanie ustawione na mniej niż 0,3 sekundy, dwukrotne kliknięcie w celu wpisania tekstu będzie bardzo trudne. Wybierz „Przełącz”, aby automatycznie przełączyć się na wpisywanie po puszczeniu.\n\nGdy używasz tej funkcji, przytrzymaj palec na ekranie w celu wybrania przycisku klawiatury, a następnie puść, aby wpisać znak.\n\nMożesz dostosować działanie w ustawieniach Backtalka.</string>
   <string name="gestures_announce_typing_focus_wont_change">Opóźnienie zaznaczenia podczas pisania nie działa bez funkcji wpisywania po puszczeniu.</string>
@@ -364,7 +364,7 @@
 Określa, jak szybko Backtalk ma odtwarzać komunikaty po przeniesieniu zaznaczenia. Mniejsze opóźnienie zapewnia szybsze działanie funkcji Backtalk, ale może utrudniać dwukrotne i trzykrotne kliknięcie.\n\n
 Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowania z dwukrotnego kliknięcia na kliknięcie 2 palcami.
       </string>
-  <string name="title_pref_talkback_gesture_detection">Używaj gestów w Backtalku</string>
+  <string name="title_pref_talkback_gesture_detection">Rozpoznawaj gesty w Backtalku</string>
   <string name="toast_pref_talkback_gesture_detection">Aby uruchomić to ustawienie, wyłącz, a następnie włącz Backtalka.</string>
   <string name="title_pref_auto_image_captioning">Automatyczne opisy</string>
   <string name="title_pref_gemini_settings">Ustawienia Gemini</string>
@@ -439,13 +439,13 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="shortcut_previous_window">Poprzednie okno</string>
   <string name="shortcut_back">Wstecz</string>
   <string name="shortcut_home">Ekran główny</string>
-  <string name="shortcut_overview">Przegląd</string>
+  <string name="shortcut_overview">Ostatnie aplikacje</string>
   <string name="shortcut_notifications">Powiadomienia</string>
   <string name="shortcut_quick_settings">Szybkie ustawienia</string>
   <string name="shortcut_show_custom_actions">Pokaż czynności niestandardowe</string>
   <string name="shortcut_talkback_breakout">Otwórz menu Backtalka</string>
   <string name="shortcut_pause_or_resume_feedback">Wstrzymaj lub wznów komunikaty głosowe</string>
-  <string name="shortcut_toggle_voice_feedback">Włącz lub wyłącz komunikaty głosowe</string>
+  <string name="shortcut_toggle_voice_feedback">Włącz lub wyłącz mowę</string>
   <string name="shortcut_read_from_top">Czytaj od góry</string>
   <string name="shortcut_read_from_current">Czytaj od zaznaczonego elementu</string>
   <string name="shortcut_print_node_tree">Wydrukuj drzewo węzłów</string>
@@ -477,8 +477,8 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="shortcut_media_control">Odtwórz lub wstrzymaj multimedia</string>
   <string name="shortcut_voice_input">Rozpocznij lub zakończ głosowe wprowadzanie tekstu</string>
   <string name="shortcut_media_control_or_voice_input">Odtwórz lub wstrzymaj multimedia, rozpocznij lub zakończ głosowe wprowadzanie tekstu</string>
-  <string name="shortcut_increase_volume">Zwiększ głośność</string>
-  <string name="shortcut_decrease_volume">Zmniejsz głośność</string>
+  <string name="shortcut_increase_volume">Zwiększ głośność dostępności</string>
+  <string name="shortcut_decrease_volume">Zmniejsz głośność dostępności</string>
   <string name="shortcut_all_apps">Wszystkie aplikacje</string>
   <string name="shortcut_braille_keyboard">Włącz klawiaturę brajlowską</string>
   <string name="shortcut_braille_display_settings">Przejdź do ustawień monitora brajlowskiego</string>
@@ -493,7 +493,7 @@ Wybranie opóźnienia poniżej 0,3 sekundy spowoduje zmianę sposobu aktywowani
   <string name="shortcut_toggle_braille_display">Włącz lub wyłącz monitor brajlowski</string>
   <string name="shortcut_announce_current_time_and_date">Powiedz bieżącą datę i godzinę</string>
   <string name="shortcut_announce_battery_state">Odczytaj stan naładowania baterii</string>
-  <string name="shortcut_announce_current_title">Wypowiadaj tytuł okna</string>
+  <string name="shortcut_announce_current_title">Powiedz tytuł okna</string>
   <string name="shortcut_speech_pitch_increase">Zwiększ ton głosu</string>
   <string name="shortcut_speech_pitch_decrease">Zmniejsz ton głosu</string>
   <string name="shortcut_speech_rate_increase">Zwiększ szybkość mowy</string>
