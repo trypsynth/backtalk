@@ -1536,6 +1536,8 @@ public class FailoverTextToSpeech {
    */
   private int ttsSpeak(
       CharSequence text, int queueMode, Bundle bundle, @Nullable String utteranceId) {
+    // A sliced generated digits span must describe only the submitted slice, not the full run.
+    text = NumbersAsDigits.forSpeech(text);
     @Nullable LowLatencyAudio player = lowLatencyPlayer();
     if (player == null || utteranceId == null || TextUtils.isEmpty(text)) {
       return tts.speak(text, queueMode, bundle, utteranceId);

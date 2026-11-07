@@ -154,6 +154,12 @@ When text is marked as another language, TalkBack switches the voice to that lan
 
 When you turn a change off, Backtalk no longer splits the text or pauses around it. Text marked as the voice's own language and country, such as US English for a US English voice, isn't split either, whatever the settings, since the voice doesn't change. Backtalk compares languages by their codes only, so Serbian in Latin and in Cyrillic script counts as two dialects, and Norwegian marked as `no` and as `nb` counts as two languages.
 
+### Speak numbers as digits
+
+**Verbosity** > **Speak numbers as digits** asks a compatible speech engine to read consecutive digits separately, including leading zeros. It is off by default. It applies to numbers from 2 to 32 digits, including six-digit codes and twenty-digit electricity tokens. Runs of 33 or more digits and instructions supplied by an app are left alone.
+
+This uses Android's pronunciation hints without changing the text. Some engines, including the tested Vocalizer Tessa voice, may ignore the hint and continue reading numbers normally. There is no automatic fallback to another reading method.
+
 ### How emoji are spoken
 
 Some speech engines read emoji badly, use names of their own, or don't read them at all. **Verbosity** > **Emoji** chooses how they're spoken:

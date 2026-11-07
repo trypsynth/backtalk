@@ -1243,6 +1243,7 @@ public class SpeechControllerImpl implements SpeechController {
     text = replaceSpanByContentDescription(text);
     text = replaceBrailleSymbolByDescription(mContext, text);
     text = EmojiSpeech.process(mContext, text);
+    text = NumbersAsDigits.apply(text);
     final FeedbackItem pendingItem =
         FeedbackProcessingUtils.generateFeedbackItemFromInput(
             mContext,

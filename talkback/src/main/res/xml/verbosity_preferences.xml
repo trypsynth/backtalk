@@ -182,6 +182,13 @@
       android:key="@string/pref_speak_element_ids_key"
       android:summary="@string/summary_pref_speak_element_ids"
       android:title="@string/title_pref_speak_element_ids" />
+  <!-- Independent of verbosity presets, like punctuation. -->
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+      android:defaultValue="@bool/pref_speak_numbers_as_digits_default"
+      android:key="@string/pref_speak_numbers_as_digits_key"
+      android:title="@string/title_pref_speak_numbers_as_digits"
+      android:summary="@string/summary_pref_speak_numbers_as_digits" />
+
   <!-- Punctuation - Non-preset detailed settings -->
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_punctuation_default"
