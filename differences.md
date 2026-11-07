@@ -213,7 +213,13 @@ When you turn speech off with its gesture or keyboard shortcut, TalkBack also dr
 
 In **Verbosity**, **Speak numbers as digits** reads consecutive digits separately,
 including leading zeros. For example, `000123` is spoken as `0 0 0 1 2 3`.
-It is off by default. It changes only the text sent for speech; the app's text and
+It is off by default. Android's native digits pronunciation hints were investigated
+first: Google's engine honoured them in a standalone test, but Vocalizer Tessa did
+not reliably produce the requested reading. Explicit spacing was chosen after
+Oppo tests with Google TTS and Tessa produced the intended individual-digit output.
+Neither approach guarantees identical behaviour across engines or voices.
+
+It changes only the text sent for speech; the app's text and
 accessibility navigation stay unchanged. Existing spaces and punctuation characters are kept.
 Commas, periods, plus and minus signs, currency symbols and letters immediately
 next to a digit are separated too: `$1,500.00` is sent for speech as
@@ -229,7 +235,7 @@ Delimiters were not reliably announced with Vocalizer's own **Process punctuatio
 setting off. Turning on **Process punctuation** and selecting **Most** allowed
 commas, periods and other punctuation to be announced. Tessa called the minus
 character "dash". These are findings from that synthesizer and device; other
-speech engines may pronounce the digits and punctuation differently.
+speech engines may pronounce the digits and punctuation differently, including how they say zero.
 
 When new speech is generated for digit-spaced text, app-provided spoken wording
 that crosses a speech chunk or resume boundary falls back to the visible text for
