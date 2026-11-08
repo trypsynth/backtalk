@@ -4,6 +4,8 @@
   <string name="template_password_traversed">字符 %1$d</string>
   <string name="untitled_window">无标题</string>
   <string name="template_shorten_text">%1$d 个字符，从“%2$s”到“%3$s”</string>
+  <!-- Spoken after the last thing Backtalk said is added to the text on the clipboard, on a new line. The text added is filled in. [CHAR LIMIT=NONE] -->
+  <string name="template_text_appended">已追加，<xliff:g id="text">%1$s</xliff:g></string>
   <string name="template_text_copied">已复制，%1$s</string>
   <string name="template_capital_letter">大写的 %1$s</string>
   <string name="character_collapse_template"> %1$d 个%2$s﻿</string>
