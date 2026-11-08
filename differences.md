@@ -190,7 +190,17 @@ TalkBack ignored the order for a row whose checkbox or switch has no text of its
 
 ### "Backtalk off" at the right volume
 
-When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. TalkBack only approximated that volume.
+When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. This includes Samsung phones, and stays right when you connect or disconnect headphones while Backtalk is on. On Bluetooth headphones that control their own volume, it can be one volume step louder or quieter, about 3 dB, because those headphones can set the media volume between steps and Android doesn't tell apps where. TalkBack only approximated that volume.
+
+### Volume said as it changes
+
+When you press a volume key, Backtalk says the new volume right away and stops what it was saying. During continuous reading it waits for the current item to finish instead, so reading goes on. A newer level replaces one that hasn't finished. The first change names the volume, such as "Music volume set to 50 percent", and changes to the same volume less than 2 seconds apart say only the percentage. If you hold the key down, Backtalk says the first level, stays quiet while the volume keeps changing, and says the level you end at when you let go. TalkBack waited until the keys had been still for 2 seconds, and after the first press it waited 4 seconds. Backtalk also says the media volume while media plays, where TalkBack said it only when nothing was playing.
+
+Each output, such as the phone speaker or a pair of headphones, keeps its own media volume, and Android switches to it when media moves there. Backtalk doesn't say a media change that comes with a new output unless a volume key made it, so connecting or disconnecting headphones stays quiet. Headphones can report the same level again a moment later, and Backtalk doesn't say a media level that hasn't changed unless a volume key reported it. TalkBack said the level headphones set. If the new output's level is the one you already had, nothing changes, so the first press on the headphones' own controls after that isn't said.
+
+On Bluetooth headphones that control their own volume, Android raises speech to make up for the media volume, but it works out how much only when speech starts or when the accessibility volume changes. An announcement that cut into speech still playing kept the level for the old media volume, so it sounded louder or quieter than speech after it. When the media volume changes, Backtalk sets the accessibility volume one step down and back, which makes Android work out the level at once, and says the new level right away. When none of Backtalk's audio has played for 2 seconds, it first plays 0.15 seconds of silence, because Android applies the level up to 0.09 seconds after audio starts. With the screen off, Android 16 doesn't let Backtalk change the accessibility volume, so Backtalk instead stops speech, waits until none of its audio has played for 0.35 seconds, up to 0.6 seconds, and plays the silence first. During continuous reading it doesn't stop, so the level can be off then. Speech already on its way to the headphones when you turn the volume up, about 0.2 seconds of it, still plays at the old level, so it can sound loud for a moment.
+
+When you change the volume with a slider, Backtalk says only the slider's value. To stop hearing the volume, turn off **Verbosity** > **Speak volume changes**.
 
 ### Table column headers
 

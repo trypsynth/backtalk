@@ -2493,6 +2493,11 @@ public class SelectorController implements UserInputEventListener {
       new VolumeChangedListener() {
 
         @Override
+        public boolean announcesVolume(int type) {
+          return type == listenedVolumeStream;
+        }
+
+        @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {
           if (type != listenedVolumeStream) {
             return;
