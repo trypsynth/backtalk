@@ -133,16 +133,7 @@ class SystemVoiceCommands(
    * "settings", "system settings", or "device settings".
    */
   private fun handleSystemSettings(norm: String): Boolean {
-    val settingsTargets = listOf(
-      "open settings",
-      "settings",
-      "launch settings",
-      "start settings",
-      "go to settings",
-      "system settings",
-      "device settings"
-    )
-    if (VoiceCommandFuzzyMatcher.matchesAny(norm, settingsTargets, threshold = 0.88)) {
+    if (wantsSystemSettings(norm)) {
       speakDelayed(context.getString(R.string.voice_commands_opening_settings))
       val intent = Intent(Settings.ACTION_SETTINGS).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -179,51 +170,37 @@ class SystemVoiceCommands(
   }
 
   private fun handleStatusAndBattery(norm: String): Boolean {
-    val batteryTargets = listOf("battery", "battery level", "how much battery", "check battery", "battery status")
-    if (VoiceCommandFuzzyMatcher.matchesAny(norm, batteryTargets, threshold = 0.85)) {
-      val desc = batteryMonitor?.batteryStateDescription
-      if (!desc.isNullOrBlank()) {
-        speakDelayed(desc)
-        return true
+    val description =
+      when (deviceInfo(norm) ?: return false) {
+        DeviceInfo.BATTERY -> batteryMonitor?.batteryStateDescription
+        DeviceInfo.STATUS -> statusReader?.describe()
       }
-    }
-
-    val statusTargets = listOf("status", "device status", "what time is it", "time", "check status")
-    if (VoiceCommandFuzzyMatcher.matchesAny(norm, statusTargets, threshold = 0.85)) {
-      val desc = statusReader?.describe()
-      if (!desc.isNullOrBlank()) {
-        speakDelayed(desc)
-        return true
-      }
-    }
-
-    return false
+    if (description.isNullOrBlank()) return false
+    speakDelayed(description)
+    return true
   }
 
   private fun handleVolume(norm: String): Boolean {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as? AudioManager ?: return false
 
-    val isVolUp = VoiceCommandFuzzyMatcher.matchesAny(norm, listOf("volume up", "increase volume", "louder", "turn volume up"), threshold = 0.85)
-    val isVolDown = VoiceCommandFuzzyMatcher.matchesAny(norm, listOf("volume down", "decrease volume", "quieter", "turn volume down", "lower volume"), threshold = 0.85)
-    val isMute = VoiceCommandFuzzyMatcher.matchesAny(norm, listOf("mute", "mute volume", "mute audio"), threshold = 0.85)
-    val isUnmute = VoiceCommandFuzzyMatcher.matchesAny(norm, listOf("unmute", "unmute volume", "unmute audio"), threshold = 0.85)
+    val action = volumeAction(norm) ?: return false
 
-    if (isVolUp) {
+    if (action == VolumeAction.UP) {
       audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI)
       announceCurrentVolume(audioManager)
       return true
     }
-    if (isVolDown) {
+    if (action == VolumeAction.DOWN) {
       audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI)
       announceCurrentVolume(audioManager)
       return true
     }
-    if (isMute) {
+    if (action == VolumeAction.MUTE) {
       audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI)
       speakDelayed(context.getString(R.string.voice_commands_muted))
       return true
     }
-    if (isUnmute) {
+    if (action == VolumeAction.UNMUTE) {
       audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, AudioManager.FLAG_SHOW_UI)
       speakDelayed(context.getString(R.string.voice_commands_unmuted))
       return true
@@ -450,6 +427,73 @@ internal fun dndDirection(norm: String): Boolean? {
     saysOn -> true
     // No clear word: only act when exactly one list matches.
     fuzzyOn != fuzzyOff -> fuzzyOn
+    else -> null
+  }
+}
+
+private val SETTINGS_PHRASES =
+  listOf(
+    "open settings",
+    "open the settings",
+    "settings",
+    "launch settings",
+    "start settings",
+    "go to settings",
+    "system settings",
+    "device settings")
+
+private val BATTERY_PHRASES =
+  listOf("battery", "battery level", "how much battery", "check battery", "battery status")
+
+private val STATUS_PHRASES =
+  listOf("status", "device status", "check status", "what time is it", "time")
+
+private val VOLUME_UP_PHRASES = listOf("volume up", "increase volume", "louder", "turn volume up")
+
+private val VOLUME_DOWN_PHRASES =
+  listOf("volume down", "decrease volume", "quieter", "turn volume down", "lower volume")
+
+/**
+ * Whether [norm] is one of [phrases]. A long phrase may have one wrong letter. A sentence that only
+ * contains a phrase is not a match: "unmute" is not "mute", and "battery status" is not "status".
+ */
+private fun saysPhrase(norm: String, phrases: List<String>): Boolean =
+  phrases.any {
+    norm == it || (it.length >= 8 && VoiceCommandFuzzyMatcher.similarity(norm, it) >= 0.85)
+  }
+
+/** Whether [norm] asks to open Android Settings. */
+internal fun wantsSystemSettings(norm: String): Boolean = saysPhrase(norm, SETTINGS_PHRASES)
+
+internal enum class DeviceInfo {
+  BATTERY,
+  STATUS
+}
+
+/** Which device information [norm] asks for, or null when it asks for none. */
+internal fun deviceInfo(norm: String): DeviceInfo? =
+  when {
+    saysPhrase(norm, BATTERY_PHRASES) -> DeviceInfo.BATTERY
+    saysPhrase(norm, STATUS_PHRASES) -> DeviceInfo.STATUS
+    else -> null
+  }
+
+internal enum class VolumeAction {
+  UP,
+  DOWN,
+  MUTE,
+  UNMUTE
+}
+
+/** Which volume change [norm] asks for, or null when it asks for none. */
+internal fun volumeAction(norm: String): VolumeAction? {
+  val words = norm.split(" ")
+  return when {
+    // "unmute" contains "mute", so it is told apart by the whole word.
+    "unmute" in words || norm.startsWith("un mute") -> VolumeAction.UNMUTE
+    "mute" in words && words.size <= 3 -> VolumeAction.MUTE
+    saysPhrase(norm, VOLUME_UP_PHRASES) -> VolumeAction.UP
+    saysPhrase(norm, VOLUME_DOWN_PHRASES) -> VolumeAction.DOWN
     else -> null
   }
 }
