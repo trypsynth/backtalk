@@ -122,6 +122,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -182,12 +183,30 @@ public class FocusProcessorForLogicalNavigation {
   /** Set while searching again after showing an off-screen item, so it is tried only once. */
   private boolean revealingOffscreen;
 
-  // Checks once a frame for about 100 ms, when Android would send the scroll event anyway.
+  // Checks once a frame whether a page scroll has ended: once the pivot has stayed put for about
+  // 50 ms, or else, after about 650 ms, leaves it to the scroll event.
   private static final long EARLY_SCROLL_RETRY_MS = 16;
-  private static final int EARLY_SCROLL_RETRIES = 6;
+  private static final int EARLY_SCROLL_SETTLED_CHECKS = 3;
+  private static final int EARLY_SCROLL_MAX_CHECKS = 40;
 
   // Checks whether a page scroll has already moved the list, before its scroll event arrives.
   private final Handler earlyScrollCheckHandler = new Handler(Looper.getMainLooper());
+
+  // The page scroll that a swipe started, until the swipe has found its item after it. Swipes that
+  // come meanwhile wait for it: the list reuses the focused row for another item as it scrolls, so
+  // a swipe from that row would move on from the wrong item.
+  private @Nullable AutoScrollCallback pageScrollCallback;
+  private final ArrayDeque<Pair<NavigationAction, EventId>> swipesAfterPageScroll =
+      new ArrayDeque<>();
+  private static final int MAX_SWIPES_AFTER_PAGE_SCROLL = 3;
+  // So that swipes never wait for a scroll that Backtalk doesn't hear the end of.
+  private static final long MAX_SWIPE_WAIT_MS = 1000;
+  private final Runnable stopWaitingForPageScroll =
+      () -> {
+        LogUtils.w(TAG, "Stopped waiting for the page scroll");
+        pageScrollCallback = null;
+        runSwipesAfterPageScroll();
+      };
 
   // Target to put focus on on the next window navigation action
   private @Nullable AccessibilityNodeInfoCompat stealWindowNavigationTarget = null;
@@ -240,6 +259,17 @@ public class FocusProcessorForLogicalNavigation {
     if (navigationAction == null || navigationAction.actionType == NavigationAction.UNKNOWN) {
       LogUtils.w(TAG, "Cannot perform navigation action: action type undefined.");
       return false;
+    }
+    if (navigationAction.actionType == NavigationAction.DIRECTIONAL_NAVIGATION
+        && isWaitingForPageScroll()) {
+      if (swipesAfterPageScroll.size() < MAX_SWIPES_AFTER_PAGE_SCROLL) {
+        LogUtils.d(TAG, "Swipe waits for the page scroll to end");
+        if (swipesAfterPageScroll.isEmpty()) {
+          earlyScrollCheckHandler.postDelayed(stopWaitingForPageScroll, MAX_SWIPE_WAIT_MS);
+        }
+        swipesAfterPageScroll.add(Pair.create(navigationAction, eventId));
+      }
+      return true;
     }
     AccessibilityNodeInfoCompat pivot = getPivotNodeForNavigationAction(navigationAction);
     if (pivot == null) {
@@ -2708,50 +2738,92 @@ public class FocusProcessorForLogicalNavigation {
             eventId);
     if (scrolled
         && scrollCallback != null
-        && navigationAction.targetType == NavigationTarget.TARGET_DEFAULT) {
+        && navigationAction.actionType == NavigationAction.DIRECTIONAL_NAVIGATION) {
+      pageScrollCallback = scrollCallback;
+    }
+    // Searching before the scroll event needs the list's cached rows cleared, which needs Android
+    // 14. Before that, the search waits for the scroll event, as TalkBack's does.
+    if (scrolled
+        && scrollCallback != null
+        && navigationAction.targetType == NavigationTarget.TARGET_DEFAULT
+        && BuildVersionUtils.isAtLeastU()) {
       AutoScrollCallback callback = scrollCallback;
       AccessibilityNodeInfoCompat scrollable = scrollableNodeInfo.getNode();
       earlyScrollCheckHandler.post(
           () ->
               checkScrollEarly(
-                  callback, scrollable, pivotBefore, eventId, EARLY_SCROLL_RETRIES));
+                  callback,
+                  scrollable,
+                  pivotBefore,
+                  /* lastBounds= */ null,
+                  /* unchangedChecks= */ 0,
+                  eventId,
+                  /* checksLeft= */ EARLY_SCROLL_MAX_CHECKS));
     }
     return scrolled;
   }
 
   /**
-   * Continues the navigation as soon as the pivot has moved, instead of waiting for the scroll
-   * event. Android sends scroll events at most every 100 ms, but lists usually scroll before the
-   * action returns or within a few frames. If nothing has moved yet, checks again every {@link
-   * #EARLY_SCROLL_RETRY_MS}, up to {@code retries} times, and then leaves it to the scroll event,
-   * which is ignored if this check already handled the scroll.
+   * Continues the navigation as soon as the list has stopped scrolling, instead of waiting for the
+   * last scroll event. Android sends scroll events at most every 100 ms, and TalkBack then waits
+   * another 110 ms in case more come. This checks every {@link #EARLY_SCROLL_RETRY_MS} where the
+   * pivot is, and goes on once it has moved and then stayed put for {@link
+   * #EARLY_SCROLL_SETTLED_CHECKS} checks in a row.
+   *
+   * <p>It doesn't go on while the list is still moving: a list reuses the views of rows that leave
+   * the screen for the rows that come in, so a search partway through the scroll can miss a row
+   * and skip it. If the pivot's row leaves the screen, or the list hasn't settled after {@code
+   * checksLeft} more checks, it leaves the navigation to the scroll event, which is ignored if this
+   * check already handled the scroll.
    */
   private void checkScrollEarly(
       AutoScrollCallback callback,
       AccessibilityNodeInfoCompat scrollable,
       Rect pivotBefore,
+      @Nullable Rect lastBounds,
+      int unchangedChecks,
       EventId eventId,
-      int retries) {
+      int checksLeft) {
     if (scrollCallback != callback) {
       return;
     }
     AccessibilityNodeInfoCompat pivotNow = AccessibilityNodeInfoCompat.obtain(callback.pivot);
-    Rect pivotAfter = new Rect();
-    boolean pivotPresent = pivotNow.refresh();
-    if (pivotPresent) {
-      pivotNow.getBoundsInScreen(pivotAfter);
-      if (pivotAfter.equals(pivotBefore)) {
-        if (retries > 0) {
-          earlyScrollCheckHandler.postDelayed(
-              () -> checkScrollEarly(callback, scrollable, pivotBefore, eventId, retries - 1),
-              EARLY_SCROLL_RETRY_MS);
-        }
-        return;
-      }
+    if (!pivotNow.refresh()) {
+      // The pivot's row has left the screen, so it can't show where the scroll stops.
+      LogUtils.d(TAG, "checkScrollEarly: pivot is gone, waiting for the scroll event");
+      return;
     }
-    int deltaX = pivotPresent ? pivotBefore.left - pivotAfter.left : DELTA_UNDEFINED;
-    int deltaY = pivotPresent ? pivotBefore.top - pivotAfter.top : DELTA_UNDEFINED;
-    LogUtils.d(TAG, "checkScrollEarly: scrolled, deltaX=%s deltaY=%s", deltaX, deltaY);
+    Rect bounds = new Rect();
+    pivotNow.getBoundsInScreen(bounds);
+    if (lastBounds == null && bounds.equals(pivotBefore)) {
+      // Not moving yet.
+      unchangedChecks = 0;
+    } else if (lastBounds != null && bounds.equals(lastBounds)) {
+      unchangedChecks++;
+    } else {
+      unchangedChecks = 0;
+      lastBounds = bounds;
+    }
+    if (unchangedChecks < EARLY_SCROLL_SETTLED_CHECKS) {
+      if (checksLeft > 0) {
+        Rect last = lastBounds;
+        int unchanged = unchangedChecks;
+        earlyScrollCheckHandler.postDelayed(
+            () ->
+                checkScrollEarly(
+                    callback, scrollable, pivotBefore, last, unchanged, eventId, checksLeft - 1),
+            EARLY_SCROLL_RETRY_MS);
+      }
+      return;
+    }
+    int deltaX = pivotBefore.left - bounds.left;
+    int deltaY = pivotBefore.top - bounds.top;
+    LogUtils.d(TAG, "checkScrollEarly: scroll ended, deltaX=%s deltaY=%s", deltaX, deltaY);
+    // Android's node cache keeps the list's rows as they were until the scroll event reaches this
+    // thread, which can be up to 100 ms after the scroll ends, so read them from the app again.
+    if (BuildVersionUtils.isAtLeastU()) {
+      service.clearCachedSubtree(scrollable.unwrap());
+    }
     scrollable.refresh();
     onAutoScrolled(scrollable, eventId, deltaX, deltaY);
   }
@@ -2857,19 +2929,55 @@ public class FocusProcessorForLogicalNavigation {
       } else {
         LogUtils.w(TAG, "Skip onAutoScrolled because currentFocus is assigned by another actor.");
       }
+      endPageScroll(autoScrollCallback);
     }
   }
 
   /** Stops an auto-scroll in progress from moving focus when it ends. */
   public void cancelAutoScrollFocus() {
     scrollCallback = null;
+    pageScrollCallback = null;
+    swipesAfterPageScroll.clear();
+    earlyScrollCheckHandler.removeCallbacks(stopWaitingForPageScroll);
   }
 
   /** Determines feedback for auto-scroll failure after directional-navigation action. */
   public void onAutoScrollFailed(@NonNull AccessibilityNodeInfoCompat scrolledNode) {
     if (scrollCallback != null) {
+      AutoScrollCallback callback = scrollCallback;
       scrollCallback.onAutoScrollFailed(scrolledNode);
       scrollCallback = null;
+      endPageScroll(callback);
+    }
+  }
+
+  /** Whether a swipe's page scroll is still to be followed by focusing the item after it. */
+  private boolean isWaitingForPageScroll() {
+    return pageScrollCallback != null && pageScrollCallback == scrollCallback;
+  }
+
+  /**
+   * Lets the swipes that waited for the page scroll of {@code callback} go ahead, once it has been
+   * handled, unless handling it started another page scroll.
+   */
+  private void endPageScroll(AutoScrollCallback callback) {
+    if (pageScrollCallback == callback) {
+      pageScrollCallback = null;
+    }
+    if (!swipesAfterPageScroll.isEmpty() && !isWaitingForPageScroll()) {
+      earlyScrollCheckHandler.post(this::runSwipesAfterPageScroll);
+    }
+  }
+
+  /** Performs the swipes that waited for a page scroll, in order, until one scrolls a page. */
+  private void runSwipesAfterPageScroll() {
+    earlyScrollCheckHandler.removeCallbacks(stopWaitingForPageScroll);
+    while (!swipesAfterPageScroll.isEmpty() && !isWaitingForPageScroll()) {
+      Pair<NavigationAction, EventId> swipe = swipesAfterPageScroll.poll();
+      onNavigationAction(swipe.first, swipe.second);
+    }
+    if (!swipesAfterPageScroll.isEmpty()) {
+      earlyScrollCheckHandler.postDelayed(stopWaitingForPageScroll, MAX_SWIPE_WAIT_MS);
     }
   }
 

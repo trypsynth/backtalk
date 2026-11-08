@@ -102,7 +102,7 @@ TalkBack speaks the window name only after the speech before it, and the first i
 
 When the next item was only partly on screen, TalkBack scrolled it into view, waited for the scroll before it spoke, and then waited another 110 ms in case more scroll events arrived. Backtalk speaks the item immediately and lets the scroll finish while it speaks.
 
-When the next item is off screen, Backtalk checks once per frame whether the list has moved, rather than wait for the scroll event, which Android sends at most every 100 ms. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen, and from about 320 ms to about 140 ms when the list had to scroll a page.
+When the next item is off screen, the list scrolls a page. TalkBack waited for the last scroll event, which Android sends at most every 100 ms, and then another 110 ms in case more came. Backtalk instead checks once per frame where the item it left is, and searches as soon as that item has stopped moving for about 50 ms. It doesn't search while the list is still moving, because a list reuses the rows that leave the screen for the rows that come in, so a search partway through the scroll can miss an item. If the item it left goes off screen, Backtalk waits until the scroll events stop. TalkBack instead searched as soon as the list had scrolled far enough, while it was still moving, which could skip an item too. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen. Checking each frame needs Android 14 or later, so on earlier versions, Backtalk always waits for the scroll event.
 
 Backtalk also finds the end of a list that's laid out in reverse, such as a chat, correctly.
 
