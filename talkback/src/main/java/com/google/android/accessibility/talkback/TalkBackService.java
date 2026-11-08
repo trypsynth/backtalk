@@ -1100,13 +1100,6 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
   }
 
-  /** Says why the model on the phone could not answer, such as low memory. */
-  private void speakOnDeviceAiProblem(String text) {
-    if (pipeline != null) {
-      pipeline.getFeedbackReturner().returnFeedback(EVENT_ID_UNTRACKED, Feedback.speech(text));
-    }
-  }
-
   private void updateSpeechOverlayOnConfigChange(Configuration newConfig) {
     if (lastConfiguration == null
         || didScreenPropertiesChange(lastConfiguration, newConfig)
@@ -2447,7 +2440,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 : new GeminiRestEndpoint(
                     this,
                     BuildConfig.GEMINI_API_KEY,
-                    new LocalGemmaRequestPerformer(this, this::speakOnDeviceAiProblem)),
+                    new LocalGemmaRequestPerformer(this)),
             new AiCoreEndpoint(this));
 
     KeyboardActor keyboardActor = new KeyboardActor(this);
