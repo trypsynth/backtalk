@@ -20,6 +20,7 @@ import com.google.android.accessibility.talkback.actor.gemini.local.OnDeviceAiSe
 import com.google.android.accessibility.talkback.directtouch.FakeSharedPreferences
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -66,18 +67,35 @@ class OnDeviceAiSettingsTest {
   }
 
   @Test
-  fun defaultIsE2bWhenItFits() {
-    assertEquals(LocalModel.E2B, OnDeviceAiSettings.defaultModel(8 * gib))
-    assertEquals(LocalModel.E2B, OnDeviceAiSettings.preferredModel(FakeSharedPreferences(), 6 * gib))
+  fun defaultIsE2bFromTwelveGig() {
+    // A 12 GB phone reports about 10.9 GB.
+    assertEquals(LocalModel.E2B, OnDeviceAiSettings.defaultModel((10.9 * gib).toLong()))
+    assertEquals(
+      LocalModel.E2B,
+      OnDeviceAiSettings.preferredModel(FakeSharedPreferences(), 16 * gib),
+    )
   }
 
   @Test
-  fun defaultIsTheLargestModelThatFitsOnSmallPhones() {
+  fun defaultOnAnEightGigPhoneIsAFifthOfItsRamAtMost() {
+    // An 8 GB phone, such as a Pixel 9a, reports about 7.4 GB.
+    val ram = (7.4 * gib).toLong()
+    val model = OnDeviceAiSettings.defaultModel(ram)
+    assertNotEquals(LocalModel.E2B, model)
+    assertTrue(OnDeviceAiSettings.fits(model, ram))
+    assertTrue(model.sizeBytes <= ram / 5)
+    val largest =
+      LocalModel.entries
+        .filter { OnDeviceAiSettings.fits(it, ram) && it.sizeBytes <= ram / 5 }
+        .maxOf { it.sizeBytes }
+    assertEquals(largest, model.sizeBytes)
+  }
+
+  @Test
+  fun defaultOnSmallPhonesStillFits() {
     val model = OnDeviceAiSettings.defaultModel(4 * gib)
     assertTrue(OnDeviceAiSettings.fits(model, 4 * gib))
-    val largest =
-      LocalModel.entries.filter { OnDeviceAiSettings.fits(it, 4 * gib) }.maxOf { it.sizeBytes }
-    assertEquals(largest, model.sizeBytes)
+    assertTrue(model.sizeBytes <= 4 * gib / 5)
   }
 
   @Test

@@ -22,6 +22,7 @@ import static com.google.android.accessibility.talkback.interpreters.AutoScrollI
 
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.view.accessibility.AccessibilityEvent;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -49,6 +50,12 @@ public class AutoScrollInterpreter implements ScrollEventHandler {
 
   private ActorState actorState;
   private long handledAutoScrollUptimeMs = 0;
+
+  // How long an auto-scroll that has gone far enough waits for its scroll events to stop.
+  private static final long MAX_WAIT_AFTER_FAR_ENOUGH_MS = 400;
+  // The auto-scroll that has gone far enough, and when it did.
+  private int farEnoughScrollInstanceId = UNKNOWN_SCROLL_INSTANCE_ID;
+  private long farEnoughSinceMs = 0;
 
   private Pipeline.InterpretationReceiver pipeline;
   private DirectionNavigationActor directionNavigationActor;
@@ -96,7 +103,18 @@ public class AutoScrollInterpreter implements ScrollEventHandler {
 
       AutoScrollSuccessChecker checker = record.getAutoScrollSuccessChecker();
       LogUtils.d(TAG, "onScrollEvent, checker = %s", checker);
-      if (checker != null && checker.isAutoScrollSuccess(record.getScrolledNode(), event)) {
+      boolean scrolledFarEnough =
+          checker != null && checker.isAutoScrollSuccess(record.getScrolledNode(), event);
+      if (scrolledFarEnough && record.scrollInstanceId != farEnoughScrollInstanceId) {
+        farEnoughScrollInstanceId = record.scrollInstanceId;
+        farEnoughSinceMs = SystemClock.uptimeMillis();
+      }
+      // A list that has scrolled far enough is usually still animating, and reuses the views of the
+      // rows that leave the screen for the rows that come in, so a search now can miss a row and
+      // skip it. Wait for the scroll events to stop, as for a shorter scroll, but not longer than
+      // MAX_WAIT_AFTER_FAR_ENOUGH_MS, for lists that never stop sending them.
+      if (scrolledFarEnough
+          && SystemClock.uptimeMillis() - farEnoughSinceMs >= MAX_WAIT_AFTER_FAR_ENOUGH_MS) {
         autoScrollHandler.handleAutoScrollSuccess(
             eventId,
             AccessibilityEventUtils.getScrollDeltaX(event),

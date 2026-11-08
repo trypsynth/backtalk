@@ -52,6 +52,11 @@ class GeminiFailure(
     QUOTA,
     /** Google's servers are overloaded or had an internal error. */
     BUSY,
+    /**
+     * The model on the phone could not answer, such as for lack of memory. [message] says why, in
+     * words to speak.
+     */
+    ON_DEVICE,
     /** Anything else. */
     OTHER,
   }
@@ -89,6 +94,7 @@ class GeminiFailure(
         context.getString(
           if (aiService) R.string.ai_service_error_busy else R.string.gemini_error_busy
         )
+      Kind.ON_DEVICE -> message
       Kind.OTHER -> {
         val shortMessage = firstSentence(message)
         when {
@@ -118,6 +124,11 @@ class GeminiFailure(
     /** A failure on the phone, such as an answer that could not be read. */
     @JvmStatic
     fun other(message: String): GeminiFailure = GeminiFailure(Kind.OTHER, message = message)
+
+    /** The model on the phone could not answer, for the reason in [spokenMessage]. */
+    @JvmStatic
+    fun onDevice(spokenMessage: String): GeminiFailure =
+      GeminiFailure(Kind.ON_DEVICE, message = spokenMessage)
 
     /** Reads the failure from the error Volley reports for a request. */
     @JvmStatic
