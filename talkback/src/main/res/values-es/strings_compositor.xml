@@ -2,8 +2,8 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="talkback_on">Backtalk activado</string>
   <string name="talkback_disabled">Backtalk desactivado</string>
-  <string name="notification_type_beginning_of_field">Inicio del campo</string>
-  <string name="notification_type_end_of_field">Fin del campo</string>
+  <string name="notification_type_beginning_of_field">Principio del campo</string>
+  <string name="notification_type_end_of_field">Final del campo</string>
   <string name="notification_type_selection_mode_on">Modo de selección activado</string>
   <string name="notification_type_selection_mode_off">Modo de selección desactivado</string>
   <string name="notification_type_selection_cleared">Selección borrada</string>
@@ -20,10 +20,10 @@
   <string name="notification_category_sys">Estado del sistema</string>
   <string name="notification_category_service">Servicio</string>
   <string name="template_drawer_opened">Menú %1$s</string>
-  <string name="template_text_replaced">%1$s reemplazó %2$s</string>
+  <string name="template_text_replaced">%1$s ha sustituido a %2$s</string>
   <string name="template_text_removed">%1$s eliminado</string>
-  <string name="template_text_cut">Cortado: %1$s</string>
-  <string name="template_text_pasted">Pegado: %1$s</string>
+  <string name="template_text_cut">Se ha cortado %1$s</string>
+  <string name="template_text_pasted">Se ha pegado %1$s</string>
   <string name="template_text_selected">%1$s, seleccionado</string>
   <string name="template_announce_selected_text">Texto seleccionado: %1$s</string>
   <string name="template_text_unselected">%1$s, deseleccionado</string>
@@ -46,7 +46,7 @@
   <string name="value_button">Botón</string>
   <string name="value_seek_bar">Control deslizante</string>
   <string name="value_switch">Interruptor</string>
-  <string name="value_edit_box">Campo de texto</string>
+  <string name="value_edit_box">Cuadro de edición</string>
   <string name="value_edit_box_editing">Editando</string>
   <string name="value_image">Imagen</string>
   <string name="value_unlabelled">Sin etiqueta</string>
@@ -58,7 +58,7 @@
   <string name="value_sliding_drawer_opened">Panel deslizante abierto</string>
   <string name="value_options_menu_open">Opciones</string>
   <string name="value_text_cleared">Texto borrado</string>
-  <string name="value_text_max_length">Límite de caracteres alcanzado</string>
+  <string name="value_text_max_length">Duración máxima alcanzada</string>
   <string name="value_selected">seleccionado</string>
   <string name="value_not_selected">no seleccionado</string>
   <string name="value_checked">seleccionado</string>
@@ -72,7 +72,7 @@
   <string name="value_expanded">mostrado</string>
   <string name="value_fully_expanded">totalmente desplegado</string>
   <string name="value_partially_expanded">parcialmente desplegado</string>
-  <string name="value_collapsed">oculto</string>
+  <string name="value_collapsed">oculta</string>
   <string name="value_double_tap">Toca dos veces</string>
   <string name="value_single_tap">Tocar</string>
   <string name="value_double_tap_xr">Pellizcar dos veces</string>
