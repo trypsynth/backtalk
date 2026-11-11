@@ -456,6 +456,12 @@ To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**.
 
 Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
 
+### Open an app by name
+
+Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
+
+With the switch on, Backtalk waits for a final result from the speech recognizer before opening an app. A recognition error or timeout does not launch an app from an unfinished phrase. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
+
 ## Screen and brightness
 
 ### Brightness reading control
