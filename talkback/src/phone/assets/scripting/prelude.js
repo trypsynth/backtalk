@@ -151,10 +151,12 @@
     ].map((name) => [name, []]),
   );
   const commands = new Map();
+  const voiceCommands = new Map();
   const syncHooks = () =>
     send('hooks', {
       names: Object.keys(handlers).filter((name) => handlers[name].length > 0),
       commands: [...commands.keys()],
+      voicePatterns: [...voiceCommands.keys()],
     });
   const subscribe = (add, remove) => {
     add();
@@ -183,6 +185,31 @@
       () => commands.get(id) === fn && commands.delete(id),
     );
   };
+  const onVoiceCommand = (pattern, fn) => {
+    if (typeof fn !== 'function') throw new TypeError('onVoiceCommand needs a function');
+    const patterns = Array.isArray(pattern) ? pattern : [pattern];
+    for (const p of patterns) {
+      if (typeof p !== 'string' || !p.trim()) {
+        throw new TypeError('onVoiceCommand pattern must be a non-empty string or array of strings');
+      }
+    }
+    const clean = patterns.map((p) => p.trim());
+    return subscribe(
+      () => {
+        for (const p of clean) voiceCommands.set(p.toLowerCase(), fn);
+      },
+      () => {
+        let changed = false;
+        for (const p of clean) {
+          if (voiceCommands.get(p.toLowerCase()) === fn) {
+            voiceCommands.delete(p.toLowerCase());
+            changed = true;
+          }
+        }
+        return changed;
+      },
+    );
+  };
 
   const notify = (name, ...args) => {
     for (const fn of handlers[name]) guard(name, fn, ...args);
@@ -207,16 +234,34 @@
     return text === input ? undefined : { text };
   };
 
-  const runCommand = ({ id, via, direction, node: snapshot }) => {
+  const runCommand = ({ id, via, direction, node: snapshot, command, remainder }) => {
     const fn = commands.get(id);
     if (!fn) return { fallback: true };
     const event = Object.freeze({
       id,
       via,
       direction: direction ?? undefined,
+      command: command ?? undefined,
+      remainder: remainder ?? undefined,
       node: node(snapshot),
     });
     return guard(`command ${id}`, fn, event) === false ? { fallback: true } : undefined;
+  };
+
+  const runVoiceCommand = ({ command, pattern, remainder, node: snapshot }) => {
+    const fn = voiceCommands.get(pattern?.toLowerCase());
+    if (!fn) return { fallback: true };
+    const event = Object.freeze({
+      command,
+      pattern,
+      remainder: remainder ?? undefined,
+      node: node(snapshot),
+    });
+    const result = guard(`voice ${pattern}`, fn, event);
+    if (result === false || result?.fallback) return { fallback: true };
+    if (typeof result === 'string') return { speak: result };
+    if (typeof result?.speak === 'string') return { speak: result.speak };
+    return { handled: true };
   };
 
   const offers = new Map();
@@ -285,6 +330,7 @@
     settingChange: (data) => notify('settingChange', data.key, data.value),
     button: (data) => notify('button', data.key),
     command: runCommand,
+    voiceCommand: runVoiceCommand,
     actions: offerActions,
     dialogEvent: (data) => formEvent(data),
     runAction,
@@ -551,8 +597,8 @@
     alert: (message, { title } = {}) =>
       dialog('ui.alert', { message: String(message), title: text(title) }).then(() => undefined),
   });
-  const binding = (method) => (command, { gesture, keys } = {}) =>
-    send(method, { command: String(command), gesture, keys });
+  const binding = (method) => (command, { gesture, keys, voice } = {}) =>
+    send(method, { command: String(command), gesture, keys, voice });
 
   const backtalk = Object.freeze({
     apiVersion: call('apiVersion'),
@@ -565,6 +611,7 @@
     },
     ...Object.fromEntries(Object.keys(handlers).map((name) => [handlerName(name), listen(name)])),
     onCommand,
+    onVoiceCommand,
     get locale() {
       return call('locale');
     },
