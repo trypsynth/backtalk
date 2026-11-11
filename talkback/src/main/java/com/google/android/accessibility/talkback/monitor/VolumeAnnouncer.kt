@@ -66,11 +66,11 @@ class VolumeAnnouncer(
   /** When a volume key last went down, including the repeats of a held key. */
   private var lastVolumeKeyDownTime = -KEY_CHANGE_WINDOW_MS
 
-  /** Where media played at the last media change, to tell when an output brings its own level. */
-  private var lastMediaOutput: Set<Pair<Int, Int>>? = null
-
-  /** The media volume at the last media change, to tell a repeat of it from a change. */
-  private var lastMediaVolume = -1
+  /**
+   * Each of [PER_OUTPUT_STREAMS] at its last change, to tell when an output brings its own level and
+   * when a level only repeats.
+   */
+  private val lastLevels = mutableMapOf<Int, StreamLevel>()
 
   /**
    * Keeps the accessibility volume of the output in use, which Backtalk needs when it turns off.
@@ -99,8 +99,9 @@ class VolumeAnnouncer(
 
   /** Starts following accessibility audio, for announcements made on Bluetooth, and outputs. */
   fun start() {
-    lastMediaOutput = mediaOutput()
-    lastMediaVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+    for (stream in PER_OUTPUT_STREAMS) {
+      lastLevels[stream] = StreamLevel(outputOf(stream), audioManager.getStreamVolume(stream))
+    }
     ContextCompat.registerReceiver(
       context,
       outputReceiver,
@@ -113,8 +114,7 @@ class VolumeAnnouncer(
   /** Stops following audio, and drops a held key's volume still to be said. */
   fun stop() {
     context.unregisterReceiver(outputReceiver)
-    lastMediaOutput = null
-    lastMediaVolume = -1
+    lastLevels.clear()
     forgetHold()
     quietBeforeAnnouncement.stop()
   }
@@ -122,20 +122,20 @@ class VolumeAnnouncer(
   /**
    * Whether a change of [streamType] to [volume] isn't the user's, so it's ignored: Backtalk's own,
    * or the level of another output, such as headphones that connect. Each output keeps its own
-   * media volume, so a media change that comes with a new output and that no volume key made is the
-   * output's. Android can report that change before it says the device connected, so the output is
-   * looked up when the change comes. Headphones can then report the same level again, which isn't a
-   * change either, though a volume key that can't go further is still said.
+   * level of the [PER_OUTPUT_STREAMS], so a change of one of them that comes with a new output and
+   * that no volume key made is the output's. Android can report that change before it says the
+   * device connected, so the output is looked up when the change comes. Headphones can then report
+   * the same level again, which isn't a change either, though a volume key that can't go further is
+   * still said.
    */
   fun isIgnoredChange(streamType: Int, volume: Int): Boolean {
     if (quietBeforeAnnouncement.isOwnChange(streamType, volume)) return true
-    if (streamType != AudioManager.STREAM_MUSIC) return false
-    val output = mediaOutput()
-    // Where media played isn't known before start or when Android couldn't say.
-    val newOutput = lastMediaOutput != null && output != null && output != lastMediaOutput
-    lastMediaOutput = output
-    val repeat = volume == lastMediaVolume
-    lastMediaVolume = volume
+    if (streamType !in PER_OUTPUT_STREAMS) return false
+    val output = outputOf(streamType)
+    val last = lastLevels.put(streamType, StreamLevel(output, volume))
+    // Where the stream played isn't known before start or when Android couldn't say.
+    val newOutput = last?.output != null && output != null && output != last.output
+    val repeat = volume == last?.volume
     return (newOutput || repeat) && !changedByVolumeKey()
   }
 
@@ -252,11 +252,14 @@ class VolumeAnnouncer(
 
   private fun isInCall(): Boolean = callStateMonitor?.isPhoneCallActive == true
 
-  /** The devices media plays on, by ID and type. A device that reconnects gets a new ID. */
-  private fun mediaOutput(): Set<Pair<Int, Int>>? =
-    audioManager.outputsFor(MEDIA_ATTRIBUTES)?.map { it.id to it.type }?.toSet()
+  /** The devices [streamType] plays on, by ID and type. A device that reconnects gets a new ID. */
+  private fun outputOf(streamType: Int): Set<Pair<Int, Int>>? =
+    audioManager.outputsFor(attributesOf(streamType))?.map { it.id to it.type }?.toSet()
 
   private class HeldChange(val streamType: Int, val brief: Boolean)
+
+  /** A stream's volume and the devices it played on, null when Android couldn't say. */
+  private class StreamLevel(val output: Set<Pair<Int, Int>>?, val volume: Int)
 
   private companion object {
     /** How long to wait after a held volume key is released before saying the volume. */
@@ -268,7 +271,20 @@ class VolumeAnnouncer(
     /** How soon a change has to follow a volume key press to count as caused by it. */
     const val KEY_CHANGE_WINDOW_MS = 1000L
 
-    val MEDIA_ATTRIBUTES: AudioAttributes =
-      AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
+    /**
+     * The streams whose level Android keeps for each output and switches when headphones connect
+     * or disconnect: media, calls and notifications. The ringer keeps one level. The accessibility
+     * volume moves too, but its own listener says it, and Backtalk keeps track of it.
+     */
+    val PER_OUTPUT_STREAMS =
+      setOf(
+        AudioManager.STREAM_MUSIC,
+        AudioManager.STREAM_VOICE_CALL,
+        AudioManager.STREAM_NOTIFICATION,
+      )
   }
 }
+
+/** The audio attributes that play like [streamType], to find where it plays. */
+internal fun attributesOf(streamType: Int): AudioAttributes =
+  AudioAttributes.Builder().setLegacyStreamType(streamType).build()

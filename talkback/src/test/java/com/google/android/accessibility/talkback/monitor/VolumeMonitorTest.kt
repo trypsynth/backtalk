@@ -18,11 +18,12 @@ package com.google.android.accessibility.talkback.monitor
 
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_ACCESSIBILITY
 import android.media.AudioManager.STREAM_MUSIC
+import android.media.AudioManager.STREAM_NOTIFICATION
+import android.media.AudioManager.STREAM_VOICE_CALL
 import android.os.Looper
 import android.view.KeyEvent
 import com.google.android.accessibility.talkback.Feedback
@@ -220,6 +221,29 @@ class VolumeMonitorTest {
     change(STREAM_MUSIC, 4, 3)
 
     assertEquals(listOf("Music volume set to 40 percent."), texts())
+  }
+
+  @Test
+  fun theCallAndNotificationLevelsHeadphonesSetWhenTheyConnectAreNotSaid() {
+    monitor.startWatchingAudio()
+    playOn(STREAM_VOICE_CALL, headphones())
+    playOn(STREAM_NOTIFICATION, headphones())
+
+    change(STREAM_VOICE_CALL, 9, 1)
+    change(STREAM_NOTIFICATION, 3, 9)
+
+    assertEquals(emptyList<String>(), texts())
+  }
+
+  @Test
+  fun theCallVolumeIsSaidAfterTheHeadphonesSetIt() {
+    monitor.startWatchingAudio()
+    playOn(STREAM_VOICE_CALL, headphones())
+
+    change(STREAM_VOICE_CALL, 9, 1)
+    change(STREAM_VOICE_CALL, 8, 9)
+
+    assertEquals(listOf("Phone call volume set to 80 percent."), texts())
   }
 
   @Test
@@ -440,11 +464,12 @@ class VolumeMonitorTest {
     AudioDeviceInfoBuilder.newBuilder().setType(AudioDeviceInfo.TYPE_BUILTIN_SPEAKER).build()
 
   private fun playMediaOn(device: AudioDeviceInfo) {
+    playOn(STREAM_MUSIC, device)
+  }
+
+  private fun playOn(stream: Int, device: AudioDeviceInfo) {
     shadowOf(audioManager)
-      .setAudioDevicesForAttributes(
-        AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build(),
-        ImmutableList.of(device),
-      )
+      .setAudioDevicesForAttributes(attributesOf(stream), ImmutableList.of(device))
   }
 
   private fun texts() = spoken.map { it.text().toString() }
