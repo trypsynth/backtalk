@@ -55,6 +55,8 @@ object VoiceCommandFuzzyMatcher {
     text = text.replace(Regex("\\bd and d\\b"), "dnd")
     text = text.replace(Regex("\\bd\\.n\\.d\\.\\b"), "dnd")
 
+    text = text.replace(Regex("\\bback talk\\b"), "backtalk")
+
     // Strip punctuation
     text = PUNCTUATION_REGEX.replace(text, " ")
     text = MULTI_SPACE_REGEX.replace(text, " ").trim()
