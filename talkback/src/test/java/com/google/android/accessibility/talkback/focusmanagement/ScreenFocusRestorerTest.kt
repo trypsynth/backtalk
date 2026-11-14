@@ -26,7 +26,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35])
+@Config(sdk = [35], shadows = [com.google.android.accessibility.talkback.focusmanagement.record.FocusPathQueriesNodeInfoShadow::class])
 class ScreenFocusRestorerTest {
   private lateinit var restorer: ScreenFocusRestorer
   private lateinit var service: TalkBackService

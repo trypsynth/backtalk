@@ -214,7 +214,7 @@ public class AccessibilityFocusInterpreter
           scrolled.refresh();
         }
         NodePathDescription currentPath =
-            actorState.getFocusHistory().getLastFocusNodePathDescription();
+            actorState.getFocusHistory().getLastFocusAncestorIdentityPath();
         if (currentPath == null || !currentPath.containsNodeByHashAndIdentity(scrolled)) {
           return;
         }

@@ -22,6 +22,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.utils.AccessibilityNodeInfoUtils;
 import com.google.android.accessibility.utils.Filter;
 import com.google.android.accessibility.utils.FocusFinder;
+import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -43,6 +44,7 @@ public class FocusActionRecord {
   private final @NonNull AccessibilityNodeInfoCompat focusedNode;
   /** Describes how to find focused node from root node. */
   private final @NonNull NodePathDescription nodePathDescription;
+  private final @Nullable DeferredFocusPath deferredPath;
   /** Extra information about source focus action. */
   private final @NonNull FocusActionInfo extraInfo;
   /** Unique id for the node */
@@ -72,7 +74,13 @@ public class FocusActionRecord {
       @NonNull FocusActionInfo extraInfo,
       long actionTime) {
     this.focusedNode = focusedNode;
-    nodePathDescription = NodePathDescription.obtain(focusedNode);
+    if (WebInterfaceUtils.supportsWebActions(focusedNode)) {
+      nodePathDescription = NodePathDescription.captureIdentities(focusedNode);
+      deferredPath = new DeferredFocusPath(nodePathDescription);
+    } else {
+      nodePathDescription = NodePathDescription.obtain(focusedNode);
+      deferredPath = null;
+    }
     this.extraInfo = extraInfo;
     this.actionTime = actionTime;
     this.uniqueId = compoundPackageNameAndUniqueId(focusedNode);
@@ -82,11 +90,13 @@ public class FocusActionRecord {
   private FocusActionRecord(
       @NonNull AccessibilityNodeInfoCompat focusedNode,
       @NonNull NodePathDescription nodePathDescription,
+      @Nullable DeferredFocusPath deferredPath,
       @NonNull FocusActionInfo extraInfo,
       long actionTime,
       String uniqueId) {
     this.focusedNode = focusedNode;
     this.nodePathDescription = new NodePathDescription(nodePathDescription);
+    this.deferredPath = deferredPath;
     this.extraInfo = extraInfo;
     this.actionTime = actionTime;
     this.uniqueId = uniqueId;
@@ -99,6 +109,11 @@ public class FocusActionRecord {
 
   /** Returns reference to node-path. */
   public @NonNull NodePathDescription getNodePathDescription() {
+    return deferredPath == null ? nodePathDescription : deferredPath.get();
+  }
+
+  /** All original ancestor identities are already available; scroll association needs no context. */
+  public @NonNull NodePathDescription getAncestorIdentityPath() {
     return nodePathDescription;
   }
 
@@ -128,6 +143,7 @@ public class FocusActionRecord {
     return new FocusActionRecord(
         record.focusedNode,
         record.nodePathDescription,
+        record.deferredPath,
         record.extraInfo,
         record.actionTime,
         record.uniqueId);
@@ -209,7 +225,7 @@ public class FocusActionRecord {
 
   @Override
   public int hashCode() {
-    return Objects.hash(actionTime, focusedNode, nodePathDescription, extraInfo);
+    return Objects.hash(actionTime, focusedNode, extraInfo);
   }
 
   @Override
@@ -222,10 +238,11 @@ public class FocusActionRecord {
     }
     FocusActionRecord otherRecord = (FocusActionRecord) other;
     return (focusedNode.equals(otherRecord.focusedNode))
-        && (nodePathDescription.equals(otherRecord.nodePathDescription))
         && (extraInfo.equals(otherRecord.extraInfo))
         && (actionTime == otherRecord.actionTime)
-        && Objects.equals(uniqueId, ((FocusActionRecord) other).uniqueId);
+        && Objects.equals(uniqueId, otherRecord.uniqueId)
+        && ((deferredPath != null && deferredPath == otherRecord.deferredPath)
+            || getNodePathDescription().equals(otherRecord.getNodePathDescription()));
   }
 
   public boolean focusedNodeEquals(AccessibilityNodeInfoCompat targetNode) {
