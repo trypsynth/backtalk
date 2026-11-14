@@ -159,6 +159,13 @@
       android:key="@string/pref_speak_volume_changes_key"
       android:summary="@string/summary_pref_speak_volume_changes"
       android:title="@string/title_pref_speak_volume_changes" />
+
+  <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+      android:defaultValue="@bool/pref_steady_bluetooth_volume_default"
+      android:dependency="@string/pref_speak_volume_changes_key"
+      android:key="@string/pref_steady_bluetooth_volume_key"
+      android:summary="@string/summary_pref_steady_bluetooth_volume"
+      android:title="@string/title_pref_steady_bluetooth_volume" />
   <!-- Limit frequent content change -->
   <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
       android:defaultValue="@bool/pref_allow_frequent_content_change_announcement_default"

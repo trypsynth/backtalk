@@ -654,6 +654,10 @@
     <string name="title_pref_speak_volume_changes">Speak volume changes</string>
     <!-- Verbosity: summary of the switch for speaking volume changes. [CHAR LIMIT=NONE] -->
     <string name="summary_pref_speak_volume_changes">Say the new volume after you press the volume keys</string>
+    <!-- Verbosity: switch for briefly changing the accessibility volume on Bluetooth headphones, so that a new media volume is said as loud as the speech after it. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_steady_bluetooth_volume">Steady volume announcements on Bluetooth</string>
+    <!-- Verbosity: summary of the switch for steady volume announcements on Bluetooth headphones. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_steady_bluetooth_volume">On Bluetooth headphones, briefly change the accessibility volume so a new media volume is said as loud as the speech after it</string>
     <!--
       Source: Preference for speaking notifications as they arrive.
       Description: The user can turn this off to stop new notifications from being read aloud. [CHAR LIMIT=NONE]
