@@ -61,6 +61,10 @@ public class AudioManagerCompatUtils {
   public static final String STREAM_MUTE_CHANGED_ACTION =
       "android.media.STREAM_MUTE_CHANGED_ACTION";
 
+  /** Backtalk: sent after a stream moves to other outputs, with {@link #EXTRA_VOLUME_STREAM_TYPE}. */
+  public static final String STREAM_DEVICES_CHANGED_ACTION =
+      "android.media.STREAM_DEVICES_CHANGED_ACTION";
+
   /** The mute statefor the stream mute changed intent. */
   public static final String EXTRA_STREAM_VOLUME_MUTED = "android.media.EXTRA_STREAM_VOLUME_MUTED";
 

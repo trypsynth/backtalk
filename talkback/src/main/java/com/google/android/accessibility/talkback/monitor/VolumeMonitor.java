@@ -28,6 +28,7 @@ import android.media.AudioManager;
 import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Feedback.Part;
@@ -49,6 +50,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 /** Listens for and responds to volume changes. */
 public class VolumeMonitor extends SameThreadBroadcastReceiver {
@@ -64,6 +66,11 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
   public interface VolumeChangedListener {
     /** Invoked when the volume has been changed. */
     void onVolumeChanged(int type, int value, int prevValue, int percent);
+
+    /** Backtalk: whether this listener says the new volume of {@code type} itself. */
+    default boolean announcesVolume(int type) {
+      return false;
+    }
   }
 
   private static final SparseIntArray STREAM_NAMES = new SparseIntArray();
@@ -89,6 +96,7 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
   private final FeedbackReturner pipeline;
   private final AudioManager audioManager;
   private final CallStateMonitor callStateMonitor;
+  private final VolumeAnnouncer volumeAnnouncer;
 
   private int cachedAccessibilityStreamVolume = -1;
   private int cachedAccessibilityStreamMaxVolume = -1;
@@ -117,6 +125,17 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     this.callStateMonitor = callStateMonitor;
     this.hintA11yVolumeControl = FeatureSupport.hasAccessibilityAudioStream(context);
+    volumeAnnouncer = new VolumeAnnouncer(context, pipeline, callStateMonitor, this);
+  }
+
+  /** Backtalk: tells the monitor how to find out whether accessibility focus is on a slider. */
+  public void setSliderFocused(BooleanSupplier sliderFocused) {
+    volumeAnnouncer.setSliderFocused(sliderFocused);
+  }
+
+  /** Backtalk: tells the monitor how to find out whether continuous reading is on. */
+  public void setContinuousReading(BooleanSupplier continuousReading) {
+    volumeAnnouncer.setContinuousReading(continuousReading);
   }
 
   public void addVolumeChangedListener(VolumeChangedListener listener) {
@@ -131,10 +150,14 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     listeners.clear();
   }
 
-  private void notifyVolumeChangedListener(int type, int value, int prevValue, int percent) {
+  /** Backtalk: returns whether a listener says the new volume itself. */
+  private boolean notifyVolumeChangedListener(int type, int value, int prevValue, int percent) {
+    boolean announced = false;
     for (VolumeChangedListener listener : listeners) {
+      announced |= listener.announcesVolume(type);
       listener.onVolumeChanged(type, value, prevValue, percent);
     }
+    return announced;
   }
 
   public IntentFilter getFilter() {
@@ -164,7 +187,8 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
    * @param prevVolume The previous volume.
    */
   private void internalOnVolumeChanged(int streamType, int volume, int prevVolume) {
-    if (isSelfAdjusted(streamType, volume)) {
+    if (isSelfAdjusted(streamType, volume)
+        || volumeAnnouncer.isIgnoredChange(streamType, volume)) {
       // Ignore self-adjustments.
       return;
     }
@@ -181,13 +205,17 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
       }
     }
 
-    notifyVolumeChangedListener(streamType, volume, prevVolume, getStreamVolume(streamType));
+    // Backtalk: a gesture or reading control that changed the volume is listening, and says the
+    // new volume itself.
+    boolean listenerAnnounces =
+        notifyVolumeChangedListener(streamType, volume, prevVolume, getStreamVolume(streamType));
 
     if (currentStream < 0) {
       // If the current stream hasn't been set, acquire control.
       currentStream = streamType;
       AudioManagerCompatUtils.forceVolumeControlStream(audioManager, currentStream);
       handler.onControlAcquired(streamType);
+      volumeAnnouncer.onVolumeChanged(streamType, listenerAnnounces);
       return;
     }
 
@@ -196,7 +224,13 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
       return;
     }
 
+    volumeAnnouncer.onVolumeChanged(streamType, listenerAnnounces);
     handler.releaseControlDelayed();
+  }
+
+  /** Backtalk: follows a volume key that goes to apps, so a held key is said once. */
+  public void onVolumeKeyEvent(KeyEvent event) {
+    volumeAnnouncer.onVolumeKeyEvent(event);
   }
 
   /**
@@ -218,10 +252,6 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
       text = getAnnouncementForStreamType(R.string.template_stream_volume_set, streamType);
     }
 
-    if (!shouldAnnounceStream(streamType)) {
-      handler.post(this::releaseControl);
-      return;
-    }
     speakWithCompletion(text, streamType, utteranceCompleteRunnable, EVENT_ID_UNTRACKED);
   }
 
@@ -283,6 +313,16 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     }
   }
 
+  /** Backtalk: starts following outputs, which bring their own volume levels. */
+  public void startAnnouncing() {
+    volumeAnnouncer.start();
+  }
+
+  /** Backtalk: stops following outputs, and drops a volume still to be said. */
+  public void stopAnnouncing() {
+    volumeAnnouncer.stop();
+  }
+
   public void cacheAccessibilityStreamVolume() {
     cachedAccessibilityStreamVolume =
         audioManager.getStreamVolume(AudioManager.STREAM_ACCESSIBILITY);
@@ -315,7 +355,7 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
    * @param streamType The stream to announce.
    * @return The volume announcement text for the stream.
    */
-  private String getAnnouncementForStreamType(int templateResId, int streamType) {
+  String getAnnouncementForStreamType(int templateResId, int streamType) {
     // The ringer has special cases for silent and vibrate.
     if (streamType == AudioManager.STREAM_RING) {
       switch (audioManager.getRingerMode()) {
@@ -337,7 +377,8 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
 
   /**
    * Called after adjustments have been made and the user has not taken any action for a certain
-   * duration. Announces the current volume and releases control of the stream.
+   * duration. Backtalk: says the accessibility volume hint, if it's still due, and releases control
+   * of the stream.
    */
   private void internalOnReleaseControl() {
     handler.clearReleaseControl();
@@ -350,16 +391,12 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
 
     LogUtils.v(TAG, "Released control of stream %d", currentStream);
 
-    if (!shouldAnnounceStream(streamType) || !speakVolumeChanges()) {
-      handler.post(this::releaseControl);
-      return;
+    // Backtalk: the volume was already said as it changed, so only the hint on how to change the
+    // accessibility volume is left to say.
+    if (speakVolumeChanges() && streamType != SpeechController.DEFAULT_STREAM) {
+      internalSpeakA11yVolumeControlHint();
     }
-
-    final String text =
-        getAnnouncementForStreamType(R.string.template_stream_volume_set, streamType);
-
-    EventId eventId = EVENT_ID_UNTRACKED; // Delayed feedback occurs after normal feedback.
-    speakWithCompletion(text, streamType, utteranceCompleteRunnable, eventId);
+    releaseControl();
   }
 
   /** Releases control of the stream. */
@@ -368,32 +405,13 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     AudioManagerCompatUtils.forceVolumeControlStream(audioManager, -1);
   }
 
-  /**
-   * Returns whether a stream type should be announced.
-   *
-   * @param streamType The stream type.
-   * @return True if the stream should be announced.
-   */
   /** Whether the user wants the new volume said after they change it. */
-  private boolean speakVolumeChanges() {
+  boolean speakVolumeChanges() {
     return SharedPreferencesUtils.getBooleanPref(
         SharedPreferencesUtils.getSharedPreferences(context),
         context.getResources(),
         R.string.pref_speak_volume_changes_key,
         R.bool.pref_speak_volume_changes_default);
-  }
-
-  private boolean shouldAnnounceStream(int streamType) {
-    return switch (streamType) {
-      case AudioManager.STREAM_MUSIC ->
-          // Only announce music stream if it's not being used.
-          !audioManager.isMusicActive();
-      default ->
-          // Announce all other streams by default. The VOICE_CALL and
-          // RING streams are handled by checking the telephony state in
-          // speakWithCompletion().
-          true;
-    };
   }
 
   /**
@@ -502,7 +520,7 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
    * @return The stream volume as a percentage.
    */
   @SuppressLint("NewApi")
-  private int getStreamVolume(int streamType) {
+  int getStreamVolume(int streamType) {
     int minVolume = 0;
     // For some stream types other than defined in
     // https://developer.android.com/reference/android/media/AudioManager#getStreamMinVolume(int),
@@ -626,8 +644,7 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     public void clearReleaseControl() {
       removeMessages(MSG_CONTROL);
       removeMessages(MSG_RELEASE_CONTROL);
-      // When we announce the volume change, the a11y volume control hint will be in the volume
-      // value announcement.
+      // Backtalk: the a11y volume control hint is said when control is released.
       removeMessages(MSG_VOLUME_BUTTON_HINT);
     }
 

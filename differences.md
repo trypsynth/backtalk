@@ -190,7 +190,15 @@ TalkBack ignored the order for a row whose checkbox or switch has no text of its
 
 ### "Backtalk off" at the right volume
 
-When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. TalkBack only approximated that volume.
+When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. This includes Samsung phones, and stays right when you connect or disconnect headphones while Backtalk is on. On Bluetooth headphones that control their own volume, it can be one volume step louder or quieter, about 3 dB, because those headphones can set the media volume between steps and Android doesn't tell apps where. TalkBack only approximated that volume.
+
+### Volume said as it changes
+
+When you press a volume key, Backtalk says the new volume right away and stops what it was saying. During continuous reading it waits for the current item to finish instead, so reading goes on. A newer level replaces one that hasn't finished. The first change names the volume, such as "Music volume set to 50 percent", and changes to the same volume less than 2 seconds apart say only the percentage. If you hold the key down, Backtalk says the first level, stays quiet while the volume keeps changing, and says the level you end at when you let go. TalkBack waited until the keys had been still for 2 seconds, and after the first press it waited 4 seconds. Backtalk also says the media volume while media plays, where TalkBack said it only when nothing was playing.
+
+Each output, such as the phone speaker or a pair of headphones, keeps its own media, call and notification volumes, and Android switches to them when audio moves there. Backtalk doesn't say a change of one of these volumes that comes with a new output unless a volume key made it, so connecting or disconnecting headphones stays quiet. Headphones can report the same level again a moment later, and Backtalk doesn't say one of these levels that hasn't changed unless a volume key reported it. TalkBack said the level headphones set. If the new output's level is the one you already had, nothing changes, so the first press on the headphones' own controls after that isn't said.
+
+When you change the volume with a slider, Backtalk says only the slider's value. To stop hearing the volume, turn off **Verbosity** > **Speak volume changes**.
 
 ### Table column headers
 
