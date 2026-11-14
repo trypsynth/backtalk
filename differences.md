@@ -649,6 +649,8 @@ A phone that's opened flat, and that hasn't been held up since the screen came o
 
 ## Braille displays
 
+For Focus displays connected over classic Bluetooth, Backtalk refreshes the current braille after three seconds without a display update during reading, stopping after one minute without a display command.
+
 ### Any braille display that uses HID
 
 On Android 15 and later, TalkBack connects to braille displays that use the HID braille standard over Bluetooth, but only lists displays whose names it knows, so newer displays and braille terminals were left out. Backtalk lists any Bluetooth device that offers HID, whatever its name, and connecting checks that it's a braille display, so other HID devices, such as keyboards, can appear in the list too. TalkBack also refused displays that send their keys and receive their cells in separate HID reports, as the standard allows; Backtalk connects to those.

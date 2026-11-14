@@ -517,6 +517,16 @@ updateCells (
   }
 }
 
+/* Resend the current cells through the same queue as ordinary output. This
+ * preserves acknowledgement ordering and uses the latest buffer even when a
+ * write is already in flight. No configuration or key state is changed. */
+static int
+refreshDisplay (BrailleDisplay *brl) {
+  brl->data->writeFirst = 0;
+  brl->data->writeLast = brl->data->model->cellCount - 1;
+  return writeRequest(brl);
+}
+
 typedef struct {
   unsigned char checksum;
 } ReadPacketData;
@@ -861,6 +871,7 @@ brl_construct (BrailleDisplay *brl, char **parameters, const char *device) {
 
         setBrailleKeyTable(brl, brl->data->keyTableDefinition);
         brl->setBrailleFirmness = setBrailleFirmness;
+        brl->refreshBrailleDisplay = refreshDisplay;
 
         return writeRequest(brl);
       }
