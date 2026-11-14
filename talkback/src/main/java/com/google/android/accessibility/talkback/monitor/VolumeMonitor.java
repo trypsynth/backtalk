@@ -313,13 +313,13 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     }
   }
 
-  /** Backtalk: starts following accessibility audio, for announcements made on Bluetooth. */
-  public void startWatchingAudio() {
+  /** Backtalk: starts following outputs, which bring their own volume levels. */
+  public void startAnnouncing() {
     volumeAnnouncer.start();
   }
 
-  /** Backtalk: stops following accessibility audio. */
-  public void stopWatchingAudio() {
+  /** Backtalk: stops following outputs, and drops a volume still to be said. */
+  public void stopAnnouncing() {
     volumeAnnouncer.stop();
   }
 

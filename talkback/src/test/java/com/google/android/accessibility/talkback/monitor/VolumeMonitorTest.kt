@@ -155,7 +155,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theVolumeHeadphonesSetWhenTheyConnectIsNotSaid() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     // Android can report the headphones' level before it says they connected.
     playMediaOn(headphones())
 
@@ -166,7 +166,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theHeadphonesRepeatingTheirLevelIsNotSaid() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playMediaOn(headphones())
 
     change(STREAM_MUSIC, 5, 4)
@@ -177,7 +177,7 @@ class VolumeMonitorTest {
 
   @Test
   fun aVolumeKeyAtTheSameLevelIsSaid() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     change(STREAM_MUSIC, 10, 9)
     spoken.clear()
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
@@ -190,7 +190,7 @@ class VolumeMonitorTest {
 
   @Test
   fun aVolumeKeyIsSaidOnANewOutput() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playMediaOn(headphones())
 
     key(KeyEvent.ACTION_DOWN, repeat = 0)
@@ -201,7 +201,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theHeadphoneControlsAreSaidAfterTheHeadphonesSetTheirVolume() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playMediaOn(headphones())
 
     change(STREAM_MUSIC, 5, 4)
@@ -212,7 +212,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theSpeakerLevelIsNotSaidWhenHeadphonesDisconnect() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playMediaOn(headphones())
     change(STREAM_MUSIC, 5, 4)
     playMediaOn(speaker())
@@ -225,7 +225,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theCallAndNotificationLevelsHeadphonesSetWhenTheyConnectAreNotSaid() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playOn(STREAM_VOICE_CALL, headphones())
     playOn(STREAM_NOTIFICATION, headphones())
 
@@ -237,7 +237,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theCallVolumeIsSaidAfterTheHeadphonesSetIt() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     playOn(STREAM_VOICE_CALL, headphones())
 
     change(STREAM_VOICE_CALL, 9, 1)
@@ -249,7 +249,7 @@ class VolumeMonitorTest {
   @Test
   fun headphonesConnectedBeforeBacktalkStartsAreNotWaitedFor() {
     playMediaOn(headphones())
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
 
     change(STREAM_MUSIC, 5, 4)
 
@@ -258,7 +258,7 @@ class VolumeMonitorTest {
 
   @Test
   fun theAccessibilityVolumeIsKeptWhenItMovesToAnotherOutput() {
-    monitor.startWatchingAudio()
+    monitor.startAnnouncing()
     monitor.cacheAccessibilityStreamVolume()
     audioManager.setStreamVolume(STREAM_ACCESSIBILITY, 3, 0)
 

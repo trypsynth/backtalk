@@ -3210,7 +3210,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       ContextCompat.registerReceiver(
           this, volumeMonitor, volumeMonitor.getFilter(), RECEIVER_EXPORTED);
-      volumeMonitor.startWatchingAudio();
+      volumeMonitor.startAnnouncing();
       if (FeatureSupport.hasAccessibilityAudioStream(this)) {
         // Cache the initial volume in case that the volume is never changed during runtime.
         volumeMonitor.cacheAccessibilityStreamVolume();
@@ -3363,7 +3363,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       volumeMonitor.releaseControl();
       volumeMonitor.clearVolumeChangedListener();
-      volumeMonitor.stopWatchingAudio();
+      volumeMonitor.stopAnnouncing();
     }
 
     if (headphoneStateMonitor != null) {
