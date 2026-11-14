@@ -67,6 +67,7 @@
     <string name="pref_speak_element_ids_key">pref_element_ids_key</string>
     <string name="pref_speak_notifications_key">pref_speak_notifications</string>
     <string name="pref_speak_volume_changes_key">pref_speak_volume_changes</string>
+    <string name="pref_steady_bluetooth_volume_key">pref_steady_bluetooth_volume</string>
     <string name="pref_diagnosis_mode_key">pref_diagnosis_mode</string>
     <string name="pref_tts_overlay_key">pref_tts_overlay</string>
     <string name="pref_multiple_gesture_set_key">pref_multiple_gesture_set_key</string>
@@ -1587,6 +1588,7 @@
     <bool name="pref_speak_element_ids_default">false</bool>
     <bool name="pref_speak_notifications_default">true</bool>
     <bool name="pref_speak_volume_changes_default">true</bool>
+    <bool name="pref_steady_bluetooth_volume_default">false</bool>
     <bool name="pref_diagnosis_mode_default">false</bool>
     <bool name="pref_tts_overlay_default">false</bool>
     <bool name="pref_multiple_gesture_set_default">false</bool>

@@ -94,6 +94,10 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
   private var watchdog: ScheduledFuture<*>? = null
   private var thread: Thread? = null
   private var idleFrames = 0
+  // Set by pauseWhenQuiet: the track pauses as soon as nothing plays, not after IDLE_MS.
+  private var pauseSoon = false
+  // The last clip of silence made by playSilence, kept since every call asks for the same length.
+  private var silence: Clip? = null
   // Whether the track has audio queued since it last paused. Without the fast path, it pauses as
   // soon as its audio has been heard, after silentFrames of silence.
   private var primed = false
@@ -496,6 +500,8 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
   /** Starts the audio thread and its watchdog if they are not running. Called with [lock] held. */
   private fun wake() {
     idleFrames = 0
+    // New audio replaces a request to pause once quiet, so the track keeps IDLE_MS after it.
+    pauseSoon = false
     // A thread waiting for speech carries on with it.
     lock.notifyAll()
     if (thread != null || released || broken) return
@@ -593,7 +599,9 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
       synchronized(lock) {
         val current = track
         val idle = clips.isEmpty() && (streams.isEmpty() || held)
-        if (released || broken || current == null || (idle && idleFrames >= idleLimit())) {
+        if (
+          released || broken || current == null || (idle && (pauseSoon || idleFrames >= idleLimit()))
+        ) {
           end(current)
           return
         }
@@ -1022,6 +1030,37 @@ class LowLatencyAudio private constructor(context: Context, private val attribut
 
     /** Whether a player sends its track to the media output, away from the earpiece. */
     @JvmStatic fun isAvoidingEarpiece(): Boolean = players().any { it.detour != null }
+
+    /**
+     * Makes every player pause its track as soon as nothing plays, rather than after IDLE_MS of
+     * silence, so that Android sees accessibility audio stop.
+     */
+    @JvmStatic
+    fun pauseWhenQuiet() {
+      for (player in players()) {
+        synchronized(player.lock) {
+          if (player.thread != null) {
+            player.pauseSoon = true
+            player.lock.notifyAll()
+          }
+        }
+      }
+    }
+
+    /**
+     * Plays [millis] of silence on the player for [attributes]' usage, which starts its track if it
+     * was paused. Returns false if the device cannot make a low-latency track.
+     */
+    @JvmStatic
+    fun playSilence(context: Context, attributes: AudioAttributes, millis: Int): Boolean {
+      val player = get(context, attributes) ?: return false
+      val size = player.sampleRate * millis / 1000 * 2
+      val clip =
+        player.silence?.takeIf { it.size == size && it.rate == player.sampleRate }
+          ?: Clip(FloatArray(size), player.sampleRate).also { player.silence = it }
+      player.play(clip, 0f, 0f, 1f)
+      return true
+    }
 
     /** Stops every speech stream of every player made so far, without making new ones. */
     @JvmStatic

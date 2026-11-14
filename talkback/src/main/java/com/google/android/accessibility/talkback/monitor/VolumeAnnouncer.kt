@@ -54,6 +54,7 @@ class VolumeAnnouncer(
 ) {
   private val audioManager = context.getSystemService(AudioManager::class.java)
   private val handler = Handler(Looper.getMainLooper())
+  private val quietBeforeAnnouncement = QuietBeforeAnnouncement(context)
 
   /** Whether a volume key is held, so that its repeated changes are kept quiet. */
   private var volumeKeyHeld = false
@@ -99,7 +100,7 @@ class VolumeAnnouncer(
     if (change != null) announceVolumeNow(change.streamType, change.brief)
   }
 
-  /** Starts following outputs and the levels they bring. */
+  /** Starts following outputs, and accessibility audio for announcements made on Bluetooth. */
   fun start() {
     for (stream in PER_OUTPUT_STREAMS) {
       lastLevels[stream] = StreamLevel(outputOf(stream), audioManager.getStreamVolume(stream))
@@ -110,24 +111,28 @@ class VolumeAnnouncer(
       IntentFilter(AudioManagerCompatUtils.STREAM_DEVICES_CHANGED_ACTION),
       ContextCompat.RECEIVER_NOT_EXPORTED,
     )
+    quietBeforeAnnouncement.start()
   }
 
-  /** Stops following outputs, and drops a held key's volume still to be said. */
+  /** Stops following outputs and audio, and drops a held key's volume still to be said. */
   fun stop() {
     context.unregisterReceiver(outputReceiver)
     lastLevels.clear()
     forgetHold()
+    quietBeforeAnnouncement.stop()
   }
 
   /**
-   * Whether a change of [streamType] to [volume] isn't the user's, so it's ignored: the level of
-   * another output, such as headphones that connect. Each output keeps its own level of the
-   * [PER_OUTPUT_STREAMS], so a change of one of them that comes with a new output and that no volume
-   * key made is the output's. Android can report that change before it says the device connected,
-   * so the output is looked up when the change comes. Headphones can then report the same level
-   * again, which isn't a change either, though a volume key that can't go further is still said.
+   * Whether a change of [streamType] to [volume] isn't the user's, so it's ignored: Backtalk's own,
+   * or the level of another output, such as headphones that connect. Each output keeps its own
+   * level of the [PER_OUTPUT_STREAMS], so a change of one of them that comes with a new output and
+   * that no volume key made is the output's. Android can report that change before it says the
+   * device connected, so the output is looked up when the change comes. Headphones can then report
+   * the same level again, which isn't a change either, though a volume key that can't go further is
+   * still said.
    */
   fun isIgnoredChange(streamType: Int, volume: Int): Boolean {
+    if (quietBeforeAnnouncement.isOwnChange(streamType, volume)) return true
     if (streamType !in PER_OUTPUT_STREAMS) return false
     val output = outputOf(streamType)
     val last = lastLevels.put(streamType, StreamLevel(output, volume))
@@ -192,8 +197,23 @@ class VolumeAnnouncer(
 
   /** @param brief whether to say only the percentage, without the stream name */
   private fun announceVolumeNow(streamType: Int, brief: Boolean) {
+    // A newer change replaces an announcement still waiting for quiet.
+    quietBeforeAnnouncement.cancel()
     if (!monitor.speakVolumeChanges() || isInCall()) return
-    speakVolume(streamType, brief)
+    // On Bluetooth, a new media volume is said at the level speech has from now on, after a nudge
+    // of the accessibility volume or once earlier speech has stopped. Continuous reading is not
+    // stopped for it.
+    quietBeforeAnnouncement.announce(
+      streamType,
+      /* keepSpeech= */ continuousReading.asBoolean,
+      {
+        pipeline.returnFeedback(
+          EVENT_ID_UNTRACKED,
+          Feedback.Part.builder().setInterruptAllFeedback(true),
+        )
+      },
+      { speakVolume(streamType, brief) },
+    )
   }
 
   private fun speakVolume(streamType: Int, brief: Boolean) {
