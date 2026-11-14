@@ -19,6 +19,7 @@ package com.google.android.accessibility.talkback.actor
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
 import android.os.SystemClock
+import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityWindowInfo
@@ -27,6 +28,7 @@ import com.google.android.accessibility.talkback.ActorState
 import com.google.android.accessibility.talkback.ActorStateWritable
 import com.google.android.accessibility.talkback.Pipeline
 import com.google.android.accessibility.talkback.PrimesController
+import com.google.android.accessibility.talkback.focusmanagement.action.NavigationAction
 import com.google.android.accessibility.talkback.focusmanagement.interpreter.ScreenState
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory
 import com.google.android.accessibility.talkback.focusmanagement.record.AccessibilityFocusActionHistory.WindowIdentifier
@@ -36,6 +38,7 @@ import com.google.android.accessibility.utils.FocusFinder
 import com.google.android.accessibility.utils.FormFactorUtils
 import com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED
 import com.google.android.accessibility.utils.input.WindowsDelegate
+import com.google.android.accessibility.utils.traversal.TraversalStrategy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -164,6 +167,51 @@ class FocusActorForScreenStateChangeTest {
     assertEquals(1, RootsShadow.rootRequests)
   }
 
+  @Test
+  fun staleSavedNodeRecoversToFirstFocusableNode() {
+    // The saved node no longer appears in the new screen's tree, so it cannot be restored directly.
+    val oldRoot = root()
+    val oldApp = window(APP, AccessibilityWindowInfo.TYPE_APPLICATION, oldRoot)
+    val oldFocused = button(oldApp, oldRoot)
+    shadowOf(oldFocused.unwrap()).setRefreshReturnValue(false)
+    history.onAccessibilityFocusAction(oldFocused, focusInfo(), 1, screen(oldApp))
+
+    val newRoot = root()
+    val newApp = window(APP, AccessibilityWindowInfo.TYPE_APPLICATION, newRoot)
+    button(newApp, newRoot, "Backup")
+    button(newApp, newRoot, "Delete")
+    shadowOf(service).setWindows(listOf(newApp))
+
+    assertTrue(restore(newApp))
+    assertEquals(listOf("Backup"), focused.map { it?.text?.toString() })
+    // Recovery reuses the root already fetched for the invalid-node check.
+    assertEquals(1, RootsShadow.rootRequests)
+  }
+
+  @Test
+  fun staleSavedNodeRecoversBackwardToLastFocusableNode() {
+    val oldRoot = root()
+    val oldApp = window(APP, AccessibilityWindowInfo.TYPE_APPLICATION, oldRoot)
+    val oldFocused = button(oldApp, oldRoot)
+    shadowOf(oldFocused.unwrap()).setRefreshReturnValue(false)
+    history.onAccessibilityFocusAction(
+      oldFocused,
+      focusInfo(TraversalStrategy.SEARCH_FOCUS_BACKWARD),
+      1,
+      screen(oldApp),
+    )
+
+    val newRoot = root()
+    val newApp = window(APP, AccessibilityWindowInfo.TYPE_APPLICATION, newRoot)
+    button(newApp, newRoot, "Backup")
+    button(newApp, newRoot, "Delete")
+    shadowOf(service).setWindows(listOf(newApp))
+
+    assertTrue(restore(newApp))
+    assertEquals(listOf("Delete"), focused.map { it?.text?.toString() })
+    assertEquals(1, RootsShadow.rootRequests)
+  }
+
   /** Restores the last focus into [active], counting only the roots that fetches. */
   private fun restore(active: AccessibilityWindowInfo): Boolean {
     RootsShadow.rootRequests = 0
@@ -173,7 +221,10 @@ class FocusActorForScreenStateChangeTest {
   private fun screen(active: AccessibilityWindowInfo) =
     ScreenState(windows, active, SystemClock.uptimeMillis())
 
-  private fun root() = AccessibilityNodeInfo().apply { packageName = APP_PACKAGE }
+  private fun root() =
+    AccessibilityNodeInfo.obtain(View(service).apply { id = View.generateViewId() }).apply {
+      packageName = APP_PACKAGE
+    }
 
   private fun window(id: Int, type: Int, root: AccessibilityNodeInfo): AccessibilityWindowInfo {
     val window = AccessibilityWindowInfo()
@@ -191,11 +242,13 @@ class FocusActorForScreenStateChangeTest {
   private fun button(
     window: AccessibilityWindowInfo,
     root: AccessibilityNodeInfo,
+    text: String = "Play",
   ): AccessibilityNodeInfoCompat {
-    val node = AccessibilityNodeInfo()
+    val node =
+      AccessibilityNodeInfo.obtain(View(service).apply { id = View.generateViewId() })
     node.packageName = APP_PACKAGE
     node.className = "android.widget.Button"
-    node.text = "Play"
+    node.text = text
     node.isVisibleToUser = true
     node.isEnabled = true
     node.isClickable = true
@@ -207,8 +260,16 @@ class FocusActorForScreenStateChangeTest {
     return AccessibilityNodeInfoCompat.wrap(node)
   }
 
-  private fun focusInfo() =
-    FocusActionInfo.builder().setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION).build()
+  private fun focusInfo(direction: Int = TraversalStrategy.SEARCH_FOCUS_FORWARD) =
+    FocusActionInfo.builder()
+      .setSourceAction(FocusActionInfo.LOGICAL_NAVIGATION)
+      .setNavigationAction(
+        NavigationAction.Builder()
+          .setAction(NavigationAction.DIRECTIONAL_NAVIGATION)
+          .setDirection(direction)
+          .build()
+      )
+      .build()
 
   private companion object {
     const val APP = 10
