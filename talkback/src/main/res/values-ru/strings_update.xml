@@ -15,4 +15,22 @@
   <string name="update_install_failed">Не удалось установить обновление</string>
   <string name="update_install_canceled">Обновление отменено</string>
   <string name="update_allow_install">Разрешите Backtalk устанавливать приложения, затем повторите обновление</string>
+  <!-- Update download status while connecting to the server. [CHAR LIMIT=NONE] -->
+  <string name="update_connecting">Подключение</string>
+  <!-- Update status while checking the APK and preparing its installation. [CHAR LIMIT=NONE] -->
+  <string name="update_preparing">Подготовка к установке</string>
+  <!-- Update status after handing the APK to Android for installation. [CHAR LIMIT=NONE] -->
+  <string name="update_installing">Установка обновления</string>
+  <!-- Update notification inviting the user back to the system install prompt. [CHAR LIMIT=NONE] -->
+  <string name="update_confirm_install">Готово к установке. Откройте для подтверждения.</string>
+  <!-- Update progress dialog status after Android reports success. [CHAR LIMIT=NONE] -->
+  <string name="update_installed">Обновление установлено</string>
+  <!-- Update progress dialog status after a transfer or preparation failure. [CHAR LIMIT=NONE] -->
+  <string name="update_download_failed">Не удалось скачать или подготовить обновление. Проверьте подключение и свободное место, затем повторите попытку.</string>
+  <!-- Update status after Android interrupted the download or its foreground time expired. [CHAR LIMIT=NONE] -->
+  <string name="update_download_interrupted">Обновление было прервано. Повторите попытку, чтобы начать скачивание заново.</string>
+  <!-- Button in the update progress dialog to retry a failed or canceled download. [CHAR LIMIT=20] -->
+  <string name="update_retry">Повторить</string>
+  <!-- Download progress: percentage, downloaded file size, total file size. [CHAR LIMIT=NONE] -->
+  <string name="update_download_progress"><xliff:g id="percent" example="50">%1$d</xliff:g>%%, <xliff:g id="downloaded" example="25 MB">%2$s</xliff:g> из <xliff:g id="total" example="50 MB">%3$s</xliff:g></string>
 </resources>
