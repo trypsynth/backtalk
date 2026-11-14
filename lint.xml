@@ -104,6 +104,8 @@
         <ignore regexp="template_item_details_order_dropped" />
         <ignore regexp="item_details_order_footer" />
         <ignore regexp="title_pref_speak_items_before_scroll" />
+        <ignore regexp="title_pref_steady_bluetooth_volume" />
+        <ignore regexp="summary_pref_steady_bluetooth_volume" />
         <ignore regexp="title_pref_phonetic_letters_mode" />
         <ignore regexp="phonetic_letters_mode_off" />
         <ignore regexp="phonetic_letters_mode_after_letter_delay" />

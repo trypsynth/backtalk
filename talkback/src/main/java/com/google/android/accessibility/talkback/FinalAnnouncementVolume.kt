@@ -25,12 +25,13 @@ import kotlin.math.pow
 /**
  * Works out how loud to speak "Backtalk off".
  *
- * Android shuts the accessibility audio stream down before Backtalk speaks that last announcement,
- * so it plays at the media volume. To keep it at the accessibility volume, the speech is made
- * quieter by the difference between the two. Android 9 and later report each volume step's real
- * loudness in decibels for the current output, which is exact. Before that, the difference is
- * guessed from where the two volume sliders are, which lowers the speech too little at the
- * quietest accessibility volumes, where Android's volume steps are furthest apart.
+ * Android turns the accessibility volume up to the media volume's step before Backtalk speaks that
+ * last announcement. To keep it at the accessibility volume, the speech is made quieter by the
+ * difference between the two steps. Android 9 and later report each step's real loudness for the
+ * current output, which is exact. The accessibility stream's own loudness is used for both,
+ * because the media stream's can differ from it. Before Android 9, the difference is guessed from
+ * where the two volume sliders are, which lowers the speech too little at the quietest
+ * accessibility volumes, where Android's volume steps are furthest apart.
  */
 object FinalAnnouncementVolume {
   /**
@@ -59,12 +60,49 @@ object FinalAnnouncementVolume {
       return 0f
     }
     val gain =
-      decibelGain(audioManager, accessibilityIndex, musicIndex)
+      reportedGain(audioManager, accessibilityIndex, accessibilityMaxIndex, musicIndex, musicMaxIndex)
         ?: sliderGain(
           accessibilityIndex.toFloat() / accessibilityMaxIndex,
           musicIndex.toFloat() / musicMaxIndex,
         )
     return speechVolume * gain
+  }
+
+  /**
+   * The accessibility step that Android sets for media step [musicIndex], the way it matches the
+   * steps of two streams: in tenths of a step, from each stream's lowest step to its highest, then
+   * rounded. Bluetooth headphones can set the media volume between steps, which apps can't see,
+   * so there this can be a step off.
+   */
+  @JvmStatic
+  fun accessibilityStepAtMediaVolume(
+    musicIndex: Int,
+    musicMinIndex: Int,
+    musicMaxIndex: Int,
+    accessibilityMinIndex: Int,
+    accessibilityMaxIndex: Int,
+  ): Int {
+    val musicRange = (musicMaxIndex - musicMinIndex) * 10
+    val accessibilityRange = (accessibilityMaxIndex - accessibilityMinIndex) * 10
+    val tenths =
+      accessibilityMinIndex * 10 +
+        ((musicIndex - musicMinIndex) * 10 * accessibilityRange + musicRange / 2) / musicRange
+    return (tenths + 5) / 10
+  }
+
+  /**
+   * The gain that turns a sound at the media step into one at the accessibility step, from 0 to 1,
+   * from the loudness Android reports for each. That is usually in decibels, which are at most
+   * 0 at full volume, but Samsung phones report a fraction of full loudness instead, from 0 to 1.
+   * Their fractions are above 0 at every step but the lowest, which is never asked for, so two
+   * values above 0 are fractions.
+   */
+  @JvmStatic
+  fun gainFromReportedVolumes(accessibility: Float, music: Float): Float {
+    if (accessibility > 0f && music > 0f) {
+      return (accessibility / music).coerceIn(0f, 1f)
+    }
+    return gainFromDecibels(accessibility, music)
   }
 
   /** The gain that turns a sound at [musicDb] into one at [accessibilityDb], from 0 to 1. */
@@ -88,23 +126,37 @@ object FinalAnnouncementVolume {
     return 10f.pow((accessibilityFraction - musicFraction) / 0.4f)
   }
 
-  private fun decibelGain(
+  /**
+   * The gain from the accessibility stream's loudness at [accessibilityIndex] and at the step
+   * Android sets it to for media step [musicIndex].
+   */
+  private fun reportedGain(
     audioManager: AudioManager,
     accessibilityIndex: Int,
+    accessibilityMaxIndex: Int,
     musicIndex: Int,
+    musicMaxIndex: Int,
   ): Float? {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
       return null
     }
+    val mediaStep =
+      accessibilityStepAtMediaVolume(
+        musicIndex,
+        audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC),
+        musicMaxIndex,
+        audioManager.getStreamMinVolume(AudioManager.STREAM_ACCESSIBILITY),
+        accessibilityMaxIndex,
+      )
     val deviceType = outputDeviceType(audioManager)
     return try {
-      gainFromDecibels(
+      gainFromReportedVolumes(
         audioManager.getStreamVolumeDb(
           AudioManager.STREAM_ACCESSIBILITY,
           accessibilityIndex,
           deviceType,
         ),
-        audioManager.getStreamVolumeDb(AudioManager.STREAM_MUSIC, musicIndex, deviceType),
+        audioManager.getStreamVolumeDb(AudioManager.STREAM_ACCESSIBILITY, mediaStep, deviceType),
       )
     } catch (e: IllegalArgumentException) {
       null
