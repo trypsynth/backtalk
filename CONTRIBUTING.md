@@ -2,14 +2,28 @@
 
 Thanks for wanting to help. Backtalk is maintained by one person in their spare time, and every pull request is read and reviewed by hand. These guidelines keep that possible.
 
+## What Backtalk takes
+
+Backtalk is meant to be TalkBack, but faster, with a few things put back that TalkBack lost. It's close to where it should be, so most of what goes in is:
+
+*   Fixes, including for problems TalkBack has too.
+*   Changes that make Backtalk faster or more responsive, measured on a device.
+*   Behaviour from earlier TalkBack releases, such as the circle menu, and Google features that are in the source but don't work in it, such as voice commands and Describe screen.
+*   Small improvements to things TalkBack already does.
+*   Translations.
+
+New features that TalkBack has never had are rarely taken, especially ones that add settings screens or gestures, or that change how touch, focus or speech work. Many of them can be written as a [script](docs/scripting.md) instead, and changes to the scripting API that make that possible are welcome. If you'd like a screen reader that takes more new features, [SandFly](https://github.com/aaron-gh/sandfly) is a fork of Backtalk that does.
+
 ## Pull requests
 
 *   Open a few at a time. You can have up to three pull requests open at once, drafts included, and GitHub won't let you open a fourth until one of them is merged or closed. Wait for review rather than working around the limit. Opening a batch of pull requests at once, with an AI agent or by hand, buries the maintainer and everyone else waiting for review. It's disrespectful of their time and won't be tolerated: batches like that are closed without review.
 *   One change per pull request. A pull request should do one thing, and its title should say what. Don't mix a fix with unrelated cleanup or another feature.
+*   Keep it small. If a change needs hundreds of lines of code, or edits to many of Google's files, that usually means it should be split, done another way, or written as a script. Tests and documentation don't count toward this.
 *   Say why. Describe the problem you're fixing and how you found it, such as an issue, a log, or a device and app where it happens, and say how you tested the change.
 *   Test on a device. Unit tests and lint aren't enough for a screen reader. Say which phone or watch, Android version and speech engine you tried it on, and what you did. If you couldn't try something, say so.
+*   Measure speed changes. If a change makes something faster, time it on master and on your branch, on a device, and give both numbers. Changes that should be faster but weren't measured aren't taken.
 *   Answer review. If you're asked for changes, make them or explain why not. Pull requests that go two weeks without an answer to review are closed.
-*   Open an issue first for big changes, such as a new feature or a change to how navigation, gestures or speech work, so that we can agree on the approach before you write it.
+*   Agree on big changes first. For a new feature, or a change to how navigation, gestures or speech work, open an issue and wait until the approach is agreed there before you write it. An issue opened at the same time as the pull request doesn't count. Pull requests for features that weren't agreed may be closed without review.
 
 ## Using AI tools
 
