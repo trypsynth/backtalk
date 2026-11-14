@@ -261,6 +261,20 @@ class WebReadingControlTest {
     throw AssertionError("Web reading control preference is missing from navigation settings")
   }
 
+  @Test
+  fun doubleTapStartedBeforeTheDelayedSwitchUsesTheExploredItemsControl() {
+    val fixture = ControllerFixture(preserve = false)
+    fixture.seedSelection(Setting.MEDIA_CONTROLS)
+    fixture.controller.touchInteractionState(true)
+    fixture.focus(web = false, actions = true)
+    fixture.controller.touchInteractionState(false)
+    // The double tap's first touch starts before the delayed switch has run.
+    fixture.controller.touchInteractionState(true)
+    fixture.assertSelected(Setting.MEDIA_CONTROLS)
+
+    assertEquals(Setting.ACTIONS, fixture.controller.getCurrentSettingForClick())
+  }
+
   private class ControllerFixture(preserve: Boolean) {
     private val context = RuntimeEnvironment.getApplication()
     private val prefs = SharedPreferencesUtils.getSharedPreferences(context)
