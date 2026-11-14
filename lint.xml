@@ -391,6 +391,17 @@
         <ignore regexp="title_pref_radial_menu" />
         <ignore regexp="title_pref_scripts" />
         <ignore regexp="value_charger_connected" />
+        <ignore regexp="title_pref_app_gestures" />
+        <ignore regexp="summary_pref_app_gestures" />
+        <ignore regexp="shortcut_app_gestures" />
+        <ignore regexp="summary_app_gestures_menu" />
+        <ignore regexp="title_app_gestures_for" />
+        <ignore regexp="title_app_gestures_screen" />
+        <ignore regexp="app_gestures_unavailable" />
+        <ignore regexp="app_gestures_same_as_other_apps" />
+        <ignore regexp="app_gestures_remove" />
+        <ignore regexp="app_gestures_removed" />
+        <ignore regexp="app_gestures_none" />
     </issue>
     <!--
       R8 minifies the published builds, but their resources aren't shrunk, since the compositor,
