@@ -68,6 +68,7 @@ object Updater {
   private const val NOTIFICATION_ID = 0x0BAC7A1C
   internal const val PREF_LAST_CHECK_TIME = "update_last_check_time"
   internal const val PREF_LAST_NOTIFIED_BUILD = "update_last_notified_build"
+  private const val PREF_WHATS_NEW_FROM_HASH = "update_whats_new_from_hash"
   private const val APK_FILE_NAME = "backtalk.apk"
   private val CHECK_INTERVAL_MS = TimeUnit.DAYS.toMillis(1)
   private val POLL_INTERVAL_MS = TimeUnit.HOURS.toMillis(3)
@@ -232,7 +233,7 @@ object Updater {
       .setTitle(title)
       .setMessage(message)
       .setPositiveButton(R.string.update_dialog_install) { _, _ ->
-        install(activity, update.downloadUrl)
+        install(activity, update.downloadUrl, BuildConfig.COMMIT_HASH)
       }
       .setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.dismiss() }
       .setCancelable(true)
@@ -245,6 +246,7 @@ object Updater {
       Intent(context, UpdateReceiver::class.java)
         .setAction(UpdateReceiver.ACTION_INSTALL)
         .putExtra(UpdateReceiver.EXTRA_DOWNLOAD_URL, update.downloadUrl)
+        .putExtra(UpdateReceiver.EXTRA_FROM_HASH, BuildConfig.COMMIT_HASH)
     val pendingIntent =
       PendingIntent.getBroadcast(
         context,
@@ -277,7 +279,11 @@ object Updater {
    * over Bluetooth.
    */
   @JvmStatic
-  fun install(context: Context, downloadUrl: String) {
+  fun install(
+    context: Context,
+    downloadUrl: String,
+    fromHash: String = BuildConfig.COMMIT_HASH,
+  ) {
     val appContext = context.applicationContext
     if (!appContext.packageManager.canRequestPackageInstalls()) {
       val intent =
@@ -305,9 +311,9 @@ object Updater {
     installing = true
     val wifi = if (FormFactorUtils.isAndroidWear()) downloadNetwork(appContext) else null
     if (wifi == null) {
-      downloadAndInstall(appContext, downloadUrl, network = null)
+      downloadAndInstall(appContext, downloadUrl, fromHash, network = null)
     } else {
-      wifi.acquire { network -> downloadAndInstall(appContext, downloadUrl, network) }
+      wifi.acquire { network -> downloadAndInstall(appContext, downloadUrl, fromHash, network) }
     }
   }
 
@@ -318,7 +324,12 @@ object Updater {
       }
 
   /** Downloads the APK over [network], or the default network if null, and installs it. */
-  private fun downloadAndInstall(context: Context, downloadUrl: String, network: Network?) {
+  private fun downloadAndInstall(
+    context: Context,
+    downloadUrl: String,
+    fromHash: String,
+    network: Network?,
+  ) {
     executor.execute {
       var downloaded = false
       try {
@@ -333,7 +344,7 @@ object Updater {
           }
         downloaded = true
         try {
-          installApk(context, apk)
+          installApk(context, apk, fromHash)
         } finally {
           apk.delete()
         }
@@ -374,7 +385,7 @@ object Updater {
 
   private class WrongPackageException(message: String) : Exception(message)
 
-  private fun installApk(context: Context, apk: File) {
+  private fun installApk(context: Context, apk: File, fromHash: String) {
     val info = readArchive(context, apk)
     val apkPackage = info?.packageName
     val kind = AppIdMove.installKind(apkPackage, context.packageName, isSameSigner(context, info))
@@ -405,6 +416,7 @@ object Updater {
           Intent(context, UpdateReceiver::class.java)
             .setAction(UpdateReceiver.ACTION_INSTALL_STATUS)
             .putExtra(UpdateReceiver.EXTRA_INSTALLED_PACKAGE, apkPackage)
+            .putExtra(UpdateReceiver.EXTRA_FROM_HASH, fromHash)
         // The installer fills in the status, so the intent must be mutable.
         val flags =
           PendingIntent.FLAG_UPDATE_CURRENT or
@@ -473,6 +485,12 @@ object Updater {
       // For an update, the system stops Backtalk to replace it, and restarts the service if it
       // was on. A move installs a new app, and this one keeps running until that one is on.
       PackageInstaller.STATUS_SUCCESS -> {
+        intent.getStringExtra(UpdateReceiver.EXTRA_FROM_HASH)?.let { fromHash ->
+          SharedPreferencesUtils.getSharedPreferences(appContext)
+            .edit()
+            .putString(PREF_WHATS_NEW_FROM_HASH, fromHash)
+            .apply()
+        }
         val installed = intent.getStringExtra(UpdateReceiver.EXTRA_INSTALLED_PACKAGE)
         if (installed != null && installed != appContext.packageName) {
           onMoved(appContext, installed)
@@ -490,6 +508,12 @@ object Updater {
       }
     }
   }
+
+  /** Returns the build hash that was installed from, or the current hash if none is recorded. */
+  @JvmStatic
+  fun whatsNewFromHash(context: Context): String =
+    SharedPreferencesUtils.getSharedPreferences(context).getString(PREF_WHATS_NEW_FROM_HASH, null)
+      ?: BuildConfig.COMMIT_HASH
 
   /** Opens the accessibility settings for the newly installed Backtalk, so the user turns it on. */
   private fun onMoved(context: Context, packageName: String) {
