@@ -10,6 +10,14 @@ Backtalk is a fork of [Google's TalkBack](https://github.com/google/talkback), t
 *   Move the code to Kotlin over time. New code is written in Kotlin. Google's Java files are converted only when they already need large changes, so that new Google releases stay easy to merge.
 *   Stay close to Google's releases, and merge each new one.
 
+## Why Backtalk
+
+Backtalk is for people who want TalkBack, but faster. If you know TalkBack, you already know Backtalk: gestures, menus and settings work as they do in TalkBack, apart from a few changed defaults listed in [Differences from TalkBack](differences.md), and anything that teaches TalkBack still applies.
+
+When your screen reader breaks, you can't use your phone, so Backtalk changes carefully. Every pull request is read and reviewed by hand and has to be tested on a device, and new behaviour is off by default, so an update doesn't change how your phone works unless you choose it. Backtalk also stays close to Google's code, so that each new TalkBack release can be merged and Backtalk keeps up with new versions of Android.
+
+If you'd like a screen reader that adds many more features, [SandFly](https://github.com/aaron-gh/sandfly) is a fork of Backtalk that does.
+
 ## Differences from TalkBack
 
 Backtalk speaks sooner after each swipe and screen change, and can play its sounds and speech through a low-latency audio path. It adds a two-finger rotor, a circle menu, Pause Backtalk, direct touch for audio games, sound themes with control sounds in 3D, a vibration for every sound, a status gesture, and braille keyboard dots that follow how you hold the device. It also changes some defaults and fixes problems in TalkBack. For the full list, see [Differences from TalkBack](differences.md).
