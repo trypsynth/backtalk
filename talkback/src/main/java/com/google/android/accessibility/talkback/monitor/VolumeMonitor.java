@@ -18,7 +18,6 @@ package com.google.android.accessibility.talkback.monitor;
 
 import static com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED;
 import static com.google.android.accessibility.utils.output.FeedbackItem.FLAG_FORCE_FEEDBACK_EVEN_IF_AUDIO_PLAYBACK_ACTIVE;
-import static com.google.android.accessibility.utils.output.FeedbackItem.FLAG_SOURCE_IS_VOLUME_CONTROL;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -38,7 +37,6 @@ import com.google.android.accessibility.talkback.Pipeline.FeedbackReturner;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.utils.FeatureSupport;
 import com.google.android.accessibility.utils.FormFactorUtils;
-import com.google.android.accessibility.utils.Performance.EventId;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
 import com.google.android.accessibility.utils.WeakReferenceHandler;
 import com.google.android.accessibility.utils.broadcast.SameThreadBroadcastReceiver;
@@ -187,8 +185,7 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
    * @param prevVolume The previous volume.
    */
   private void internalOnVolumeChanged(int streamType, int volume, int prevVolume) {
-    if (isSelfAdjusted(streamType, volume)
-        || volumeAnnouncer.isIgnoredChange(streamType, volume)) {
+    if (isSelfAdjusted(streamType, volume)) {
       // Ignore self-adjustments.
       return;
     }
@@ -209,6 +206,12 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
     // new volume itself.
     boolean listenerAnnounces =
         notifyVolumeChangedListener(streamType, volume, prevVolume, getStreamVolume(streamType));
+
+    // Backtalk: a level that a new output brings isn't the user's change, unless a listener was
+    // waiting for it.
+    if (volumeAnnouncer.isIgnoredChange(streamType, volume) && !listenerAnnounces) {
+      return;
+    }
 
     if (currentStream < 0) {
       // If the current stream hasn't been set, acquire control.
@@ -245,14 +248,9 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
       return;
     }
 
-    String text;
-    if (mutedState) {
-      text = context.getString(R.string.template_stream_muted_set, getStreamName(streamType));
-    } else {
-      text = getAnnouncementForStreamType(R.string.template_stream_volume_set, streamType);
-    }
-
-    speakWithCompletion(text, streamType, utteranceCompleteRunnable, EVENT_ID_UNTRACKED);
+    // Backtalk: said the way volume changes are, while media plays too.
+    volumeAnnouncer.onStreamMuted(streamType, mutedState);
+    handler.post(this::releaseControl);
   }
 
   private void internalSpeakA11yVolumeControlHint() {
@@ -415,57 +413,6 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
   }
 
   /**
-   * Speaks text with a completion action, or just runs the completion action if the volume monitor
-   * should be quiet.
-   *
-   * @param text The text to speak.
-   * @param streamType The type of stream.
-   * @param completedAction The action to run after speaking.
-   */
-  private void speakWithCompletion(
-      String text,
-      int streamType,
-      SpeechController.UtteranceCompleteRunnable completedAction,
-      EventId eventId) {
-    if ((callStateMonitor != null)
-        && (callStateMonitor.getCurrentCallState() != TelephonyManager.CALL_STATE_IDLE)) {
-      // If the phone is busy, don't speak anything.
-      handler.post(this::releaseControl);
-      return;
-    }
-
-    SpeechController.SpeakOptions speakOptions =
-        SpeechController.SpeakOptions.create()
-            .setQueueMode(SpeechController.QUEUE_MODE_QUEUE)
-            .setFlags(
-                FLAG_SOURCE_IS_VOLUME_CONTROL | FLAG_FORCE_FEEDBACK_EVEN_IF_AUDIO_PLAYBACK_ACTIVE)
-            .setUtteranceGroup(SpeechController.UTTERANCE_GROUP_DEFAULT)
-            .setCompletedAction(completedAction);
-    Speech.Builder speechBuilder =
-        Speech.builder().setAction(Action.SPEAK).setText(text).setOptions(speakOptions);
-
-    // Let's speak the hint even if audio playback is active because the hint is only spoken for
-    // 3 times, we don't want users to miss it.
-    if (hintA11yVolumeControl) {
-      int a11yVolumeControlHintTimes = getA11yVolumeControlHintTimes();
-      if ((a11yVolumeControlHintTimes < A11Y_VOLUME_CONTROL_HINT_TIMES)
-          && (streamType != SpeechController.DEFAULT_STREAM)) {
-        increaseAndStoreA11yVolumeControlHintTimes(a11yVolumeControlHintTimes);
-        speechBuilder
-            .setHintSpeakOptions(
-                SpeakOptions.create()
-                    .setFlags(
-                        FeedbackItem.FLAG_NO_HISTORY
-                            | FLAG_FORCE_FEEDBACK_EVEN_IF_AUDIO_PLAYBACK_ACTIVE))
-            .setHint(context.getString(R.string.hint_a11y_volume_control));
-      }
-    }
-
-    Feedback.Part.Builder part = Feedback.Part.builder().setSpeech(speechBuilder.build());
-    pipeline.returnFeedback(eventId, part);
-  }
-
-  /**
    * Returns the localized stream name for a given stream type constant.
    *
    * @param streamType A stream type constant.
@@ -545,24 +492,6 @@ public class VolumeMonitor extends SameThreadBroadcastReceiver {
   }
 
   private final VolumeHandler handler = new VolumeHandler(this);
-
-  /**
-   * Runnable that hides the volume overlay. Used as a completion action for the "volume set"
-   * utterance.
-   */
-  private final SpeechController.UtteranceCompleteRunnable utteranceCompleteRunnable =
-      new SpeechController.UtteranceCompleteRunnable() {
-        @Override
-        public void run(int status) {
-          releaseControl();
-        }
-      };
-
-  /** This is to check data of Feedback of Pipeline for test purpose. */
-  @VisibleForTesting
-  SpeechController.UtteranceCompleteRunnable getUtteranceCompleteRunnable() {
-    return utteranceCompleteRunnable;
-  }
 
   public void onVolumeKeyPressed() {
     handler.volumeButtonHintDelayed();

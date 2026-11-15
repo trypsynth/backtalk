@@ -189,6 +189,70 @@ class VolumeMonitorTest {
   }
 
   @Test
+  fun anUnchangedVolumeThatNoKeyMadeIsNotSaid() {
+    change(STREAM_MUSIC, 10, 9)
+    shadowOf(Looper.getMainLooper()).idleFor(Duration.ofMillis(500))
+    spoken.clear()
+
+    change(STREAM_MUSIC, 10, 10)
+
+    assertEquals(emptyList<String>(), texts())
+  }
+
+  @Test
+  fun muteIsSaidLikeAVolumeChange() {
+    mute(true)
+
+    assertEquals(listOf("Music volume muted."), texts())
+    assertEquals(SpeechController.UTTERANCE_GROUP_VOLUME, spoken.single().options()?.mUtteranceGroup)
+  }
+
+  @Test
+  fun muteIsNotSaidWhenSpeakVolumeChangesIsOff() {
+    SharedPreferencesUtils.putBooleanPref(
+      SharedPreferencesUtils.getSharedPreferences(context),
+      context.resources,
+      R.string.pref_speak_volume_changes_key,
+      false,
+    )
+
+    mute(true)
+
+    assertEquals(emptyList<String>(), texts())
+  }
+
+  @Test
+  fun aListenerHearsAChangeThatComesWithANewOutput() {
+    monitor.startAnnouncing()
+    playMediaOn(headphones())
+    var heard = 0
+    monitor.addVolumeChangedListener(
+      object : VolumeMonitor.VolumeChangedListener {
+        override fun onVolumeChanged(type: Int, value: Int, prevValue: Int, percent: Int) {
+          heard++
+        }
+
+        override fun announcesVolume(type: Int) = type == STREAM_MUSIC
+      }
+    )
+
+    change(STREAM_MUSIC, 5, 4)
+
+    assertEquals(1, heard)
+    assertEquals(emptyList<String>(), texts())
+  }
+
+  @Test
+  fun theAccessibilityLevelHeadphonesBringIsNotSaid() {
+    monitor.startAnnouncing()
+    playOn(STREAM_ACCESSIBILITY, headphones())
+
+    change(STREAM_ACCESSIBILITY, 9, 3)
+
+    assertEquals(emptyList<String>(), texts())
+  }
+
+  @Test
   fun aVolumeKeyIsSaidOnANewOutput() {
     monitor.startAnnouncing()
     playMediaOn(headphones())
@@ -454,6 +518,15 @@ class VolumeMonitorTest {
         .putExtra(AudioManagerCompatUtils.EXTRA_PREV_VOLUME_STREAM_VALUE, prevValue)
     )
     // Runs what is already due, without letting any time pass.
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  private fun mute(muted: Boolean) {
+    monitor.onReceiveIntent(
+      Intent(AudioManagerCompatUtils.STREAM_MUTE_CHANGED_ACTION)
+        .putExtra(AudioManagerCompatUtils.EXTRA_VOLUME_STREAM_TYPE, STREAM_MUSIC)
+        .putExtra(AudioManagerCompatUtils.EXTRA_STREAM_VOLUME_MUTED, muted)
+    )
     shadowOf(Looper.getMainLooper()).idle()
   }
 

@@ -21,18 +21,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioAttributes
-import android.media.AudioDeviceInfo
 import android.media.AudioManager
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.util.Log
 import android.view.KeyEvent
 import androidx.core.content.ContextCompat
 import com.google.android.accessibility.talkback.Feedback
 import com.google.android.accessibility.talkback.Pipeline.FeedbackReturner
 import com.google.android.accessibility.talkback.R
+import com.google.android.accessibility.talkback.audio.outputsFor
 import com.google.android.accessibility.utils.Performance.EVENT_ID_UNTRACKED
 import com.google.android.accessibility.utils.compat.media.AudioManagerCompatUtils
 import com.google.android.accessibility.utils.output.FeedbackItem
@@ -125,16 +123,19 @@ class VolumeAnnouncer(
    * [PER_OUTPUT_STREAMS], so a change of one of them that comes with a new output and that no volume
    * key made is the output's. Android can report that change before it says the device connected,
    * so the output is looked up when the change comes. Headphones can then report the same level
-   * again, which isn't a change either, though a volume key that can't go further is still said.
+   * again, which isn't a change either.
    */
   fun isIgnoredChange(streamType: Int, volume: Int): Boolean {
     if (streamType !in PER_OUTPUT_STREAMS) return false
-    val output = outputOf(streamType)
-    val last = lastLevels.put(streamType, StreamLevel(output, volume))
+    val last = lastLevels[streamType]
+    val byKey = changedByVolumeKey()
+    // A held key repeats many times a second, so the output isn't asked for each repeat.
+    val output = if (byKey && volumeKeyHeld) last?.output else outputOf(streamType)
+    lastLevels[streamType] = StreamLevel(output, volume)
+    if (byKey) return false
     // Where the stream played isn't known before start or when Android couldn't say.
     val newOutput = last?.output != null && output != null && output != last.output
-    val repeat = volume == last?.volume
-    return (newOutput || repeat) && !changedByVolumeKey()
+    return newOutput || volume == last?.volume
   }
 
   /**
@@ -158,6 +159,22 @@ class VolumeAnnouncer(
       return
     }
     announceVolumeNow(streamType, brief)
+  }
+
+  /**
+   * Says that [streamType] was muted or unmuted, as a volume change is said. It replaces the level
+   * said for the same key press. A held key's level is said when the key is released.
+   */
+  fun onStreamMuted(streamType: Int, muted: Boolean) {
+    val byKey = changedByVolumeKey()
+    // A focused slider says its own value, as it does for a volume change.
+    if ((volumeKeyHeld && byKey) || (!byKey && sliderFocused.asBoolean)) return
+    if (!monitor.speakVolumeChanges() || isInCall()) return
+    if (muted) {
+      speak(context.getString(R.string.template_stream_muted_set, monitor.getStreamName(streamType)))
+    } else {
+      speakVolume(streamType, brief = false)
+    }
   }
 
   /**
@@ -197,9 +214,13 @@ class VolumeAnnouncer(
   }
 
   private fun speakVolume(streamType: Int, brief: Boolean) {
-    val text =
+    speak(
       if (brief) briefAnnouncement(streamType)
       else monitor.getAnnouncementForStreamType(R.string.template_stream_volume_set, streamType)
+    )
+  }
+
+  private fun speak(text: CharSequence) {
     val speakOptions =
       SpeechController.SpeakOptions.create()
         .setQueueMode(
@@ -256,37 +277,25 @@ class VolumeAnnouncer(
 
     /**
      * The streams whose level Android keeps for each output and switches when headphones connect
-     * or disconnect: media, calls and notifications. The ringer keeps one level. The accessibility
-     * volume moves too, but its own listener says it, and Backtalk keeps track of it.
+     * or disconnect: media, calls, notifications and accessibility. The ringer keeps one level.
      */
     val PER_OUTPUT_STREAMS =
       setOf(
         AudioManager.STREAM_MUSIC,
         AudioManager.STREAM_VOICE_CALL,
         AudioManager.STREAM_NOTIFICATION,
+        AudioManager.STREAM_ACCESSIBILITY,
       )
   }
 }
 
-/** The audio attributes that play like [streamType], to find where it plays. */
-internal fun attributesOf(streamType: Int): AudioAttributes =
-  AudioAttributes.Builder().setLegacyStreamType(streamType).build()
-
 /**
- * The devices audio with [attributes] plays on, or null when Android can't say. Before Android 13
- * apps can't ask, so the connected outputs stand in for them.
+ * The audio attributes that play like [streamType], to find where it plays. Android won't make them
+ * from the accessibility stream, so that one uses the accessibility usage.
  */
-internal fun AudioManager.outputsFor(attributes: AudioAttributes): List<AudioDeviceInfo>? =
-  try {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      getAudioDevicesForAttributes(attributes)
-    } else {
-      getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
-    }
-  } catch (e: RuntimeException) {
-    // Some phones throw here, as AudioDeviceRouter found.
-    Log.w(TAG, "Could not find where audio plays", e)
-    null
+internal fun attributesOf(streamType: Int): AudioAttributes =
+  if (streamType == AudioManager.STREAM_ACCESSIBILITY) {
+    AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY).build()
+  } else {
+    AudioAttributes.Builder().setLegacyStreamType(streamType).build()
   }
-
-private const val TAG = "BacktalkVolume"

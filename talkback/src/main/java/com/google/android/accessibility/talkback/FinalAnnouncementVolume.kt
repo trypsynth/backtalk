@@ -20,6 +20,7 @@ import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import android.os.Build
+import com.google.android.accessibility.talkback.audio.outputsFor
 import kotlin.math.pow
 
 /**
@@ -171,7 +172,7 @@ object FinalAnnouncementVolume {
           .setUsage(AudioAttributes.USAGE_MEDIA)
           .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
           .build()
-      audioManager.getAudioDevicesForAttributes(attributes).firstOrNull()?.let {
+      audioManager.outputsFor(attributes)?.firstOrNull()?.let {
         return it.type
       }
     }
