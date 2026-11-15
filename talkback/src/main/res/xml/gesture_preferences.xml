@@ -9,6 +9,11 @@
       android:title="@string/reset_gesture_settings_title"
       android:key="@string/pref_reset_gesture_settings_key"
       app:allowDividerBelow="true"/>
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreference
+      android:title="@string/title_pref_app_gestures"
+      android:summary="@string/summary_pref_app_gestures"
+      android:key="@string/pref_app_gestures_key"
+      android:fragment="com.google.android.accessibility.talkback.preference.base.AppGesturesFragment" />
   <ListPreference
       android:key="@string/pref_gesture_set_key"
       android:title="@string/pref_gesture_set_key_title"

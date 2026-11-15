@@ -33,6 +33,7 @@ import com.google.android.accessibility.talkback.actor.DimScreenActor;
 import com.google.android.accessibility.talkback.actor.gemini.GeminiConfiguration;
 import com.google.android.accessibility.talkback.contextmenu.ContextMenuItem.DeferredType;
 import com.google.android.accessibility.talkback.flags.FeatureFlagReader;
+import com.google.android.accessibility.talkback.gesture.AppGestures;
 import com.google.android.accessibility.talkback.menurules.NodeMenuRuleProcessor;
 import com.google.android.accessibility.talkback.scripting.ItemInspector;
 import com.google.android.accessibility.talkback.scripting.ScriptMenuItem;
@@ -94,6 +95,7 @@ public class TalkbackMenuProcessor {
   private static final int ORDER_INSPECT_ITEM = 26;
   private static final int ORDER_COPY_SCREEN_TREE = ORDER_INSPECT_ITEM;
   private static final int ORDER_TELL_TIME = 27;
+  private static final int ORDER_APP_GESTURES = 28;
 
   private final TalkBackService service;
   private final ActorState actorState;
@@ -192,6 +194,7 @@ public class TalkbackMenuProcessor {
         R.bool.pref_show_context_menu_copy_screen_tree_default,
         R.string.shortcut_copy_screen_tree,
         (node, say) -> ItemInspector.copyScreenTree(service, node, say));
+    addAppGestures(menu);
 
     setMenuItemShowsDialog(
         menu,
@@ -652,6 +655,27 @@ public class TalkbackMenuProcessor {
     if (!WindowNavigationMenuProcessor.prepareWindowSubMenu(service, subMenu, pipeline)) {
       menu.removeItem(R.id.window_menu);
     }
+  }
+
+  private void addAppGestures(ContextMenu menu) {
+    menu.removeItem(R.id.app_gestures);
+    if (!showMenuItem(
+        R.string.pref_show_context_menu_app_gestures_setting_key,
+        R.bool.pref_show_context_menu_app_gestures_default)) {
+      return;
+    }
+    @Nullable CharSequence nodePackage = currentNode == null ? null : currentNode.getPackageName();
+    @Nullable String app =
+        nodePackage == null ? AppGestures.focusedPackage() : nodePackage.toString();
+    if (!AppGestures.canSetGesturesFor(service, app)) {
+      return;
+    }
+    addAfterMenuCloses(
+        menu,
+        R.id.app_gestures,
+        ORDER_APP_GESTURES,
+        service.getString(R.string.title_app_gestures_for, AppGestures.appLabel(service, app)),
+        node -> service.startActivity(AppGestures.settingsIntent(service, app)));
   }
 
   private void addScriptCommands(ContextMenu menu) {

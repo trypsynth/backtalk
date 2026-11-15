@@ -737,6 +737,16 @@ public class GestureController {
           focused,
           message ->
               pipeline.returnFeedback(EVENT_ID_UNTRACKED, Feedback.requestedSpeech(message)));
+    } else if (action.equals(service.getString(R.string.shortcut_value_app_gestures))) {
+      @Nullable String app = AppGestures.focusedPackage();
+      if (AppGestures.canSetGesturesFor(service, app)) {
+        service.startActivity(AppGestures.settingsIntent(service, app));
+      } else {
+        result =
+            pipeline.returnFeedback(
+                eventId,
+                Feedback.requestedSpeech(service.getString(R.string.app_gestures_unavailable)));
+      }
     } else if (action.equals(service.getString(R.string.shortcut_value_toggle_scripts))) {
       @Nullable Boolean scriptsOn = Scripts.toggleAll();
       int message =

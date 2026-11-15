@@ -697,6 +697,7 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     INSPECT_ITEM(R.string.shortcut_value_inspect_item, R.string.shortcut_inspect_item),
     COPY_SCREEN_TREE(R.string.shortcut_value_copy_screen_tree, R.string.shortcut_copy_screen_tree),
     TOGGLE_SCRIPTS(R.string.shortcut_value_toggle_scripts, R.string.shortcut_toggle_scripts),
+    APP_GESTURES(R.string.shortcut_value_app_gestures, R.string.shortcut_app_gestures),
     ANNOUNCE_PHONETIC_PRONUNCIATION(
         R.string.shortcut_value_announce_phonetic_pronunciation,
         R.string.shortcut_announce_phonetic_pronunciation),
@@ -768,6 +769,7 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
   private final List<HashMap<String, GestureCollector>> actionToGesture = new ArrayList<>();
   private final List<HashMap<Integer, String>> gestureIdToActionKey = new ArrayList<>();
   private HashMap<Integer, String> fingerprintGestureIdToActionKey = new HashMap<>();
+  private HashMap<Integer, String> gestureIdToPrefKey = new HashMap<>();
 
   /** Reloads preferences whenever their values change. */
   private final OnSharedPreferenceChangeListener sharedPreferenceChangeListener =
@@ -921,7 +923,8 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
    * @return action key string
    */
   public String getActionKeyFromGestureId(int gestureId) {
-    return getActionKeyFromGestureId(currentGestureSet, gestureId);
+    @Nullable String appAction = AppGestures.action(prefs, gestureIdToPrefKey.get(gestureId));
+    return appAction != null ? appAction : getActionKeyFromGestureId(currentGestureSet, gestureId);
   }
 
   private String getActionKeyFromGestureId(int index, int gestureId) {
@@ -1062,6 +1065,7 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
     boolean isFirstRun = actionToGesture.isEmpty();
 
     HashMap<Integer, String> newFingerPrintGestureIdToActionKey = new HashMap<>();
+    HashMap<Integer, String> newGestureIdToPrefKey = new HashMap<>();
     for (int index = 0; index < NUMBER_OF_GESTURE_SET; index++) {
       HashMap<Integer, String> gestureIdToActionKeyMap = new HashMap<>();
       HashMap<String, GestureCollector> actionToGestureMap = new HashMap<>();
@@ -1126,6 +1130,7 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
                   context.getString(gesture.keyId), context.getString(gesture.defaultActionId)));
         } else {
           gestureIdToActionKeyMap.put(gesture.gestureId, action);
+          newGestureIdToPrefKey.put(gesture.gestureId, context.getString(gesture.keyId));
         }
       }
 
@@ -1144,6 +1149,7 @@ public class GestureShortcutMapping implements GestureShortcutProvider {
       }
     }
     fingerprintGestureIdToActionKey = newFingerPrintGestureIdToActionKey;
+    gestureIdToPrefKey = newGestureIdToPrefKey;
   }
 
   private boolean skipGestureForRTL(TalkBackGesture gesture) {

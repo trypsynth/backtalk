@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the gesture settings item that lists the apps with gestures of their own. [CHAR LIMIT=NONE] -->
+    <string name="title_pref_app_gestures">Gestures for apps</string>
+    <!-- Summary of the gesture settings item that lists the apps with gestures of their own. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_app_gestures">Gestures that do something else in one app</string>
+    <!-- Gesture action, and Backtalk menu setting, that opens the gesture settings of the app the user is in. [CHAR LIMIT=NONE] -->
+    <string name="shortcut_app_gestures">Set gestures for this app</string>
+    <!-- Summary of the Backtalk menu setting that adds the item for setting the current app's gestures. [CHAR LIMIT=NONE] -->
+    <string name="summary_app_gestures_menu">Give gestures another action in the app you\'re in</string>
+    <!-- Backtalk menu item that opens the gesture settings of one app. %1$s is the app's name, such as Chrome. [CHAR LIMIT=NONE] -->
+    <string name="title_app_gestures_for">Set gestures for <xliff:g id="app" example="Chrome">%1$s</xliff:g></string>
+    <!-- Title of the screen with the gestures of one app. %1$s is the app's name, such as Chrome. [CHAR LIMIT=NONE] -->
+    <string name="title_app_gestures_screen">Gestures in <xliff:g id="app" example="Chrome">%1$s</xliff:g></string>
+    <!-- Spoken when the user asks to set gestures for the current app, but the current screen belongs to Backtalk, or the device is locked. [CHAR LIMIT=NONE] -->
+    <string name="app_gestures_unavailable">Gestures can\'t be set for this screen</string>
+    <!-- Summary of a gesture, and choice in its list of actions, when the gesture does the same in this app as in the other apps. %1$s is the action, such as Next item. [CHAR LIMIT=NONE] -->
+    <string name="app_gestures_same_as_other_apps">Same as in other apps: <xliff:g id="action" example="Next item">%1$s</xliff:g></string>
+    <!-- Button on the screen with one app's gestures that makes every gesture work as in the other apps. [CHAR LIMIT=NONE] -->
+    <string name="app_gestures_remove">Use the same gestures as in other apps</string>
+    <!-- Spoken after the user removes the gestures set for one app. [CHAR LIMIT=NONE] -->
+    <string name="app_gestures_removed">Gestures for this app removed</string>
+    <!-- Shown on the list of apps with gestures of their own while no app has any. [CHAR LIMIT=NONE] -->
+    <string name="app_gestures_none">No app has gestures of its own. To set them, assign Set gestures for this app to a gesture, or add it to the Backtalk menu, and use it in the app.</string>
+</resources>

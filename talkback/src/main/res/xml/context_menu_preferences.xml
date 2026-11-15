@@ -231,6 +231,14 @@
             android:summary="@string/summary_copy_screen_tree_menu"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:layout="@layout/listitem_2texts"
+            android:defaultValue="@bool/pref_show_context_menu_app_gestures_default"
+            android:key="@string/pref_show_context_menu_app_gestures_setting_key"
+            android:order="28"
+            android:title="@string/shortcut_app_gestures"
+            app:singleLineTitle="false"
+            android:summary="@string/summary_app_gestures_menu"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:layout="@layout/listitem_2texts"
             android:defaultValue="@bool/pref_show_context_menu_voice_commands_default"
             android:key="@string/pref_show_context_menu_voice_commands_setting_key"
             android:order="21"
