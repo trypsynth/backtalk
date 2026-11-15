@@ -73,6 +73,7 @@ class LocalGemmaRunnerTest {
     val done = CountDownLatch(1)
     var response: GeminiResponse? = null
     var failure: String? = null
+    var failureKind: GeminiFailure.Kind? = null
     var cancelled = false
 
     override fun onResponse(response: GeminiResponse) {
@@ -82,6 +83,7 @@ class LocalGemmaRunnerTest {
 
     override fun onFailure(failure: GeminiFailure) {
       this.failure = failure.message
+      this.failureKind = failure.kind
       done.countDown()
     }
 
@@ -114,29 +116,27 @@ class LocalGemmaRunnerTest {
     return body
   }
 
-  private val announced = mutableListOf<String>()
-
   private fun runner(llm: LocalLlm?) =
-    LocalGemmaRunner({ llm }, { llm }, worker, sameThread, sameThread, { announced.add(it) })
+    LocalGemmaRunner({ llm }, { llm }, worker, sameThread, sameThread)
 
   @Test
-  fun aMemoryFailureIsSpokenAndEndsQuietly() {
+  fun aMemoryFailureFailsWithItsSpokenReason() {
     val llm = FakeLlm { throw LocalLlmMemoryException("Not enough free memory for Gemma") }
     val recorder = Recorder()
     runner(llm).run(request("Describe"), recorder)
     recorder.await()
-    assertEquals(listOf("Not enough free memory for Gemma"), announced)
-    assertTrue(recorder.cancelled)
-    assertNull(recorder.failure)
+    assertEquals(GeminiFailure.Kind.ON_DEVICE, recorder.failureKind)
+    assertEquals("Not enough free memory for Gemma", recorder.failure)
+    assertFalse(recorder.cancelled)
   }
 
   @Test
-  fun otherFailuresAreNotSpokenByTheRunner() {
+  fun otherFailuresFailWithTheirMessage() {
     val llm = FakeLlm { throw LocalLlmException("broken") }
     val recorder = Recorder()
     runner(llm).run(request("Describe"), recorder)
     recorder.await()
-    assertTrue(announced.isEmpty())
+    assertEquals(GeminiFailure.Kind.OTHER, recorder.failureKind)
     assertTrue(recorder.failure!!.contains("broken"))
   }
 
@@ -255,7 +255,6 @@ class LocalGemmaRunnerTest {
         worker,
         blockedCanceller,
         sameThread,
-        { announced.add(it) },
       )
     val recorder = Recorder()
     runner.run(request("p"), recorder)

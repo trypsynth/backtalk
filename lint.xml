@@ -6,6 +6,21 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="voice_commands_help_dnd" />
+        <ignore regexp="voice_commands_help_dnd_description" />
+        <ignore regexp="voice_commands_backtalk_settings" />
+        <ignore regexp="voice_commands_backtalk_setting" />
+        <ignore regexp="voice_commands_open_backtalk_settings" />
+        <ignore regexp="voice_commands_dnd_on" />
+        <ignore regexp="voice_commands_dnd_off" />
+        <ignore regexp="voice_commands_dnd_permission_required" />
+        <ignore regexp="voice_commands_opening_settings" />
+        <ignore regexp="voice_commands_opening_backtalk_settings" />
+        <ignore regexp="voice_commands_volume_set" />
+        <ignore regexp="voice_commands_muted" />
+        <ignore regexp="voice_commands_unmuted" />
+        <ignore regexp="voice_commands_found" />
+        <ignore regexp="voice_commands_element_not_found" />
         <ignore regexp="voice_commands_help_call" />
         <ignore regexp="voice_commands_help_call_description" />
         <ignore regexp="voice_commands_help_call_control" />

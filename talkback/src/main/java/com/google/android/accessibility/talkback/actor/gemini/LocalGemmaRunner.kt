@@ -25,7 +25,6 @@ import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
-import java.util.function.Consumer
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -41,8 +40,10 @@ import org.json.JSONObject
  * @param canceller runs the cancelling, because stopping a model can block and cancel is called on
  *   the main thread
  * @param callbackExecutor runs the callbacks, which expect the main thread
- * @param announce speaks why the model could not answer, on the callback executor. The request
- *   then ends as cancelled, which is silent, so the user does not also hear a generic error.
+ *
+ * When the model can't load for lack of memory, the request fails with a [GeminiFailure] whose
+ * message says so, in words to speak, so that the reason is said in place of a generic error, and
+ * is part of the answer that the caller gives, such as an image description's.
  */
 internal class LocalGemmaRunner(
   private val llm: () -> LocalLlm?,
@@ -50,7 +51,6 @@ internal class LocalGemmaRunner(
   private val worker: ExecutorService,
   private val canceller: Executor,
   private val callbackExecutor: Executor,
-  private val announce: Consumer<String>,
 ) {
   private class Job(val prompt: String, val jpeg: ByteArray?, val json: Boolean) {
     val cancelled = AtomicBoolean(false)
@@ -115,10 +115,7 @@ internal class LocalGemmaRunner(
     } catch (_: LocalLlmCancelledException) {
       report(job) { callback.onCancelled() }
     } catch (e: LocalLlmMemoryException) {
-      report(job) {
-        announce.accept(e.spokenMessage)
-        callback.onCancelled()
-      }
+      report(job) { callback.onFailure(GeminiFailure.onDevice(e.spokenMessage)) }
     } catch (e: Exception) {
       report(job) { callback.onFailure(GeminiFailure.other(e.toString())) }
     } finally {

@@ -32,6 +32,11 @@ object OnDeviceAiSettings {
 
   /** Android reports a little less RAM than the phone's label says, so allow for that. */
   private const val RAM_SLACK = 0.85
+  private const val GIB = 1024L * 1024L * 1024L
+  // A 12 GB phone reports about 10.9 GB of RAM, and an 8 GB one about 7.4 GB.
+  private const val DEFAULT_E2B_MIN_RAM_GIB = 10L
+  // The default model's file is at most this fraction of the RAM, a fifth.
+  private const val DEFAULT_MAX_RAM_SHARE = 5
 
   fun isOnDevice(prefs: SharedPreferences): Boolean =
     prefs.getString(PREF_PROVIDER, PROVIDER_CLOUD) == PROVIDER_DEVICE
@@ -69,17 +74,22 @@ object OnDeviceAiSettings {
     LocalModel.entries.filter { fits(it, totalRamBytes) || isInstalled(it) }
 
   /**
-   * The model to use when the user has not chosen one: Gemma 4 E2B when it fits, otherwise the
-   * largest model that fits, preferring ones that are not experimental.
+   * The model to use when the user has not chosen one. It should load with the memory a phone
+   * usually has free, not just fit in its RAM: on a Pixel 9a, with 8 GB, Gemma 4 E2B took about 3
+   * GB while it answered when only about 1.6 GB was free, so Android swapped, and it took over a
+   * minute. So Gemma 4 E2B is the default from 12 GB of RAM. Below that, the default is the largest
+   * model no bigger than a fifth of the RAM, preferring ones that are not experimental, or else the
+   * smallest model that fits.
    */
   fun defaultModel(totalRamBytes: Long): LocalModel {
-    if (fits(LocalModel.E2B, totalRamBytes)) {
+    if (totalRamBytes >= DEFAULT_E2B_MIN_RAM_GIB * GIB) {
       return LocalModel.E2B
     }
-    return LocalModel.entries
-      .filter { fits(it, totalRamBytes) }
+    val fitting = LocalModel.entries.filter { fits(it, totalRamBytes) }
+    return fitting
+      .filter { it.sizeBytes <= totalRamBytes / DEFAULT_MAX_RAM_SHARE }
       .sortedWith(compareBy<LocalModel> { it.experimental }.thenByDescending { it.sizeBytes })
-      .firstOrNull() ?: LocalModel.E2B
+      .firstOrNull() ?: fitting.minByOrNull { it.sizeBytes } ?: LocalModel.E2B
   }
 
   fun setPreferredModel(prefs: SharedPreferences, model: LocalModel) {
