@@ -498,6 +498,11 @@ class ScreenOnSuppressionTest {
       .commit()
     // Muted every time it repeats, with no wake window or interaction involved.
     repeat(3) { assertTrue(suppression.shouldSuppressEvent(event(message))) }
+    // A description is what gets spoken, so it is what is matched.
+    assertTrue(suppression.shouldSuppressEvent(
+      rawEvent(AccessibilityEvent.TYPE_ANNOUNCEMENT, "com.android.systemui").apply {
+        contentDescription = message
+      }))
     suppression.onUserInteraction()
     assertTrue(suppression.shouldSuppressEvent(event(message)))
     // Other fingerprint messages, other apps, and touched labels still speak.

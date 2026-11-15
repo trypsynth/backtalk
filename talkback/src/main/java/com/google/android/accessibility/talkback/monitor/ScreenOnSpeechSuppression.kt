@@ -34,6 +34,7 @@ import com.google.android.accessibility.talkback.PackageNameProvider
 import com.google.android.accessibility.talkback.TalkBackService
 import com.google.android.accessibility.talkback.UserInterface.UserInputEventListener
 import com.google.android.accessibility.talkback.focusmanagement.record.FocusActionInfo
+import com.google.android.accessibility.utils.AccessibilityEventUtils
 import com.google.android.accessibility.utils.AccessibilityWindowInfoUtils.WINDOW_ID_NONE
 import com.google.android.accessibility.utils.Performance.EventId
 import com.google.android.accessibility.utils.input.WindowEventInterpreter
@@ -186,7 +187,9 @@ class ScreenOnSpeechSuppression(
     if (event.packageName?.toString() !in systemUiPackages) return false
     if (ScreenAnnouncementSettings.isOn(prefs,
         ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION)) return false
-    val text = normalizeMessage(event.text.joinToString(" "))
+    // Match what the announcement rule speaks: the description when there is one, else the text.
+    val spoken = AccessibilityEventUtils.getEventTextOrDescription(event) ?: return false
+    val text = normalizeMessage(spoken.toString())
     return text.isNotEmpty() && isFingerprintLocation(text)
   }
 

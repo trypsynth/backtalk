@@ -327,7 +327,7 @@
     -->
     <string name="value_device_unlocked">Device unlocked.</string>
 
-    <!-- Settings for what Backtalk says when the screen turns off or on and when the phone is unlocked. [CHAR LIMIT=NONE] -->
+    <!-- Settings for what Backtalk says when the screen turns off or on, on the lock screen, and when the phone is unlocked. [CHAR LIMIT=NONE] -->
     <string name="title_pref_screen_announcements">Screen on and off</string>
     <!-- [CHAR LIMIT=NONE] -->
     <string name="summary_pref_screen_announcements">Choose what Backtalk says when the screen turns off or on, on the lock screen, and when the phone is unlocked</string>
