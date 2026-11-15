@@ -217,6 +217,7 @@
         <ignore regexp="title_append_last_spoken_phrase" />
         <ignore regexp="summary_append_last_spoken_phrase" />
         <ignore regexp="title_edittext_clear" />
+        <ignore regexp="title_pause_backtalk" />
         <ignore regexp="cannot_clear_feedback" />
         <ignore regexp="media_action_fast_forward" />
         <ignore regexp="media_action_next" />
