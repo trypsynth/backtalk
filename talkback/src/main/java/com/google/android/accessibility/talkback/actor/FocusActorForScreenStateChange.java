@@ -19,6 +19,7 @@ package com.google.android.accessibility.talkback.actor;
 import static androidx.core.view.accessibility.AccessibilityNodeInfoCompat.FOCUS_INPUT;
 import static androidx.core.view.accessibility.AccessibilityWindowInfoCompat.TYPE_INPUT_METHOD;
 import static com.google.android.accessibility.utils.AccessibilityWindowInfoUtils.WINDOW_ID_NONE;
+import static com.google.android.accessibility.utils.traversal.TraversalStrategy.SEARCH_FOCUS_BACKWARD;
 import static com.google.android.accessibility.utils.traversal.TraversalStrategy.SEARCH_FOCUS_FORWARD;
 
 import android.accessibilityservice.AccessibilityService;
@@ -236,8 +237,30 @@ public class FocusActorForScreenStateChange {
         // tree.
         || (!WebInterfaceUtils.isWebContainer(nodeToRestoreFocus)
             && !isInWindow(nodeToRestoreFocus, windowId, root))) {
-      LogUtils.e(TAG, "Do not restore focus from the invalid node " + nodeToRestoreFocus);
-      return false;
+      int searchDirection = getRecoverySearchDirection(lastFocusAction);
+      LogUtils.w(
+          TAG,
+          "Saved focus is invalid; recovering in direction "
+              + TraversalStrategyUtils.directionToString(searchDirection)
+              + ": "
+              + nodeToRestoreFocus);
+      nodeToRestoreFocus = findFirstFocusableNode(root, searchDirection);
+      if (nodeToRestoreFocus == null) {
+        return false;
+      }
+      FocusActionInfo fallbackFocusActionInfo =
+          FOCUS_ACTION_INFO_FIRST_FOCUSABLE_NODE_BUILDER
+              .setForceMuteFeedback(
+                  FocusActorHelper.shouldMuteFeedbackForFocusedNode(
+                      nodeToRestoreFocus, screenState))
+              .build();
+      boolean success =
+          pipeline.returnFeedback(
+              eventId, Feedback.focus(nodeToRestoreFocus, fallbackFocusActionInfo));
+      if (screenState.isInterpretFirstTimeWhenWakeUp() && success) {
+        screenState.consumeInterpretFirstTimeWhenWakeUp();
+      }
+      return success;
     }
     boolean success =
         // TODO: Remove workaround solution. Adds setForceRefocus(true) to forces
@@ -256,6 +279,40 @@ public class FocusActorForScreenStateChange {
     }
 
     return success;
+  }
+
+  /**
+   * Returns the direction to recover in after the saved focus node is gone. The last navigation
+   * direction is the best available hint; without one, forward is the safe default.
+   */
+  private static int getRecoverySearchDirection(@NonNull FocusActionRecord lastFocusAction) {
+    if (lastFocusAction.getExtraInfo().navigationAction != null
+        && lastFocusAction.getExtraInfo().navigationAction.searchDirection
+            == SEARCH_FOCUS_BACKWARD) {
+      return SEARCH_FOCUS_BACKWARD;
+    }
+    return SEARCH_FOCUS_FORWARD;
+  }
+
+  /**
+   * Finds the first visible node that can receive accessibility focus in the current root, in the
+   * given direction: the first node when moving forward, the last node when moving backward.
+   */
+  private @Nullable AccessibilityNodeInfoCompat findFirstFocusableNode(
+      @NonNull AccessibilityNodeInfoCompat root, int searchDirection) {
+    TraversalStrategy traversalStrategy =
+        TraversalStrategyUtils.getTraversalStrategy(
+            root,
+            focusFinder,
+            OrderedTraversalStrategyConfig.builder()
+                .setSearchDirection(searchDirection)
+                .setMakeFabFirst(makeFabFirst)
+                .build());
+    return TraversalStrategyUtils.findFirstFocusInNodeTree(
+        traversalStrategy,
+        root,
+        searchDirection,
+        AccessibilityNodeInfoUtils.FILTER_SHOULD_FOCUS);
   }
 
   /**
