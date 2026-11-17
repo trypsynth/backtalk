@@ -71,6 +71,22 @@ public final class SpeechChunker {
     return starts;
   }
 
+  /** Splits only at the engine limit, keeping UTF-16 surrogate pairs together. */
+  static List<Integer> chunkStartsAtLimit(CharSequence text, int maxLength) {
+    List<Integer> starts = new ArrayList<>();
+    starts.add(0);
+    int start = 0;
+    while (text.length() - start > maxLength) {
+      int end = start + maxLength;
+      if (Character.isSurrogatePair(text.charAt(end - 1), text.charAt(end))) {
+        end--;
+      }
+      starts.add(end);
+      start = end;
+    }
+    return starts;
+  }
+
   /**
    * Adds the starts of the pieces after {@code start}, up to {@code end}, cutting any longer than
    * {@link #MAX_CHUNK}. The last piece is kept at least {@link #MIN_CHUNK} long. Returns {@code

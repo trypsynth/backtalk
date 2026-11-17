@@ -1040,6 +1040,7 @@ public class FailoverTextToSpeech {
       SpeechCacheManager speechCacheManager = usableSpeechCache();
       if (isLocaleAttached
           && speechCacheManager != null
+          && !NumbersAsDigits.isDigitExpandedText(text)
           && speechCacheManager.hasCache(
               utteranceId, text, locale, queueMode, effectivePitch, effectiveRate)) {
         LogUtils.d(TAG, "cached speech available, don't need to change locale");
@@ -1379,8 +1380,9 @@ public class FailoverTextToSpeech {
             if (isReady()) {
               attemptSetLanguage(speakRequest.locale);
               // The queued request's own id: the completing id names the cached speech.
-              if (NumbersAsDigits.isPreparedText(speakRequest.text)) {
-                // Prepared speech needs the same length/span handling after cache playback.
+              if (NumbersAsDigits.isPreparedText(speakRequest.text)
+                  || speakRequest.text.length() > TextToSpeech.getMaxSpeechInputLength()) {
+                // Keep the engine length and prepared span handling after cache playback.
                 speakInChunks(
                     speakRequest.text,
                     speakRequest.queueMode,
@@ -1400,8 +1402,7 @@ public class FailoverTextToSpeech {
   }
 
   /**
-   * Speaks the text with cache if possible, otherwiase fallback to {@link
-   * TextToSpeech#speak(CharSequence, int, Bundle, String)}} and drop the suspend queue if needed.
+   * Speaks the text with cache if possible, otherwise falls back to the TTS engine.
    * If the queue mode is {@link TextToSpeech#QUEUE_ADD} and the cache is speaking, the speech will
    * be added to the {@link #suspendQueue} and speaks until the cache is spoken completed.
    *
@@ -1429,6 +1430,7 @@ public class FailoverTextToSpeech {
       return speakInChunks(text, queueMode, bundle, utteranceId, locale);
     }
 
+    boolean bypassCache = NumbersAsDigits.isDigitExpandedText(text);
     if (speechCacheManager.isSpeaking()) {
       if (queueMode == TextToSpeech.QUEUE_ADD) {
         LogUtils.d(TAG, "speakWithCacheOrTts -- speaking cache, play %s later", utteranceId);
@@ -1442,24 +1444,20 @@ public class FailoverTextToSpeech {
             utteranceId,
             suspendQueue.size());
         notifyInterruptedForSuspendQueue();
-        // speak next speech immediately
-        if (speechCacheManager.speakWithSpeechCachePlayer(
-            utteranceId, queueMode, text, bundle, playbackStateListener, locale)) {
-          tts.speak("", SPEECH_FLUSH_ALL, null);
-          return TextToSpeech.SUCCESS;
+        if (bypassCache) {
+          // The cache lookup would normally stop the cached audio before checking for a hit.
+          speechCacheManager.stopSpeaking();
         }
-        LogUtils.d(TAG, "tts.speak, utteranceId =" + utteranceId);
-        return speakInChunks(text, queueMode, bundle, utteranceId, locale);
       }
-    } else {
-      if (speechCacheManager.speakWithSpeechCachePlayer(
-          utteranceId, queueMode, text, bundle, playbackStateListener, locale)) {
-        tts.speak("", SPEECH_FLUSH_ALL, null);
-        return TextToSpeech.SUCCESS;
-      }
-      LogUtils.d(TAG, "tts.speak, utteranceId =" + utteranceId);
-      return speakInChunks(text, queueMode, bundle, utteranceId, locale);
     }
+    if (!bypassCache
+        && speechCacheManager.speakWithSpeechCachePlayer(
+            utteranceId, queueMode, text, bundle, playbackStateListener, locale)) {
+      tts.speak("", SPEECH_FLUSH_ALL, null);
+      return TextToSpeech.SUCCESS;
+    }
+    LogUtils.d(TAG, "tts.speak, utteranceId =" + utteranceId);
+    return speakInChunks(text, queueMode, bundle, utteranceId, locale);
   }
 
   /** Marks the utterance ID of one piece of a split utterance. */
@@ -1498,17 +1496,20 @@ public class FailoverTextToSpeech {
   /**
    * Speaks long text as pieces of a sentence or phrase, so a later utterance can interrupt it
    * quickly. See {@link SpeechChunker}. The pieces report progress as the one original utterance:
-   * see {@link #toOriginal}. The {@link #PREF_SPEAK_IN_PHRASES_KEY} setting turns this off.
+   * see {@link #toOriginal}. With phrases disabled, splitting only enforces the engine limit.
    */
   private int speakInChunks(
       CharSequence text, int queueMode, Bundle bundle, String utteranceId, Locale locale) {
-    // A speech-only expansion can exceed the limit checked before feedback processing.
-    // Even with phrase splitting off, never submit an oversized request to the engine.
-    List<Integer> starts =
-        utteranceId == null
-                || (!speaksInPhrases() && text.length() < TextToSpeech.getMaxSpeechInputLength())
-            ? Collections.singletonList(0)
-            : SpeechChunker.chunkStarts(text, locale == null ? Locale.getDefault() : locale);
+    // Measure the outgoing text because digit expansion can exceed the feedback fragment limit.
+    int maxLength = TextToSpeech.getMaxSpeechInputLength();
+    List<Integer> starts;
+    if (utteranceId != null && speaksInPhrases()) {
+      starts = SpeechChunker.chunkStarts(text, locale == null ? Locale.getDefault() : locale);
+    } else if (text.length() <= maxLength || utteranceId == null) {
+      starts = Collections.singletonList(0);
+    } else {
+      starts = SpeechChunker.chunkStartsAtLimit(text, maxLength);
+    }
     if (starts.size() <= 1) {
       if (utteranceId != null) {
         progressEstimator.onQueued(utteranceId, text, requestRate, ttsEngine);

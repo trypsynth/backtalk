@@ -153,7 +153,7 @@ public class FeedbackProcessingUtils {
 
   /**
    * Splits text contained within the {@link FeedbackItem}'s {@link FeedbackFragment}s into
-   * fragments containing less than {@link #MAX_UTTERANCE_LENGTH} characters.
+   * fragments containing at most {@link #MAX_UTTERANCE_LENGTH} characters.
    *
    * @param item The item containing fragments to split.
    */
@@ -166,7 +166,7 @@ public class FeedbackProcessingUtils {
         continue;
       }
 
-      if (fragmentText.length() >= MAX_UTTERANCE_LENGTH) {
+      if (fragmentText.length() > MAX_UTTERANCE_LENGTH) {
         // If the text from an original fragment exceeds the allowable
         // fragment text length, start by removing the original fragment
         // from the item.

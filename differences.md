@@ -221,12 +221,11 @@ Neither approach guarantees identical behaviour across engines or voices.
 
 It changes only the text sent for speech; the app's text and
 accessibility navigation stay unchanged. Existing spaces and punctuation characters are kept.
-Commas, periods, plus and minus signs, currency symbols and letters immediately
-next to a digit are separated too: `$1,500.00` is sent for speech as
-`$ 1 , 5 0 0 . 0 0`, and `R7` as `R 7`. This applies to letter/digit boundaries
-in other text too, such as `A12B` becoming `A 1 2 B`. Other punctuation is left
-unchanged. Punctuation is still spoken according to the existing punctuation
-setting and speech engine.
+Commas, periods, plus and minus signs, and currency symbols immediately next to
+a digit are separated too. For example, `$1,500.00` is sent for speech as
+`$ 1 , 5 0 0 . 0 0`. Letters stay attached to adjacent digits, so `A12B`
+becomes `A1 2B`. Punctuation is still spoken according to the existing
+punctuation setting and speech engine.
 
 On an Oppo CPH2197 running Android 13 with Vocalizer Tessa, turning this option
 off kept the usual number pronunciation, and turning it on read consecutive

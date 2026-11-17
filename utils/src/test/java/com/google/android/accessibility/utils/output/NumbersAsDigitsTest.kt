@@ -40,6 +40,7 @@ class NumbersAsDigitsTest {
   private fun spoken(source: String): String = NumbersAsDigits.process(source, true)?.text?.toString() ?: source
 
   @Test fun enabledReadsRunsAndLeadingZeros() {
+    assertEquals("8 8 2 8 5", spoken("88285"))
     assertEquals("2 8 3 4 8 2", spoken("283482"))
     assertEquals("0 0 0 1 2 3", spoken("000123"))
     assertEquals("Your code is 9 2 3 8 8 6", spoken("Your code is 923886"))
@@ -66,7 +67,7 @@ class NumbersAsDigitsTest {
     assertEquals("$ 1 , 5 0 0 . 0 0", spoken("$1,500.00"))
     assertEquals("3 , 5 . 2 5", spoken("3,5.25"))
     assertEquals("- 3 . 4", spoken("-3.4"))
-    assertEquals("R 7 , 6 0 0 . 0 0", spoken("R7,600.00"))
+    assertEquals("R7 , 6 0 0 . 0 0", spoken("R7,600.00"))
     assertEquals("+ 0 . 5", spoken("+0.5"))
     assertEquals("− 3 . 4", spoken("−3.4"))
     assertEquals("€ 1 , 2 0", spoken("€1,20"))
@@ -74,26 +75,40 @@ class NumbersAsDigitsTest {
 
   @Test fun onlyDirectDigitBoundariesInTheSelectedCharacterSetAreChanged() {
     assertEquals("Hello, world. R$, -- + .", spoken("Hello, world. R$, -- + ."))
-    assertEquals("A 1 2 B", spoken("A12B"))
-    assertEquals("USD 7 .", spoken("USD7."))
+    assertEquals("USD7 .", spoken("USD7."))
     assertEquals("(1 2)/3 4:5 6!", spoken("(12)/34:56!"))
     assertEquals("$ 1 2 , text. Then 3 . End!", spoken("$12, text. Then 3. End!"))
     assertEquals("1 2  ,  3 4", spoken("12  ,  34"))
   }
 
+  @Test fun lettersStayAdjacentToDigits() {
+    assertEquals("3rd", spoken("3rd"))
+    assertEquals("1 0am", spoken("10am"))
+    assertEquals("A1 2B", spoken("A12B"))
+    assertEquals("sg1 1 5", spoken("sg115"))
+    assertEquals("2 0 2 6年3月5日", spoken("2026年3月5日"))
+    assertEquals("第1 2ページ", spoken("第12ページ"))
+  }
+
   @Test fun unicodeDigitsAreSeparatedAtCodePointBoundaries() {
     assertEquals("١ ٢ ٣", spoken("١٢٣"))
-    assertEquals("𝟙 𝟚", spoken("𝟙𝟚"))
+    val result = NumbersAsDigits.process("𝟙𝟚", true)!!
+    assertEquals("𝟙 𝟚", result.text.toString())
+    assertTrue(NumbersAsDigits.isDigitExpandedText(result.text))
+    intArrayOf(0, 1, 2, 2, 3, 4).forEachIndexed { index, offset ->
+      assertEquals(offset, result.sourceOffset(index))
+    }
+    assertEquals("𐐀𝟙 𝟚𐐀", spoken("𐐀𝟙𝟚𐐀"))
     assertEquals("😀1 2😀", spoken("😀12😀"))
   }
 
   @Test fun positionsMapBackBeforeInsertedSpacesAndAfterTheNumber() {
-    val result = NumbersAsDigits.process("A 12 B", true)!!
-    assertEquals("A 1 2 B", result.text.toString())
-    val expected = intArrayOf(0, 1, 2, 3, 3, 4, 5, 6)
+    val result = NumbersAsDigits.process("A12B", true)!!
+    assertEquals("A1 2B", result.text.toString())
+    val expected = intArrayOf(0, 1, 2, 2, 3, 4)
     expected.forEachIndexed { index, offset -> assertEquals(offset, result.sourceOffset(index)) }
     assertEquals(0, result.sourceOffset(-1))
-    assertEquals(6, result.sourceOffset(100))
+    assertEquals(4, result.sourceOffset(100))
   }
 
   @Test fun languageStyleAndPunctuationSpansAreRemappedWithoutMutatingSource() {
@@ -112,9 +127,23 @@ class NumbersAsDigitsTest {
     assertEquals(3, speech.getSpanEnd(style))
     assertEquals(4, speech.getSpanStart(punctuation))
     assertEquals(5, speech.getSpanEnd(punctuation))
+    assertTrue(NumbersAsDigits.isPreparedText(speech))
+    assertTrue(NumbersAsDigits.isDigitExpandedText(speech))
+    val marker = speech.getSpans(0, speech.length, Any::class.java).single {
+      it !== language && it !== style && it !== punctuation
+    }
+    assertEquals(0, speech.getSpanStart(marker))
+    assertEquals(speech.length, speech.getSpanEnd(marker))
+    assertEquals(Spanned.SPAN_EXCLUSIVE_EXCLUSIVE, speech.getSpanFlags(marker))
     assertEquals("12,34", original.toString())
+    assertFalse(NumbersAsDigits.isPreparedText(original))
+    assertEquals(3, original.getSpans(0, original.length, Any::class.java).size)
+    assertEquals(0, original.getSpanStart(language))
+    assertEquals(5, original.getSpanEnd(language))
     assertEquals(1, original.getSpanStart(style))
     assertEquals(2, original.getSpanEnd(style))
+    assertEquals(2, original.getSpanStart(punctuation))
+    assertEquals(3, original.getSpanEnd(punctuation))
   }
 
   @Test fun delimiterSpansFromPunctuationProcessingKeepTheirExactCharacterRanges() {
@@ -174,9 +203,9 @@ class NumbersAsDigitsTest {
     val digits = TtsSpan.DigitsBuilder("00FF").build()
     original.setSpan(digits, 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     val speech = NumbersAsDigits.process(original, true)!!.text as Spanned
-    assertEquals("0 0 FF", speech.toString())
+    assertEquals("0 0FF", speech.toString())
     assertEquals(0, speech.getSpanStart(digits))
-    assertEquals(6, speech.getSpanEnd(digits))
+    assertEquals(5, speech.getSpanEnd(digits))
     assertEquals("00FF", digits.args.getString(TtsSpan.ARG_DIGITS))
   }
 
@@ -206,7 +235,9 @@ class NumbersAsDigitsTest {
     assertEquals("0123", fragment.text.toString())
     assertEquals(6, iterator.feedbackItemOffset)
     assertTrue(iterator.nextIsContinuation())
-    assertEquals("0 1 2 3", iterator.prepareSpeechText(fragment.text).toString())
+    val speech = iterator.prepareSpeechText(fragment.text)!!
+    assertEquals("0 1 2 3", speech.toString())
+    assertTrue(NumbersAsDigits.isDigitExpandedText(speech))
     assertEquals(2, iterator.sourceOffset(4))
   }
 
@@ -274,14 +305,17 @@ class NumbersAsDigitsTest {
 
   @Test fun aPlainStringFragmentCanResumeAfterDigitPreparation() {
     NumbersAsDigits.setEnabled(true)
-    val fragment = FeedbackFragment("123456", null)
-    fragment.text = "123456"
+    val fragment = FeedbackFragment("123456B", null)
+    fragment.text = "123456B"
     val iterator = iterator(fragment)
     iterator.next()
     iterator.prepareSpeechText(fragment.text)
     iterator.onFragmentRangeStarted("test", iterator.sourceOffset(10), iterator.sourceOffset(11))
     iterator.next()
-    assertEquals("6", iterator.prepareSpeechText(fragment.text).toString())
+    val speech = iterator.prepareSpeechText(fragment.text)!!
+    assertEquals("6B", speech.toString())
+    assertTrue(NumbersAsDigits.isPreparedText(speech))
+    assertFalse(NumbersAsDigits.isDigitExpandedText(speech))
     assertEquals(5, iterator.feedbackItemOffset)
   }
 

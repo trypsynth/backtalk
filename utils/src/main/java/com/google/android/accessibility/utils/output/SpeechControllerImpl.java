@@ -2156,7 +2156,7 @@ public class SpeechControllerImpl implements SpeechController {
     float pitch = speechPitch * (applyParams ? parseFloatParam(params, SpeechParam.PITCH, 1) : 1);
     final float rate =
         speechRate * (applyParams ? parseFloatParam(params, SpeechParam.RATE, 1) : 1);
-    CharSequence text;
+    final CharSequence text;
 
     final boolean shouldSilenceFragment = shouldSilenceSpeech(feedbackItem);
     if (shouldSilenceFragment || TextUtils.isEmpty(fragment.getText())) {
@@ -2191,20 +2191,21 @@ public class SpeechControllerImpl implements SpeechController {
       }
     }
 
-    // Punctuation and locale processing are complete. Keep the stored fragment unchanged.
-    text = iterator.prepareSpeechText(text);
+    // Prepare the engine request while keeping the original fragment text for the overlay.
+    final CharSequence speechText = iterator.prepareSpeechText(text);
 
-    final String logText = (text == null) ? null : String.format("\"%s\"", text.toString());
+    final String logText =
+        (speechText == null) ? null : String.format("\"%s\"", speechText.toString());
     LogUtils.v(
         TAG,
         "Speaking fragment text=%s, utteranceId=%s, TtsSpan=%s, locale=%s, event=%s",
         logText,
         feedbackItem.getUtteranceId(),
-        SpannableUtils.spansToStringForLogging(text, TtsSpan.class),
+        SpannableUtils.spansToStringForLogging(speechText, TtsSpan.class),
         locale,
         eventId);
 
-    if (text != null && feedbackItem.hasFlag(FeedbackItem.FLAG_FORCE_FEEDBACK)) {
+    if (speechText != null && feedbackItem.hasFlag(FeedbackItem.FLAG_FORCE_FEEDBACK)) {
       mDelegate.onSpeakingForcedFeedback();
     }
 
@@ -2213,7 +2214,7 @@ public class SpeechControllerImpl implements SpeechController {
     // immediately call the fragment completion listener. This process is
     // important for things like continuous reading.
     failoverTts.speak(
-        text,
+        speechText,
         locale,
         pitch,
         rate,
@@ -2557,10 +2558,12 @@ public class SpeechControllerImpl implements SpeechController {
     int offset = 0;
     FeedbackFragmentsIterator iterator = currentFragmentIterator;
     if (iterator != null) {
-      start = iterator.sourceOffset(start);
-      end = iterator.sourceOffset(end);
+      if (iterator.matchesUtteranceId(utteranceId)) {
+        start = iterator.sourceOffset(start);
+        end = iterator.sourceOffset(end);
+        offset = iterator.getFeedbackItemOffset();
+      }
       iterator.onFragmentRangeStarted(utteranceId, start, end);
-      offset = iterator.getFeedbackItemOffset();
     }
     final int utteranceIndex = SpeechControllerImpl.parseUtteranceId(utteranceId);
     onUtteranceRangeStarted(utteranceIndex, start + offset, end + offset);

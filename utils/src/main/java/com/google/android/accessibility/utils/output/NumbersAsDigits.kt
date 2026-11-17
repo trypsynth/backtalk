@@ -66,9 +66,8 @@ object NumbersAsDigits {
       speechToSource[output.length] = i + 1
     }
     sourceToSpeech[length] = output.length
-    var speech: CharSequence = output.toString()
+    val speech = SpannableString(output)
     if (source is Spanned) {
-      val copy = SpannableString(speech)
       for (span in source.getSpans(0, length, Any::class.java)) {
         val start = source.getSpanStart(span)
         val end = source.getSpanEnd(span)
@@ -79,21 +78,28 @@ object NumbersAsDigits {
         if (span is TtsSpan && conflictsWithSpacing(span) && mappedEnd - mappedStart > end - start) {
           continue
         }
-        copy.setSpan(span, mappedStart, maxOf(mappedStart, mappedEnd), source.getSpanFlags(span))
+        speech.setSpan(span, mappedStart, maxOf(mappedStart, mappedEnd), source.getSpanFlags(span))
       }
-      speech = copy
     }
-    return Result(protect(speech), speechToSource)
+    if (!isPreparedText(speech)) speech.markPrepared(expandedDigits = true)
+    return Result(speech, speechToSource)
   }
 
   /** Tags a private copy so protection follows queued speech and resumed suffixes. */
   @JvmStatic
   fun protect(text: CharSequence): CharSequence {
     if (isPreparedText(text)) return text
-    return SpannableString(text).apply {
-      setSpan(PreparedSpeechSpan(), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-    }
+    return SpannableString(text).apply { markPrepared(expandedDigits = false) }
   }
+
+  private fun SpannableString.markPrepared(expandedDigits: Boolean) {
+    setSpan(PreparedSpeechSpan(expandedDigits), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+  }
+
+  @JvmStatic
+  fun isDigitExpandedText(text: CharSequence): Boolean =
+    text is Spanned &&
+      text.getSpans(0, text.length, PreparedSpeechSpan::class.java).any { it.expandedDigits }
 
   @JvmStatic
   fun isPreparedText(text: CharSequence?): Boolean =
@@ -120,11 +126,11 @@ object NumbersAsDigits {
     return copy ?: slice
   }
 
-  private class PreparedSpeechSpan
+  private class PreparedSpeechSpan(val expandedDigits: Boolean)
 
   /** Character boundaries only: no currency, decimal, sign or identifier parsing. */
   private fun isNumericNeighbour(point: Int): Boolean =
-    Character.isLetterOrDigit(point) || Character.getType(point) == Character.CURRENCY_SYMBOL.toInt() ||
+    Character.isDigit(point) || Character.getType(point) == Character.CURRENCY_SYMBOL.toInt() ||
       point == ','.code || point == '.'.code || point == '+'.code || point == '-'.code || point == 0x2212
 
   private fun conflictsWithSpacing(span: TtsSpan): Boolean = when (span.type) {

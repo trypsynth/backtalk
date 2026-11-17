@@ -60,6 +60,10 @@ class FeedbackFragmentsIterator {
     return speech == null ? speechOffset : speech.sourceOffset(speechOffset);
   }
 
+  boolean matchesUtteranceId(String utteranceId) {
+    return TextUtils.equals(utteranceId, feedBackItemUtteranceId);
+  }
+
   public FeedbackFragmentsIterator(
       @NonNull Iterator<FeedbackFragment> currentFragmentIterator, String feedBackItemUtteranceId) {
     this.currentFragmentIterator = currentFragmentIterator;
@@ -117,7 +121,7 @@ class FeedbackFragmentsIterator {
    * SpeechControllerImpl#onFragmentCompleted(String, boolean, boolean, boolean)}.
    */
   void onFragmentCompleted(String utteranceId, boolean success) {
-    if (!TextUtils.equals(utteranceId, feedBackItemUtteranceId)) {
+    if (!matchesUtteranceId(utteranceId)) {
       // Assume it's failed.
       LogUtils.w(
           TAG,
@@ -136,7 +140,7 @@ class FeedbackFragmentsIterator {
    * SpeechControllerImpl#onFragmentRangeStarted(String, int, int)}.
    */
   void onFragmentRangeStarted(String utteranceId, int start, int end) {
-    if (TextUtils.equals(utteranceId, feedBackItemUtteranceId)) {
+    if (matchesUtteranceId(utteranceId)) {
       recordUtteranceStartIndex(start);
       FeedbackFragment feedbackFragment = currentFeedbackFragment.get();
       LogUtils.v(
