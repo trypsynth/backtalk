@@ -6,6 +6,7 @@
       Keep MissingTranslation enabled globally and suppress it only for these exact resources.
     -->
     <issue id="MissingTranslation">
+        <ignore regexp="code_user_facing_name_persian.*" />
         <ignore regexp="voice_commands_help_dnd" />
         <ignore regexp="voice_commands_help_dnd_description" />
         <ignore regexp="voice_commands_backtalk_settings" />

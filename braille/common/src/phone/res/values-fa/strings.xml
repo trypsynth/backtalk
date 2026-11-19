@@ -79,6 +79,8 @@
   <string name="code_user_facing_name_norwegian_comp8">بریل رایانه‌ای ۸ نقطه‌ای نروژی</string>
   <string name="code_user_facing_name_norwegian_8">بریل ۸ نقطه‌ای نروژ</string>
   <string name="code_user_facing_name_norwegian_8_with_6_fallback">بریل ۸ نقطه‌ای نروژی با پشتیبان ۶ نقطه‌ای</string>
+  <string name="code_user_facing_name_persian">فارسی</string>
+  <string name="code_user_facing_name_persian_comp8">بریل ۸ نقطه‌ای فارسی ویژه رایانه</string>
   <string name="code_user_facing_name_nepali_indian">بریل نپالی (هند)</string>
   <string name="code_user_facing_name_portuguese">پرتغالی</string>
   <string name="code_user_facing_name_punjabi">پنجابی</string>
