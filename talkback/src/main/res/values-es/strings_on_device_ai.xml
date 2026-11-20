@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the settings screen for running AI on the phone. [CHAR LIMIT=40] -->
+    <string name="title_pref_on_device_ai">On-device AI</string>
+    <!-- Summary of the on-device AI entry in the main settings. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_on_device_ai">Describe image and describe screen with a model on this phone, with no API key</string>
+
+    <!-- Switch that turns on-device AI on. [CHAR LIMIT=40] -->
+    <string name="pref_on_device_ai_enable">Use on-device AI</string>
+    <!-- Summary of the switch when it can be turned on. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_enable_summary">Images and screenshots are described on this phone and are never sent to Google. It is slower than the cloud and uses more battery.</string>
+    <!-- Summary of the switch when no model is installed yet. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_enable_needs_model">Download or import a model first.</string>
+    <!-- Summary of the switch when the phone has a 32-bit processor. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_unsupported_cpu">Not available. This phone does not have a 64-bit ARM processor.</string>
+    <!-- Summary of the switch when the phone has too little memory. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_not_enough_ram">Not available for this model. This phone does not have enough memory.</string>
+
+    <!-- Entry that opens the model picker. [CHAR LIMIT=40] -->
+    <string name="pref_on_device_ai_model">Model</string>
+    <!-- Summary of the model entry. %1$s is the model name, %2$s its download size. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_model_summary">%1$s, %2$s</string>
+    <!-- One model in the picker. %1$s is the name, %2$s the size, %3$s tags like " (experimental)", %4$s a short note, %5$s the memory it needs. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_model_entry">%1$s, %2$s%3$s. %4$s %5$s</string>
+    <!-- Tag for a model that is already on the phone. [CHAR LIMIT=20] -->
+    <string name="on_device_ai_tag_downloaded">downloaded</string>
+    <!-- Tag for a model that has not been tried much. [CHAR LIMIT=20] -->
+    <string name="on_device_ai_tag_experimental">experimental</string>
+    <!-- How much memory a model needs. %1$d is gigabytes. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_tag_needs_memory">Needs about %1$d GB of memory.</string>
+    <!-- Shown for a model this phone cannot run. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_tag_not_enough_memory">Not enough memory on this phone.</string>
+    <!-- Title of the model picker dialog. [CHAR LIMIT=40] -->
+    <string name="on_device_ai_choose_model">Choose a model</string>
+    <!-- Shown when the user picks a model that the phone cannot run. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_model_too_big">This phone does not have enough memory for that model.</string>
+
+    <!-- Entry that downloads the model. %1$s is the size, like "2.6 GB". [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_download">Download model (%1$s)</string>
+    <!-- Summary of the download entry before a download. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_download_summary">Downloads once from Hugging Face. After that, nothing is sent over the network.</string>
+    <!-- Entry shown while downloading. %1$d is the percent. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_downloading">Downloading, %1$d%%</string>
+    <!-- Summary while downloading. %1$s is how much is done, like "880 MB of 2.6 GB". [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_downloading_summary">%1$s. Tap to stop. It carries on from here if you start it again.</string>
+    <!-- How much of the download is done. %1$s is the downloaded size, %2$s the full size. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_progress_sizes">%1$s of %2$s</string>
+    <!-- Progress with the time left. %1$s is the sizes text, %2$s the time left like "4:32". [CHAR LIMIT=80] -->
+    <string name="on_device_ai_progress_with_time">%1$s, %2$s left</string>
+    <!-- Spoken at each quarter of the download. %1$d is the percent. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_announce_progress">Downloading, %1$d percent</string>
+    <!-- Spoken when the download finishes. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_announce_done">Model downloaded</string>
+
+    <!-- Notification channel name for the model download. [CHAR LIMIT=40] -->
+    <string name="on_device_ai_notification_channel">On-device AI download</string>
+    <!-- Notification title while downloading. %1$d is the percent. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_notification_downloading">Downloading the model, %1$d%%</string>
+    <!-- Notification text when the download finished. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_notification_done">Model downloaded. Turn on on-device AI in settings.</string>
+    <!-- Notification text when the download failed. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_notification_failed">The download failed. Open settings to try again.</string>
+    <!-- Notification text when Android paused the download after several hours in the background. The downloaded part is kept. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_notification_paused">Android paused the download. Open settings to carry on.</string>
+    <!-- Entry shown while a picked file is being copied in. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_importing">Checking the model file</string>
+    <!-- Summary when a model is installed. [CHAR LIMIT=NONE] -->
+    <!-- Entry that opens the screen for deleting downloaded models. [CHAR LIMIT=40] -->
+    <string name="pref_on_device_ai_manage">Manage models</string>
+    <!-- Summary of Manage models when nothing is downloaded. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_manage_none">No models downloaded</string>
+    <!-- Number of models downloaded. [CHAR LIMIT=30] -->
+    <plurals name="on_device_ai_models_downloaded">
+        <item quantity="one">%1$d model downloaded</item>
+        <item quantity="other">%1$d models downloaded</item>
+    </plurals>
+    <!-- Title of the Manage models screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_manage_models">Manage models</string>
+    <!-- Line on the Manage models screen with the total storage used. %1$s is like "3.4 GB". [CHAR LIMIT=NONE] -->
+    <string name="manage_models_storage_used">Models are using %1$s of storage.</string>
+    <!-- Shown on the Manage models screen when nothing is downloaded. [CHAR LIMIT=NONE] -->
+    <string name="manage_models_empty">No models are downloaded.</string>
+    <!-- Title of a download that was started but not finished. %1$s is the model name. [CHAR LIMIT=60] -->
+    <string name="manage_models_unfinished">%1$s, unfinished download</string>
+    <!-- Title of the confirmation to delete a model. %1$s is the model name. [CHAR LIMIT=60] -->
+    <string name="manage_models_delete_title">Delete %1$s?</string>
+    <!-- Message of that confirmation. %1$s is the storage that is freed. [CHAR LIMIT=NONE] -->
+    <string name="manage_models_delete_message">This frees %1$s. You can download it again later.</string>
+    <!-- Button that deletes the model. [CHAR LIMIT=20] -->
+    <string name="manage_models_delete">Delete</string>
+    <!-- Shown after a model is deleted. %1$s is the model name. [CHAR LIMIT=60] -->
+    <string name="manage_models_deleted">%1$s deleted</string>
+
+    <!-- Entry that imports a model file from storage. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_import">Use a model file from storage</string>
+    <!-- Summary of the import entry. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_import_summary">Pick a Gemma 4 litertlm file that you already downloaded.</string>
+    <!-- Confirmation that a model file was installed. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_import_done">Model installed</string>
+    <!-- Message when the picked file is not a known model. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_import_failed">That file is not a supported Gemma 4 model file.</string>
+
+    <!-- Entry that sets how long to wait for an answer. [CHAR LIMIT=40] -->
+    <string name="pref_on_device_ai_timeout">Time limit for answers</string>
+    <!-- Summary of the time limit entry. %1$s is the current limit, like "3 minutes". [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_timeout_summary">%1$s. Backtalk stops waiting after this long. Describe screen takes longer than describe image.</string>
+    <!-- Title of the time limit dialog. [CHAR LIMIT=40] -->
+    <string name="on_device_ai_choose_timeout">Time limit for answers</string>
+    <!-- A time limit in minutes. [CHAR LIMIT=20] -->
+    <plurals name="on_device_ai_timeout_minutes">
+        <item quantity="one">%1$d minute</item>
+        <item quantity="other">%1$d minutes</item>
+    </plurals>
+
+    <!-- Switch that makes describe screen ask for less detail so it answers sooner. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_short_prompts">Shorter screen descriptions</string>
+    <!-- Summary of that switch. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_short_prompts_summary">Describe screen asks for fewer details, so it answers sooner. Turn this off for fuller descriptions.</string>
+
+    <!-- Switch that runs the model on the GPU. [CHAR LIMIT=60] -->
+    <string name="pref_on_device_ai_gpu">Use the GPU</string>
+    <!-- Summary of the GPU switch. [CHAR LIMIT=NONE] -->
+    <string name="pref_on_device_ai_gpu_summary">Can be faster and use less memory. If answers fail, turn this off.</string>
+
+    <!-- Download failed: no network. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_network">The download stopped. Check your connection and try again. It will carry on where it stopped.</string>
+    <!-- Download failed: the server refused. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_http">The download server did not accept the request. Try again later, or import a file instead.</string>
+    <!-- Download failed: the file was wrong. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_corrupt">The file did not match the expected model and was deleted. Try again.</string>
+    <!-- Download failed: could not write the file. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_storage">Could not save the file.</string>
+    <!-- Download failed: not enough free storage. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_low_space">There is not enough free storage for this model.</string>
+    <!-- Download paused: Android stopped it after several hours in the background. The downloaded part is kept. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_error_time_limit">Android paused the download after several hours in the background. Tap to carry on where it stopped.</string>
+
+    <!-- Title of the dialog that asks before downloading on mobile data. [CHAR LIMIT=60] -->
+    <string name="on_device_ai_metered_title">Download on mobile data?</string>
+    <!-- Message of that dialog. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_metered_message">The model is several gigabytes. Wi-Fi is better.</string>
+    <!-- Button to download anyway. [CHAR LIMIT=20] -->
+    <string name="on_device_ai_metered_download">Download</string>
+    <!-- Button to cancel. [CHAR LIMIT=20] -->
+    <string name="on_device_ai_cancel">Cancel</string>
+    <!-- Developer setting that lifts the memory limits of on-device AI. [CHAR LIMIT=60] -->
+    <string name="title_pref_on_device_ai_ignore_memory_limits">Ignore on-device AI memory limits</string>
+    <!-- Summary of that setting. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_on_device_ai_ignore_memory_limits">Lets you choose a model that needs more memory than this phone has, and loads it without checking for free memory, to test what happens when Android stops it.</string>
+    <!-- Spoken when there is not enough free memory to load the model. %1$s is the model name. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_not_enough_memory">Not enough free memory for %1$s. Close some apps, or choose a smaller model in On-device AI settings.</string>
+    <!-- Spoken when Android stopped the model while it was working, most likely for lack of memory. %1$s is the model name. [CHAR LIMIT=NONE] -->
+    <string name="on_device_ai_stopped">%1$s stopped, probably because the phone ran out of memory. Choose a smaller model in On-device AI settings.</string>
+</resources>

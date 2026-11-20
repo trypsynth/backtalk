@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title of the setting that shows the Backtalk menu as a circle instead of a list. [CHAR LIMIT=40] -->
+    <string name="title_pref_radial_menu">Menú circular</string>
+    <!-- Summary of the setting that shows the Backtalk menu as a circle instead of a list. [CHAR LIMIT=NONE] -->
+    <string name="summary_pref_radial_menu">Muestra el menú de Backtalk en forma de círculo. Desplaza el dedo alrededor del centro para seleccionar elementos, y su´eltalo para seleccionarlos.</string>
+
+    <!-- Circle menu: spoken when the finger reaches an item that opens more items. [CHAR LIMIT=NONE] -->
+    <string name="template_radial_menu_submenu"><xliff:g id="title" example="Navigation">%1$s</xliff:g> menú</string>
+    <!-- Circle menu: spoken when the finger is in the middle of the circle or outside it, where lifting closes the menu. [CHAR LIMIT=NONE] -->
+    <string name="radial_menu_cancel">Cancelar</string>
+    <!-- Circle menu: spoken when the menu closes without selecting an item. [CHAR LIMIT=NONE] -->
+    <string name="radial_menu_closed">Menú cerrado</string>
+    <!-- Circle menu: hint spoken when the user has not touched the screen a short time after the menu opens. [CHAR LIMIT=NONE] -->
+    <string name="hint_radial_menu">Toca la pantalla y desliza el dedo en círculos para enfocar elementos del menú, y suelta para activarlos. Suelta en el medio para cancelar.</string>
+</resources>

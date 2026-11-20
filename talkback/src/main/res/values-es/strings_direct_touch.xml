@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spoken when direct touch turns on: touches now go straight to the app in front. [CHAR LIMIT=40] -->
+    <string name="direct_touch_on">Toque directo activado</string>
+    <!-- Spoken when direct touch turns off: touches go back to the screen reader. [CHAR LIMIT=40] -->
+    <string name="direct_touch_off">Toque directo desactivado</string>
+
+    <!-- Label of the quick settings tile that pauses and resumes direct touch. [CHAR LIMIT=20] -->
+    <string name="direct_touch_tile_label">Direct touch</string>
+
+    <!-- Title of the direct touch settings screen. [CHAR LIMIT=40] -->
+    <string name="title_pref_direct_touch">Toque directo</string>
+    <!-- Direct touch settings: master switch title. [CHAR LIMIT=40] -->
+    <string name="pref_direct_touch_master">Toque directo</string>
+    <!-- Direct touch settings: master switch summary. [CHAR LIMIT=NONE] -->
+    <string name="pref_direct_touch_master_summary">Pasa los gestos y toques directamente a las apps que selecciones abajo, y los devuelve a Backtalk para diálogos, menús, el teclado y pantallas del sistema.</string>
+    <!-- Direct touch settings: switch that makes Backtalk speak when direct touch changes. [CHAR LIMIT=60] -->
+    <string name="pref_direct_touch_speech">Anunciar cuando el toque directo se cambie</string>
+    <!-- Direct touch settings: switch that makes the phone vibrate when direct touch changes. [CHAR LIMIT=60] -->
+    <string name="pref_direct_touch_haptics">Vibrar cuando el toque directo cambie</string>
+    <!-- Direct touch settings: heading of the list of apps. [CHAR LIMIT=30] -->
+    <string name="direct_touch_apps_category">Apps</string>
+    <!-- Direct touch settings: accessibility action that turns direct typing on for an app. [CHAR LIMIT=40] -->
+    <string name="direct_touch_action_typing_on">Activar escritura directa</string>
+    <!-- Direct touch settings: accessibility action that turns direct typing off for an app. [CHAR LIMIT=40] -->
+    <string name="direct_touch_action_typing_off">Desactivar escritura directa</string>
+    <!-- Direct touch settings: summary of an app that has direct typing on. [CHAR LIMIT=40] -->
+    <string name="direct_touch_typing_summary_on">Escritura directa activada</string>
+</resources>
