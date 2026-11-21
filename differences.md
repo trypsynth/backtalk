@@ -444,6 +444,10 @@ The **Sentences** reading control moves through text one sentence at a time when
 
 When you turn on **Controls** > **Touch and activation** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.
 
+### Volume keys that move the cursor
+
+When you turn on **Controls** > **Touch and activation** > **Volume keys move the cursor**, the volume keys move the cursor of the text field you're typing in: volume up moves it back one character, and volume down moves it forward, and Backtalk says the character, as it does when you move by character with the **Characters** reading control. Hold a key to keep moving. This works while focus is on the text field or on the keyboard. Anywhere else, the volume keys change the volume as usual, and they still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. A slider with focus takes the keys first when **Volume keys adjust sliders** is on too. The setting is off by default.
+
 ## Backtalk menu
 
 ### Shorter menu by default

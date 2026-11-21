@@ -833,9 +833,15 @@ public class TalkBackService extends AccessibilityServiceCompat
   // Records whether the last press of VolumeUp or VolumeDown adjusted the focused slider.
   private boolean volumeUpKeyAdjustsSlider = false;
   private boolean volumeDownKeyAdjustsSlider = false;
+  // Records whether the last press of VolumeUp or VolumeDown moved the cursor of a text field.
+  private boolean volumeUpKeyMovesCursor = false;
+  private boolean volumeDownKeyMovesCursor = false;
 
   /** "Volume keys adjust sliders" setting. */
   private boolean volumeKeysAdjustSliders = false;
+
+  /** "Volume keys move the cursor" setting. */
+  private boolean volumeKeysMoveCursor = false;
 
   private final @NonNull SparseArray<TouchInteractionMonitor> displayIdToTouchInteractionMonitors =
       new SparseArray<>();
@@ -1529,10 +1535,11 @@ public class TalkBackService extends AccessibilityServiceCompat
   }
 
   /**
-   * Adjusts the focused slider with the volume keys, when the setting is on, and returns whether
-   * the key was consumed. Volume keys pressed while touching the screen, with the keyboard
-   * shortcut modifier, or during continuous reading keep adjusting speech volume. The key up that
-   * ends a press which adjusted the slider is consumed too.
+   * Adjusts the focused slider, or moves the cursor of the text field being edited, with the volume
+   * keys, when their settings are on, and returns whether the key was consumed. Volume keys pressed
+   * while touching the screen, with the keyboard shortcut modifier, or during continuous reading
+   * keep adjusting speech volume. The key up that ends a press which adjusted the slider or moved
+   * the cursor is consumed too.
    */
   private boolean adjustSliderWithVolumeKey(KeyEvent keyEvent, boolean triggerModifierPressed) {
     int keyCode = keyEvent.getKeyCode();
@@ -1541,34 +1548,61 @@ public class TalkBackService extends AccessibilityServiceCompat
       return false;
     }
     if (keyEvent.getAction() != KeyEvent.ACTION_DOWN) {
-      boolean adjusted;
+      boolean handled;
       if (isUp) {
-        adjusted = volumeUpKeyAdjustsSlider;
+        handled = volumeUpKeyAdjustsSlider || volumeUpKeyMovesCursor;
         volumeUpKeyAdjustsSlider = false;
+        volumeUpKeyMovesCursor = false;
       } else {
-        adjusted = volumeDownKeyAdjustsSlider;
+        handled = volumeDownKeyAdjustsSlider || volumeDownKeyMovesCursor;
         volumeDownKeyAdjustsSlider = false;
+        volumeDownKeyMovesCursor = false;
       }
-      return adjusted;
+      return handled;
     }
-    // Holding the key repeats the adjustment, even if focus leaves the slider meanwhile.
+    // Holding the key repeats the adjustment, even if focus leaves the slider or field meanwhile.
     if (keyEvent.getRepeatCount() == 0) {
-      boolean adjusts =
-          volumeKeysAdjustSliders
+      boolean available =
+          (volumeKeysAdjustSliders || volumeKeysMoveCursor)
               && isServiceActive()
               && !isTouchInteracting
               && !triggerModifierPressed
               && !isBrailleImeTouchInteracting()
               && !pipeline.getActorState().getContinuousRead().isActive()
               && ringerModeAndScreenMonitor != null
-              && ringerModeAndScreenMonitor.isInteractive()
+              && ringerModeAndScreenMonitor.isInteractive();
+      boolean adjusts =
+          available
+              && volumeKeysAdjustSliders
               && Role.getRole(accessibilityFocusMonitor.getSupportedAdjustableNode())
                   == Role.ROLE_SEEK_CONTROL;
+      boolean movesCursor = available && !adjusts && volumeKeysMoveCursor && isEditingText();
       if (isUp) {
         volumeUpKeyAdjustsSlider = adjusts;
+        volumeUpKeyMovesCursor = movesCursor;
       } else {
         volumeDownKeyAdjustsSlider = adjusts;
+        volumeDownKeyMovesCursor = movesCursor;
       }
+    }
+    if (isUp ? volumeUpKeyMovesCursor : volumeDownKeyMovesCursor) {
+      // Up goes back and down goes forward, as swiping up and down does with a reading control.
+      pipeline
+          .getFeedbackReturner()
+          .returnFeedback(
+              Performance.EVENT_ID_UNTRACKED,
+              Feedback.focusDirection(
+                      isUp
+                          ? com.google.android.accessibility.utils.traversal.TraversalStrategy
+                              .SEARCH_FOCUS_BACKWARD
+                          : com.google.android.accessibility.utils.traversal.TraversalStrategy
+                              .SEARCH_FOCUS_FORWARD)
+                  .setInputMode(
+                      com.google.android.accessibility.utils.monitor.InputModeTracker
+                          .INPUT_MODE_KEYBOARD)
+                  .setGranularity(
+                      com.google.android.accessibility.utils.input.CursorGranularity.CHARACTER));
+      return true;
     }
     if (!(isUp ? volumeUpKeyAdjustsSlider : volumeDownKeyAdjustsSlider)) {
       return false;
@@ -1581,6 +1615,19 @@ public class TalkBackService extends AccessibilityServiceCompat
                 isUp ? Feedback.AdjustValue.Action.INCREASE_VALUE
                     : Feedback.AdjustValue.Action.DECREASE_VALUE));
     return true;
+  }
+
+  /**
+   * Whether a text field is being edited: it has input focus, and accessibility focus is on it or
+   * on the keyboard.
+   */
+  private boolean isEditingText() {
+    AccessibilityNodeInfoCompat node =
+        accessibilityFocusMonitor.getNodeForEditingActions(
+            accessibilityFocusMonitor.getAccessibilityFocus(/* useInputFocusIfEmpty= */ true));
+    return node != null
+        && node.isFocused()
+        && (node.isEditable() || Role.getRole(node) == Role.ROLE_EDIT_TEXT);
   }
 
   private boolean isBrailleImeTouchInteracting() {
@@ -3801,6 +3848,9 @@ public class TalkBackService extends AccessibilityServiceCompat
         getBooleanPref(
             R.string.pref_volume_keys_adjust_sliders_key,
             R.bool.pref_volume_keys_adjust_sliders_default);
+    volumeKeysMoveCursor =
+        getBooleanPref(
+            R.string.pref_volume_keys_move_cursor_key, R.bool.pref_volume_keys_move_cursor_default);
 
     boolean useAudioFocus =
         getBooleanPref(R.string.pref_use_audio_focus_key, R.bool.pref_use_audio_focus_default);
