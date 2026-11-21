@@ -42,6 +42,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.HandlerCompat;
+import com.google.android.accessibility.talkback.actor.voicecommands.VoiceAppMatching;
 import com.google.android.accessibility.talkback.permission.PermissionUtils;
 import com.google.android.accessibility.utils.DelayHandler;
 import com.google.android.accessibility.utils.SettingsUtils;
@@ -90,6 +91,7 @@ public class SpeechRecognizerPerformer {
   private boolean isListening = false;
   private boolean sessionActive = false;
   private final boolean partialResultFastFeedback;
+  private boolean requireFinalOpenCommand;
   private String cachedResult = "";
 
   private @Nullable Intent recognizerIntent;
@@ -280,6 +282,18 @@ public class SpeechRecognizerPerformer {
     this.speechRecognizerRequester = speechRecognizerRequester;
   }
 
+  /** Waits for final recognition before processing commands starting with "open". */
+  public void setRequireFinalOpenCommand(boolean required) {
+    if (requireFinalOpenCommand == required) {
+      return;
+    }
+    requireFinalOpenCommand = required;
+    stopListening();
+    stopListeningDelayHandler.removeMessages();
+    reset();
+    cachedResult = "";
+  }
+
   public void doListening() {
     if (speechRecognizerRequester == null) {
       LogUtils.e(TAG, "doListening:Speech listener's not set.");
@@ -403,6 +417,10 @@ public class SpeechRecognizerPerformer {
     executeCommandDelayHandler.removeCallbacksAndMessages(null);
 
     final String speech = (result == null || result.isEmpty()) ? null : result.get(0);
+    cachedResult = "";
+    if (isPartialResult && requireFinalOpenCommand && VoiceAppMatching.hasOpenPrefix(speech)) {
+      return;
+    }
     // SpeechRecognizer after recognizing the speech is triggering onPlaybackConfigChanged
     // in AudioPlaybackMonitor for config USAGE_ASSISTANCE_NAVIGATION_GUIDANCE, which is
     // activating VoiceActionMonitor#AudioPlaybackStateChangedListener() and interrupting
@@ -414,7 +432,6 @@ public class SpeechRecognizerPerformer {
     // Wait longer if final-result is unknown, because more partial-results may be coming.
     long commandDelayMs =
         isPartialResult ? partialSpeechFeedbackDelayMs : FINAL_SPEECH_COMMAND_PROCESS_DELAY_MS;
-    cachedResult = "";
     if (!TextUtils.isEmpty(speech)) {
       if (partialResultFastFeedback || !isPartialResult) {
         speechRecognitionDelayedSender =

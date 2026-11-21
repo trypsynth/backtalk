@@ -126,6 +126,7 @@ import com.google.android.libraries.accessibility.utils.log.LogUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 // TODO: Refactoring this class as a feedback-mapper class
@@ -144,6 +145,8 @@ public class VoiceCommandProcessor {
   private final TalkBackAnalytics analytics;
   private final CallVoiceCommands callVoiceCommands;
   private final SystemVoiceCommands systemVoiceCommands;
+  private VoiceAppLauncher appLauncher;
+  private boolean openAppsEnabled;
 
   private boolean echoNotRecognizedTextEnabled;
 
@@ -274,6 +277,26 @@ public class VoiceCommandProcessor {
     this.pipeline = pipeline;
     this.callVoiceCommands.setPipeline(pipeline);
     this.systemVoiceCommands.setPipeline(pipeline);
+    if (appLauncher != null) {
+      appLauncher.shutdown();
+    }
+    appLauncher = new VoiceAppLauncher(service);
+  }
+
+  public void shutdown() {
+    if (appLauncher != null) {
+      appLauncher.shutdown();
+    }
+  }
+
+  public void setOpenAppsEnabled(boolean enabled) {
+    if (openAppsEnabled == enabled) {
+      return;
+    }
+    openAppsEnabled = enabled;
+    if (appLauncher != null) {
+      appLauncher.cancel();
+    }
   }
 
   public void setBatteryMonitor(BatteryMonitor batteryMonitor) {
@@ -321,16 +344,19 @@ public class VoiceCommandProcessor {
         });
   }
 
-  /* Returns true if the recognized string is one of the voice commands. */
+  /** Tries built-in commands before falling back to app names. */
   @CanIgnoreReturnValue
   public boolean handleSpeechCommand(String command, boolean isPartialResult) {
-    if (TextUtils.isEmpty(command)) {
+    if (TextUtils.isEmpty(command)
+        || (openAppsEnabled && isPartialResult && VoiceAppMatching.hasOpenPrefix(command))) {
       return false;
     }
-    LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
-    EventId eventId = EVENT_ID_UNTRACKED;
+    if (openAppsEnabled) {
+      appLauncher.cancel();
+    }
 
-    // Calls, and the answers to their questions ("say yes to confirm")
+    // Calls, and the answers to their questions ("say yes to confirm"). Let an app command
+    // clear a pending call question before it is handled by the app launcher.
     if (callVoiceCommands.handleCommand(
         VoiceCommandFuzzyMatcher.normalize(command), isPartialResult)) {
       if (!isPartialResult) {
@@ -339,11 +365,35 @@ public class VoiceCommandProcessor {
       return true;
     }
 
-    // Check system voice commands (dnd, status, volume, settings, find on screen)
     if (systemVoiceCommands.handleCommand(command, isPartialResult)) {
       analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
       return true;
     }
+
+    String lowerCaseCommand = command.toLowerCase(Locale.getDefault());
+    if (handleBuiltInCommand(lowerCaseCommand)) {
+      return true;
+    }
+
+    if (openAppsEnabled
+        && !isPartialResult
+        && appLauncher.handle(
+            command,
+            launched -> {
+              if (launched) {
+                analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+              } else {
+                speakUnrecognizedCommand(command, false);
+              }
+            })) {
+      return true;
+    }
+    return speakUnrecognizedCommand(lowerCaseCommand, isPartialResult);
+  }
+
+  private boolean handleBuiltInCommand(String command) {
+    LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
+    EventId eventId = EVENT_ID_UNTRACKED;
 
     // Gemini voice command
     // command format: Gemini
@@ -850,6 +900,10 @@ public class VoiceCommandProcessor {
       return true;
     }
 
+    return false;
+  }
+
+  private boolean speakUnrecognizedCommand(String command, boolean isPartialResult) {
     if (echoNotRecognizedTextEnabled) {
       speakDelayed(
           service.getString(R.string.voice_commands_echo_feedback_not_recognized, command));

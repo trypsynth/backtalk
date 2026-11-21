@@ -491,6 +491,12 @@ Backtalk adds voice commands for settings that Android lets apps change:
 
 Say "find [name]", "focus [name]", "search for [name]", or "locate [name]" (for example, "find play button", "focus search", "locate cancel") to search the screen and move accessibility focus directly to the matching control.
 
+### Open an app by name
+
+Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
+
+With the switch on, phrases starting with **Open** wait for the final speech result. Backtalk checks built-in commands such as **Open Backtalk settings** first. If none matches, it looks for an app by name. Turning the switch off cancels pending launches. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
+
 ## Screen and brightness
 
 ### Brightness reading control
