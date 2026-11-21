@@ -158,8 +158,14 @@ public class SelectorController implements UserInputEventListener {
   // interaction's ongoing. This flag records the touch interaction start/end, respectively. So that
   // the currentSetting will only happen when touch event's ended.
   private boolean touchActive = false;
-  // Accompanying the 'touchActive' flag, this variable avoids the reassign of the same node.
-  private AccessibilityNodeInfo lastFocusedNode = null;
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private final LateSettingSwitch lateSettingSwitch =
+      new LateSettingSwitch(handler, this::switchCurrentSetting);
+
+  /** Stops a reading control waiting to be picked from asking the app after the service stops. */
+  public void shutdown() {
+    lateSettingSwitch.cancel();
+  }
 
   /** Audial feedback announce types. */
   public enum AnnounceType {
@@ -254,6 +260,11 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_granularity_paragraphs_key,
         R.string.selector_granularity_paragraphs,
         R.bool.pref_selector_granularity_paragraphs_default),
+    // Backtalk
+    GRANULARITY_SENTENCES(
+        R.string.pref_selector_granularity_sentences_key,
+        R.string.selector_granularity_sentences,
+        R.bool.pref_selector_granularity_sentences_default),
     GRANULARITY_CHARACTERS(
         R.string.pref_selector_granularity_characters_key,
         R.string.selector_granularity_characters,
@@ -457,6 +468,9 @@ public class SelectorController implements UserInputEventListener {
     WORDS(Setting.GRANULARITY_WORDS, CursorGranularity.WORD, GRANULARITY_FOR_ALL_NODE),
     PARAGRAPHS(
         Setting.GRANULARITY_PARAGRAPHS, CursorGranularity.PARAGRAPH, GRANULARITY_FOR_ALL_NODE),
+    // Backtalk
+    SENTENCES(
+        Setting.GRANULARITY_SENTENCES, CursorGranularity.SENTENCE, GRANULARITY_FOR_ALL_NODE),
     CHARACTERS(
         Setting.GRANULARITY_CHARACTERS, CursorGranularity.CHARACTER, GRANULARITY_FOR_ALL_NODE),
     LINES(Setting.GRANULARITY_LINES, CursorGranularity.LINE, GRANULARITY_FOR_ALL_NODE),
@@ -625,6 +639,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.GRANULARITY_WORDS,
           Setting.GRANULARITY_LINES,
           Setting.GRANULARITY_PARAGRAPHS,
+          Setting.GRANULARITY_SENTENCES,
           Setting.GRANULARITY_HEADINGS,
           Setting.GRANULARITY_CONTROLS,
           Setting.GRANULARITY_LINKS,
@@ -805,6 +820,9 @@ public class SelectorController implements UserInputEventListener {
       return Setting.GRANULARITY_LINES;
     } else if (granularity == R.string.granularity_paragraph) {
       return Setting.GRANULARITY_PARAGRAPHS;
+    } else if (granularity == R.string.granularity_sentence) {
+      // Backtalk
+      return Setting.GRANULARITY_SENTENCES;
     } else if (granularity == R.string.granularity_native_heading) {
       return Setting.GRANULARITY_HEADINGS;
     } else if (granularity == R.string.granularity_native_control) {
@@ -894,6 +912,7 @@ public class SelectorController implements UserInputEventListener {
         case GRANULARITY_HEADINGS,
             GRANULARITY_WORDS,
             GRANULARITY_PARAGRAPHS,
+            GRANULARITY_SENTENCES,
             GRANULARITY_CHARACTERS,
             GRANULARITY_LINES,
             GRANULARITY_LINKS,
@@ -1044,6 +1063,7 @@ public class SelectorController implements UserInputEventListener {
       case GRANULARITY_HEADINGS,
           GRANULARITY_WORDS,
           GRANULARITY_PARAGRAPHS,
+          GRANULARITY_SENTENCES,
           GRANULARITY_CHARACTERS,
           GRANULARITY_LINES,
           GRANULARITY_LINKS,
@@ -1111,6 +1131,7 @@ public class SelectorController implements UserInputEventListener {
    * automatically that make user easier to use screen search navigation.
    */
   public void searchActionPerformed() {
+    lateSettingSwitch.runNow();
     settingToRestore = GRANULARITY_SEARCH;
     setCurrentSetting(
         EVENT_ID_UNTRACKED,
@@ -1208,6 +1229,7 @@ public class SelectorController implements UserInputEventListener {
    */
   @Override
   public void editTextOrSelectableTextSelected(boolean isSelected) {
+    lateSettingSwitch.runNow();
     if (isSelected) {
       Setting current = getCurrentSetting(context, prefs);
       if (selectionGranularityOf(current) != null) {
@@ -1252,12 +1274,13 @@ public class SelectorController implements UserInputEventListener {
       return;
     }
 
-    if (nodeInfo == null || nodeInfo.equals(lastFocusedNode)) {
+    if (nodeInfo == null) {
       return;
     }
     if (touchActive) {
-      lastFocusedNode = nodeInfo;
+      lateSettingSwitch.hold(nodeInfo);
     } else {
+      lateSettingSwitch.cancel();
       switchCurrentSetting(nodeInfo);
     }
   }
@@ -1300,7 +1323,6 @@ public class SelectorController implements UserInputEventListener {
     if (nodeInfo == null) {
       return;
     }
-    lastFocusedNode = null;
     Optional<ContextualSetting> contextualMenu =
         getMatchedContextualSettingForActivation(
             context, AccessibilityNodeInfoCompat.wrap(nodeInfo), hiddenSettings);
@@ -1350,6 +1372,7 @@ public class SelectorController implements UserInputEventListener {
           case GRANULARITY_HEADINGS,
               GRANULARITY_WORDS,
               GRANULARITY_PARAGRAPHS,
+              GRANULARITY_SENTENCES,
               GRANULARITY_CHARACTERS,
               GRANULARITY_LINES,
               GRANULARITY_LINKS,
@@ -1377,17 +1400,24 @@ public class SelectorController implements UserInputEventListener {
         };
   }
 
+  /**
+   * Returns the current setting after picking the reading control a touch left waiting, so a click
+   * started within the delay, such as a double tap, uses the control for the item it activates.
+   */
+  public Setting getCurrentSettingForClick() {
+    lateSettingSwitch.runNow();
+    return getCurrentSetting(context, prefs);
+  }
+
   @Override
   public void touchInteractionState(boolean active) {
     touchActive = active;
     if (active) {
       // A touch replaces a move that is waiting for a list to scroll.
       verticalNavigator.cancel();
-    }
-    if (!touchActive) {
-      if (lastFocusedNode != null) {
-        switchCurrentSetting(lastFocusedNode);
-      }
+      lateSettingSwitch.pause();
+    } else {
+      lateSettingSwitch.schedule();
     }
   }
 
@@ -1410,6 +1440,7 @@ public class SelectorController implements UserInputEventListener {
 
   private boolean selectPreviousOrNext(
       EventId eventId, AnnounceType announceType, boolean isNext, boolean showOverlay) {
+    lateSettingSwitch.runNow();
     List<Setting> settings = getFilteredSettings();
     List<ScriptReadingControl> controls = Scripts.readingControls();
 
@@ -1547,6 +1578,7 @@ public class SelectorController implements UserInputEventListener {
       return false;
     }
 
+    lateSettingSwitch.runNow();
     setCurrentSetting(EVENT_ID_UNTRACKED, setting, announceType, showOverlay);
     return true;
   }
@@ -1855,6 +1887,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Change the value of the selected setting or scroll forward/backard of the seeker. */
   public void adjustSelectedSetting(EventId eventId, boolean isNext) {
+    lateSettingSwitch.runNow();
     @Nullable ScriptReadingControl scriptControl = currentScriptControl(Scripts.readingControls());
     if (scriptControl != null) {
       scriptControl.adjust(isNext);
@@ -1971,6 +2004,7 @@ public class SelectorController implements UserInputEventListener {
       case GRANULARITY_HEADINGS,
           GRANULARITY_WORDS,
           GRANULARITY_PARAGRAPHS,
+          GRANULARITY_SENTENCES,
           GRANULARITY_CHARACTERS,
           GRANULARITY_LINES,
           GRANULARITY_LINKS,
@@ -2057,6 +2091,7 @@ public class SelectorController implements UserInputEventListener {
 
   /** Activate the currently selected action in the actions setting. */
   public void activateCurrentAction(EventId eventId) {
+    lateSettingSwitch.runNow();
     if (!accessibilityFocusMonitor.hasAccessibilityFocus(/* useInputFocusIfEmpty= */ false)) {
       return;
     }
@@ -2488,9 +2523,13 @@ public class SelectorController implements UserInputEventListener {
 
   private EventId lastChangeVolumeEventId;
   private int listenedVolumeStream = -1;
-  private final Handler handler = new Handler(Looper.getMainLooper());
   private final VolumeChangedListener volumeChangedListener =
       new VolumeChangedListener() {
+
+        @Override
+        public boolean announcesVolume(int type) {
+          return type == listenedVolumeStream;
+        }
 
         @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {

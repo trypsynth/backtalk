@@ -1106,13 +1106,6 @@ public class TalkBackService extends AccessibilityServiceCompat
     }
   }
 
-  /** Says why the model on the phone could not answer, such as low memory. */
-  private void speakOnDeviceAiProblem(String text) {
-    if (pipeline != null) {
-      pipeline.getFeedbackReturner().returnFeedback(EVENT_ID_UNTRACKED, Feedback.speech(text));
-    }
-  }
-
   private void updateSpeechOverlayOnConfigChange(Configuration newConfig) {
     if (lastConfiguration == null
         || didScreenPropertiesChange(lastConfiguration, newConfig)
@@ -1439,6 +1432,12 @@ public class TalkBackService extends AccessibilityServiceCompat
                 != 0;
     if (adjustSliderWithVolumeKey(keyEvent, triggerModifierPressed)) {
       return true;
+    }
+    // Backtalk: a held volume key is said once, when it's released. This follows the keys that
+    // Backtalk routes to its own volume too, so the release is seen even if routing changes.
+    if (volumeMonitor != null
+        && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+      volumeMonitor.onVolumeKeyEvent(keyEvent);
     }
     if (keyAction == KeyEvent.ACTION_DOWN) {
       boolean handleVolumeKeyInTalkBack =
@@ -2427,6 +2426,8 @@ public class TalkBackService extends AccessibilityServiceCompat
 
     voiceCommandProcessor =
         new VoiceCommandProcessor(this, accessibilityFocusMonitor, selectorController, analytics);
+    voiceCommandProcessor.setBatteryMonitor(batteryMonitor);
+    voiceCommandProcessor.setStatusReader(statusReader);
     voiceCommandActor =
         new VoiceCommandActor(
             this,
@@ -2453,7 +2454,7 @@ public class TalkBackService extends AccessibilityServiceCompat
                 : new GeminiRestEndpoint(
                     this,
                     BuildConfig.GEMINI_API_KEY,
-                    new LocalGemmaRequestPerformer(this, this::speakOnDeviceAiProblem)),
+                    new LocalGemmaRequestPerformer(this)),
             new AiCoreEndpoint(this));
 
     KeyboardActor keyboardActor = new KeyboardActor(this);
@@ -2589,6 +2590,15 @@ public class TalkBackService extends AccessibilityServiceCompat
     focuser.setMenuManager(menuManager);
 
     volumeMonitor = new VolumeMonitor(pipeline.getFeedbackReturner(), this, callStateMonitor);
+    // Backtalk: a focused slider that the user just moved says its own value, and continuous
+    // reading must not be cut off. A change from elsewhere, such as headphones, is still said.
+    volumeMonitor.setSliderFocused(
+        () ->
+            RecentUserInput.isRecent()
+                && Role.getRole(accessibilityFocusMonitor.getSupportedAdjustableNode())
+                    == Role.ROLE_SEEK_CONTROL);
+    volumeMonitor.setContinuousReading(
+        () -> pipeline.getActorState().getContinuousRead().isActive());
     selectorController =
         new SelectorController(
             this,
@@ -3206,6 +3216,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       ContextCompat.registerReceiver(
           this, volumeMonitor, volumeMonitor.getFilter(), RECEIVER_EXPORTED);
+      volumeMonitor.startAnnouncing();
       if (FeatureSupport.hasAccessibilityAudioStream(this)) {
         // Cache the initial volume in case that the volume is never changed during runtime.
         volumeMonitor.cacheAccessibilityStreamVolume();
@@ -3358,6 +3369,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       volumeMonitor.releaseControl();
       volumeMonitor.clearVolumeChangedListener();
+      volumeMonitor.stopAnnouncing();
     }
 
     if (headphoneStateMonitor != null) {
@@ -3404,6 +3416,10 @@ public class TalkBackService extends AccessibilityServiceCompat
     // before connected).
     if (dimScreenController != null) {
       dimScreenController.shutdown();
+    }
+
+    if (selectorController != null) {
+      selectorController.shutdown();
     }
 
     // The saved reading order holds nodes, which would outlive the service and could be reused,

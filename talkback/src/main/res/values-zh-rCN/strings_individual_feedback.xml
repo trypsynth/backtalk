@@ -75,6 +75,8 @@
     <string name="individual_sound_screen_on">屏幕已开启</string>
     <!-- Sound played when moving back wraps around to the last item. [CHAR LIMIT=60] -->
     <string name="individual_sound_wrap_back">已循环到末尾</string>
+    <!-- Sound played when the item in focus has more actions. [CHAR LIMIT=60] -->
+    <string name="individual_sound_actions_available">操作可用</string>
     <!-- Sound played when moving forward wraps around to the first item. [CHAR LIMIT=60] -->
     <string name="individual_sound_wrap_forward">已循环到开头</string>
 </resources>

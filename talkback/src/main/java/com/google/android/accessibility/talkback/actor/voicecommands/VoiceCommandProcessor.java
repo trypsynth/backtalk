@@ -92,6 +92,8 @@ import android.content.Intent;
 import android.text.TextUtils;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import com.google.android.accessibility.talkback.preference.TalkBackPreferencesActivity;
+import com.google.android.accessibility.talkback.monitor.BatteryMonitor;
+import com.google.android.accessibility.talkback.status.StatusReader;
 import com.google.android.accessibility.talkback.ActorState;
 import com.google.android.accessibility.talkback.Feedback;
 import com.google.android.accessibility.talkback.Interpretation;
@@ -142,6 +144,7 @@ public class VoiceCommandProcessor {
   private ActorState actorState;
   private final TalkBackAnalytics analytics;
   private final CallVoiceCommands callVoiceCommands;
+  private final SystemVoiceCommands systemVoiceCommands;
   private VoiceAppLauncher appLauncher;
   private boolean openAppsEnabled;
 
@@ -160,7 +163,11 @@ public class VoiceCommandProcessor {
   };
 
   private static final int[] talkbackSettingCommandResArray = {
-    R.string.voice_commands_talkback_settings, R.string.voice_commands_talkback_setting
+    R.string.voice_commands_backtalk_settings,
+    R.string.voice_commands_backtalk_setting,
+    R.string.voice_commands_open_backtalk_settings,
+    R.string.voice_commands_talkback_settings,
+    R.string.voice_commands_talkback_setting
   };
 
   private static final int[] finishSelectCommandResArray = {
@@ -263,11 +270,13 @@ public class VoiceCommandProcessor {
     this.selectorController = selectorController;
     this.analytics = analytics;
     this.callVoiceCommands = new CallVoiceCommands(service);
+    this.systemVoiceCommands = new SystemVoiceCommands(service, null, null, null);
   }
 
   public void setPipeline(Pipeline.FeedbackReturner pipeline) {
     this.pipeline = pipeline;
     this.callVoiceCommands.setPipeline(pipeline);
+    this.systemVoiceCommands.setPipeline(pipeline);
     if (appLauncher != null) {
       appLauncher.shutdown();
     }
@@ -288,6 +297,14 @@ public class VoiceCommandProcessor {
     if (appLauncher != null) {
       appLauncher.cancel();
     }
+  }
+
+  public void setBatteryMonitor(BatteryMonitor batteryMonitor) {
+    this.systemVoiceCommands.setBatteryMonitor(batteryMonitor);
+  }
+
+  public void setStatusReader(StatusReader statusReader) {
+    this.systemVoiceCommands.setStatusReader(statusReader);
   }
 
   public void setActorState(ActorState actorState) {
@@ -327,10 +344,11 @@ public class VoiceCommandProcessor {
         });
   }
 
-  /** Waits for final recognition when opening apps by voice is enabled. */
+  /** Tries built-in commands before falling back to app names. */
   @CanIgnoreReturnValue
   public boolean handleSpeechCommand(String command, boolean isPartialResult) {
-    if (TextUtils.isEmpty(command) || (openAppsEnabled && isPartialResult)) {
+    if (TextUtils.isEmpty(command)
+        || (openAppsEnabled && isPartialResult && VoiceAppMatching.hasOpenPrefix(command))) {
       return false;
     }
     if (openAppsEnabled) {
@@ -347,27 +365,33 @@ public class VoiceCommandProcessor {
       return true;
     }
 
-    if (openAppsEnabled) {
-      if (appLauncher.handle(
-          command,
-          launched -> {
-            if (launched) {
-              analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
-            } else {
-              speakUnrecognizedCommand(command, false);
-            }
-          })) {
-        return true;
-      }
+    if (systemVoiceCommands.handleCommand(command, isPartialResult)) {
+      analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+      return true;
     }
-    return handleBuiltInCommand(command, isPartialResult);
+
+    String lowerCaseCommand = command.toLowerCase(Locale.getDefault());
+    if (handleBuiltInCommand(lowerCaseCommand)) {
+      return true;
+    }
+
+    if (openAppsEnabled
+        && !isPartialResult
+        && appLauncher.handle(
+            command,
+            launched -> {
+              if (launched) {
+                analytics.onVoiceCommandEvent(VOICE_COMMAND_RECOGNIZED);
+              } else {
+                speakUnrecognizedCommand(command, false);
+              }
+            })) {
+      return true;
+    }
+    return speakUnrecognizedCommand(lowerCaseCommand, isPartialResult);
   }
 
-  private boolean handleBuiltInCommand(String command, boolean isPartialResult) {
-    if (TextUtils.isEmpty(command)) {
-      return false;
-    }
-    command = command.toLowerCase(Locale.getDefault());
+  private boolean handleBuiltInCommand(String command) {
     LogUtils.i(LOG_TAG, "handleSpeechCommand() command=\"%s\"", command);
     EventId eventId = EVENT_ID_UNTRACKED;
 
@@ -876,7 +900,7 @@ public class VoiceCommandProcessor {
       return true;
     }
 
-    return speakUnrecognizedCommand(command, isPartialResult);
+    return false;
   }
 
   private boolean speakUnrecognizedCommand(String command, boolean isPartialResult) {

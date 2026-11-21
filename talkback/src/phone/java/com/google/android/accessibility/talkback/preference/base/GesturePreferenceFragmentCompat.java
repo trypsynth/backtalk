@@ -39,6 +39,7 @@ import androidx.preference.Preference.OnPreferenceClickListener;
 import androidx.preference.PreferenceScreen;
 import com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory;
 import com.google.android.accessibility.material.preference.AccessibilitySuiteRadioButtonPreference;
+import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.preference.base.GestureListPreference.ActionItem;
 import com.google.android.accessibility.utils.PreferenceSettingsUtils;
 import com.google.android.accessibility.utils.SharedPreferencesUtils;
@@ -84,6 +85,10 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
       };
 
   private int selectedPosition;
+
+  // Backtalk: the selected action and its category, which stays expanded when the others collapse.
+  @Nullable private Preference selectedPreference;
+  @Nullable private AccessibilitySuitePreferenceCategory selectedCategory;
 
   /** Creates the fragment from given {@link GestureListPreference}. */
   @Nullable
@@ -152,6 +157,32 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
     preferenceKey = rootKey;
 
     PreferenceSettingsUtils.setPreferenceScreen(this, createPreferenceScreen());
+    collapseActionCategories();
+  }
+
+  /**
+   * Backtalk: makes each category of actions a collapsed group, as the gestures are, so that the
+   * list is quick to move through. The category of the selected action starts expanded. The first
+   * category has no title, and holds the action that unassigns the gesture, so it stays as it is.
+   */
+  private void collapseActionCategories() {
+    PreferenceScreen screen = getPreferenceScreen();
+    Context context = getContext();
+    if (screen == null || context == null) {
+      return;
+    }
+    for (int i = 0; i < screen.getPreferenceCount(); i++) {
+      Preference preference = screen.getPreference(i);
+      if (preference instanceof AccessibilitySuitePreferenceCategory
+          && !TextUtils.isEmpty(preference.getTitle())) {
+        AccessibilitySuitePreferenceCategory category =
+            (AccessibilitySuitePreferenceCategory) preference;
+        category.setCollapsible(
+            context.getString(R.string.category_collapsed),
+            context.getString(R.string.category_expanded));
+        category.setCollapsed(category != selectedCategory);
+      }
+    }
   }
 
   private PreferenceScreen createPreferenceScreen() {
@@ -187,6 +218,8 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
           category.addPreference(radioButtonPreference);
           if (checked) {
             selectedPosition = order;
+            selectedPreference = radioButtonPreference;
+            selectedCategory = category;
           }
           radioButtonPreference.setRequestInitialAccessibilityFocus(checked);
         }
@@ -204,6 +237,11 @@ public class GesturePreferenceFragmentCompat extends TalkbackBaseFragment {
   }
 
   private void scrollToSelectedPosition() {
+    // Backtalk: collapsed categories hide actions, so the position is found by the list itself.
+    if (selectedPreference != null) {
+      scrollToPreference(selectedPreference);
+      return;
+    }
     RecyclerView recyclerView = getListView();
     if (recyclerView == null) {
       LogUtils.w(TAG, "RecyclerView has been cleared.");

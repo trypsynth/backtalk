@@ -20,15 +20,23 @@ import android.content.Context
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.MessageDigest
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
 /**
  * A script file in a source. [file] is its file name, [name] what the list shows: the file name
- * without its extension, unless that is empty or names two files.
+ * without its extension, unless that is empty or names two files. On GitHub, [sha] is the git hash
+ * the listing gave for the file, and [blobUrl] is where the API serves the file by that hash.
  */
-data class SourceScript(val file: String, val url: String, val name: String = file)
+data class SourceScript(
+  val file: String,
+  val url: String,
+  val name: String = file,
+  val sha: String? = null,
+  val blobUrl: String? = null,
+)
 
 /** One page of a source's files. [count] is how many entries the page held. */
 data class SourcePage(val scripts: List<SourceScript>, val count: Int, val next: String?)
@@ -59,6 +67,7 @@ object ScriptSources {
   private const val MAX_SCRIPTS = 200
   private const val DEFAULT_SCRIPT_SOURCE = "github.com/trypsynth/backtalk-scripts"
   private const val DEFAULT_SOUND_THEME_SOURCE = "github.com/trypsynth/backtalk-themes"
+  private val GIT_SHA = Regex("[0-9a-f]{40}")
 
   /** The sources of [kind] until the list is first saved, so a source removed stays removed. */
   private fun defaults(kind: SourceKind): List<ScriptSource> =
@@ -160,7 +169,7 @@ object ScriptSources {
     val scripts =
       scriptsIn(entries) {
         if (host.api == SourceApi.GITLAB) gitlabScript(source, kind, it)
-        else gitScript(host, kind, it)
+        else gitScript(source, kind, it)
       }
     return SourcePage(scripts, entries.length(), null)
   }
@@ -169,10 +178,15 @@ object ScriptSources {
     (0 until entries.length()).mapNotNull { entries.optJSONObject(it)?.let(read) }
 
   // GitHub, and Gitea or Forgejo, which answer alike.
-  private fun gitScript(host: SourceHost, kind: SourceKind, entry: JSONObject): SourceScript? {
+  private fun gitScript(source: ScriptSource, kind: SourceKind, entry: JSONObject): SourceScript? {
     if (entry.optString("type") != "file") return null
     val file = entry.optString("name")
-    return scriptOf(host, kind, file, entry.optString("download_url"), entry.optLong("size"))
+    val script =
+      scriptOf(source.host, kind, file, entry.optString("download_url"), entry.optLong("size"))
+    val sha = entry.optString("sha").lowercase()
+    if (script == null || source.host != SourceHost.GITHUB || !GIT_SHA.matches(sha)) return script
+    val blobUrl = "https://api.github.com/repos/${source.owner}/${source.repo}/git/blobs/$sha"
+    return script.copy(sha = sha, blobUrl = blobUrl)
   }
 
   // GitLab lists no sizes or addresses of files, so a file's address is made, and its size is
@@ -231,7 +245,42 @@ object ScriptSources {
   /** The bytes of a script from a source, at most [ScriptPackage.maxBytesOf] its file name. */
   @Throws(IOException::class)
   fun download(script: SourceScript): ByteArray =
-    fetch(script.url, ScriptPackage.maxBytesOf(script.file), "*/*")
+    download(script) { url, accept ->
+      val limit = ScriptPackage.maxBytesOf(script.file)
+      if (url != script.blobUrl) {
+        fetch(url, limit, accept)
+      } else {
+        // The API has a limit on requests, which listingError explains.
+        fetch(url, limit, accept) { connection, code ->
+          listingError(SourceHost.GITHUB, connection, code)
+        }
+      }
+    }
+
+  /**
+   * [download], reading each address with [get], which is given the address and the Accept header.
+   * GitHub's file server can give out a copy up to 5 minutes old after a push, so a file that
+   * doesn't match the hash it was listed with is read again from the API, which serves it by that
+   * hash.
+   */
+  @Throws(IOException::class)
+  internal fun download(script: SourceScript, get: (String, String) -> ByteArray): ByteArray {
+    val bytes = get(script.url, "*/*")
+    val sha = script.sha ?: return bytes
+    val blobUrl = script.blobUrl ?: return bytes
+    if (gitBlobSha(bytes) == sha) return bytes
+    val current = get(blobUrl, "application/vnd.github.raw+json")
+    if (gitBlobSha(current) != sha) throw IOException("The file doesn't match its listing")
+    return current
+  }
+
+  /** The hash git gives a file with these [bytes], as GitHub lists it. */
+  fun gitBlobSha(bytes: ByteArray): String {
+    val digest = MessageDigest.getInstance("SHA-1")
+    digest.update("blob ${bytes.size}\u0000".toByteArray(Charsets.US_ASCII))
+    digest.update(bytes)
+    return digest.digest().joinToString("") { "%02x".format(it) }
+  }
 
   private fun listingError(
     host: SourceHost,

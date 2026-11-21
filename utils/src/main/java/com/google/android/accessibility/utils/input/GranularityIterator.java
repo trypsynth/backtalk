@@ -94,6 +94,10 @@ public final class GranularityIterator {
         iterator.initialize(text.toString());
         return iterator;
       }
+      // Backtalk: given the text itself, since its language spans pick the sentence rules.
+      case CursorGranularity.SENTENCE_BIT -> {
+        return new SentenceTextSegmentIterator(text);
+      }
     }
     return null;
   }

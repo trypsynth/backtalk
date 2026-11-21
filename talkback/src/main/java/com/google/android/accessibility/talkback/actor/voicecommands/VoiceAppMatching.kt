@@ -16,6 +16,12 @@ internal object VoiceAppMatching {
       .trimEnd('.', ',', '!', '?', ':', ';', '،', '؟', '؛')
       .trimEnd()
 
+  @JvmStatic
+  fun hasOpenPrefix(command: CharSequence?): Boolean {
+    val normalized = normalize(command)
+    return normalized == "open" || normalized.startsWith("open ")
+  }
+
   /** Only "Open <name>" is an app request. */
   fun appName(command: String): String? {
     val normalized = normalize(command)

@@ -308,21 +308,11 @@ class AudioDeviceRouter @JvmOverloads constructor(
   /** Whether [device] is Bluetooth and Android plays media on it. */
   private fun playsAsMedia(am: AudioManager, device: AudioDeviceInfo): Boolean {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return false
+    // Where media plays now. The communication route doesn't change it. Android 12 can't say, so
+    // any connected Bluetooth media output counts.
     val media =
-      try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          // Where media plays now. The communication route doesn't change it.
-          am.getAudioDevicesForAttributes(
-            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
-          )
-        } else {
-          // Android 12 can't say, so any connected Bluetooth media output counts.
-          am.getDevices(AudioManager.GET_DEVICES_OUTPUTS).toList()
-        }
-      } catch (e: Exception) {
-        Log.w(TAG, "Couldn't find where media plays", e)
-        return false
-      }
+      am.outputsFor(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build())
+        ?: return false
     return playsAsMedia(endpointOf(device), media.map(::endpointOf))
   }
 
@@ -398,20 +388,15 @@ class AudioDeviceRouter @JvmOverloads constructor(
    */
   private fun accessibilityAudioGoesToTarget(am: AudioManager, targetDevice: AudioDeviceInfo): Boolean {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-    return try {
-      val attrs =
-        AudioAttributes.Builder()
-          .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
-          .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
-          .build()
-      val devices = am.getAudioDevicesForAttributes(attrs)
-      if (devices.isEmpty()) return true
-      val onSpeaker = devices.any { it.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
-      if (targetDevice.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER) onSpeaker else !onSpeaker
-    } catch (e: Exception) {
-      Log.w(TAG, "getAudioDevicesForAttributes failed", e)
-      true
-    }
+    val attrs =
+      AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY)
+        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+        .build()
+    val devices = am.outputsFor(attrs)
+    if (devices.isNullOrEmpty()) return true
+    val onSpeaker = devices.any { it.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
+    return if (targetDevice.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER) onSpeaker else !onSpeaker
   }
 
   /**

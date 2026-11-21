@@ -14,13 +14,13 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.speech.SpeechRecognizer
 import android.view.accessibility.AccessibilityEvent
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import com.google.android.accessibility.talkback.Feedback
 import com.google.android.accessibility.talkback.Interpretation
-import com.google.android.accessibility.talkback.Pipeline
 import com.google.android.accessibility.talkback.R
 import com.google.android.accessibility.talkback.TalkBackService
 import com.google.android.accessibility.talkback.analytics.TalkBackAnalytics
@@ -206,15 +206,12 @@ class VoiceAppLauncherTest {
     val feedback = mutableListOf<Feedback>()
     val interpreted = mutableListOf<Interpretation?>()
     val processor = VoiceCommandProcessor(talkback, null, null, object : TalkBackAnalytics {})
+    processor.setPipeline {
+      feedback.add(it)
+      true
+    }
+    ReflectionHelpers.getField<VoiceAppLauncher>(processor, "appLauncher").shutdown()
     ReflectionHelpers.setField(processor, "appLauncher", launcher)
-    ReflectionHelpers.setField(
-      processor,
-      "pipeline",
-      Pipeline.FeedbackReturner {
-        feedback.add(it)
-        true
-      },
-    )
     processor.setPipelineInterpretationReceiver { _, _, command, _ ->
       interpreted.add(command)
       true
@@ -228,11 +225,21 @@ class VoiceAppLauncherTest {
     feedback.clear()
     processor.setOpenAppsEnabled(true)
     assertFalse(processor.handleSpeechCommand("Open Camera", true))
-    processor.handleSpeechCommand("Open missing home", false)
+    Settings.Secure.putInt(talkback.contentResolver, "user_setup_complete", 1)
+    app("Backtalk settings", "example.settings")
+    assertTrue(processor.handleSpeechCommand("Open Backtalk settings", false))
+    finish()
+    assertEquals(
+      "TalkBackPreferencesActivity",
+      shadowOf(talkback).nextStartedActivity.component?.className?.substringAfterLast('.'),
+    )
+    assertNull(shadowOf(service).nextStartedActivity)
+    feedback.clear()
+    processor.handleSpeechCommand("Open missing app", false)
     finish()
     assertTrue(interpreted.isEmpty())
     assertEquals(
-      talkback.getString(R.string.voice_commands_echo_feedback_not_recognized, "Open missing home"),
+      talkback.getString(R.string.voice_commands_echo_feedback_not_recognized, "Open missing app"),
       feedback.single().failovers().single().speech()!!.text().toString(),
     )
     processor.handleSpeechCommand("Home", false)
@@ -316,19 +323,24 @@ class VoiceAppLauncherTest {
 
   @Test
   @Config(sdk = [26, 34])
-  fun recognitionWaitsForFinalSpeechAndIndependentRequirementsDoNotOverrideEachOther() {
+  fun onlyOpenCommandsWaitForFinalSpeech() {
     val recognized = mutableListOf<Pair<String, Boolean>>()
     val recognizer = SpeechRecognizerPerformer(service, 10000, true)
     recognizer.setListener { command, partial ->
       recognized.add(command to partial)
       true
     }
-    recognizer.requireFinalResults("apps", true)
-    recognizer.requireFinalResults("another feature", true)
-    recognizer.requireFinalResults("apps", false)
+    recognizer.setRequireFinalOpenCommand(true)
     recognizer.speechRecognitionListener.onPartialResults(
       Bundle().apply {
         putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, arrayListOf("Open YouTube"))
+      }
+    )
+    shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(2))
+    assertTrue(recognized.isEmpty())
+    recognizer.speechRecognitionListener.onPartialResults(
+      Bundle().apply {
+        putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, arrayListOf("OPEN"))
       }
     )
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(2))
@@ -340,7 +352,6 @@ class VoiceAppLauncherTest {
     )
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(1))
     assertEquals(listOf("Open YouTube Music" to false), recognized)
-    recognizer.requireFinalResults("another feature", false)
     recognizer.speechRecognitionListener.onPartialResults(
       Bundle().apply {
         putStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION, arrayListOf("Home"))
@@ -359,7 +370,7 @@ class VoiceAppLauncherTest {
       recognized.add(command)
       true
     }
-    recognizer.requireFinalResults("apps", true)
+    recognizer.setRequireFinalOpenCommand(true)
     fun partial(target: SpeechRecognizerPerformer = recognizer) =
       target.speechRecognitionListener.onPartialResults(
         Bundle().apply {
@@ -367,10 +378,10 @@ class VoiceAppLauncherTest {
         }
       )
     partial()
-    recognizer.requireFinalResults("apps", false)
+    recognizer.setRequireFinalOpenCommand(false)
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
     assertTrue(recognized.isEmpty())
-    recognizer.requireFinalResults("apps", true)
+    recognizer.setRequireFinalOpenCommand(true)
     partial()
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
     assertTrue(recognized.isEmpty())
@@ -379,12 +390,17 @@ class VoiceAppLauncherTest {
     shadowOf(Looper.getMainLooper()).idle()
     assertTrue(recognized.isEmpty())
 
-    // The existing fallback for partial-only engines is preserved without a final-result request.
+    // Check the cached-partial path used by engines without fast feedback.
     val slowRecognizer = SpeechRecognizerPerformer(service, 10000, false)
     slowRecognizer.setListener { command, _ ->
       recognized.add(command)
       true
     }
+    slowRecognizer.setRequireFinalOpenCommand(true)
+    partial(slowRecognizer)
+    shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
+    assertTrue(recognized.isEmpty())
+    slowRecognizer.setRequireFinalOpenCommand(false)
     partial(slowRecognizer)
     shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(10))
     assertEquals(listOf("Open Camera"), recognized)

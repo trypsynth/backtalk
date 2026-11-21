@@ -20,6 +20,12 @@ When you double-tap, the app reports the click, and TalkBack then waited 150 ms 
 
 When you double-tap a switch, most apps change it before they finish the click. Backtalk reads the switch again right then and says its new state, such as "on", instead of waiting for the app's later report of the change. The later report then isn't said again. On an emulator, with the switches in Android's **Date & time** settings, the median time from lifting your finger to the start of speech went from about 152 ms to about 82 ms. The switches in Android's **Wi-Fi** settings and in the Clock app's alarms are said early in the same way. Apps that change the state later still have it said when they report it, as before.
 
+### Typed letters said sooner
+
+When you lift your finger to type a key, TalkBack checked whether the reading controls should switch for the key before it handled the typed letter. That check asks the keyboard and the app, which are busy right after a key is typed. Backtalk makes the check a moment later, or straight away if you use the reading controls first.
+
+As a key is typed, the keyboard also reports that your finger left the key. TalkBack asked the keyboard about each of these reports and then ignored the answer. Backtalk doesn't ask. On an emulator, typing in Android's Settings search with Gboard, these two changes together took the median time from lifting your finger to the start of speech from about 109 ms to about 89 ms, and the median time to the key's vibration from about 46 ms to about 13 ms.
+
 ### Next swipe prepared in advance
 
 While you listen to an item, Backtalk works out what a swipe forward or back would say. When your swipe lands on the item that Backtalk prepared, speech starts immediately: on average 33 ms after the swipe, compared with 60 ms without preparation. In testing, about four in five swipes used prepared speech.
@@ -102,7 +108,7 @@ TalkBack speaks the window name only after the speech before it, and the first i
 
 When the next item was only partly on screen, TalkBack scrolled it into view, waited for the scroll before it spoke, and then waited another 110 ms in case more scroll events arrived. Backtalk speaks the item immediately and lets the scroll finish while it speaks.
 
-When the next item is off screen, Backtalk checks once per frame whether the list has moved, rather than wait for the scroll event, which Android sends at most every 100 ms. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen, and from about 320 ms to about 140 ms when the list had to scroll a page.
+When the next item is off screen, the list scrolls a page. TalkBack waited for the last scroll event, which Android sends at most every 100 ms, and then another 110 ms in case more came. Backtalk instead checks once per frame where the item it left is, and searches as soon as that item has stopped moving for about 50 ms. It doesn't search while the list is still moving, because a list reuses the rows that leave the screen for the rows that come in, so a search partway through the scroll can miss an item. If the item it left goes off screen, Backtalk waits until the scroll events stop. TalkBack instead searched as soon as the list had scrolled far enough, while it was still moving, which could skip an item too. On a Samsung phone, swipes that scroll went from about 310 ms to about 60 ms when the item was partly on screen. Checking each frame needs Android 14 or later, so on earlier versions, Backtalk always waits for the scroll event.
 
 Backtalk also finds the end of a list that's laid out in reverse, such as a chat, correctly.
 
@@ -190,7 +196,15 @@ TalkBack ignored the order for a row whose checkbox or switch has no text of its
 
 ### "Backtalk off" at the right volume
 
-When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. TalkBack only approximated that volume.
+When you turn Backtalk off, it says "Backtalk off" at the accessibility volume, using your device's real volume levels. This includes Samsung phones, and stays right when you connect or disconnect headphones while Backtalk is on. On Bluetooth headphones that control their own volume, it can be one volume step louder or quieter, about 3 dB, because those headphones can set the media volume between steps and Android doesn't tell apps where. TalkBack only approximated that volume.
+
+### Volume said as it changes
+
+When you press a volume key, Backtalk says the new volume right away and stops what it was saying. During continuous reading it waits for the current item to finish instead, so reading goes on. A newer level replaces one that hasn't finished. The first change names the volume, such as "Music volume set to 50 percent", and changes to the same volume less than 2 seconds apart say only the percentage. If you hold the key down, Backtalk says the first level, stays quiet while the volume keeps changing, and says the level you end at when you let go. When media is muted or unmuted, Backtalk says so the same way. TalkBack waited until the keys had been still for 2 seconds, and after the first press it waited 4 seconds. Backtalk also says the media volume while media plays, where TalkBack said it only when nothing was playing.
+
+Each output, such as the phone speaker or a pair of headphones, keeps its own media, call, notification and accessibility volumes, and Android switches to them when audio moves there. Backtalk doesn't say a change of one of these volumes that comes with a new output unless a volume key made it, so connecting or disconnecting headphones stays quiet. Headphones can report the same level again a moment later, and Backtalk doesn't say one of these levels that hasn't changed unless a volume key reported it. TalkBack said the level headphones set. If the new output's level is the one you already had, nothing changes, so the first press on the headphones' own controls after that isn't said.
+
+When you change the volume with a slider, Backtalk says only the slider's value. To stop hearing the volume, including mute, turn off **Verbosity** > **Speak volume changes**.
 
 ### Table column headers
 
@@ -422,6 +436,10 @@ realme UI reports some volume sliders as not focusable and unlabeled, so TalkBac
 
 The **Vertical navigation** reading control, which you can turn on in **Reading controls**, moves to the item below when you swipe down and to the item above when you swipe up. It skips the other items of the same row, such as the call and contact buttons beside each call in the call log, or the buttons beside a video in YouTube. Going up lands on the first item of the row above. In a list, it stays in the list: when there is no row below or above on screen, it scrolls the list a page and moves to the next row. At the end of the list, or outside one, it moves to the item below or above on screen, and plays the end sound when there is none.
 
+### Sentences
+
+The **Sentences** reading control moves through text one sentence at a time when you swipe up or down. It works in any text Backtalk reads, including text that apps can only move through by word or paragraph, and in a text field you're typing in, where it moves the cursor. Sentences end where the text's language ends them, so Chinese and Japanese full stops count, and in languages that Android has a list for, abbreviations such as "Mr." don't end a sentence. It doesn't work in web pages. It isn't in the reading controls by default. To add it, go to **Reading controls**.
+
 ### Volume keys that adjust sliders
 
 When you turn on **Controls** > **Touch and activation** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.
@@ -456,11 +474,24 @@ To turn the circle menu on, go to **Backtalk menu** and turn on **Circle menu**.
 
 Say "call Mom", or "call" followed by a phone number, to place a call. Backtalk reads back who it will call and asks you to say yes, then calls at once. Add "on speaker" to start the call on the speaker. If two contacts match, Backtalk reads their names and you say a number. Say "answer the call" or "pick up the call" to answer, "decline" to turn a call away, and "hang up" to end one. The first time, Backtalk asks for the phone, contacts and answer-calls permissions. Ending a call needs Android 9 or later. Turning the speaker on or off during a call isn't included, because Android doesn't let apps like Backtalk do it.
 
+### System controls
+
+Backtalk adds voice commands for settings that Android lets apps change:
+*   **Do Not Disturb**: Say "turn on Do Not Disturb" or "turn on DND" to silence notifications, and "turn off DND" to restore them. If notification policy access has not been granted yet, Backtalk asks for permission and opens the setting.
+*   **System settings**: Say "open settings" or "settings" to open the Android system Settings app.
+*   **Backtalk settings**: Say "open Backtalk settings" or "Backtalk settings" to open screen reader preferences directly.
+*   **Device status and battery**: Say "battery" to hear the battery level and charging state, or "status" to hear the time, network, and device status.
+*   **Volume**: Say "volume up", "volume down", "mute", or "unmute".
+
+### Finding controls on screen
+
+Say "find [name]", "focus [name]", "search for [name]", or "locate [name]" (for example, "find play button", "focus search", "locate cancel") to search the screen and move accessibility focus directly to the matching control.
+
 ### Open an app by name
 
 Turn on **Controls** > **Open apps by voice** in Backtalk settings to use this command. The switch is off by default and is available on phones. In **Voice commands**, say **Open** followed by an installed app's name to launch it. The **Open** prefix is currently English; app names use their displayed labels. Backtalk chooses the closest full app name with at least 85% similarity. If no app qualifies, or different apps tie for the closest match, it speaks the existing message for unrecognized commands. Multiple launcher entries belonging to the same app do not count as different apps.
 
-With the switch on, Backtalk waits for a final result from the speech recognizer before opening an app. A recognition error or timeout does not launch an app from an unfinished phrase. An **Open** request is handled as an app name; other phrases continue to use the existing voice commands. Turning the switch off cancels pending launches and restores the usual recognition timing. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
+With the switch on, phrases starting with **Open** wait for the final speech result. Backtalk checks built-in commands such as **Open Backtalk settings** first. If none matches, it looks for an app by name. Turning the switch off cancels pending launches. App names are looked up for each request, so newly installed or removed apps are reflected without restarting Backtalk.
 
 ## Screen and brightness
 
@@ -719,6 +750,10 @@ On Android 12 and later, Backtalk's settings follow the system dark mode.
 ### Slider titles
 
 Backtalk doesn't stop on a slider's title as a separate item when you swipe through settings.
+
+### Collapsed groups of actions
+
+When you choose the action for a gesture, the actions are in collapsed groups, such as **Basic navigation** and **System actions**, as the gestures themselves are. Double-tap a group to expand or collapse it. The group with the gesture's current action starts expanded, and focus starts on that action.
 
 ## Updates and installing
 

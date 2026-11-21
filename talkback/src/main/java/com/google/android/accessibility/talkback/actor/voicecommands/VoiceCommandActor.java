@@ -151,7 +151,7 @@ public class VoiceCommandActor implements SpeechRecognizerRequester {
 
   public void setOpenAppsEnabled(boolean enabled) {
     voiceCommandProcessor.setOpenAppsEnabled(enabled);
-    speechRecognizerPerformer.requireFinalResults(VoiceAppLauncher.class, enabled);
+    speechRecognizerPerformer.setRequireFinalOpenCommand(enabled);
   }
 
   /**

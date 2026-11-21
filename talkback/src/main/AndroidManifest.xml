@@ -16,6 +16,8 @@
 
     <!-- Required to monitor phone busy state. -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Required for toggling Do Not Disturb by voice command -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <!-- Required for haptic feedback. -->
     <uses-permission android:name="android.permission.VIBRATE" />

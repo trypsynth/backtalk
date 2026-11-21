@@ -503,9 +503,10 @@ public class GestureController {
         || action.equals(service.getString(R.string.shortcut_value_perform_click_action))) {
       // For customized gesture(s) which perform the "Activate"/click action, they are regarded
       // the same behavior as the native "Double-Tap" gesture.
-      if (SelectorController.getCurrentSetting(service).equals(Setting.ACTIONS)) {
+      Setting currentSetting = selectorController.getCurrentSettingForClick();
+      if (currentSetting.equals(Setting.ACTIONS)) {
         selectorController.activateCurrentAction(eventId);
-      } else if (SelectorController.getCurrentSetting(service).equals(Setting.MEDIA_CONTROLS)) {
+      } else if (currentSetting.equals(Setting.MEDIA_CONTROLS)) {
         selectorController.activateCurrentMediaAction(eventId);
       } else {
         result = pipeline.returnFeedback(eventId, Feedback.focus(CLICK_CURRENT));
@@ -1042,6 +1043,12 @@ public class GestureController {
   private final Handler handler = new Handler(Looper.getMainLooper());
   private final VolumeChangedListener a11yVolumeChangedListener =
       new VolumeChangedListener() {
+
+        // Backtalk: this listener says the new accessibility volume, so VolumeMonitor doesn't.
+        @Override
+        public boolean announcesVolume(int type) {
+          return type == AudioManager.STREAM_ACCESSIBILITY;
+        }
 
         @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {

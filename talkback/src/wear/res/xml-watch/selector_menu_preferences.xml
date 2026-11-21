@@ -36,6 +36,11 @@
             android:title="@string/granularity_paragraph"
             android:summary="@string/summary_paragraphs"/>
         <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
+            android:defaultValue="@bool/pref_selector_granularity_sentences_default"
+            android:key="@string/pref_selector_granularity_sentences_key"
+            android:title="@string/granularity_sentence"
+            android:summary="@string/summary_sentences"/>
+        <com.google.android.accessibility.material.preference.AccessibilitySuiteCheckBoxPreference
             android:defaultValue="@bool/pref_selector_granularity_headings_default"
             android:key="@string/pref_selector_granularity_headings_key"
             android:title="@string/granularity_web_heading"
