@@ -436,6 +436,10 @@ realme UI reports some volume sliders as not focusable and unlabeled, so TalkBac
 
 The **Vertical navigation** reading control, which you can turn on in **Reading controls**, moves to the item below when you swipe down and to the item above when you swipe up. It skips the other items of the same row, such as the call and contact buttons beside each call in the call log, or the buttons beside a video in YouTube. Going up lands on the first item of the row above. In a list, it stays in the list: when there is no row below or above on screen, it scrolls the list a page and moves to the next row. At the end of the list, or outside one, it moves to the item below or above on screen, and plays the end sound when there is none.
 
+### Sentences
+
+The **Sentences** reading control moves through text one sentence at a time when you swipe up or down. It works in any text Backtalk reads, including text that apps can only move through by word or paragraph, and in a text field you're typing in, where it moves the cursor. Sentences end where the text's language ends them, so Chinese and Japanese full stops count, and in languages that Android has a list for, abbreviations such as "Mr." don't end a sentence. It doesn't work in web pages. It isn't in the reading controls by default. To add it, go to **Reading controls**.
+
 ### Volume keys that adjust sliders
 
 When you turn on **Controls** > **Touch and activation** > **Volume keys adjust sliders**, the volume keys change the value of the slider that has focus, and Backtalk speaks the new value, as it does when you adjust the slider with the **Adjustable** reading control. Hold a key to keep changing the value. When focus is on anything else, or the screen is off, the volume keys change the volume as usual. They also still change speech volume while a finger is on the screen, during continuous reading, and with the keyboard shortcut modifier. The setting is off by default.

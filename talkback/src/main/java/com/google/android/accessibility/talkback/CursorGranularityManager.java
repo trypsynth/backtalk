@@ -497,7 +497,12 @@ public class CursorGranularityManager {
 
       final AccessibilityNodeInfoCompat currentNode = navigableNodes.get(currentNodeIndex);
 
-      if (GranularityTraversal.shouldHandleGranularityTraversalInTalkback(currentNode)) {
+      // Backtalk: sentences are always moved through by Backtalk, and never asked of the app.
+      if (requestedGranularity == CursorGranularity.SENTENCE) {
+        if (granularityTraversal.traverseAtSentenceGranularity(currentNode, forward, eventId)) {
+          return SUCCESS;
+        }
+      } else if (GranularityTraversal.shouldHandleGranularityTraversalInTalkback(currentNode)) {
         if (granularityTraversal.traverseAtGranularity(
             currentNode, requestedGranularity.value, forward, eventId)) {
           return SUCCESS;
@@ -508,6 +513,10 @@ public class CursorGranularityManager {
         if (granularityTraversal.traverseAtLineGranularity(currentNode, forward, eventId)) {
           return SUCCESS;
         }
+      } else if (AccessibilityNodeInfoUtils.getMovementGranularity(currentNode) == 0) {
+        // Backtalk: an item that's only in the list to move through by sentence can't move by
+        // anything else, so the app isn't asked.
+        LogUtils.v(TAG, "Item supports only sentences, trying next node");
       } else if (requestedGranularity == CursorGranularity.WORD
           && !isSelectionModeActive()
           && granularityTraversal.traverseEmojiWordInFrameworkText(currentNode, forward, eventId)) {
@@ -732,6 +741,13 @@ public class CursorGranularityManager {
         nodes.add(root);
       }
       supportedGranularities |= root.getMovementGranularities();
+    }
+    // Backtalk: Backtalk moves by sentence itself, through any text it reads.
+    if (GranularityTraversal.hasSentenceText(root)) {
+      supportedGranularities |= CursorGranularity.SENTENCE_BIT;
+      if (nodes != null && !nodes.contains(root)) {
+        nodes.add(root);
+      }
     }
 
     if (!TextUtils.isEmpty(root.getContentDescription())) {

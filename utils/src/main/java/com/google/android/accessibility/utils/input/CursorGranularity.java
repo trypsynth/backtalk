@@ -38,6 +38,8 @@ public enum CursorGranularity {
       R.string.granularity_paragraph,
       5,
       AccessibilityNodeInfoCompat.MOVEMENT_GRANULARITY_PARAGRAPH),
+  // Backtalk: sentences, which Backtalk moves through itself, since apps can't.
+  SENTENCE(R.string.granularity_sentence, 37, CursorGranularity.SENTENCE_BIT),
   WEB_LIST(R.string.granularity_web_list, 8, 0),
   HEADING(R.string.granularity_native_heading, 10, 0),
   CONTROL(R.string.granularity_native_control, 11, 0),
@@ -77,6 +79,13 @@ public enum CursorGranularity {
 
   /** Used to represent a granularity with no framework value. */
   private static final int NO_VALUE = 0;
+
+  /**
+   * Backtalk: the bit that stands for {@link #SENTENCE} in a mask of supported granularities. No
+   * framework granularity uses it, and it's never sent to an app, since apps can't move by
+   * sentence.
+   */
+  public static final int SENTENCE_BIT = 1 << 30;
 
   /** The resource identifier for this granularity's user-visible name. */
   public final int resourceId;
@@ -296,7 +305,9 @@ public enum CursorGranularity {
     return resourceId == R.string.granularity_character
         || resourceId == R.string.granularity_word
         || resourceId == R.string.granularity_line
-        || resourceId == R.string.granularity_paragraph;
+        || resourceId == R.string.granularity_paragraph
+        // Backtalk
+        || resourceId == R.string.granularity_sentence;
   }
 
   public boolean isTableNavigationGranularity() {

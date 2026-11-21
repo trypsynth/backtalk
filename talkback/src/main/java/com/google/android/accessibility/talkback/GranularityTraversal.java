@@ -35,6 +35,7 @@ import com.google.android.accessibility.utils.WebInterfaceUtils;
 import com.google.android.accessibility.utils.input.CursorGranularity;
 import com.google.android.accessibility.utils.input.GranularityIterator;
 import com.google.android.accessibility.utils.input.GranularityIterator.TextSegmentIterator;
+import com.google.android.accessibility.utils.input.SentenceTextSegmentIterator;
 import com.google.android.accessibility.utils.input.TextEventInterpreter;
 import com.google.android.accessibility.talkback.R;
 import com.google.android.accessibility.talkback.compositor.CompositorUtils;
@@ -284,6 +285,70 @@ public final class GranularityTraversal {
     sendViewTextTraversedAtGranularityEvent(
         segmentStart, segmentEnd, forward, text, CursorGranularity.LINE.value, node, eventId);
     return true;
+  }
+
+  /**
+   * Backtalk: moves to the next or previous sentence of {@code node}. Apps can't move by sentence,
+   * so Backtalk finds the sentences itself, in any text it reads. In an edit text that has input
+   * focus, the app's cursor moves, as it does for lines; elsewhere, Backtalk keeps its own cursor,
+   * as it does for content descriptions. Not used in web content, which the browser moves through.
+   *
+   * @return {@code true} if there was a sentence to move to.
+   */
+  public boolean traverseAtSentenceGranularity(
+      AccessibilityNodeInfoCompat node, boolean forward, EventId eventId) {
+    if (WebInterfaceUtils.isWebContainer(node)) {
+      return false;
+    }
+    boolean editing = Role.getRole(node) == Role.ROLE_EDIT_TEXT && node.isFocused();
+    if (editing && (!node.refresh() || node.isShowingHintText())) {
+      return false;
+    }
+    CharSequence text = getSentenceText(node);
+    if (TextUtils.isEmpty(text)) {
+      return false;
+    }
+    int current;
+    if (editing) {
+      current = forward ? node.getTextSelectionEnd() : node.getTextSelectionStart();
+    } else {
+      current = getCursorPosition(node);
+    }
+    if (current < 0 || current > text.length()) {
+      current = forward ? 0 : text.length();
+    }
+    TextSegmentIterator iterator = new SentenceTextSegmentIterator(text);
+    int[] range = forward ? iterator.following(current) : iterator.preceding(current);
+    if (range == null) {
+      return false;
+    }
+    if (editing) {
+      int cursor = forward ? range[1] : range[0];
+      pipelineReturner.ifPresent(
+          feedbackReturner ->
+              feedbackReturner.returnFeedback(
+                  Feedback.create(
+                      eventId,
+                      Feedback.part()
+                          .setEdit(Feedback.edit(node, MOVE_CURSOR).setCursorIndex(cursor).build())
+                          .build())));
+    } else {
+      setAccessibilityCursor(node, range[1], range[0], text.length(), forward);
+    }
+    sendViewTextTraversedAtGranularityEvent(
+        range[0], range[1], forward, text, CursorGranularity.SENTENCE.value, node, eventId);
+    return true;
+  }
+
+  /** Backtalk: whether {@code node} has text that {@link #traverseAtSentenceGranularity} reads. */
+  static boolean hasSentenceText(AccessibilityNodeInfoCompat node) {
+    return !WebInterfaceUtils.isWebContainer(node) && !TextUtils.isEmpty(getSentenceText(node));
+  }
+
+  /** Backtalk: the text moved through by sentence, the node's text or its content description. */
+  private static CharSequence getSentenceText(AccessibilityNodeInfoCompat node) {
+    CharSequence text = AccessibilityNodeInfoUtils.getText(node);
+    return TextUtils.isEmpty(text) ? node.getContentDescription() : text;
   }
 
   /**

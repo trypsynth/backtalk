@@ -270,6 +270,7 @@
     <string name="pref_selector_granularity_headings_key">pref_selector_granularity_headings_key</string>
     <string name="pref_selector_granularity_words_key">pref_selector_granularity_words_key</string>
     <string name="pref_selector_granularity_paragraphs_key">pref_selector_granularity_paragraphs_key</string>
+    <string name="pref_selector_granularity_sentences_key">pref_selector_granularity_sentences_key</string>
     <string name="pref_selector_granularity_characters_key">pref_selector_granularity_characters_key</string>
     <string name="pref_selector_granularity_lines_key">pref_selector_granularity_lines_key</string>
     <string name="pref_selector_granularity_windows_key">pref_selector_granularity_windows_key</string>
@@ -1671,6 +1672,8 @@
     <bool name="pref_selector_granularity_headings_default">true</bool>
     <bool name="pref_selector_granularity_words_default">true</bool>
     <bool name="pref_selector_granularity_paragraphs_default">true</bool>
+    <!-- Backtalk: sentences are off until the user turns them on. -->
+    <bool name="pref_selector_granularity_sentences_default">false</bool>
     <bool name="pref_selector_granularity_characters_default">true</bool>
     <bool name="pref_selector_granularity_lines_default">true</bool>
     <bool name="pref_selector_granularity_windows_default">false</bool>
@@ -2014,6 +2017,7 @@
     <string name="selector_granularity_headings">GRANULARITY_HEADINGS</string>
     <string name="selector_granularity_words">GRANULARITY_WORDS</string>
     <string name="selector_granularity_paragraphs">GRANULARITY_PARAGRAPHS</string>
+    <string name="selector_granularity_sentences">GRANULARITY_SENTENCES</string>
     <string name="selector_granularity_characters">GRANULARITY_CHARACTERS</string>
     <string name="selector_granularity_lines">GRANULARITY_LINES</string>
     <string name="selector_granularity_windows">GRANULARITY_WINDOWS</string>

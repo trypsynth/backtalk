@@ -260,6 +260,11 @@ public class SelectorController implements UserInputEventListener {
         R.string.pref_selector_granularity_paragraphs_key,
         R.string.selector_granularity_paragraphs,
         R.bool.pref_selector_granularity_paragraphs_default),
+    // Backtalk
+    GRANULARITY_SENTENCES(
+        R.string.pref_selector_granularity_sentences_key,
+        R.string.selector_granularity_sentences,
+        R.bool.pref_selector_granularity_sentences_default),
     GRANULARITY_CHARACTERS(
         R.string.pref_selector_granularity_characters_key,
         R.string.selector_granularity_characters,
@@ -463,6 +468,9 @@ public class SelectorController implements UserInputEventListener {
     WORDS(Setting.GRANULARITY_WORDS, CursorGranularity.WORD, GRANULARITY_FOR_ALL_NODE),
     PARAGRAPHS(
         Setting.GRANULARITY_PARAGRAPHS, CursorGranularity.PARAGRAPH, GRANULARITY_FOR_ALL_NODE),
+    // Backtalk
+    SENTENCES(
+        Setting.GRANULARITY_SENTENCES, CursorGranularity.SENTENCE, GRANULARITY_FOR_ALL_NODE),
     CHARACTERS(
         Setting.GRANULARITY_CHARACTERS, CursorGranularity.CHARACTER, GRANULARITY_FOR_ALL_NODE),
     LINES(Setting.GRANULARITY_LINES, CursorGranularity.LINE, GRANULARITY_FOR_ALL_NODE),
@@ -631,6 +639,7 @@ public class SelectorController implements UserInputEventListener {
           Setting.GRANULARITY_WORDS,
           Setting.GRANULARITY_LINES,
           Setting.GRANULARITY_PARAGRAPHS,
+          Setting.GRANULARITY_SENTENCES,
           Setting.GRANULARITY_HEADINGS,
           Setting.GRANULARITY_CONTROLS,
           Setting.GRANULARITY_LINKS,
@@ -811,6 +820,9 @@ public class SelectorController implements UserInputEventListener {
       return Setting.GRANULARITY_LINES;
     } else if (granularity == R.string.granularity_paragraph) {
       return Setting.GRANULARITY_PARAGRAPHS;
+    } else if (granularity == R.string.granularity_sentence) {
+      // Backtalk
+      return Setting.GRANULARITY_SENTENCES;
     } else if (granularity == R.string.granularity_native_heading) {
       return Setting.GRANULARITY_HEADINGS;
     } else if (granularity == R.string.granularity_native_control) {
@@ -900,6 +912,7 @@ public class SelectorController implements UserInputEventListener {
         case GRANULARITY_HEADINGS,
             GRANULARITY_WORDS,
             GRANULARITY_PARAGRAPHS,
+            GRANULARITY_SENTENCES,
             GRANULARITY_CHARACTERS,
             GRANULARITY_LINES,
             GRANULARITY_LINKS,
@@ -1050,6 +1063,7 @@ public class SelectorController implements UserInputEventListener {
       case GRANULARITY_HEADINGS,
           GRANULARITY_WORDS,
           GRANULARITY_PARAGRAPHS,
+          GRANULARITY_SENTENCES,
           GRANULARITY_CHARACTERS,
           GRANULARITY_LINES,
           GRANULARITY_LINKS,
@@ -1358,6 +1372,7 @@ public class SelectorController implements UserInputEventListener {
           case GRANULARITY_HEADINGS,
               GRANULARITY_WORDS,
               GRANULARITY_PARAGRAPHS,
+              GRANULARITY_SENTENCES,
               GRANULARITY_CHARACTERS,
               GRANULARITY_LINES,
               GRANULARITY_LINKS,
@@ -1989,6 +2004,7 @@ public class SelectorController implements UserInputEventListener {
       case GRANULARITY_HEADINGS,
           GRANULARITY_WORDS,
           GRANULARITY_PARAGRAPHS,
+          GRANULARITY_SENTENCES,
           GRANULARITY_CHARACTERS,
           GRANULARITY_LINES,
           GRANULARITY_LINKS,
