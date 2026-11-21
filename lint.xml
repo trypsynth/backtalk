@@ -22,6 +22,7 @@
         <ignore regexp="voice_commands_unmuted" />
         <ignore regexp="voice_commands_found" />
         <ignore regexp="voice_commands_element_not_found" />
+        <ignore regexp="script_binding_voice" />
         <ignore regexp="voice_commands_help_call" />
         <ignore regexp="voice_commands_help_call_description" />
         <ignore regexp="voice_commands_help_call_control" />

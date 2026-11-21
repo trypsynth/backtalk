@@ -469,6 +469,12 @@ Backtalk adds voice commands for settings that Android lets apps change:
 
 Say "find [name]", "focus [name]", "search for [name]", or "locate [name]" (for example, "find play button", "focus search", "locate cancel") to search the screen and move accessibility focus directly to the matching control.
 
+### Voice command scripts API
+
+Backtalk scripts can create custom voice commands:
+*   **Manifest commands**: Add `voice: 'phrase'` or `voice: ['phrase 1', 'phrase 2']` to any entry in `manifest.commands`. When spoken, Backtalk runs the command with `via: 'voice'`, `event.command`, and `event.remainder`.
+*   **Dynamic voice API**: Use `backtalk.onVoiceCommand(pattern, callback)` to register exact phrases, fuzzy phrases, or wildcard capture patterns (such as `'search for *'`).
+
 ## Screen and brightness
 
 ### Brightness reading control

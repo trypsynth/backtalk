@@ -328,6 +328,14 @@ class ManifestParserTest {
   }
 
   @Test
+  fun aCommandAcceptsVoice() {
+    val manifest =
+      parse(""","permissions":["input"],"commands":[{"id":"go","title":"Go","voice":["start go","go"]}]""")
+    assertEquals(listOf("start go", "go"), manifest.commands[0].voice)
+    assertTrue(manifest.commands[0].bindings.any { it is CommandBinding.Voice && it.phrase == "start go" })
+  }
+
+  @Test
   fun aCommandsGestureAndKeysAreChecked() {
     val permission = """"permissions":["input"]"""
     assertTrue(
