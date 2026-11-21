@@ -162,6 +162,10 @@
   <string name="code_user_facing_name_norwegian_8">Norwegian 8-dot Braille</string>
   <!-- Language list preference item for the Norwegian 8 dots braille with 6-dot fallback language. [CHAR_LIMIT=80] -->
   <string name="code_user_facing_name_norwegian_8_with_6_fallback">Norwegian 8-dot Braille with 6-dot Fallback</string>
+  <!-- Language list preference item for the Persian braille language. [CHAR_LIMIT=40] -->
+  <string name="code_user_facing_name_persian">Persian</string>
+  <!-- Language list preference item for the Persian 8-dot computer braille language. [CHAR_LIMIT=80] -->
+  <string name="code_user_facing_name_persian_comp8">Persian 8-dot Computer Braille</string>
   <!-- Language list preference item for the Nepali (India) braille language. [CHAR_LIMIT=40] -->
   <string name="code_user_facing_name_nepali_indian">Nepali Braille (India)</string>
   <!-- Language list preference item for the Portuguese braille language. [CHAR_LIMIT=40] -->
