@@ -1427,6 +1427,12 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (adjustSliderWithVolumeKey(keyEvent, triggerModifierPressed)) {
       return true;
     }
+    // Backtalk: a held volume key is said once, when it's released. This follows the keys that
+    // Backtalk routes to its own volume too, so the release is seen even if routing changes.
+    if (volumeMonitor != null
+        && (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)) {
+      volumeMonitor.onVolumeKeyEvent(keyEvent);
+    }
     if (keyAction == KeyEvent.ACTION_DOWN) {
       boolean handleVolumeKeyInTalkBack =
           isTouchInteracting
@@ -2578,6 +2584,15 @@ public class TalkBackService extends AccessibilityServiceCompat
     focuser.setMenuManager(menuManager);
 
     volumeMonitor = new VolumeMonitor(pipeline.getFeedbackReturner(), this, callStateMonitor);
+    // Backtalk: a focused slider that the user just moved says its own value, and continuous
+    // reading must not be cut off. A change from elsewhere, such as headphones, is still said.
+    volumeMonitor.setSliderFocused(
+        () ->
+            RecentUserInput.isRecent()
+                && Role.getRole(accessibilityFocusMonitor.getSupportedAdjustableNode())
+                    == Role.ROLE_SEEK_CONTROL);
+    volumeMonitor.setContinuousReading(
+        () -> pipeline.getActorState().getContinuousRead().isActive());
     selectorController =
         new SelectorController(
             this,
@@ -3195,6 +3210,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       ContextCompat.registerReceiver(
           this, volumeMonitor, volumeMonitor.getFilter(), RECEIVER_EXPORTED);
+      volumeMonitor.startAnnouncing();
       if (FeatureSupport.hasAccessibilityAudioStream(this)) {
         // Cache the initial volume in case that the volume is never changed during runtime.
         volumeMonitor.cacheAccessibilityStreamVolume();
@@ -3347,6 +3363,7 @@ public class TalkBackService extends AccessibilityServiceCompat
     if (volumeMonitor != null) {
       volumeMonitor.releaseControl();
       volumeMonitor.clearVolumeChangedListener();
+      volumeMonitor.stopAnnouncing();
     }
 
     if (headphoneStateMonitor != null) {

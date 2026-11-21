@@ -1043,6 +1043,12 @@ public class GestureController {
   private final VolumeChangedListener a11yVolumeChangedListener =
       new VolumeChangedListener() {
 
+        // Backtalk: this listener says the new accessibility volume, so VolumeMonitor doesn't.
+        @Override
+        public boolean announcesVolume(int type) {
+          return type == AudioManager.STREAM_ACCESSIBILITY;
+        }
+
         @Override
         public void onVolumeChanged(int type, int value, int prevValue, int percent) {
           if (type != AudioManager.STREAM_ACCESSIBILITY) {
