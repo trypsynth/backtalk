@@ -168,7 +168,7 @@
       Description: Explains that enabling this routes TalkBack speech through the accessibility stream,
       allowing independent volume control. [CHAR LIMIT=NONE]
     -->
-    <string name="summary_pref_use_accessibility_stream">Speech and sounds use the accessibility volume, so you can set them apart from media. When off, they use the media volume.</string>
+    <string name="summary_pref_use_accessibility_stream">Speech and sounds use the accessibility volume, so you can set them apart from media. When off, they use the media volume. Sounds from other apps, such as the beeps of voice typing, still use the accessibility volume.</string>
     <!--
       Source: Title for the "speak long text in phrases" toggle.
       Description: When on, Backtalk sends long text to the speech engine as separate phrases. [CHAR LIMIT=NONE]

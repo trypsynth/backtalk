@@ -152,7 +152,7 @@ The reading control goes through the profiles in the order of the **Voice profil
 
 ### Accessibility volume or media volume
 
-TalkBack always plays speech at the accessibility volume. In Backtalk, you can turn off **Text-to-speech** > **Use accessibility volume**, so that speech and Backtalk's sounds use the media volume instead. The setting is on by default.
+TalkBack always plays speech at the accessibility volume. In Backtalk, you can turn off **Text-to-speech** > **Use accessibility volume**, so that speech and Backtalk's sounds use the media volume instead. The setting is on by default. It only moves Backtalk's own speech and sounds. Sounds that other apps play while a screen reader is on, such as the beeps when Gboard's voice typing or Google's speech recognition starts and stops listening, still use the accessibility volume.
 
 ### Automatic language and dialect changes
 
