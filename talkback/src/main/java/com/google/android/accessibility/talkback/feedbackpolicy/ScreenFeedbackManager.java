@@ -494,7 +494,8 @@ public class ScreenFeedbackManager
 
         // For TYPE_WINDOW_STATE_CHANGED events, only announce the accessibility pane title.
         if (interpretation.getEventType() == TYPE_WINDOW_STATE_CHANGED) {
-          if (interpretation.getContentChangeTypes() == CONTENT_CHANGE_TYPE_PANE_APPEARED) {
+          if (interpretation.getContentChangeTypes() == CONTENT_CHANGE_TYPE_PANE_APPEARED
+              && !NotificationPopUpPane.isPopUp(service, interpretation)) {
             logCompose(logDepth, "composeFeedback", "Pane appeared");
             utterance = interpretation.getEventSourceWindow().getTitleForFeedback();
           }

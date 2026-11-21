@@ -249,6 +249,10 @@ On Samsung watches, Backtalk reads the app and title, then the message content, 
 
 To stop Backtalk from reading new notifications when they arrive, turn off **Verbosity** > **Speak notifications**. Backtalk still reads incoming calls, and you can still read notifications in the notification shade. The setting is on by default.
 
+### No "Notification shade" when a notification pops up
+
+When a notification pops up at the top of the screen, TalkBack said "Notification shade", even when it didn't read the notification because **Speak notifications** was off or Do Not Disturb was on. Backtalk doesn't say "Notification shade" for a notification that pops up. It still says "Notification shade" when you open the shade yourself.
+
 ### Toasts in Do Not Disturb
 
 While Do Not Disturb was on, TalkBack didn't speak toasts, the short messages that apps show at the bottom of the screen. Backtalk speaks toasts, and stays silent only for notifications.
