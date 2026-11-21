@@ -727,6 +727,10 @@ On Android 12 and later, Backtalk's settings follow the system dark mode.
 
 Backtalk doesn't stop on a slider's title as a separate item when you swipe through settings.
 
+### Collapsed groups of actions
+
+When you choose the action for a gesture, the actions are in collapsed groups, such as **Basic navigation** and **System actions**, as the gestures themselves are. Double-tap a group to expand or collapse it. The group with the gesture's current action starts expanded, and focus starts on that action.
+
 ## Updates and installing
 
 ### Separate app
