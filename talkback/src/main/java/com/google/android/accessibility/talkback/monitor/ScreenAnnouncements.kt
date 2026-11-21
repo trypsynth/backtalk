@@ -20,15 +20,17 @@ import android.content.SharedPreferences
 import com.google.android.accessibility.talkback.status.StatusItem
 
 /**
- * What Backtalk says when the screen turns off or on and when the phone is unlocked. The time
- * when the screen turns on keeps its own older setting, which the Backtalk menu and gestures also
- * change. The keys are also in res/xml/screen_announcement_preferences.xml.
+ * What Backtalk says when the screen turns off or on, on the lock screen, and when the phone is
+ * unlocked. The time when the screen turns on keeps its own older setting, which the Backtalk menu
+ * and gestures also change. The keys are also in res/xml/screen_announcement_preferences.xml.
  */
 object ScreenAnnouncementSettings {
   const val SAY_SCREEN_OFF = "pref_screen_off_say_screen_off"
   const val SCREEN_OFF_RINGER = "pref_screen_off_ringer_mode"
   const val SAY_UNLOCKED = "pref_unlock_say_unlocked"
   const val SUPPRESS_EXTRA_SCREEN_ON_SPEECH = "pref_screen_on_suppress_extra_speech"
+  /** The message System UI repeats on the lock screen to say where the fingerprint sensor is. */
+  const val LOCK_SCREEN_FINGERPRINT_LOCATION = "pref_lock_screen_fingerprint_location"
 
   /**
    * The status items that can be spoken after the time as the screen turns on, in the order they
@@ -51,6 +53,7 @@ object ScreenAnnouncementSettings {
       SCREEN_OFF_RINGER to true,
       SAY_UNLOCKED to true,
       SUPPRESS_EXTRA_SCREEN_ON_SPEECH to false,
+      LOCK_SCREEN_FINGERPRINT_LOCATION to true,
     ) +
       SCREEN_ON_STATUS.values.associateWith { false }
 

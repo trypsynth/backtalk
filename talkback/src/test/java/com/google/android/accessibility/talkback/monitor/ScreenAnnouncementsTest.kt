@@ -36,15 +36,20 @@ class ScreenAnnouncementsTest {
       DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(screen).getElementsByTagName(
         "com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference"
       )
+    // Keys the settings filter needs as resources. Other @string keys, like the time, aren't ours.
+    val keysInResources = setOf(
+      "pref_screen_on_suppress_extra_speech_key", "pref_lock_screen_fingerprint_location_key",
+    )
     val onScreen = mutableMapOf<String, Boolean>()
     for (i in 0 until switches.length) {
       val switch = switches.item(i) as Element
       val resourceKey = switch.getAttribute("android:key")
-      val key = if (resourceKey == "@string/pref_screen_on_suppress_extra_speech_key") {
+      val name = resourceKey.removePrefix("@string/")
+      val key = if (name in keysInResources) {
         val strings = DocumentBuilderFactory.newInstance().newDocumentBuilder()
           .parse(File("src/main/res/values/donottranslate.xml")).getElementsByTagName("string")
         (0 until strings.length).map { strings.item(it) as Element }
-          .first { it.getAttribute("name") == "pref_screen_on_suppress_extra_speech_key" }.textContent
+          .first { it.getAttribute("name") == name }.textContent
       } else resourceKey
       if (!key.startsWith("@")) {
         onScreen[key] = switch.getAttribute("android:defaultValue").toBooleanStrict()

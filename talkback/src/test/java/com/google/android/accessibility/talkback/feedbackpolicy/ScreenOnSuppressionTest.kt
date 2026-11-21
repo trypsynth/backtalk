@@ -479,4 +479,52 @@ class ScreenOnSuppressionTest {
     suppression.onDisplayStateChanged(true)
     assertTrue(suppression.isSuppressing())
   }
+
+  @Test
+  fun fingerprintSensorLocationIsMutedOnlyWhenTurnedOff() {
+    val message = "The fingerprint sensor is centered in the lower part of the screen."
+    val prefs = SharedPreferencesUtils.getSharedPreferences(service)
+    val suppression = ScreenOnSpeechSuppression(
+      prefs, initiallyScreenOn = true, systemUiPackages = uiPackages, isLocked = { locked },
+      isFingerprintLocation = { it.equals(message, ignoreCase = true) },
+    )
+    fun event(text: String, type: Int = AccessibilityEvent.TYPE_ANNOUNCEMENT,
+      packageName: String = "com.android.systemui") =
+      rawEvent(type, packageName).apply { this.text.add(text) }
+
+    // On by default, so the message keeps being spoken.
+    assertFalse(suppression.shouldSuppressEvent(event(message)))
+    prefs.edit().putBoolean(ScreenAnnouncementSettings.LOCK_SCREEN_FINGERPRINT_LOCATION, false)
+      .commit()
+    // Muted every time it repeats, with no wake window or interaction involved.
+    repeat(3) { assertTrue(suppression.shouldSuppressEvent(event(message))) }
+    // A description is what gets spoken, so it is what is matched.
+    assertTrue(suppression.shouldSuppressEvent(
+      rawEvent(AccessibilityEvent.TYPE_ANNOUNCEMENT, "com.android.systemui").apply {
+        contentDescription = message
+      }))
+    suppression.onUserInteraction()
+    assertTrue(suppression.shouldSuppressEvent(event(message)))
+    // Other fingerprint messages, other apps, and touched labels still speak.
+    assertFalse(suppression.shouldSuppressEvent(event("Fingerprint not recognized")))
+    assertFalse(suppression.shouldSuppressEvent(event(message, packageName = "example.app")))
+    assertFalse(suppression.shouldSuppressEvent(
+      event(message, AccessibilityEvent.TYPE_VIEW_HOVER_ENTER)))
+    // System UI can send one it already scheduled just after unlocking; that is muted too.
+    locked = false
+    assertTrue(suppression.shouldSuppressEvent(event(message)))
+  }
+
+  @Test
+  fun fingerprintSensorLocationMatchesDespiteLineBreaksAndCase() {
+    assertEquals(
+      ScreenOnSpeechSuppression.normalizeMessage("The sensor is here.\nYou'll hear feedback."),
+      ScreenOnSpeechSuppression.normalizeMessage("  the sensor is here.  You'll hear FEEDBACK. "),
+    )
+    // French puts a no-break space before some punctuation.
+    assertEquals(
+      ScreenOnSpeechSuppression.normalizeMessage("Le capteur est ici : touchez-le."),
+      ScreenOnSpeechSuppression.normalizeMessage("Le capteur est ici : touchez-le."),
+    )
+  }
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- What Backtalk says when the screen turns off or on and when the phone is unlocked. The keys
-     and defaults match ScreenAnnouncementSettings, except the time, which is an older setting. The
-     status items after the time are separate from the status gesture's Status readout. -->
+<!-- What Backtalk says when the screen turns off or on, on the lock screen, and when the phone is
+     unlocked. The keys and defaults match ScreenAnnouncementSettings, except the time, which is an
+     older setting. The status items after the time are separate from the status gesture's Status
+     readout. -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
   <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
       android:key="pref_screen_announcements_screen_off_category"
@@ -54,6 +55,16 @@
         android:key="@string/pref_screen_on_suppress_extra_speech_key"
         android:summary="@string/summary_pref_suppress_extra_screen_on_speech"
         android:title="@string/title_pref_suppress_extra_screen_on_speech" />
+  </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
+
+  <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
+      android:key="pref_screen_announcements_lock_screen_category"
+      android:title="@string/title_screen_announcements_lock_screen">
+    <com.google.android.accessibility.material.preference.AccessibilitySuiteSwitchPreference
+        android:defaultValue="true"
+        android:key="@string/pref_lock_screen_fingerprint_location_key"
+        android:summary="@string/summary_pref_lock_screen_fingerprint_location"
+        android:title="@string/title_pref_lock_screen_fingerprint_location" />
   </com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory>
 
   <com.google.android.accessibility.material.preference.AccessibilitySuitePreferenceCategory
