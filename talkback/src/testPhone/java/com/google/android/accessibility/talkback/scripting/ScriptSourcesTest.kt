@@ -275,4 +275,80 @@ class ScriptSourcesTest {
   fun aFileInPlaceOfAFolderIsNotAListing() {
     ScriptSources.parsePage(source("github.com/a/b"), """{"name":"x.js","type":"file"}""")
   }
+
+  // What `git hash-object` gives for "hello\n" and for "hello again\n".
+  private val hello = "hello\n".toByteArray()
+  private val helloSha = "ce013625030ba8dba906f756967f9e9ca394464a"
+  private val helloAgain = "hello again\n".toByteArray()
+
+  @Test
+  fun theGitHashOfAFileIsTheOneGitGives() {
+    assertEquals(helloSha, ScriptSources.gitBlobSha(hello))
+    assertEquals("e69de29bb2d1d6434b8b29ae775ad8c2e48c5391", ScriptSources.gitBlobSha(ByteArray(0)))
+  }
+
+  @Test
+  fun aGitHubFileKeepsItsHashAndTheAddressOfItsBlob() {
+    val page =
+      ScriptSources.parsePage(
+        source("github.com/a/b"),
+        """[
+          {"name":"x.js","type":"file","size":6,"sha":"$helloSha","download_url":"$raw/x.js"},
+          {"name":"y.js","type":"file","size":6,"sha":"not a hash","download_url":"$raw/y.js"}
+        ]""",
+      )
+
+    assertEquals(
+      listOf(
+        SourceScript(
+          "x.js",
+          "$raw/x.js",
+          sha = helloSha,
+          blobUrl = "https://api.github.com/repos/a/b/git/blobs/$helloSha",
+        ),
+        SourceScript("y.js", "$raw/y.js"),
+      ),
+      page.scripts,
+    )
+  }
+
+  private val listed =
+    SourceScript("x.js", "$raw/x.js", sha = helloSha, blobUrl = "https://api.github.com/blob")
+
+  @Test
+  fun aFileThatMatchesItsListingIsReadOnce() {
+    val read = mutableListOf<String>()
+    val bytes = ScriptSources.download(listed) { url, _ -> hello.also { read += url } }
+
+    assertEquals("hello\n", bytes.decodeToString())
+    assertEquals(listOf("$raw/x.js"), read)
+  }
+
+  @Test
+  fun anOldCopyFromTheFileServerIsReadAgainFromTheApi() {
+    val read = mutableListOf<String>()
+    val bytes =
+      ScriptSources.download(listed) { url, accept ->
+        read += "$url $accept"
+        if (url == listed.url) helloAgain else hello
+      }
+
+    assertEquals("hello\n", bytes.decodeToString())
+    assertEquals(
+      listOf("$raw/x.js */*", "https://api.github.com/blob application/vnd.github.raw+json"),
+      read,
+    )
+  }
+
+  @Test(expected = java.io.IOException::class)
+  fun aFileTheApiCantMatchToItsListingIsRefused() {
+    ScriptSources.download(listed) { _, _ -> helloAgain }
+  }
+
+  @Test
+  fun aFileWithoutAHashIsTakenAsItIs() {
+    val bytes = ScriptSources.download(SourceScript("x.js", "$raw/x.js")) { _, _ -> helloAgain }
+
+    assertEquals("hello again\n", bytes.decodeToString())
+  }
 }
